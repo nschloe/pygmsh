@@ -84,6 +84,19 @@ def PlaneSurface(lines):
 
     return sname
 # -----------------------------------------------------------------------------
+def RuledSurface(lines):
+    '''Create Gmsh Surface.
+    '''
+    llname = LineLoop(lines)
+
+    global SURFACE_ID
+    SURFACE_ID += 1
+    sname = 'surf%d' % SURFACE_ID
+    GMSH_CODE.append('%s = newreg;' % sname)
+    GMSH_CODE.append('Ruled Surface(%s) = {%s};' % (sname, llname))
+
+    return sname
+# -----------------------------------------------------------------------------
 def SurfaceLoop(surfaces):
     '''Gmsh Surface Loop.
     '''

@@ -77,6 +77,50 @@ def add_circle(radius, lcar,
 
     return c1, c2, c3, c4
 # -----------------------------------------------------------------------------
+def add_ball(x0, radius, lcar, label=None):
+
+    # Add points.
+    p = []
+    p.append(Point(x0, lcar=lcar))
+    p.append(Point([x0[0]+radius, x0[1],        x0[2]       ], lcar=lcar))
+    p.append(Point([x0[0],        x0[1]+radius, x0[2]       ], lcar=lcar))
+    p.append(Point([x0[0],        x0[1],        x0[2]+radius], lcar=lcar))
+    p.append(Point([x0[0]-radius, x0[1],        x0[2]       ], lcar=lcar))
+    p.append(Point([x0[0],        x0[1]-radius, x0[2]       ], lcar=lcar))
+    p.append(Point([x0[0],        x0[1],        x0[2]-radius], lcar=lcar))
+
+    # Add ball skeleton.
+    c = []
+    c.append(Circle([p[1], p[0], p[6]]))
+    c.append(Circle([p[6], p[0], p[4]]))
+    c.append(Circle([p[4], p[0], p[3]]))
+    c.append(Circle([p[3], p[0], p[1]]))
+    c.append(Circle([p[1], p[0], p[2]]))
+    c.append(Circle([p[2], p[0], p[4]]))
+    c.append(Circle([p[4], p[0], p[5]]))
+    c.append(Circle([p[5], p[0], p[1]]))
+    c.append(Circle([p[6], p[0], p[2]]))
+    c.append(Circle([p[2], p[0], p[3]]))
+    c.append(Circle([p[3], p[0], p[5]]))
+    c.append(Circle([p[5], p[0], p[6]]))
+
+    # Add surfaces (1/8th of the ball surface).
+    s = []
+    s.append(RuledSurface([c[4],      c[9],     c[3]]))
+    s.append(RuledSurface([c[8],      '-'+c[4], c[0]]))
+    s.append(RuledSurface([c[11],     '-'+c[7], '-'+c[0]]))
+    s.append(RuledSurface([c[7],      '-'+c[3], c[10]]))
+    s.append(RuledSurface(['-'+c[9],  c[5],     c[2]]))
+    s.append(RuledSurface(['-'+c[10], '-'+c[2], c[6]]))
+    s.append(RuledSurface(['-'+c[1],  '-'+c[6], '-'+c[11]]))
+    s.append(RuledSurface(['-'+c[5],  '-'+c[8], c[1]]))
+
+    # The surface loop and volume.
+    sl = SurfaceLoop(s)
+    v = Volume(sl, label=label)
+
+    return v
+# -----------------------------------------------------------------------------
 def add_box(x0, x1, y0, y1, z0, z1,
             lcar,
             holes = None
