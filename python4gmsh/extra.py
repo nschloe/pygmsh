@@ -80,40 +80,43 @@ def add_circle(radius, lcar,
 def add_ball(x0, radius, lcar, label=None):
 
     # Add points.
-    p = []
-    p.append(Point(x0, lcar=lcar))
-    p.append(Point([x0[0]+radius, x0[1],        x0[2]       ], lcar=lcar))
-    p.append(Point([x0[0],        x0[1]+radius, x0[2]       ], lcar=lcar))
-    p.append(Point([x0[0],        x0[1],        x0[2]+radius], lcar=lcar))
-    p.append(Point([x0[0]-radius, x0[1],        x0[2]       ], lcar=lcar))
-    p.append(Point([x0[0],        x0[1]-radius, x0[2]       ], lcar=lcar))
-    p.append(Point([x0[0],        x0[1],        x0[2]-radius], lcar=lcar))
+    p = [Point(x0, lcar=lcar),
+         Point([x0[0]+radius, x0[1],        x0[2]       ], lcar=lcar),
+         Point([x0[0],        x0[1]+radius, x0[2]       ], lcar=lcar),
+         Point([x0[0],        x0[1],        x0[2]+radius], lcar=lcar),
+         Point([x0[0]-radius, x0[1],        x0[2]       ], lcar=lcar),
+         Point([x0[0],        x0[1]-radius, x0[2]       ], lcar=lcar),
+         Point([x0[0],        x0[1],        x0[2]-radius], lcar=lcar)
+         ]
 
     # Add ball skeleton.
-    c = []
-    c.append(Circle([p[1], p[0], p[6]]))
-    c.append(Circle([p[6], p[0], p[4]]))
-    c.append(Circle([p[4], p[0], p[3]]))
-    c.append(Circle([p[3], p[0], p[1]]))
-    c.append(Circle([p[1], p[0], p[2]]))
-    c.append(Circle([p[2], p[0], p[4]]))
-    c.append(Circle([p[4], p[0], p[5]]))
-    c.append(Circle([p[5], p[0], p[1]]))
-    c.append(Circle([p[6], p[0], p[2]]))
-    c.append(Circle([p[2], p[0], p[3]]))
-    c.append(Circle([p[3], p[0], p[5]]))
-    c.append(Circle([p[5], p[0], p[6]]))
+    c = [Circle([p[1], p[0], p[6]]),
+         Circle([p[6], p[0], p[4]]),
+         Circle([p[4], p[0], p[3]]),
+         Circle([p[3], p[0], p[1]]),
+         Circle([p[1], p[0], p[2]]),
+         Circle([p[2], p[0], p[4]]),
+         Circle([p[4], p[0], p[5]]),
+         Circle([p[5], p[0], p[1]]),
+         Circle([p[6], p[0], p[2]]),
+         Circle([p[2], p[0], p[3]]),
+         Circle([p[3], p[0], p[5]]),
+         Circle([p[5], p[0], p[6]])
+         ]
 
     # Add surfaces (1/8th of the ball surface).
-    s = []
-    s.append(RuledSurface([c[4],      c[9],     c[3]]))
-    s.append(RuledSurface([c[8],      '-'+c[4], c[0]]))
-    s.append(RuledSurface([c[11],     '-'+c[7], '-'+c[0]]))
-    s.append(RuledSurface([c[7],      '-'+c[3], c[10]]))
-    s.append(RuledSurface(['-'+c[9],  c[5],     c[2]]))
-    s.append(RuledSurface(['-'+c[10], '-'+c[2], c[6]]))
-    s.append(RuledSurface(['-'+c[1],  '-'+c[6], '-'+c[11]]))
-    s.append(RuledSurface(['-'+c[5],  '-'+c[8], c[1]]))
+    ll = [LineLoop([c[4],      c[9],     c[3]]),
+          LineLoop([c[8],      '-'+c[4], c[0]]),
+          LineLoop([c[11],     '-'+c[7], '-'+c[0]]),
+          LineLoop([c[7],      '-'+c[3], c[10]]),
+          LineLoop(['-'+c[9],  c[5],     c[2]]),
+          LineLoop(['-'+c[10], '-'+c[2], c[6]]),
+          LineLoop(['-'+c[1],  '-'+c[6], '-'+c[11]]),
+          LineLoop(['-'+c[5],  '-'+c[8], c[1]])
+          ]
+
+    # Create a surface for each line loop.
+    s = [RuledSurface(l) for l in ll]
 
     # The surface loop and volume.
     sl = SurfaceLoop(s)
@@ -151,14 +154,17 @@ def add_box(x0, x1, y0, y1, z0, z1,
          Line(p[6], p[7])
          ]
 
-    # Define the six surfaces.
-    s = [PlaneSurface([e[0], e[3],  '-'+e[5],  '-'+e[1]]),
-         PlaneSurface([e[0], e[4],  '-'+e[8],  '-'+e[2]]),
-         PlaneSurface([e[1], e[6],  '-'+e[9],  '-'+e[2]]),
-         PlaneSurface([e[3], e[7],  '-'+e[10], '-'+e[4]]),
-         PlaneSurface([e[5], e[7],  '-'+e[11], '-'+e[6]]),
-         PlaneSurface([e[8], e[10], '-'+e[11], '-'+e[9]])
-         ]
+    # Define the six line loops.
+    ll = [LineLoop([e[0], e[3],  '-'+e[5],  '-'+e[1]]),
+          LineLoop([e[0], e[4],  '-'+e[8],  '-'+e[2]]),
+          LineLoop([e[1], e[6],  '-'+e[9],  '-'+e[2]]),
+          LineLoop([e[3], e[7],  '-'+e[10], '-'+e[4]]),
+          LineLoop([e[5], e[7],  '-'+e[11], '-'+e[6]]),
+          LineLoop([e[8], e[10], '-'+e[11], '-'+e[9]])
+          ]
+
+    # Create a surface for each line loop.
+    s = [RuledSurface(l) for l in ll]
 
     # Create the surface loop.
     sloop = SurfaceLoop(s)
