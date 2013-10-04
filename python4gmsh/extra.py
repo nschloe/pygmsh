@@ -77,7 +77,7 @@ def add_circle(radius, lcar,
 
     return c1, c2, c3, c4
 # -----------------------------------------------------------------------------
-def add_ball(x0, radius, lcar, label=None):
+def add_ball(x0, radius, lcar, with_volume=True, label=None):
 
     # Add points.
     p = [Point(x0, lcar=lcar),
@@ -119,10 +119,13 @@ def add_ball(x0, radius, lcar, label=None):
     s = [RuledSurface(l) for l in ll]
 
     # The surface loop and volume.
-    sl = SurfaceLoop(s)
-    v = Volume(sl, label=label)
+    surface_loop = SurfaceLoop(s)
+    if with_volume:
+        volume = Volume(surface_loop, label=label)
+    else:
+        volume = None
 
-    return v
+    return volume, surface_loop
 # -----------------------------------------------------------------------------
 def add_box(x0, x1, y0, y1, z0, z1,
             lcar,
@@ -166,11 +169,21 @@ def add_box(x0, x1, y0, y1, z0, z1,
     # Create a surface for each line loop.
     s = [RuledSurface(l) for l in ll]
 
+
     # Create the surface loop.
     sloop = SurfaceLoop(s)
+    if holes:
+        # Create an array of surface loops; the first entry is the outer
+        # surface loop, the following ones are holes.
+        #GMSH_CODE.append('theloops[0] = %s;' % sloop)
+        #for k, hole in enumerate(holes):
+        #    GMSH_CODE.append('theloops[%d] = %s;' % (k+1, hole))
+        GMSH_CODE.append('theloops[] = {%s};' % (sloop + ',' + ','.join(holes)))
+
+        sloop = 'theloops[]'
+
 
     # Create volume
-    # TODO (possibly with holes)
     vol = Volume(sloop, 'box')
 
     return vol
