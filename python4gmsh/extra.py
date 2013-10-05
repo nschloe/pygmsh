@@ -42,11 +42,10 @@ def add_circle(radius, lcar,
                   [0.0, 0.0,     radius ],
                   [0.0, 0.0,     -radius],
                   [0.0, -radius, 0.0    ]])
-
     # Apply the transformation.
     # TODO assert that the transformation preserves circles
     X = [np.dot(R, x) + x0 for x in X]
-
+    # Add Gmsh Points.
     add_comment('Points')
     p = [Point(x, lcar) for x in X]
 
@@ -209,11 +208,10 @@ def add_torus(irad, orad,
     x0t = np.dot(R, np.array([0.0, orad, 0.0]))
     c = add_circle(irad, lcar, R=R, x0=x0+x0t)
 
-    default_rot_axis = [0.0, 0.0, 1.0]
-    default_point_on_rot_axis = [0.0, 0.0, 0.0]
-
-    rot_axis = np.dot(R, default_rot_axis)
-    point_on_rot_axis = np.dot(R, default_point_on_rot_axis) + x0
+    rot_axis = [0.0, 0.0, 1.0]
+    rot_axis = np.dot(R, rot_axis)
+    point_on_rot_axis = [0.0, 0.0, 0.0]
+    point_on_rot_axis = np.dot(R, point_on_rot_axis) + x0
 
     # Form the torus by extruding the four circle lines three times by 2/3*pi.
     # This works around the inability of Gmsh to extrude by pi or more.  The
@@ -258,11 +256,15 @@ def add_pipe(outer_radius, inner_radius, length,
     '''Hollow cylinder.
     '''
     # Define rectangle which to extrude.
-    p = [Point([0.0, outer_radius, -0.5*length], lcar),
-         Point([0.0, outer_radius,  0.5*length], lcar),
-         Point([0.0, inner_radius,  0.5*length], lcar),
-         Point([0.0, inner_radius, -0.5*length], lcar)
-         ]
+    X = np.array([[0.0, outer_radius, -0.5*length],
+                  [0.0, outer_radius,  0.5*length],
+                  [0.0, inner_radius,  0.5*length],
+                  [0.0, inner_radius, -0.5*length]
+                  ])
+    # Apply transformation.
+    X = [np.dot(R, x) + x0 for x in X]
+    # Create points set.
+    p = [Point(x, lcar) for x in X]
 
     # Define edges.
     e = [Line(p[0], p[1]),
@@ -271,8 +273,10 @@ def add_pipe(outer_radius, inner_radius, length,
          Line(p[3], p[0])
          ]
 
-    rot_axis = [0, 0, 1]
-    point_on_rot_axis = [0, 0, 0]
+    rot_axis = [0.0, 0.0, 1.0]
+    rot_axis = np.dot(R, rot_axis)
+    point_on_rot_axis = [0.0, 0.0, 0.0]
+    point_on_rot_axis = np.dot(R, point_on_rot_axis) + x0
 
     # Extrude all edges three times by 2*Pi/3.
     previous = e
@@ -281,10 +285,7 @@ def add_pipe(outer_radius, inner_radius, length,
     for i in range(3):
         add_comment('Round no. %s' % (i+1))
         for k in range(4):
-            #  ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
-            #  ts2[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc2};};
-            #  ts3[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc3};};
-            #  ts4[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc4};};
+            # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
             name = Extrude('Line{%s}' % previous[k],
                            rot_axis,
                            point_on_rot_axis,
@@ -292,9 +293,7 @@ def add_pipe(outer_radius, inner_radius, length,
             all_names.append(name)
             previous[k] = name + '[0]'
 
-    # Now build the volume out of all those surfaces.  We then store the
-    # surface loops identification numbers in a list for later reference (we
-    # will need these to define the final volume).
+    # Now just add surface loop and volume.
     all_surfaces = (name + '[1]' for name in all_names)
     surface_loop = SurfaceLoop(all_surfaces)
     vol = Volume(surface_loop)
