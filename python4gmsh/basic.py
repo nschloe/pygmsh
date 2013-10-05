@@ -23,6 +23,7 @@ SURFACELOOP_ID = 0
 VOLUME_ID = 0
 CIRCLE_ID = 0
 EXTRUDE_ID = 0
+ARRAY_ID = 0
 
 GMSH_CODE = []
 # -----------------------------------------------------------------------------
@@ -133,4 +134,17 @@ def Extrude(entity, axis, point_on_axis, angle):
                       + (angle, entity)))
 
     return name
+# -----------------------------------------------------------------------------
+def Array(entities):
+    '''Forms a Gmsh array from a list of entities.
+    '''
+    global ARRAY_ID
+    ARRAY_ID += 1
+    name = 'array%d' % ARRAY_ID
+    GMSH_CODE.append('%s[] = {%s};' % (name, ','.join(entities)))
+    return name + '[]'
+# -----------------------------------------------------------------------------
+def Comment(string):
+    GMSH_CODE.append('// ' + string)
+    return
 # -----------------------------------------------------------------------------

@@ -1,8 +1,6 @@
 '''
-This module provides a Python interface for the Gmsh scripting language.  It
-aims at working around some of Gmsh's inconveniences (e.g., having to manually
-assign an ID for every entity created) and providing access to Python's
-features.
+This module contains some convenience functions for building simple geometric
+objects with Gmsh.
 '''
 # -----------------------------------------------------------------------------
 import numpy as np
@@ -25,10 +23,6 @@ def rotation_matrix(u, theta):
 
     return R
 # -----------------------------------------------------------------------------
-def add_comment(string):
-    GMSH_CODE.append('// ' + string)
-    return
-# -----------------------------------------------------------------------------
 def add_circle(radius, lcar,
                R = np.eye(3),
                x0 = np.array([0.0, 0.0, 0.0])
@@ -46,11 +40,11 @@ def add_circle(radius, lcar,
     # TODO assert that the transformation preserves circles
     X = [np.dot(R, x) + x0 for x in X]
     # Add Gmsh Points.
-    add_comment('Points')
+    Comment('Points')
     p = [Point(x, lcar) for x in X]
 
     # Four circle arcs
-    add_comment('Circle arcs')
+    Comment('Circle arcs')
     c = [Circle([p[1], p[0], p[2]]),
          Circle([p[2], p[0], p[4]]),
          Circle([p[4], p[0], p[3]]),
@@ -109,9 +103,7 @@ def add_ball(x0, radius, lcar,
     if holes:
         # Create an array of surface loops; the first entry is the outer
         # surface loop, the following ones are holes.
-        GMSH_CODE.append('theloops[] = {%s};' % (surface_loop + ','
-                                                + ','.join(holes)))
-        surface_loop = 'theloops[]'
+        surface_loop = Array([surface_loop] + holes)
 
     # Create volume.
     if with_volume:
@@ -172,9 +164,7 @@ def add_box(x0, x1, y0, y1, z0, z1,
     if holes:
         # Create an array of surface loops; the first entry is the outer
         # surface loop, the following ones are holes.
-        GMSH_CODE.append('theloops[] = {%s};' % (surface_loop + ','
-                                                + ','.join(holes)))
-        surface_loop = 'theloops[]'
+        surface_loop = Array([surface_loop] + holes)
 
     if with_volume:
         # Create volume
@@ -201,8 +191,8 @@ def add_torus(irad, orad,
 
         x_hat = R*x + x0.
     '''
-    add_comment(76*'-')
-    add_comment('Torus')
+    Comment(76*'-')
+    Comment('Torus')
 
     # Add circle
     x0t = np.dot(R, np.array([0.0, orad, 0.0]))
@@ -220,11 +210,10 @@ def add_torus(irad, orad,
     # the following Extrude() step.  The second [1] entry of the array is the
     # surface that was created by the extrusion.
     previous = c
-
     angle = '2*Pi/3'
     all_names = []
     for i in range(3):
-        add_comment('Round no. %s' % (i+1))
+        Comment('Round no. %s' % (i+1))
         for k in range(4):
             #  ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
             #  ts2[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc2};};
@@ -244,7 +233,7 @@ def add_torus(irad, orad,
     if label:
         PhysicalVolume(vol, label)
 
-    add_comment(76*'-')
+    Comment(76*'-')
     return
 # -----------------------------------------------------------------------------
 def add_pipe(outer_radius, inner_radius, length,
@@ -283,7 +272,7 @@ def add_pipe(outer_radius, inner_radius, length,
     angle = '2*Pi/3'
     all_names = []
     for i in range(3):
-        add_comment('Round no. %s' % (i+1))
+        Comment('Round no. %s' % (i+1))
         for k in range(4):
             # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
             name = Extrude('Line{%s}' % previous[k],
