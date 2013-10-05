@@ -21,12 +21,16 @@ def _main():
         vol, sl = p4g.add_ball(x0, r, with_volume=False, lcar=0.2*r)
         holes.append(sl)
 
-    p4g.add_box(-1, 1,
-                -1, 1,
-                -1, 1,
-                lcar = 0.2,
-                holes = holes
-                )
+    #p4g.add_box(-1, 1,
+    #            -1, 1,
+    #            -1, 1,
+    #            lcar = 0.2,
+    #            holes = holes
+    #            )
+    p4g.add_ball([0, 0, 0], 1.0,
+                 lcar = 0.2,
+                 holes=holes
+                 )
 
     print('\n'.join(p4g.GMSH_CODE))
     return

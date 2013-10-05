@@ -104,7 +104,7 @@ def SurfaceLoop(surfaces):
 
     return name
 # -----------------------------------------------------------------------------
-def Volume(surface_loop, label=None):
+def Volume(surface_loop):
     '''Gmsh Volume.
     '''
     global VOLUME_ID
@@ -113,8 +113,11 @@ def Volume(surface_loop, label=None):
     GMSH_CODE.append('%s = newreg;' % name)
     GMSH_CODE.append('Volume(%s) = %s;' % (name, surface_loop))
 
-    if label:
-        GMSH_CODE.append('Physical Volume("%s") = %s;' % (label, name))
-
     return name
+# -----------------------------------------------------------------------------
+def PhysicalVolume(volume, label):
+    '''Gmsh Physical Volume.
+    '''
+    GMSH_CODE.append('Physical Volume("%s") = %s;' % (label, volume))
+    return
 # -----------------------------------------------------------------------------

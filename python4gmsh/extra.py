@@ -77,7 +77,11 @@ def add_circle(radius, lcar,
 
     return c1, c2, c3, c4
 # -----------------------------------------------------------------------------
-def add_ball(x0, radius, lcar, with_volume=True, label=None):
+def add_ball(x0, radius, lcar,
+             with_volume = True,
+             holes = [],
+             label=None
+             ):
 
     # Add points.
     p = [Point(x0, lcar=lcar),
@@ -118,10 +122,20 @@ def add_ball(x0, radius, lcar, with_volume=True, label=None):
     # Create a surface for each line loop.
     s = [RuledSurface(l) for l in ll]
 
-    # The surface loop and volume.
+    # Create the surface loop.
     surface_loop = SurfaceLoop(s)
+    if holes:
+        # Create an array of surface loops; the first entry is the outer
+        # surface loop, the following ones are holes.
+        GMSH_CODE.append('theloops[] = {%s};' % (surface_loop + ','
+                                                + ','.join(holes)))
+        surface_loop = 'theloops[]'
+
+    # Create volume.
     if with_volume:
-        volume = Volume(surface_loop, label=label)
+        volume = Volume(surface_loop)
+        if label:
+            PhysicalVolume(vol, label)
     else:
         volume = None
 
@@ -129,7 +143,9 @@ def add_ball(x0, radius, lcar, with_volume=True, label=None):
 # -----------------------------------------------------------------------------
 def add_box(x0, x1, y0, y1, z0, z1,
             lcar,
-            holes = None
+            with_volume = True,
+            holes = [],
+            label = None
             ):
     # Define corner points.
     p = [Point([x1, y1, z1], lcar = lcar),
@@ -169,24 +185,24 @@ def add_box(x0, x1, y0, y1, z0, z1,
     # Create a surface for each line loop.
     s = [RuledSurface(l) for l in ll]
 
-
     # Create the surface loop.
-    sloop = SurfaceLoop(s)
+    surface_loop = SurfaceLoop(s)
     if holes:
         # Create an array of surface loops; the first entry is the outer
         # surface loop, the following ones are holes.
-        #GMSH_CODE.append('theloops[0] = %s;' % sloop)
-        #for k, hole in enumerate(holes):
-        #    GMSH_CODE.append('theloops[%d] = %s;' % (k+1, hole))
-        GMSH_CODE.append('theloops[] = {%s};' % (sloop + ',' + ','.join(holes)))
+        GMSH_CODE.append('theloops[] = {%s};' % (surface_loop + ','
+                                                + ','.join(holes)))
+        surface_loop = 'theloops[]'
 
-        sloop = 'theloops[]'
+    if with_volume:
+        # Create volume
+        vol = Volume(surface_loop)
+        if label:
+            PhysicalVolume(vol, label)
+    else:
+        vol = None
 
-
-    # Create volume
-    vol = Volume(sloop, 'box')
-
-    return vol
+    return vol, surface_loop
 # -----------------------------------------------------------------------------
 def add_torus(irad, orad,
               lcar,
