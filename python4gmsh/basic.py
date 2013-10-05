@@ -82,7 +82,7 @@ def PlaneSurface(line_loop):
     global _SURFACE_ID
     _SURFACE_ID += 1
     sname = 'surf%d' % _SURFACE_ID
-    _GMSH_CODE.append('%s = newreg;' % sname)
+    _GMSH_CODE.append('%s = news;' % sname)
     _GMSH_CODE.append('Plane Surface(%s) = {%s};' % (sname, line_loop))
 
     return sname
@@ -93,7 +93,7 @@ def RuledSurface(line_loop):
     global _SURFACE_ID
     _SURFACE_ID += 1
     sname = 'surf%d' % _SURFACE_ID
-    _GMSH_CODE.append('%s = newreg;' % sname)
+    _GMSH_CODE.append('%s = news;' % sname)
     _GMSH_CODE.append('Ruled Surface(%s) = {%s};' % (sname, line_loop))
 
     return sname
@@ -108,6 +108,12 @@ def SurfaceLoop(surfaces):
     _GMSH_CODE.append('Surface Loop(%s) = {%s};' % (name, ','.join(surfaces)))
 
     return name
+# -----------------------------------------------------------------------------
+def PhysicalSurface(surface, label):
+    '''Gmsh Physical Surface.
+    '''
+    _GMSH_CODE.append('Physical Surface("%s") = %s;' % (label, surface))
+    return
 # -----------------------------------------------------------------------------
 def Volume(surface_loop):
     '''Gmsh Volume.
@@ -151,5 +157,12 @@ def Array(entities):
 # -----------------------------------------------------------------------------
 def Comment(string):
     _GMSH_CODE.append('// ' + string)
+    return
+# -----------------------------------------------------------------------------
+def raw_code(list_of_strings):
+    '''Add raw Gmsh code.
+    '''
+    for string in list_of_strings
+        _GMSH_CODE.append(string)
     return
 # -----------------------------------------------------------------------------
