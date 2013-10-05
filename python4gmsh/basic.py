@@ -24,6 +24,7 @@ VOLUME_ID = 0
 CIRCLE_ID = 0
 REG_ID = 0
 OTHER_ID = 0
+EXTRUDE_ID = 0
 
 GMSH_CODE = []
 # -----------------------------------------------------------------------------
@@ -120,4 +121,18 @@ def PhysicalVolume(volume, label):
     '''
     GMSH_CODE.append('Physical Volume("%s") = %s;' % (label, volume))
     return
+# -----------------------------------------------------------------------------
+def Extrude(entity, axis, point_on_axis, angle):
+    '''Extrusion (rotation) of any entity around an axis by a given angle.
+    '''
+    global EXTRUDE_ID
+    EXTRUDE_ID += 1
+
+    #  ex4[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc4};};
+    name = 'ex%d' % EXTRUDE_ID
+    GMSH_CODE.append('%s[] = Extrude{{%s,%s,%s}, {%s,%s,%s}, %s}{%s;};'
+                    % ((name,) + tuple(axis) + tuple(point_on_axis)
+                      + (angle, entity)))
+
+    return name
 # -----------------------------------------------------------------------------

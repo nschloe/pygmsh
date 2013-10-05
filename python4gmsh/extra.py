@@ -244,6 +244,7 @@ def add_torus(irad, orad,
     # the following Extrude() step.  The second [1] entry of the array is the
     # surface that was created by the extrusion.
     previous = [c1, c2, c3, c4]
+
     angle = '2*Pi/3'
     all_names = []
     for i in range(3):
@@ -253,15 +254,11 @@ def add_torus(irad, orad,
             #  ts2[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc2};};
             #  ts3[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc3};};
             #  ts4[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc4};};
-            name = 'ts' + str(my_id) + str(i) + str(k)
+            name = Extrude('Line{%s}' % previous[k],
+                           rot_axis,
+                           point_on_rot_axis,
+                           angle)
             all_names.append(name)
-            GMSH_CODE.append('%s[] = Extrude{{%s,%s,%s}, {%s,%s,%s}, %s}{Line{%s};};'
-                            % ((name,)
-                              + tuple(rot_axis)
-                              + tuple(point_on_rot_axis)
-                              + (angle, previous[k])
-                              )
-                            )
             previous[k] = name + '[0]'
 
     #  Now build the volume out of all those surfaces.
