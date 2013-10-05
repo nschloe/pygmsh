@@ -52,12 +52,13 @@ def add_circle(radius, lcar,
 
     # Four circle arcs
     add_comment('Circle arcs')
-    c1 = Circle([p[1], p[0], p[2]])
-    c2 = Circle([p[2], p[0], p[4]])
-    c3 = Circle([p[4], p[0], p[3]])
-    c4 = Circle([p[3], p[0], p[1]])
+    c = [Circle([p[1], p[0], p[2]]),
+         Circle([p[2], p[0], p[4]]),
+         Circle([p[4], p[0], p[3]]),
+         Circle([p[3], p[0], p[1]])
+         ]
 
-    return c1, c2, c3, c4
+    return c
 # -----------------------------------------------------------------------------
 def add_ball(x0, radius, lcar,
              with_volume = True,
@@ -201,17 +202,12 @@ def add_torus(irad, orad,
 
         x_hat = R*x + x0.
     '''
-    # Use OTHER_ID to make torus entity names unique.
-    global OTHER_ID
-    OTHER_ID += 1
-    my_id = OTHER_ID
-
     add_comment(76*'-')
-    add_comment('Torus no. %s' % my_id)
+    add_comment('Torus')
 
     # Add circle
     x0t = np.dot(R, np.array([0.0, orad, 0.0]))
-    c1, c2, c3, c4 = add_circle(irad, lcar, R=R, x0=x0+x0t)
+    c = add_circle(irad, lcar, R=R, x0=x0+x0t)
 
     default_rot_axis = [0.0, 0.0, 1.0]
     default_point_on_rot_axis = [0.0, 0.0, 0.0]
@@ -225,7 +221,7 @@ def add_torus(irad, orad,
     # the entity that has been extruded at the far end. This can be used for
     # the following Extrude() step.  The second [1] entry of the array is the
     # surface that was created by the extrusion.
-    previous = [c1, c2, c3, c4]
+    previous = c
 
     angle = '2*Pi/3'
     all_names = []
