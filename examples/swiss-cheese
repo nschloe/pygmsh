@@ -31,7 +31,7 @@ def _main():
                  holes=holes
                  )
 
-    print('\n'.join(p4g.GMSH_CODE))
+    print(p4g.get_code())
     return
 # -----------------------------------------------------------------------------
 if __name__ == '__main__':

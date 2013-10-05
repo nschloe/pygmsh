@@ -55,7 +55,7 @@ def _main():
                  lcar = 0.3
                 )
 
-    print('\n'.join(p4g.GMSH_CODE))
+    print(p4g.get_code())
     return
 # -----------------------------------------------------------------------------
 if __name__ == '__main__':

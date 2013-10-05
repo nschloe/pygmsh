@@ -27,6 +27,11 @@ _ARRAY_ID = 0
 
 _GMSH_CODE = []
 # -----------------------------------------------------------------------------
+def get_code():
+    '''Returns properly formatted Gmsh code.
+    '''
+    return '\n'.join(_GMSH_CODE)
+# -----------------------------------------------------------------------------
 def Point(x, lcar):
     '''Add point.
     '''
