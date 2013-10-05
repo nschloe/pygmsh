@@ -8,24 +8,6 @@ features.
 import numpy as np
 from basic import *
 # -----------------------------------------------------------------------------
-# In Gmsh, the user must manually provide a unique ID for every point, curce,
-# volume created. This can get messy when a lot of entities are created and it
-# isn't clear which IDs are already in use. Some Gmsh commands even create new
-# entities and silently reserve IDs in that way. This module tries to work
-# around this by providing routines in the style of add_point(x) which
-# *returns* the ID. To make variable names in Gmsh unique, keep track of how
-# many points, cirlces, etc. have already been created. Variable names will
-# then be p1, p2, etc. for points, c1, c2, etc. for circles and so on.
-POINT_ID = 0
-LINE_ID = 0
-LINELOOP_ID = 0
-SURFACE_ID = 0
-SURFACELOOP_ID = 0
-VOLUME_ID = 0
-CIRCLE_ID = 0
-REG_ID = 0
-OTHER_ID = 0
-# -----------------------------------------------------------------------------
 def rotation_matrix(u, theta):
     '''Return matrix that implements the rotation around the vector u by the
     angle theta, cf.
@@ -261,24 +243,12 @@ def add_torus(irad, orad,
             all_names.append(name)
             previous[k] = name + '[0]'
 
-    #  Now build the volume out of all those surfaces.
-    #  We then store the surface loops identification numbers in a list
-    #  for later reference (we will need these to define the final
-    #  volume).
-    global REG_ID
-    REG_ID += 1
-    surfaceloop_id = REG_ID
-    all_surfaces = (name + '[1]' for name in all_names)
-    GMSH_CODE.append('Surface Loop(%s) = {%s};'
-                    % (surfaceloop_id, ', '.join(all_surfaces))
-                    )
-
-    # Now define volume.
-    REG_ID += 1
-    volume_id = REG_ID
-    GMSH_CODE.append('Volume(%s) = {%s};' % (volume_id, surfaceloop_id))
+    # Now build surface loop and volume.
+    all_surfaces = [name + '[1]' for name in all_names]
+    surface_loop = SurfaceLoop(all_surfaces)
+    vol = Volume(surface_loop)
     if label:
-        GMSH_CODE.append('Physical Volume("%s") = %s;' % (label, volume_id))
+        PhysicalVolume(vol, label)
 
     add_comment(76*'-')
     return
