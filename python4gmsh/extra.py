@@ -248,7 +248,7 @@ def add_torus(irad, orad,
     angle = '2*Pi/3'
     all_names = []
     for i in range(3):
-        add_comment('Round no. %s' % i)
+        add_comment('Round no. %s' % (i+1))
         for k in range(4):
             #  ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
             #  ts2[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc2};};
@@ -281,5 +281,59 @@ def add_torus(irad, orad,
         GMSH_CODE.append('Physical Volume("%s") = %s;' % (label, volume_id))
 
     add_comment(76*'-')
+    return
+# -----------------------------------------------------------------------------
+def add_pipe(outer_radius, inner_radius, length,
+             R = np.eye(3),
+             x0 = np.array([0.0, 0.0, 0.0]),
+             label = None,
+             lcar = 0.1
+             ):
+    '''Hollow cylinder.
+    '''
+    # Define rectangle which to extrude.
+    p = [Point([0.0, outer_radius, -0.5*length], lcar),
+         Point([0.0, outer_radius,  0.5*length], lcar),
+         Point([0.0, inner_radius,  0.5*length], lcar),
+         Point([0.0, inner_radius, -0.5*length], lcar)
+         ]
+
+    # Define edges.
+    e = [Line(p[0], p[1]),
+         Line(p[1], p[2]),
+         Line(p[2], p[3]),
+         Line(p[3], p[0])
+         ]
+
+    rot_axis = [0, 0, 1]
+    point_on_rot_axis = [0, 0, 0]
+
+    # Extrude all edges three times by 2*Pi/3.
+    previous = e
+    angle = '2*Pi/3'
+    all_names = []
+    for i in range(3):
+        add_comment('Round no. %s' % (i+1))
+        for k in range(4):
+            #  ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
+            #  ts2[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc2};};
+            #  ts3[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc3};};
+            #  ts4[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc4};};
+            name = Extrude('Line{%s}' % previous[k],
+                           rot_axis,
+                           point_on_rot_axis,
+                           angle)
+            all_names.append(name)
+            previous[k] = name + '[0]'
+
+    # Now build the volume out of all those surfaces.  We then store the
+    # surface loops identification numbers in a list for later reference (we
+    # will need these to define the final volume).
+    all_surfaces = (name + '[1]' for name in all_names)
+    surface_loop = SurfaceLoop(all_surfaces)
+    vol = Volume(surface_loop)
+    if label:
+        PhysicalVolume(vol, label)
+
     return
 # -----------------------------------------------------------------------------
