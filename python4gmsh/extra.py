@@ -222,7 +222,8 @@ def add_torus(irad, orad,
             name = Extrude('Line{%s}' % previous[k],
                            rot_axis,
                            point_on_rot_axis,
-                           angle)
+                           angle
+                           )
             all_names.append(name)
             previous[k] = name + '[0]'
 

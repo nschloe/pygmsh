@@ -132,7 +132,7 @@ def PhysicalVolume(volume, label):
     _GMSH_CODE.append('Physical Volume("%s") = %s;' % (label, volume))
     return
 # -----------------------------------------------------------------------------
-def Extrude(entity, axis, point_on_axis, angle):
+def Extrude(entity, axis, point_on_axis, angle, recombine=True):
     '''Extrusion (rotation) of any entity around an axis by a given angle.
     '''
     global _EXTRUDE_ID
@@ -140,9 +140,13 @@ def Extrude(entity, axis, point_on_axis, angle):
 
     #  ex4[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc4};};
     name = 'ex%d' % _EXTRUDE_ID
-    _GMSH_CODE.append('%s[] = Extrude{{%s,%s,%s}, {%s,%s,%s}, %s}{%s;};'
+    if recombine:
+        recombine_str = 'Recombine;'
+    else:
+        recombine_str = ''
+    _GMSH_CODE.append('%s[] = Extrude{{%s,%s,%s}, {%s,%s,%s}, %s}{%s;%s};'
                     % ((name,) + tuple(axis) + tuple(point_on_axis)
-                      + (angle, entity)))
+                      + (angle, entity, recombine_str)))
 
     return name
 # -----------------------------------------------------------------------------
@@ -162,7 +166,7 @@ def Comment(string):
 def raw_code(list_of_strings):
     '''Add raw Gmsh code.
     '''
-    for string in list_of_strings
+    for string in list_of_strings:
         _GMSH_CODE.append(string)
     return
 # -----------------------------------------------------------------------------
