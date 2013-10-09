@@ -50,7 +50,7 @@ def Line(p0, p1):
     global _LINE_ID
     _LINE_ID += 1
     name = 'l%d' % _LINE_ID
-    _GMSH_CODE.append('%s = newreg;' % name)
+    _GMSH_CODE.append('%s = newl;' % name)
     _GMSH_CODE.append('Line(%s) = {%s, %s};' % (name, p0, p1))
     return name
 # -----------------------------------------------------------------------------
@@ -60,7 +60,7 @@ def Circle(point_ids):
     global _CIRCLE_ID
     _CIRCLE_ID += 1
     name = 'c%d' % _CIRCLE_ID
-    _GMSH_CODE.append('%s = newreg;' % name)
+    _GMSH_CODE.append('%s = newl;' % name)
     _GMSH_CODE.append('Circle(%s) = {%s, %s, %s};'
                     % (name, point_ids[0], point_ids[1], point_ids[2])
                     )
@@ -72,7 +72,7 @@ def CompoundLine(lines):
     global _LINE_ID
     _LINE_ID += 1
     name = 'l%d' % _LINE_ID
-    _GMSH_CODE.append('%s = newreg;' % name)
+    _GMSH_CODE.append('%s = newl;' % name)
     _GMSH_CODE.append('Compound Line(%s) = {%s};' % (name, ','.join(lines)))
     return name
 # -----------------------------------------------------------------------------
@@ -82,7 +82,7 @@ def LineLoop(lines):
     global _LINELOOP_ID
     _LINELOOP_ID += 1
     name = 'll%d' % _LINELOOP_ID
-    _GMSH_CODE.append('%s = newreg;' % name)
+    _GMSH_CODE.append('%s = newll;' % name)
     _GMSH_CODE.append('Line Loop(%s) = {%s};' % (name, ','.join(lines)))
     return name
 # -----------------------------------------------------------------------------
@@ -125,7 +125,7 @@ def SurfaceLoop(surfaces):
     global _SURFACELOOP_ID
     _SURFACELOOP_ID += 1
     name = 'surfloop%d' % _SURFACELOOP_ID
-    _GMSH_CODE.append('%s = newreg;' % name)
+    _GMSH_CODE.append('%s = newsl;' % name)
     _GMSH_CODE.append('Surface Loop(%s) = {%s};' % (name, ','.join(surfaces)))
 
     return name
@@ -142,7 +142,7 @@ def Volume(surface_loop):
     global _VOLUME_ID
     _VOLUME_ID += 1
     name = 'vol%d' % _VOLUME_ID
-    _GMSH_CODE.append('%s = newreg;' % name)
+    _GMSH_CODE.append('%s = newv;' % name)
     _GMSH_CODE.append('Volume(%s) = %s;' % (name, surface_loop))
 
     return name
