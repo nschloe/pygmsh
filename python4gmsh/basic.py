@@ -66,6 +66,16 @@ def Circle(point_ids):
                     )
     return name
 # -----------------------------------------------------------------------------
+def CompoundLine(lines):
+    '''Gmsh Compound Line.
+    '''
+    global _LINE_ID
+    _LINE_ID += 1
+    name = 'l%d' % _LINE_ID
+    _GMSH_CODE.append('%s = newreg;' % name)
+    _GMSH_CODE.append('Compound Line(%s) = {%s};' % (name, ','.join(lines)))
+    return name
+# -----------------------------------------------------------------------------
 def LineLoop(lines):
     '''Gmsh Line Loops.
     '''
@@ -97,6 +107,17 @@ def RuledSurface(line_loop):
     _GMSH_CODE.append('Ruled Surface(%s) = {%s};' % (sname, line_loop))
 
     return sname
+# -----------------------------------------------------------------------------
+def CompoundSurface(surfaces):
+    '''Gmsh Compound Surface.
+    '''
+    global _SURFACE_ID
+    _SURFACE_ID += 1
+    name = 'surf%d' % _SURFACE_ID
+    _GMSH_CODE.append('%s = news;' % name)
+    _GMSH_CODE.append('Compound Surface(%s) = {%s};' % (name, ','.join(surfaces)))
+
+    return name
 # -----------------------------------------------------------------------------
 def SurfaceLoop(surfaces):
     '''Gmsh Surface Loop.
@@ -132,7 +153,20 @@ def PhysicalVolume(volume, label):
     _GMSH_CODE.append('Physical Volume("%s") = %s;' % (label, volume))
     return
 # -----------------------------------------------------------------------------
-def Extrude(entity, axis, point_on_axis, angle, recombine=True):
+def Extrude_translate(entity, axis):
+    '''Extrusion (translation) of any entity along a given axis.
+    '''
+    global _EXTRUDE_ID
+    _EXTRUDE_ID += 1
+
+    # out[] = Extrude{0,1,0}{ Line{1}; };
+    name = 'ex%d' % _EXTRUDE_ID
+    _GMSH_CODE.append('%s[] = Extrude{%s,%s,%s}{%s;};'
+                    % ((name,) + tuple(axis) + (entity,)))
+
+    return name
+# -----------------------------------------------------------------------------
+def Extrude_rotate(entity, axis, point_on_axis, angle, recombine=False):
     '''Extrusion (rotation) of any entity around an axis by a given angle.
     '''
     global _EXTRUDE_ID
