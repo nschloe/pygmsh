@@ -13,7 +13,8 @@ def _main():
     p4g.add_pipe(inner_radius = 0.3,
                  outer_radius = 0.4,
                  length = 1.0,
-                 R = R
+                 R = R,
+                 lcar = 0.1
                  )
 
     x0 = np.array([0, 0, 0.3])
