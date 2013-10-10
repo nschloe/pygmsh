@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 '''
 This module provides a Python interface for the Gmsh scripting language.  It
 aims at working around some of Gmsh's inconveniences (e.g., having to manually
@@ -25,7 +26,28 @@ _CIRCLE_ID = 0
 _EXTRUDE_ID = 0
 _ARRAY_ID = 0
 
-_GMSH_CODE = []
+# -----------------------------------------------------------------------------
+def _header():
+    '''Return file header.
+    '''
+    name = 'python4gmsh'
+    version = '0.1'
+    years = '2013'
+    author = 'Nico Schlömer'
+    author_email = 'nico.schloemer@gmail.com'
+    website = 'https://github.com/nschloe/python4gmsh'
+    header = ['// This file was created by %s v%s.' % (name, version),
+              '// Copyright (c) %s, %s <%s>' % (years, author, author_email),
+              '// All rights reserved.',
+              '//',
+              '// The latest updates can be retrieved from',
+              '//     %s' % website,
+              '// where you can also make suggestions and help improve %s.' % name,
+              '//',
+              ]
+    return header
+# -----------------------------------------------------------------------------
+_GMSH_CODE = _header()
 # -----------------------------------------------------------------------------
 def get_code():
     '''Returns properly formatted Gmsh code.
