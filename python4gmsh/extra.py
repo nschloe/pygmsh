@@ -1,3 +1,34 @@
+# -*- coding: utf8 -*-
+#
+# Copyright (c) 2013, Nico Schlömer
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+#
+# * Neither the name of the {organization} nor the names of its
+#   contributors may be used to endorse or promote products derived from
+#   this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
 '''
 This module contains some convenience functions for building simple geometric
 objects with Gmsh.
@@ -277,20 +308,29 @@ def add_pipe(outer_radius, inner_radius, length,
     previous = e
     angle = '2*Pi/3'
     all_names = []
+    com = []
     for i in range(3):
         Comment('Round no. %s' % (i+1))
-        for k in range(4):
+        for k in range(len(previous)):
             # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
             name = Extrude_rotate('Line{%s}' % previous[k],
                                   rot_axis,
                                   point_on_rot_axis,
                                   angle
                                   )
-            all_names.append(name)
+            #if k==0:
+            #    com.append(name+'[1]')
+            #else:
+            #    all_names.append(name+'[1]')
+            all_names.append(name+'[1]')
             previous[k] = name + '[0]'
 
+    #
+    #cs = CompoundSurface(com)
+
     # Now just add surface loop and volume.
-    all_surfaces = (name + '[1]' for name in all_names)
+    all_surfaces = all_names
+    #all_surfaces = all_names + [cs]
     surface_loop = SurfaceLoop(all_surfaces)
     vol = Volume(surface_loop)
     if label:
