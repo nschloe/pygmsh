@@ -54,6 +54,19 @@ def rotation_matrix(u, theta):
 
     return R
 # -----------------------------------------------------------------------------
+def add_polygon(X, lcar):
+
+    # Create points.
+    p = [Point(x, lcar) for x in X]
+    # Create lines
+    e = [Line(p[k], p[k+1]) for k in range(len(p)-1)]
+    e.append(Line(p[-1], p[0]))
+
+    ll = LineLoop(e)
+    s = PlaneSurface(ll)
+
+    return s
+# -----------------------------------------------------------------------------
 def add_circle(radius, lcar,
                R = np.eye(3),
                x0 = np.array([0.0, 0.0, 0.0]),
@@ -252,11 +265,11 @@ def add_torus(irad, orad,
         for k in range(len(previous)):
             # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
             # ...
-            name = Extrude_rotate('Line{%s}' % previous[k],
-                                  rot_axis,
-                                  point_on_rot_axis,
-                                  angle
-                                  )
+            name = Extrude('Line{%s}' % previous[k],
+                           rotation_axis = rot_axis,
+                           point_on_axis = point_on_rot_axis,
+                           angle = angle
+                           )
             all_names.append(name)
             previous[k] = name + '[0]'
 
@@ -313,11 +326,11 @@ def add_pipe(outer_radius, inner_radius, length,
         Comment('Round no. %s' % (i+1))
         for k in range(len(previous)):
             # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
-            name = Extrude_rotate('Line{%s}' % previous[k],
-                                  rot_axis,
-                                  point_on_rot_axis,
-                                  angle
-                                  )
+            name = Extrude('Line{%s}' % previous[k],
+                           rotation_axis = rot_axis,
+                           point_on_axis = point_on_rot_axis,
+                           angle = angle
+                           )
             #if k==0:
             #    com.append(name+'[1]')
             #else:
@@ -361,7 +374,9 @@ def add_pipe2(outer_radius, inner_radius, length,
     surf = PlaneSurface(','.join([ll_outer, ll_inner]))
 
     # Now Extrude the ring surface.
-    name = Extrude_translate('Surface{%s}' % surf, [1, 0, 0])
+    name = Extrude('Surface{%s}' % surf,
+                   translation_axis = [1, 0, 0]
+                   )
     vol = name + '[0]'
 
     return vol

@@ -14,20 +14,20 @@ def _main():
                  outer_radius = 0.4,
                  length = 1.0,
                  R = R,
-                 lcar = 0.1
+                 lcar = 0.04
                  )
 
-    x0 = np.array([0, 0, 0.3])
-    p4g.add_torus(irad = 0.05, orad = 0.6, lcar = 0.1,
-                  R = R,
-                  x0 = np.dot(R, x0)
-                  )
+    #x0 = np.array([0, 0, 0.3])
+    #p4g.add_torus(irad = 0.05, orad = 0.6, lcar = 0.1,
+    #              R = R,
+    #              x0 = np.dot(R, x0)
+    #              )
 
-    x0 = np.array([0, 0, -0.3])
-    p4g.add_torus(irad = 0.05, orad = 0.6, lcar = 0.1,
-                  R = R,
-                  x0 = np.dot(R, x0)
-                  )
+    #x0 = np.array([0, 0, -0.3])
+    #p4g.add_torus(irad = 0.05, orad = 0.6, lcar = 0.1,
+    #              R = R,
+    #              x0 = np.dot(R, x0)
+    #              )
 
     print(p4g.get_code())
     return
