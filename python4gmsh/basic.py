@@ -205,34 +205,46 @@ def PhysicalVolume(volume, label):
     _GMSH_CODE.append('Physical Volume("%s") = %s;' % (label, volume))
     return
 # -----------------------------------------------------------------------------
-def Extrude_translate(entity, axis):
-    '''Extrusion (translation) of any entity along a given axis.
+def Extrude(entity,
+            translation_axis = None,
+            rotation_axis = None,
+            point_on_axis = None,
+            angle = None
+            ):
+    '''Extrusion (translation + rotation) of any entity along a given
+    translation_axis, around a given rotation_axis, about a given angle. If
+    one of the entities is not provided, this method will produce only
+    translation or rotation.
     '''
     global _EXTRUDE_ID
     _EXTRUDE_ID += 1
 
     # out[] = Extrude{0,1,0}{ Line{1}; };
     name = 'ex%d' % _EXTRUDE_ID
-    _GMSH_CODE.append('%s[] = Extrude{%s,%s,%s}{%s;};'
-                    % ((name,) + tuple(axis) + (entity,)))
+    if translation_axis is not None and rotation_axis is not None:
+        _GMSH_CODE.append('%s[] = Extrude{{%s,%s,%s}, {%s,%s,%s}, {%s,%s,%s}, %s}{%s;};'
+                         % ((name,)
+                           + tuple(translation_axis)
+                           + tuple(rotation_axis)
+                           + tuple(point_on_axis)
+                           + (angle, entity))
+                         )
 
-    return name
-# -----------------------------------------------------------------------------
-def Extrude_rotate(entity, axis, point_on_axis, angle, recombine=False):
-    '''Extrusion (rotation) of any entity around an axis by a given angle.
-    '''
-    global _EXTRUDE_ID
-    _EXTRUDE_ID += 1
+    elif translation_axis is not None:
+        # Only translation
+        _GMSH_CODE.append('%s[] = Extrude{%s,%s,%s}{%s;};'
+                        % ((name,) + tuple(translation_axis) + (entity,)))
+    elif rotation_axis is not None:
+        # Only rotation
+        _GMSH_CODE.append('%s[] = Extrude{{%s,%s,%s}, {%s,%s,%s}, %s}{%s;};'
+                         % ((name,)
+                           + tuple(rotation_axis)
+                           + tuple(point_on_axis)
+                           + (angle, entity))
+                         )
 
-    #  ex4[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc4};};
-    name = 'ex%d' % _EXTRUDE_ID
-    if recombine:
-        recombine_str = 'Recombine;'
     else:
-        recombine_str = ''
-    _GMSH_CODE.append('%s[] = Extrude{{%s,%s,%s}, {%s,%s,%s}, %s}{%s;%s};'
-                    % ((name,) + tuple(axis) + tuple(point_on_axis)
-                      + (angle, entity, recombine_str)))
+        raise RuntimeError('Specify at least translation or rotation.')
 
     return name
 # -----------------------------------------------------------------------------
