@@ -70,17 +70,27 @@ def add_polygon(X, lcar):
 def add_circle(radius, lcar,
                R = np.eye(3),
                x0 = np.array([0.0, 0.0, 0.0]),
-               compound = False
+               compound = False,
+               num_sections = 4
                ):
-    '''Add circle.
+    '''Add circle in the y-z-plane.
     '''
     # Define points that make the circle (midpoint and the four cardinal
     # directions).
-    X = np.array([[0.0, 0.0,     0.0    ],
-                  [0.0, radius,  0.0    ],
-                  [0.0, 0.0,     radius ],
-                  [0.0, 0.0,     -radius],
-                  [0.0, -radius, 0.0    ]])
+    X = [[0.0, 0.0, 0.0]]
+    if num_sections == 4:
+        # For accuracy, the points are provided explicitly.
+        X = [[0.0, 0.0,     0.0    ],
+             [0.0, radius,  0.0    ],
+             [0.0, 0.0,     radius ],
+             [0.0, -radius, 0.0    ],
+             [0.0, 0.0,     -radius]]
+    else:
+        for k in range(num_sections):
+            alpha = 2*np.pi * k / num_sections
+            X.append([0.0, radius*np.cos(alpha), radius*np.sin(alpha)])
+
+    # if
     # Apply the transformation.
     # TODO assert that the transformation preserves circles
     X = [np.dot(R, x) + x0 for x in X]
@@ -88,16 +98,16 @@ def add_circle(radius, lcar,
     Comment('Points')
     p = [Point(x, lcar) for x in X]
 
-    # Four circle arcs
+    # Define the circle arcs.
     Comment('Circle arcs')
-    c = [Circle([p[1], p[0], p[2]]),
-         Circle([p[2], p[0], p[4]]),
-         Circle([p[4], p[0], p[3]]),
-         Circle([p[3], p[0], p[1]])
-         ]
+    c = []
+    for k in range(1, len(p)-1):
+        c.append(Circle([p[k], p[0], p[k+1]]))
+    # Don't forget the closing arc.
+    c.append(Circle([p[-1], p[0], p[1]]))
 
     if compound:
-        c = [CompoundLine(cc)]
+        c = [CompoundLine(c)]
 
     return c
 # -----------------------------------------------------------------------------
@@ -293,8 +303,9 @@ def add_pipe(outer_radius, inner_radius, length,
              lcar = 0.1
              ):
     '''Hollow cylinder.
+    Define a rectangle, extrude it by rotation.
     '''
-    # Define rectangle which to extrude.
+    Comment('Define rectangle.')
     X = np.array([[0.0, outer_radius, -0.5*length],
                   [0.0, outer_radius,  0.5*length],
                   [0.0, inner_radius,  0.5*length],
@@ -321,9 +332,10 @@ def add_pipe(outer_radius, inner_radius, length,
     previous = e
     angle = '2*Pi/3'
     all_names = []
-    com = []
+    #com = []
+    Comment('Extrude in 3 steps.')
     for i in range(3):
-        Comment('Round no. %s' % (i+1))
+        Comment('Step %s' % (i+1))
         for k in range(len(previous)):
             # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
             name = Extrude('Line{%s}' % previous[k],
@@ -357,6 +369,9 @@ def add_pipe2(outer_radius, inner_radius, length,
               label = None,
               lcar = 0.1
               ):
+    '''Hollow cylinder.
+    Define a ring, extrude it by translation.
+    '''
 
     # Define ring which to Extrude by translation.
     c_inner = add_circle(inner_radius, lcar,
