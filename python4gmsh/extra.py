@@ -71,7 +71,7 @@ def add_circle(radius, lcar,
                R = np.eye(3),
                x0 = np.array([0.0, 0.0, 0.0]),
                compound = False,
-               num_sections = 4
+               num_sections = 3
                ):
     '''Add circle in the y-z-plane.
     '''
@@ -291,6 +291,62 @@ def add_torus(irad, orad,
 
     surface_loop = SurfaceLoop(all_surfaces)
     vol = Volume(surface_loop)
+    if label:
+        PhysicalVolume(vol, label)
+
+    Comment(76*'-')
+    return
+# -----------------------------------------------------------------------------
+def add_torus2(irad, orad,
+              lcar,
+              R = np.eye(3),
+              x0 = np.array([0.0, 0.0, 0.0]),
+              label = None
+              ):
+    '''Create Gmsh code for torus with
+
+    irad ... inner radius
+    orad ... outer radius
+
+    under the coordinate transformation
+
+        x_hat = R*x + x0.
+    '''
+    Comment(76*'-')
+    Comment('Torus')
+
+    # Add circle
+    x0t = np.dot(R, np.array([0.0, orad, 0.0]))
+    c = add_circle(irad, lcar, R=R, x0=x0+x0t)
+    ll = LineLoop(c)
+    s = PlaneSurface(ll)
+
+    rot_axis = [0.0, 0.0, 1.0]
+    rot_axis = np.dot(R, rot_axis)
+    point_on_rot_axis = [0.0, 0.0, 0.0]
+    point_on_rot_axis = np.dot(R, point_on_rot_axis) + x0
+
+    # Form the torus by extruding the circle three times by 2/3*pi.
+    # This works around the inability of Gmsh to extrude by pi or more.  The
+    # Extrude() macro returns an array; the first [0] entry in the array is
+    # the entity that has been extruded at the far end. This can be used for
+    # the following Extrude() step.  The second [1] entry of the array is the
+    # surface that was created by the extrusion.
+    previous = s
+    all_names = []
+    num_steps = 3
+    for i in range(num_steps):
+        name = Extrude('Surface{%s}' % previous,
+                       rotation_axis = rot_axis,
+                       point_on_axis = point_on_rot_axis,
+                       angle = '2*Pi/%d' % num_steps
+                       )
+        previous = name + '[0]'
+        all_names.append(name)
+
+
+    all_volumes = [name + '[1]' for name in all_names]
+    vol = CompoundVolume(all_volumes)
     if label:
         PhysicalVolume(vol, label)
 

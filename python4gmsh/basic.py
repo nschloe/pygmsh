@@ -199,6 +199,19 @@ def Volume(surface_loop):
 
     return name
 # -----------------------------------------------------------------------------
+def CompoundVolume(volumes):
+    '''Gmsh Compound Volume.
+    '''
+    global _VOLUME_ID
+    _VOLUME_ID += 1
+    name = 'cv%d' % _VOLUME_ID
+    _GMSH_CODE.append('%s = newv;' % name)
+    _GMSH_CODE.append('Compound Volume(%s) = {%s};'
+                     % (name, ','.join(volumes))
+                     )
+
+    return name
+# -----------------------------------------------------------------------------
 def PhysicalVolume(volume, label):
     '''Gmsh Physical Volume.
     '''
