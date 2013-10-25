@@ -36,8 +36,6 @@ assign an ID for every entity created) and providing access to Python's
 features.
 '''
 # -----------------------------------------------------------------------------
-import numpy as np
-# -----------------------------------------------------------------------------
 # In Gmsh, the user must manually provide a unique ID for every point, curce,
 # volume created. This can get messy when a lot of entities are created and it
 # isn't clear which IDs are already in use. Some Gmsh commands even create new
@@ -167,7 +165,9 @@ def CompoundSurface(surfaces):
     _SURFACE_ID += 1
     name = 'surf%d' % _SURFACE_ID
     _GMSH_CODE.append('%s = news;' % name)
-    _GMSH_CODE.append('Compound Surface(%s) = {%s};' % (name, ','.join(surfaces)))
+    _GMSH_CODE.append('Compound Surface(%s) = {%s};'
+                     % (name, ','.join(surfaces))
+                     )
 
     return name
 # -----------------------------------------------------------------------------
@@ -258,6 +258,8 @@ def Array(entities):
     return name + '[]'
 # -----------------------------------------------------------------------------
 def Comment(string):
+    '''Adds a Gmsh comment.
+    '''
     _GMSH_CODE.append('// ' + string)
     return
 # -----------------------------------------------------------------------------

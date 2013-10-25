@@ -90,7 +90,6 @@ def add_circle(radius, lcar,
             alpha = 2*np.pi * k / num_sections
             X.append([0.0, radius*np.cos(alpha), radius*np.sin(alpha)])
 
-    # if
     # Apply the transformation.
     # TODO assert that the transformation preserves circles
     X = [np.dot(R, x) + x0 for x in X]
@@ -116,6 +115,8 @@ def add_ball(x0, radius, lcar,
              holes = [],
              label=None
              ):
+    '''Creates a ball with a given radius around a given midpoint x0.
+    '''
 
     # Add points.
     p = [Point(x0, lcar=lcar),
@@ -390,9 +391,12 @@ def add_pipe2(outer_radius, inner_radius, length,
 
     # Now Extrude the ring surface.
     name = Extrude('Surface{%s}' % surf,
-                   translation_axis = [1, 0, 0]
+                   translation_axis = [length, 0, 0]
                    )
     vol = name + '[0]'
+
+    if label:
+        PhysicalVolume(vol, label)
 
     return vol
 # -----------------------------------------------------------------------------
