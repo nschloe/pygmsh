@@ -53,6 +53,7 @@ _VOLUME_ID = 0
 _CIRCLE_ID = 0
 _EXTRUDE_ID = 0
 _ARRAY_ID = 0
+_FIELD_ID = 0
 
 
 # -----------------------------------------------------------------------------
@@ -275,6 +276,49 @@ def Extrude(entity,
 
     else:
         raise RuntimeError('Specify at least translation or rotation.')
+
+    return name
+# -----------------------------------------------------------------------------
+def BoundaryLayer(edges_list=[],
+                  faces_list=[],
+                  nodes_list=[],
+                  anisomax=None,
+                  hfar=None,
+                  hwall_n=None,
+                  hwall_t=None,
+                  ratio=None,
+                  thickness=None
+                  ):
+    '''Add boundary layer.
+    '''
+    global _FIELD_ID
+    _FIELD_ID += 1
+    name = 'field%d' % _FIELD_ID
+
+    _GMSH_CODE.append('%s = newf;' % name)
+
+    _GMSH_CODE.append('Field[%s] = BoundaryLayer;' % name)
+    if edges_list:
+        _GMSH_CODE.append('Field[%s].EdgesList = {%s};'
+                          % (name, ','.join(edges_list)))
+    if faces_list:
+        _GMSH_CODE.append('Field[%s].FacesList = {%s};'
+                          % (name, ','.join(faces_list)))
+    if nodes_list:
+        _GMSH_CODE.append('Field[%s].NodesList = {%s};'
+                          % (name, ','.join(nodes_list)))
+    if hfar:
+        _GMSH_CODE.append('Field[%s].hfar= %g;' % (name, hfar))
+    if hwall_t:
+        _GMSH_CODE.append('Field[%s].hwall_t= %g;' % (name, hwall_t))
+    if hwall_n:
+        _GMSH_CODE.append('Field[%s].hwall_n= %g;' % (name, hwall_n))
+    if ratio:
+        _GMSH_CODE.append('Field[%s].ratio= %g;' % (name, ratio))
+    if thickness:
+        _GMSH_CODE.append('Field[%s].thickness= %g;' % (name, thickness))
+    if anisomax:
+        _GMSH_CODE.append('Field[%s].AnisoMax= %g;' % (name, anisomax))
 
     return name
 # -----------------------------------------------------------------------------
