@@ -105,6 +105,22 @@ def Line(p0, p1):
     _GMSH_CODE.append('Line(%s) = {%s, %s};' % (name, p0, p1))
     return name
 # -----------------------------------------------------------------------------
+def BSpline(control_points):
+    '''Add B-spline.
+    '''
+    n = len(control_points)
+    if n < 4:
+        raise RuntimeError(('BSpline needs at least four control points (%d '
+                            'given).') % n)
+    global _LINE_ID
+    _LINE_ID += 1
+    name = 'bspline%d' % _LINE_ID
+    _GMSH_CODE.append('%s = newl;' % name)
+    _GMSH_CODE.append('BSpline(%s) = {%s};'
+                      % (name, ', '.join(control_points))
+                      )
+    return name
+# -----------------------------------------------------------------------------
 def Circle(point_ids):
     '''Add Circle.
     '''
