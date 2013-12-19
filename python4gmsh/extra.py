@@ -56,6 +56,24 @@ def rotation_matrix(u, theta):
 
     return R
 # -----------------------------------------------------------------------------
+def add_rectangle(xmin, xmax, ymin, ymax, z, lcar):
+
+    X = [[xmin, ymin, z],
+         [xmax, ymin, z],
+         [xmax, ymax, z],
+         [xmin, ymax, z]]
+
+    # Create points.
+    p = [Point(x, lcar) for x in X]
+    # Create lines
+    e = [Line(p[k], p[k+1]) for k in range(len(p)-1)]
+    e.append(Line(p[-1], p[0]))
+
+    ll = LineLoop(e)
+    s = PlaneSurface(ll)
+
+    return s
+# -----------------------------------------------------------------------------
 def add_polygon(X, lcar):
 
     # Create points.
