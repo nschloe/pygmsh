@@ -54,6 +54,7 @@ _CIRCLE_ID = 0
 _EXTRUDE_ID = 0
 _ARRAY_ID = 0
 
+
 # -----------------------------------------------------------------------------
 def _header():
     '''Return file header.
@@ -112,8 +113,8 @@ def Circle(point_ids):
     name = 'c%d' % _CIRCLE_ID
     _GMSH_CODE.append('%s = newl;' % name)
     _GMSH_CODE.append('Circle(%s) = {%s, %s, %s};'
-                    % (name, point_ids[0], point_ids[1], point_ids[2])
-                    )
+                      % (name, point_ids[0], point_ids[1], point_ids[2])
+                      )
     return name
 # -----------------------------------------------------------------------------
 def CompoundLine(lines):
@@ -166,8 +167,8 @@ def CompoundSurface(surfaces):
     name = 'surf%d' % _SURFACE_ID
     _GMSH_CODE.append('%s = news;' % name)
     _GMSH_CODE.append('Compound Surface(%s) = {%s};'
-                     % (name, ','.join(surfaces))
-                     )
+                      % (name, ','.join(surfaces))
+                      )
 
     return name
 # -----------------------------------------------------------------------------
@@ -207,8 +208,8 @@ def CompoundVolume(volumes):
     name = 'cv%d' % _VOLUME_ID
     _GMSH_CODE.append('%s = newv;' % name)
     _GMSH_CODE.append('Compound Volume(%s) = {%s};'
-                     % (name, ','.join(volumes))
-                     )
+                      % (name, ','.join(volumes))
+                      )
 
     return name
 # -----------------------------------------------------------------------------
@@ -219,10 +220,10 @@ def PhysicalVolume(volume, label):
     return
 # -----------------------------------------------------------------------------
 def Extrude(entity,
-            translation_axis = None,
-            rotation_axis = None,
-            point_on_axis = None,
-            angle = None
+            translation_axis=None,
+            rotation_axis=None,
+            point_on_axis=None,
+            angle=None
             ):
     '''Extrusion (translation + rotation) of any entity along a given
     translation_axis, around a given rotation_axis, about a given angle. If
@@ -236,25 +237,25 @@ def Extrude(entity,
     name = 'ex%d' % _EXTRUDE_ID
     if translation_axis is not None and rotation_axis is not None:
         _GMSH_CODE.append('%s[] = Extrude{{%s,%s,%s}, {%s,%s,%s}, {%s,%s,%s}, %s}{%s;};'
-                         % ((name,)
-                           + tuple(translation_axis)
-                           + tuple(rotation_axis)
-                           + tuple(point_on_axis)
-                           + (angle, entity))
-                         )
+                          % ((name,)
+                             + tuple(translation_axis)
+                             + tuple(rotation_axis)
+                             + tuple(point_on_axis)
+                             + (angle, entity))
+                          )
 
     elif translation_axis is not None:
         # Only translation
         _GMSH_CODE.append('%s[] = Extrude{%s,%s,%s}{%s;};'
-                        % ((name,) + tuple(translation_axis) + (entity,)))
+                          % ((name,) + tuple(translation_axis) + (entity,)))
     elif rotation_axis is not None:
         # Only rotation
         _GMSH_CODE.append('%s[] = Extrude{{%s,%s,%s}, {%s,%s,%s}, %s}{%s;};'
-                         % ((name,)
-                           + tuple(rotation_axis)
-                           + tuple(point_on_axis)
-                           + (angle, entity))
-                         )
+                          % ((name,)
+                             + tuple(rotation_axis)
+                             + tuple(point_on_axis)
+                             + (angle, entity))
+                          )
 
     else:
         raise RuntimeError('Specify at least translation or rotation.')

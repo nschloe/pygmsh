@@ -35,7 +35,9 @@ objects with Gmsh.
 '''
 # -----------------------------------------------------------------------------
 import numpy as np
-from basic import *
+from basic import Point, Line, LineLoop, PlaneSurface, Comment, Circle, \
+    CompoundLine, RuledSurface, Volume, PhysicalVolume, SurfaceLoop, Array, \
+    Extrude, CompoundVolume
 # -----------------------------------------------------------------------------
 def rotation_matrix(u, theta):
     '''Return matrix that implements the rotation around the vector u by the
@@ -49,8 +51,8 @@ def rotation_matrix(u, theta):
     c = np.cos(theta)
     s = np.sin(theta)
     R = np.eye(3) * c \
-      + s * cpm \
-      + (1.0 - c) * np.outer(u, u)
+        + s * cpm \
+        + (1.0 - c) * np.outer(u, u)
 
     return R
 # -----------------------------------------------------------------------------
@@ -68,10 +70,10 @@ def add_polygon(X, lcar):
     return s
 # -----------------------------------------------------------------------------
 def add_circle(radius, lcar,
-               R = np.eye(3),
-               x0 = np.array([0.0, 0.0, 0.0]),
-               compound = False,
-               num_sections = 3
+               R=np.eye(3),
+               x0=np.array([0.0, 0.0, 0.0]),
+               compound=False,
+               num_sections=3
                ):
     '''Add circle in the y-z-plane.
     '''
@@ -80,10 +82,10 @@ def add_circle(radius, lcar,
     X = [[0.0, 0.0, 0.0]]
     if num_sections == 4:
         # For accuracy, the points are provided explicitly.
-        X = [[0.0, 0.0,     0.0    ],
-             [0.0, radius,  0.0    ],
-             [0.0, 0.0,     radius ],
-             [0.0, -radius, 0.0    ],
+        X = [[0.0, 0.0,     0.0],
+             [0.0, radius,  0.0],
+             [0.0, 0.0,     radius],
+             [0.0, -radius, 0.0],
              [0.0, 0.0,     -radius]]
     else:
         for k in range(num_sections):
@@ -111,8 +113,8 @@ def add_circle(radius, lcar,
     return c
 # -----------------------------------------------------------------------------
 def add_ball(x0, radius, lcar,
-             with_volume = True,
-             holes = [],
+             with_volume=True,
+             holes=[],
              label=None
              ):
     '''Creates a ball with a given radius around a given midpoint x0.
@@ -120,11 +122,11 @@ def add_ball(x0, radius, lcar,
 
     # Add points.
     p = [Point(x0, lcar=lcar),
-         Point([x0[0]+radius, x0[1],        x0[2]       ], lcar=lcar),
-         Point([x0[0],        x0[1]+radius, x0[2]       ], lcar=lcar),
+         Point([x0[0]+radius, x0[1],        x0[2]],        lcar=lcar),
+         Point([x0[0],        x0[1]+radius, x0[2]],        lcar=lcar),
          Point([x0[0],        x0[1],        x0[2]+radius], lcar=lcar),
-         Point([x0[0]-radius, x0[1],        x0[2]       ], lcar=lcar),
-         Point([x0[0],        x0[1]-radius, x0[2]       ], lcar=lcar),
+         Point([x0[0]-radius, x0[1],        x0[2]],        lcar=lcar),
+         Point([x0[0],        x0[1]-radius, x0[2]],        lcar=lcar),
          Point([x0[0],        x0[1],        x0[2]-radius], lcar=lcar)
          ]
 
@@ -168,7 +170,7 @@ def add_ball(x0, radius, lcar,
     if with_volume:
         volume = Volume(surface_loop)
         if label:
-            PhysicalVolume(vol, label)
+            PhysicalVolume(volume, label)
     else:
         volume = None
 
@@ -176,19 +178,19 @@ def add_ball(x0, radius, lcar,
 # -----------------------------------------------------------------------------
 def add_box(x0, x1, y0, y1, z0, z1,
             lcar,
-            with_volume = True,
-            holes = [],
-            label = None
+            with_volume=True,
+            holes=[],
+            label=None
             ):
     # Define corner points.
-    p = [Point([x1, y1, z1], lcar = lcar),
-         Point([x1, y1, z0], lcar = lcar),
-         Point([x1, y0, z1], lcar = lcar),
-         Point([x1, y0, z0], lcar = lcar),
-         Point([x0, y1, z1], lcar = lcar),
-         Point([x0, y1, z0], lcar = lcar),
-         Point([x0, y0, z1], lcar = lcar),
-         Point([x0, y0, z0], lcar = lcar)
+    p = [Point([x1, y1, z1], lcar=lcar),
+         Point([x1, y1, z0], lcar=lcar),
+         Point([x1, y0, z1], lcar=lcar),
+         Point([x1, y0, z0], lcar=lcar),
+         Point([x0, y1, z1], lcar=lcar),
+         Point([x0, y1, z0], lcar=lcar),
+         Point([x0, y0, z1], lcar=lcar),
+         Point([x0, y0, z0], lcar=lcar)
          ]
 
     # Define edges.
@@ -237,9 +239,9 @@ def add_box(x0, x1, y0, y1, z0, z1,
 # -----------------------------------------------------------------------------
 def add_torus(irad, orad,
               lcar,
-              R = np.eye(3),
-              x0 = np.array([0.0, 0.0, 0.0]),
-              label = None
+              R=np.eye(3),
+              x0=np.array([0.0, 0.0, 0.0]),
+              label=None
               ):
     '''Create Gmsh code for torus with
 
@@ -250,7 +252,7 @@ def add_torus(irad, orad,
 
         x_hat = R*x + x0.
     '''
-    Comment(76*'-')
+    Comment(76 * '-')
     Comment('Torus')
 
     # Add circle
@@ -277,9 +279,9 @@ def add_torus(irad, orad,
             # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
             # ...
             name = Extrude('Line{%s}' % previous[k],
-                           rotation_axis = rot_axis,
-                           point_on_axis = point_on_rot_axis,
-                           angle = angle
+                           rotation_axis=rot_axis,
+                           point_on_axis=point_on_rot_axis,
+                           angle=angle
                            )
             all_names.append(name)
             previous[k] = name + '[0]'
@@ -298,11 +300,11 @@ def add_torus(irad, orad,
     return
 # -----------------------------------------------------------------------------
 def add_torus2(irad, orad,
-              lcar,
-              R = np.eye(3),
-              x0 = np.array([0.0, 0.0, 0.0]),
-              label = None
-              ):
+               lcar,
+               R=np.eye(3),
+               x0=np.array([0.0, 0.0, 0.0]),
+               label=None
+               ):
     '''Create Gmsh code for torus with
 
     irad ... inner radius
@@ -337,13 +339,12 @@ def add_torus2(irad, orad,
     num_steps = 3
     for i in range(num_steps):
         name = Extrude('Surface{%s}' % previous,
-                       rotation_axis = rot_axis,
-                       point_on_axis = point_on_rot_axis,
-                       angle = '2*Pi/%d' % num_steps
+                       rotation_axis=rot_axis,
+                       point_on_axis=point_on_rot_axis,
+                       angle='2*Pi/%d' % num_steps
                        )
         previous = name + '[0]'
         all_names.append(name)
-
 
     all_volumes = [name + '[1]' for name in all_names]
     vol = CompoundVolume(all_volumes)
@@ -354,10 +355,10 @@ def add_torus2(irad, orad,
     return
 # -----------------------------------------------------------------------------
 def add_pipe(outer_radius, inner_radius, length,
-             R = np.eye(3),
-             x0 = np.array([0.0, 0.0, 0.0]),
-             label = None,
-             lcar = 0.1
+             R=np.eye(3),
+             x0=np.array([0.0, 0.0, 0.0]),
+             label=None,
+             lcar=0.1
              ):
     '''Hollow cylinder.
     Define a rectangle, extrude it by rotation.
@@ -396,9 +397,9 @@ def add_pipe(outer_radius, inner_radius, length,
         for k in range(len(previous)):
             # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
             name = Extrude('Line{%s}' % previous[k],
-                           rotation_axis = rot_axis,
-                           point_on_axis = point_on_rot_axis,
-                           angle = angle
+                           rotation_axis=rot_axis,
+                           point_on_axis=point_on_rot_axis,
+                           angle=angle
                            )
             #if k==0:
             #    com.append(name+'[1]')
@@ -421,10 +422,10 @@ def add_pipe(outer_radius, inner_radius, length,
     return
 # -----------------------------------------------------------------------------
 def add_pipe2(outer_radius, inner_radius, length,
-              R = np.eye(3),
-              x0 = np.array([0.0, 0.0, 0.0]),
-              label = None,
-              lcar = 0.1
+              R=np.eye(3),
+              x0=np.array([0.0, 0.0, 0.0]),
+              label=None,
+              lcar=0.1
               ):
     '''Hollow cylinder.
     Define a ring, extrude it by translation.
@@ -432,14 +433,14 @@ def add_pipe2(outer_radius, inner_radius, length,
 
     # Define ring which to Extrude by translation.
     c_inner = add_circle(inner_radius, lcar,
-                         R = np.eye(3),
-                         x0 = np.array([0.0, 0.0, 0.0])
+                         R=np.eye(3),
+                         x0=np.array([0.0, 0.0, 0.0])
                          )
     ll_inner = LineLoop(c_inner)
 
     c_outer = add_circle(outer_radius, lcar,
-                         R = np.eye(3),
-                         x0 = np.array([0.0, 0.0, 0.0])
+                         R=np.eye(3),
+                         x0=np.array([0.0, 0.0, 0.0])
                          )
     ll_outer = LineLoop(c_outer)
 
@@ -447,7 +448,7 @@ def add_pipe2(outer_radius, inner_radius, length,
 
     # Now Extrude the ring surface.
     name = Extrude('Surface{%s}' % surf,
-                   translation_axis = [length, 0, 0]
+                   translation_axis=[length, 0, 0]
                    )
     vol = name + '[0]'
 
