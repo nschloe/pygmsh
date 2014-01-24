@@ -1,6 +1,6 @@
 # -*- coding: utf8 -*-
 #
-# Copyright (c) 2013, Nico Schlömer
+# Copyright (c) 2013--2014, Nico Schlömer
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ aims at working around some of Gmsh's inconveniences (e.g., having to manually
 assign an ID for every entity created) and providing access to Python's
 features.
 '''
-# -----------------------------------------------------------------------------
+
 # In Gmsh, the user must manually provide a unique ID for every point, curce,
 # volume created. This can get messy when a lot of entities are created and it
 # isn't clear which IDs are already in use. Some Gmsh commands even create new
@@ -56,7 +56,6 @@ _ARRAY_ID = 0
 _FIELD_ID = 0
 
 
-# -----------------------------------------------------------------------------
 def _header():
     '''Return file header.
     '''
@@ -72,18 +71,21 @@ def _header():
               '//',
               '// The latest updates can be retrieved from',
               '//     %s' % website,
-              '// where you can also make suggestions and help improve %s.' % name,
+              '// where you can also make suggestions ',
+              'and help improve %s.' % name,
               '//',
               ]
     return header
-# -----------------------------------------------------------------------------
+
 _GMSH_CODE = _header()
-# -----------------------------------------------------------------------------
+
+
 def get_code():
     '''Returns properly formatted Gmsh code.
     '''
     return '\n'.join(_GMSH_CODE)
-# -----------------------------------------------------------------------------
+
+
 def Point(x, lcar):
     '''Add point.
     '''
@@ -92,10 +94,11 @@ def Point(x, lcar):
     name = 'p%d' % _POINT_ID
     _GMSH_CODE.append('%s = newp;' % name)
     _GMSH_CODE.append('Point(%s) = {%g, %g, %g, %g};'
-                    % (name, x[0], x[1], x[2], lcar)
-                    )
+                      % (name, x[0], x[1], x[2], lcar)
+                      )
     return name
-# -----------------------------------------------------------------------------
+
+
 def Line(p0, p1):
     '''Add line.
     '''
@@ -105,7 +108,8 @@ def Line(p0, p1):
     _GMSH_CODE.append('%s = newl;' % name)
     _GMSH_CODE.append('Line(%s) = {%s, %s};' % (name, p0, p1))
     return name
-# -----------------------------------------------------------------------------
+
+
 def BSpline(control_points):
     '''Add B-spline.
     '''
@@ -121,7 +125,8 @@ def BSpline(control_points):
                       % (name, ', '.join(control_points))
                       )
     return name
-# -----------------------------------------------------------------------------
+
+
 def Circle(point_ids):
     '''Add Circle.
     '''
@@ -133,7 +138,8 @@ def Circle(point_ids):
                       % (name, point_ids[0], point_ids[1], point_ids[2])
                       )
     return name
-# -----------------------------------------------------------------------------
+
+
 def CompoundLine(lines):
     '''Gmsh Compound Line.
     '''
@@ -143,7 +149,8 @@ def CompoundLine(lines):
     _GMSH_CODE.append('%s = newl;' % name)
     _GMSH_CODE.append('Compound Line(%s) = {%s};' % (name, ','.join(lines)))
     return name
-# -----------------------------------------------------------------------------
+
+
 def LineLoop(lines):
     '''Gmsh Line Loops.
     '''
@@ -153,7 +160,8 @@ def LineLoop(lines):
     _GMSH_CODE.append('%s = newll;' % name)
     _GMSH_CODE.append('Line Loop(%s) = {%s};' % (name, ','.join(lines)))
     return name
-# -----------------------------------------------------------------------------
+
+
 def PlaneSurface(line_loop):
     '''Create Gmsh Surface.
     '''
@@ -162,9 +170,9 @@ def PlaneSurface(line_loop):
     sname = 'surf%d' % _SURFACE_ID
     _GMSH_CODE.append('%s = news;' % sname)
     _GMSH_CODE.append('Plane Surface(%s) = {%s};' % (sname, line_loop))
-
     return sname
-# -----------------------------------------------------------------------------
+
+
 def RuledSurface(line_loop):
     '''Create Gmsh Surface.
     '''
@@ -173,9 +181,9 @@ def RuledSurface(line_loop):
     sname = 'surf%d' % _SURFACE_ID
     _GMSH_CODE.append('%s = news;' % sname)
     _GMSH_CODE.append('Ruled Surface(%s) = {%s};' % (sname, line_loop))
-
     return sname
-# -----------------------------------------------------------------------------
+
+
 def CompoundSurface(surfaces):
     '''Gmsh Compound Surface.
     '''
@@ -186,9 +194,9 @@ def CompoundSurface(surfaces):
     _GMSH_CODE.append('Compound Surface(%s) = {%s};'
                       % (name, ','.join(surfaces))
                       )
-
     return name
-# -----------------------------------------------------------------------------
+
+
 def SurfaceLoop(surfaces):
     '''Gmsh Surface Loop.
     '''
@@ -197,15 +205,16 @@ def SurfaceLoop(surfaces):
     name = 'surfloop%d' % _SURFACELOOP_ID
     _GMSH_CODE.append('%s = newsl;' % name)
     _GMSH_CODE.append('Surface Loop(%s) = {%s};' % (name, ','.join(surfaces)))
-
     return name
-# -----------------------------------------------------------------------------
+
+
 def PhysicalSurface(surface, label):
     '''Gmsh Physical Surface.
     '''
     _GMSH_CODE.append('Physical Surface("%s") = %s;' % (label, surface))
     return
-# -----------------------------------------------------------------------------
+
+
 def Volume(surface_loop):
     '''Gmsh Volume.
     '''
@@ -216,7 +225,8 @@ def Volume(surface_loop):
     _GMSH_CODE.append('Volume(%s) = %s;' % (name, surface_loop))
 
     return name
-# -----------------------------------------------------------------------------
+
+
 def CompoundVolume(volumes):
     '''Gmsh Compound Volume.
     '''
@@ -227,15 +237,16 @@ def CompoundVolume(volumes):
     _GMSH_CODE.append('Compound Volume(%s) = {%s};'
                       % (name, ','.join(volumes))
                       )
-
     return name
-# -----------------------------------------------------------------------------
+
+
 def PhysicalVolume(volume, label):
     '''Gmsh Physical Volume.
     '''
     _GMSH_CODE.append('Physical Volume("%s") = %s;' % (label, volume))
     return
-# -----------------------------------------------------------------------------
+
+
 def Extrude(entity,
             translation_axis=None,
             rotation_axis=None,
@@ -253,7 +264,8 @@ def Extrude(entity,
     # out[] = Extrude{0,1,0}{ Line{1}; };
     name = 'ex%d' % _EXTRUDE_ID
     if translation_axis is not None and rotation_axis is not None:
-        _GMSH_CODE.append('%s[] = Extrude{{%s,%s,%s}, {%s,%s,%s}, {%s,%s,%s}, %s}{%s;};'
+        _GMSH_CODE.append(('%s[] = Extrude{{%s,%s,%s}, '
+                           '{%s,%s,%s}, {%s,%s,%s}, %s}{%s;};')
                           % ((name,)
                              + tuple(translation_axis)
                              + tuple(rotation_axis)
@@ -276,9 +288,9 @@ def Extrude(entity,
 
     else:
         raise RuntimeError('Specify at least translation or rotation.')
-
     return name
-# -----------------------------------------------------------------------------
+
+
 def BoundaryLayer(edges_list=[],
                   faces_list=[],
                   nodes_list=[],
@@ -319,9 +331,9 @@ def BoundaryLayer(edges_list=[],
         _GMSH_CODE.append('Field[%s].thickness= %g;' % (name, thickness))
     if anisomax:
         _GMSH_CODE.append('Field[%s].AnisoMax= %g;' % (name, anisomax))
-
     return name
-# -----------------------------------------------------------------------------
+
+
 def Array(entities):
     '''Forms a Gmsh array from a list of entities.
     '''
@@ -330,17 +342,18 @@ def Array(entities):
     name = 'array%d' % _ARRAY_ID
     _GMSH_CODE.append('%s[] = {%s};' % (name, ','.join(entities)))
     return name + '[]'
-# -----------------------------------------------------------------------------
+
+
 def Comment(string):
     '''Adds a Gmsh comment.
     '''
     _GMSH_CODE.append('// ' + string)
     return
-# -----------------------------------------------------------------------------
+
+
 def raw_code(list_of_strings):
     '''Add raw Gmsh code.
     '''
     for string in list_of_strings:
         _GMSH_CODE.append(string)
     return
-# -----------------------------------------------------------------------------

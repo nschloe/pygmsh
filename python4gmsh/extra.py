@@ -1,6 +1,6 @@
 # -*- coding: utf8 -*-
 #
-# Copyright (c) 2013, Nico Schlömer
+# Copyright (c) 2013--2014, Nico Schlömer
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -33,60 +33,56 @@
 This module contains some convenience functions for building simple geometric
 objects with Gmsh.
 '''
-# -----------------------------------------------------------------------------
+
 import numpy as np
 from basic import Point, Line, LineLoop, PlaneSurface, Comment, Circle, \
     CompoundLine, RuledSurface, Volume, PhysicalVolume, SurfaceLoop, Array, \
     Extrude, CompoundVolume
-# -----------------------------------------------------------------------------
+
+
 def rotation_matrix(u, theta):
     '''Return matrix that implements the rotation around the vector u by the
     angle theta, cf.
     <https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle>.
     '''
     # Cross-product matrix.
-    cpm = np.array([[  0.0, -u[2],  u[1]],
-                    [ u[2],   0.0, -u[0]],
+    cpm = np.array([[0.0,   -u[2],  u[1]],
+                    [u[2],    0.0, -u[0]],
                     [-u[1],  u[0],  0.0]])
     c = np.cos(theta)
     s = np.sin(theta)
     R = np.eye(3) * c \
         + s * cpm \
         + (1.0 - c) * np.outer(u, u)
-
     return R
-# -----------------------------------------------------------------------------
-def add_rectangle(xmin, xmax, ymin, ymax, z, lcar):
 
+
+def add_rectangle(xmin, xmax, ymin, ymax, z, lcar):
     X = [[xmin, ymin, z],
          [xmax, ymin, z],
          [xmax, ymax, z],
          [xmin, ymax, z]]
-
     # Create points.
     p = [Point(x, lcar) for x in X]
     # Create lines
     e = [Line(p[k], p[k+1]) for k in range(len(p)-1)]
     e.append(Line(p[-1], p[0]))
-
     ll = LineLoop(e)
     s = PlaneSurface(ll)
-
     return s
-# -----------------------------------------------------------------------------
+
+
 def add_polygon(X, lcar):
-
     # Create points.
     p = [Point(x, lcar) for x in X]
     # Create lines
     e = [Line(p[k], p[k+1]) for k in range(len(p)-1)]
     e.append(Line(p[-1], p[0]))
-
     ll = LineLoop(e)
     s = PlaneSurface(ll)
-
     return s
-# -----------------------------------------------------------------------------
+
+
 def add_circle(radius, lcar,
                R=np.eye(3),
                x0=np.array([0.0, 0.0, 0.0]),
@@ -124,12 +120,11 @@ def add_circle(radius, lcar,
         c.append(Circle([p[k], p[0], p[k+1]]))
     # Don't forget the closing arc.
     c.append(Circle([p[-1], p[0], p[1]]))
-
     if compound:
         c = [CompoundLine(c)]
-
     return c
-# -----------------------------------------------------------------------------
+
+
 def add_ball(x0, radius, lcar,
              with_volume=True,
              holes=[],
@@ -137,7 +132,6 @@ def add_ball(x0, radius, lcar,
              ):
     '''Creates a ball with a given radius around a given midpoint x0.
     '''
-
     # Add points.
     p = [Point(x0, lcar=lcar),
          Point([x0[0]+radius, x0[1],        x0[2]],        lcar=lcar),
@@ -147,7 +141,6 @@ def add_ball(x0, radius, lcar,
          Point([x0[0],        x0[1]-radius, x0[2]],        lcar=lcar),
          Point([x0[0],        x0[1],        x0[2]-radius], lcar=lcar)
          ]
-
     # Add ball skeleton.
     c = [Circle([p[1], p[0], p[6]]),
          Circle([p[6], p[0], p[4]]),
@@ -162,7 +155,6 @@ def add_ball(x0, radius, lcar,
          Circle([p[3], p[0], p[5]]),
          Circle([p[5], p[0], p[6]])
          ]
-
     # Add surfaces (1/8th of the ball surface).
     ll = [LineLoop([c[4],      c[9],     c[3]]),
           LineLoop([c[8],      '-'+c[4], c[0]]),
@@ -173,17 +165,14 @@ def add_ball(x0, radius, lcar,
           LineLoop(['-'+c[1],  '-'+c[6], '-'+c[11]]),
           LineLoop(['-'+c[5],  '-'+c[8], c[1]])
           ]
-
     # Create a surface for each line loop.
     s = [RuledSurface(l) for l in ll]
-
     # Create the surface loop.
     surface_loop = SurfaceLoop(s)
     if holes:
         # Create an array of surface loops; the first entry is the outer
         # surface loop, the following ones are holes.
         surface_loop = Array([surface_loop] + holes)
-
     # Create volume.
     if with_volume:
         volume = Volume(surface_loop)
@@ -191,9 +180,9 @@ def add_ball(x0, radius, lcar,
             PhysicalVolume(volume, label)
     else:
         volume = None
-
     return volume, surface_loop
-# -----------------------------------------------------------------------------
+
+
 def add_box(x0, x1, y0, y1, z0, z1,
             lcar,
             with_volume=True,
@@ -210,7 +199,6 @@ def add_box(x0, x1, y0, y1, z0, z1,
          Point([x0, y0, z1], lcar=lcar),
          Point([x0, y0, z0], lcar=lcar)
          ]
-
     # Define edges.
     e = [Line(p[0], p[1]),
          Line(p[0], p[2]),
@@ -225,7 +213,6 @@ def add_box(x0, x1, y0, y1, z0, z1,
          Line(p[5], p[7]),
          Line(p[6], p[7])
          ]
-
     # Define the six line loops.
     ll = [LineLoop([e[0], e[3],  '-'+e[5],  '-'+e[1]]),
           LineLoop([e[0], e[4],  '-'+e[8],  '-'+e[2]]),
@@ -234,17 +221,14 @@ def add_box(x0, x1, y0, y1, z0, z1,
           LineLoop([e[5], e[7],  '-'+e[11], '-'+e[6]]),
           LineLoop([e[8], e[10], '-'+e[11], '-'+e[9]])
           ]
-
     # Create a surface for each line loop.
     s = [RuledSurface(l) for l in ll]
-
     # Create the surface loop.
     surface_loop = SurfaceLoop(s)
     if holes:
         # Create an array of surface loops; the first entry is the outer
         # surface loop, the following ones are holes.
         surface_loop = Array([surface_loop] + holes)
-
     if with_volume:
         # Create volume
         vol = Volume(surface_loop)
@@ -252,9 +236,9 @@ def add_box(x0, x1, y0, y1, z0, z1,
             PhysicalVolume(vol, label)
     else:
         vol = None
-
     return vol, surface_loop
-# -----------------------------------------------------------------------------
+
+
 def add_torus(irad, orad,
               lcar,
               R=np.eye(3),
@@ -313,10 +297,10 @@ def add_torus(irad, orad,
     vol = Volume(surface_loop)
     if label:
         PhysicalVolume(vol, label)
-
     Comment(76*'-')
     return
-# -----------------------------------------------------------------------------
+
+
 def add_torus2(irad, orad,
                lcar,
                R=np.eye(3),
@@ -368,10 +352,10 @@ def add_torus2(irad, orad,
     vol = CompoundVolume(all_volumes)
     if label:
         PhysicalVolume(vol, label)
-
     Comment(76*'-')
     return
-# -----------------------------------------------------------------------------
+
+
 def add_pipe(outer_radius, inner_radius, length,
              R=np.eye(3),
              x0=np.array([0.0, 0.0, 0.0]),
@@ -425,10 +409,8 @@ def add_pipe(outer_radius, inner_radius, length,
             #    all_names.append(name+'[1]')
             all_names.append(name+'[1]')
             previous[k] = name + '[0]'
-
     #
     #cs = CompoundSurface(com)
-
     # Now just add surface loop and volume.
     all_surfaces = all_names
     #all_surfaces = all_names + [cs]
@@ -436,9 +418,9 @@ def add_pipe(outer_radius, inner_radius, length,
     vol = Volume(surface_loop)
     if label:
         PhysicalVolume(vol, label)
-
     return
-# -----------------------------------------------------------------------------
+
+
 def add_pipe2(outer_radius, inner_radius, length,
               R=np.eye(3),
               x0=np.array([0.0, 0.0, 0.0]),
@@ -448,7 +430,6 @@ def add_pipe2(outer_radius, inner_radius, length,
     '''Hollow cylinder.
     Define a ring, extrude it by translation.
     '''
-
     # Define ring which to Extrude by translation.
     c_inner = add_circle(inner_radius, lcar,
                          R=np.eye(3),
@@ -469,9 +450,6 @@ def add_pipe2(outer_radius, inner_radius, length,
                    translation_axis=[length, 0, 0]
                    )
     vol = name + '[0]'
-
     if label:
         PhysicalVolume(vol, label)
-
     return vol
-# -----------------------------------------------------------------------------
