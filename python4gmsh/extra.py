@@ -41,9 +41,12 @@ from basic import Point, Line, LineLoop, PlaneSurface, Comment, Circle, \
 
 
 def rotation_matrix(u, theta):
-    '''Return matrix that implements the rotation around the vector u by the
-    angle theta, cf.
-    <https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle>.
+    '''Return matrix that implements the rotation around the vector :math:`u`
+    by the angle :math:`theta`, cf.
+    https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle.
+
+    :param u: rotation vector
+    :param theta: rotation angle
     '''
     # Cross-product matrix.
     cpm = np.array([[0.0,   -u[2],  u[1]],
@@ -89,7 +92,7 @@ def add_circle(radius, lcar,
                compound=False,
                num_sections=3
                ):
-    '''Add circle in the y-z-plane.
+    '''Add circle in the :math:`y`-:math:`z`-plane.
     '''
     # Define points that make the circle (midpoint and the four cardinal
     # directions).
@@ -130,7 +133,7 @@ def add_ball(x0, radius, lcar,
              holes=[],
              label=None
              ):
-    '''Creates a ball with a given radius around a given midpoint x0.
+    '''Creates a ball with a given radius around a given midpoint :math:`x_0`.
     '''
     # Add points.
     p = [Point(x0, lcar=lcar),
@@ -245,14 +248,13 @@ def add_torus(irad, orad,
               x0=np.array([0.0, 0.0, 0.0]),
               label=None
               ):
-    '''Create Gmsh code for torus with
+    '''Create Gmsh code for the torus under the coordinate transformation
 
-    irad ... inner radius
-    orad ... outer radius
+    :math: ..
+        \hat{x} = R x + x_0.
 
-    under the coordinate transformation
-
-        x_hat = R*x + x0.
+    :param irad: inner radius of the torus
+    :param orad: outer radius of the torus
     '''
     Comment(76 * '-')
     Comment('Torus')
@@ -307,14 +309,13 @@ def add_torus2(irad, orad,
                x0=np.array([0.0, 0.0, 0.0]),
                label=None
                ):
-    '''Create Gmsh code for torus with
+    '''Create Gmsh code for the torus under the coordinate transformation
 
-    irad ... inner radius
-    orad ... outer radius
+    :math: ..
+        \hat{x} = R x + x_0.
 
-    under the coordinate transformation
-
-        x_hat = R*x + x0.
+    :param irad: inner radius of the torus
+    :param orad: outer radius of the torus
     '''
     Comment(76*'-')
     Comment('Torus')
