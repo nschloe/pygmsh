@@ -34,7 +34,7 @@ This module contains some convenience functions for building simple geometric
 objects with Gmsh.
 '''
 
-import numpy as np
+import numpy
 from basic import Point, Line, LineLoop, PlaneSurface, Comment, Circle, \
     CompoundLine, RuledSurface, Volume, PhysicalVolume, SurfaceLoop, Array, \
     Extrude, CompoundVolume
@@ -49,14 +49,14 @@ def rotation_matrix(u, theta):
     :param theta: rotation angle
     '''
     # Cross-product matrix.
-    cpm = np.array([[0.0,   -u[2],  u[1]],
+    cpm = numpy.array([[0.0,   -u[2],  u[1]],
                     [u[2],    0.0, -u[0]],
                     [-u[1],  u[0],  0.0]])
-    c = np.cos(theta)
-    s = np.sin(theta)
-    R = np.eye(3) * c \
+    c = numpy.cos(theta)
+    s = numpy.sin(theta)
+    R = numpy.eye(3) * c \
         + s * cpm \
-        + (1.0 - c) * np.outer(u, u)
+        + (1.0 - c) * numpy.outer(u, u)
     return R
 
 
@@ -87,8 +87,8 @@ def add_polygon(X, lcar):
 
 
 def add_circle(radius, lcar,
-               R=np.eye(3),
-               x0=np.array([0.0, 0.0, 0.0]),
+               R=numpy.eye(3),
+               x0=numpy.array([0.0, 0.0, 0.0]),
                compound=False,
                num_sections=3
                ):
@@ -106,12 +106,12 @@ def add_circle(radius, lcar,
              [0.0, 0.0,     -radius]]
     else:
         for k in range(num_sections):
-            alpha = 2*np.pi * k / num_sections
-            X.append([0.0, radius*np.cos(alpha), radius*np.sin(alpha)])
+            alpha = 2*numpy.pi * k / num_sections
+            X.append([0.0, radius*numpy.cos(alpha), radius*numpy.sin(alpha)])
 
     # Apply the transformation.
     # TODO assert that the transformation preserves circles
-    X = [np.dot(R, x) + x0 for x in X]
+    X = [numpy.dot(R, x) + x0 for x in X]
     # Add Gmsh Points.
     Comment('Points')
     p = [Point(x, lcar) for x in X]
@@ -244,13 +244,13 @@ def add_box(x0, x1, y0, y1, z0, z1,
 
 def add_torus(irad, orad,
               lcar,
-              R=np.eye(3),
-              x0=np.array([0.0, 0.0, 0.0]),
+              R=numpy.eye(3),
+              x0=numpy.array([0.0, 0.0, 0.0]),
               label=None
               ):
     '''Create Gmsh code for the torus under the coordinate transformation
 
-    :math: ..
+    .. math :
         \hat{x} = R x + x_0.
 
     :param irad: inner radius of the torus
@@ -260,13 +260,13 @@ def add_torus(irad, orad,
     Comment('Torus')
 
     # Add circle
-    x0t = np.dot(R, np.array([0.0, orad, 0.0]))
+    x0t = numpy.dot(R, numpy.array([0.0, orad, 0.0]))
     c = add_circle(irad, lcar, R=R, x0=x0+x0t)
 
     rot_axis = [0.0, 0.0, 1.0]
-    rot_axis = np.dot(R, rot_axis)
+    rot_axis = numpy.dot(R, rot_axis)
     point_on_rot_axis = [0.0, 0.0, 0.0]
-    point_on_rot_axis = np.dot(R, point_on_rot_axis) + x0
+    point_on_rot_axis = numpy.dot(R, point_on_rot_axis) + x0
 
     # Form the torus by extruding the circle three times by 2/3*pi.
     # This works around the inability of Gmsh to extrude by pi or more.  The
@@ -305,13 +305,13 @@ def add_torus(irad, orad,
 
 def add_torus2(irad, orad,
                lcar,
-               R=np.eye(3),
-               x0=np.array([0.0, 0.0, 0.0]),
+               R=numpy.eye(3),
+               x0=numpy.array([0.0, 0.0, 0.0]),
                label=None
                ):
     '''Create Gmsh code for the torus under the coordinate transformation
 
-    :math: ..
+    .. math :
         \hat{x} = R x + x_0.
 
     :param irad: inner radius of the torus
@@ -321,15 +321,15 @@ def add_torus2(irad, orad,
     Comment('Torus')
 
     # Add circle
-    x0t = np.dot(R, np.array([0.0, orad, 0.0]))
+    x0t = numpy.dot(R, numpy.array([0.0, orad, 0.0]))
     c = add_circle(irad, lcar, R=R, x0=x0+x0t)
     ll = LineLoop(c)
     s = PlaneSurface(ll)
 
     rot_axis = [0.0, 0.0, 1.0]
-    rot_axis = np.dot(R, rot_axis)
+    rot_axis = numpy.dot(R, rot_axis)
     point_on_rot_axis = [0.0, 0.0, 0.0]
-    point_on_rot_axis = np.dot(R, point_on_rot_axis) + x0
+    point_on_rot_axis = numpy.dot(R, point_on_rot_axis) + x0
 
     # Form the torus by extruding the circle three times by 2/3*pi.
     # This works around the inability of Gmsh to extrude by pi or more.  The
@@ -358,8 +358,8 @@ def add_torus2(irad, orad,
 
 
 def add_pipe(outer_radius, inner_radius, length,
-             R=np.eye(3),
-             x0=np.array([0.0, 0.0, 0.0]),
+             R=numpy.eye(3),
+             x0=numpy.array([0.0, 0.0, 0.0]),
              label=None,
              lcar=0.1
              ):
@@ -367,13 +367,13 @@ def add_pipe(outer_radius, inner_radius, length,
     Define a rectangle, extrude it by rotation.
     '''
     Comment('Define rectangle.')
-    X = np.array([[0.0, outer_radius, -0.5*length],
-                  [0.0, outer_radius,  0.5*length],
-                  [0.0, inner_radius,  0.5*length],
-                  [0.0, inner_radius, -0.5*length]
-                  ])
+    X = numpy.array([[0.0, outer_radius, -0.5*length],
+                     [0.0, outer_radius,  0.5*length],
+                     [0.0, inner_radius,  0.5*length],
+                     [0.0, inner_radius, -0.5*length]
+                     ])
     # Apply transformation.
-    X = [np.dot(R, x) + x0 for x in X]
+    X = [numpy.dot(R, x) + x0 for x in X]
     # Create points set.
     p = [Point(x, lcar) for x in X]
 
@@ -385,9 +385,9 @@ def add_pipe(outer_radius, inner_radius, length,
          ]
 
     rot_axis = [0.0, 0.0, 1.0]
-    rot_axis = np.dot(R, rot_axis)
+    rot_axis = numpy.dot(R, rot_axis)
     point_on_rot_axis = [0.0, 0.0, 0.0]
-    point_on_rot_axis = np.dot(R, point_on_rot_axis) + x0
+    point_on_rot_axis = numpy.dot(R, point_on_rot_axis) + x0
 
     # Extrude all edges three times by 2*Pi/3.
     previous = e
@@ -423,8 +423,8 @@ def add_pipe(outer_radius, inner_radius, length,
 
 
 def add_pipe2(outer_radius, inner_radius, length,
-              R=np.eye(3),
-              x0=np.array([0.0, 0.0, 0.0]),
+              R=numpy.eye(3),
+              x0=numpy.array([0.0, 0.0, 0.0]),
               label=None,
               lcar=0.1
               ):
@@ -433,14 +433,14 @@ def add_pipe2(outer_radius, inner_radius, length,
     '''
     # Define ring which to Extrude by translation.
     c_inner = add_circle(inner_radius, lcar,
-                         R=np.eye(3),
-                         x0=np.array([0.0, 0.0, 0.0])
+                         R=numpy.eye(3),
+                         x0=numpy.array([0.0, 0.0, 0.0])
                          )
     ll_inner = LineLoop(c_inner)
 
     c_outer = add_circle(outer_radius, lcar,
-                         R=np.eye(3),
-                         x0=np.array([0.0, 0.0, 0.0])
+                         R=numpy.eye(3),
+                         x0=numpy.array([0.0, 0.0, 0.0])
                          )
     ll_outer = LineLoop(c_outer)
 
