@@ -11,16 +11,16 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-:mod:`pymelt.basic`
-=================================
+:mod:`python4gmsh.basic`
+========================
 
 .. automodule:: python4gmsh.basic
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`pymelt.extra`
-=================================
+:mod:`python4gmsh.extra`
+========================
 
 .. automodule:: python4gmsh.extra
     :members:
