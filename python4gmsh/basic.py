@@ -72,7 +72,7 @@ def _header():
               '// The latest updates can be retrieved from',
               '//     %s' % website,
               '// where you can also make suggestions ',
-              'and help improve %s.' % name,
+              '// and help improve %s.' % name,
               '//',
               ]
     return header
