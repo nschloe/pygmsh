@@ -443,13 +443,13 @@ def add_pipe2(outer_radius, inner_radius, length,
     # Define ring which to Extrude by translation.
     c_inner = add_circle(inner_radius, lcar,
                          R=R,
-                         x0=numpy.array([0.0, 0.0, 0.0])
+                         x0=x0
                          )
     ll_inner = LineLoop(c_inner)
 
     c_outer = add_circle(outer_radius, lcar,
-                         R=numpy.eye(3),
-                         x0=numpy.array([0.0, 0.0, 0.0])
+                         R=R,
+                         x0=x0
                          )
     ll_outer = LineLoop(c_outer)
 
