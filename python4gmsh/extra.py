@@ -289,13 +289,14 @@ def add_torus(irad, orad,
         for k in range(len(previous)):
             # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
             # ...
-            name = Extrude('Line{%s}' % previous[k],
-                           rotation_axis=rot_axis,
-                           point_on_axis=point_on_rot_axis,
-                           angle=angle
-                           )
-            all_names.append(name)
-            previous[k] = name + '[0]'
+            tmp_name = Extrude(
+                'Line{%s}' % previous[k],
+                rotation_axis=rot_axis,
+                point_on_axis=point_on_rot_axis,
+                angle=angle
+                )
+            all_names.append(tmp_name)
+            previous[k] = tmp_name + '[0]'
 
     # Now build surface loop and volume.
     all_surfaces = [name + '[1]' for name in all_names]
@@ -348,13 +349,14 @@ def add_torus2(irad, orad,
     all_names = []
     num_steps = 3
     for i in range(num_steps):
-        name = Extrude('Surface{%s}' % previous,
-                       rotation_axis=rot_axis,
-                       point_on_axis=point_on_rot_axis,
-                       angle='2*Pi/%d' % num_steps
-                       )
-        previous = name + '[0]'
-        all_names.append(name)
+        tmp_name = Extrude(
+            'Surface{%s}' % previous,
+            rotation_axis=rot_axis,
+            point_on_axis=point_on_rot_axis,
+            angle='2*Pi/%d' % num_steps
+            )
+        previous = tmp_name + '[0]'
+        all_names.append(tmp_name)
 
     all_volumes = [name + '[1]' for name in all_names]
     vol = CompoundVolume(all_volumes)
@@ -440,7 +442,7 @@ def add_pipe2(outer_radius, inner_radius, length,
     '''
     # Define ring which to Extrude by translation.
     c_inner = add_circle(inner_radius, lcar,
-                         R=numpy.eye(3),
+                         R=R,
                          x0=numpy.array([0.0, 0.0, 0.0])
                          )
     ll_inner = LineLoop(c_inner)
