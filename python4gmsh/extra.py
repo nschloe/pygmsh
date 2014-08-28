@@ -348,7 +348,7 @@ def add_torus2(irad, orad,
     previous = s
     all_names = []
     num_steps = 3
-    for i in range(num_steps):
+    for _ in range(num_steps):
         tmp_name = Extrude(
             'Surface{%s}' % previous,
             rotation_axis=rot_axis,
