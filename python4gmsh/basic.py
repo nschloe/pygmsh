@@ -291,9 +291,9 @@ def Extrude(entity,
     return name
 
 
-def BoundaryLayer(edges_list=[],
-                  faces_list=[],
-                  nodes_list=[],
+def BoundaryLayer(edges_list=None,
+                  faces_list=None,
+                  nodes_list=None,
                   anisomax=None,
                   hfar=None,
                   hwall_n=None,
@@ -303,6 +303,15 @@ def BoundaryLayer(edges_list=[],
                   ):
     '''Add boundary layer.
     '''
+    # Don't use [] as default argument,cf.
+    # <http://stackoverflow.com/a/113198/353337>
+    if edges_list is None:
+        edges_list = []
+    if faces_list is None:
+        faces_list = []
+    if nodes_list is None:
+        nodes_list = []
+
     global _FIELD_ID
     _FIELD_ID += 1
     name = 'field%d' % _FIELD_ID

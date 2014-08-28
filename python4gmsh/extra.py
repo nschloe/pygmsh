@@ -130,11 +130,14 @@ def add_circle(radius, lcar,
 
 def add_ball(x0, radius, lcar,
              with_volume=True,
-             holes=[],
+             holes=None,
              label=None
              ):
     '''Creates a ball with a given radius around a given midpoint :math:`x_0`.
     '''
+    if holes is None:
+        holes = []
+
     # Add points.
     p = [Point(x0, lcar=lcar),
          Point([x0[0]+radius, x0[1],        x0[2]],        lcar=lcar),
@@ -189,9 +192,13 @@ def add_ball(x0, radius, lcar,
 def add_box(x0, x1, y0, y1, z0, z1,
             lcar,
             with_volume=True,
-            holes=[],
+            holes=None,
             label=None
             ):
+
+    if holes is None:
+        holes = []
+
     # Define corner points.
     p = [Point([x1, y1, z1], lcar=lcar),
          Point([x1, y1, z0], lcar=lcar),
