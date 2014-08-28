@@ -1,6 +1,7 @@
 # python4gmsh
 
 [![Code Health](https://landscape.io/github/nschloe/python4gmsh/master/landscape.png)](https://landscape.io/github/nschloe/python4gmsh/master)
+[![Documentation Status](https://readthedocs.org/projects/python4gmsh/badge/?version=latest)](https://readthedocs.org/projects/python4gmsh/?badge=latest)
 
 
 Python interface for Gmsh.
