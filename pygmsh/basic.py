@@ -26,29 +26,15 @@ _EXTRUDE_ID = 0
 _ARRAY_ID = 0
 _FIELD_ID = 0
 
+from pygmsh import __name__, __version__
 
 def _header():
     '''Return file header.
     '''
-    name = 'pygmsh'
-    version = '0.1'
-    years = '2013'
-    author = 'Nico Schlömer'
-    author_email = 'nico.schloemer@gmail.com'
-    website = 'https://github.com/nschloe/python4gmsh'
-    header = ['// This file was created by %s v%s.' % (name, version),
-              '// Copyright (c) %s, %s <%s>' % (years, author, author_email),
-              '// All rights reserved.',
-              '//',
-              '// The latest updates can be retrieved from',
-              '//     %s' % website,
-              '// where you can also make suggestions ',
-              '// and help improve %s.' % name,
-              '//',
-              ]
+    header = '// This code was created by %s v%s.' % (__name__, __version__)
     return header
 
-_GMSH_CODE = _header()
+_GMSH_CODE = [_header()]
 
 
 def get_code():
