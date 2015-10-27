@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import python4gmsh as p4g
+
+import pygmsh as pg
 
 import numpy as np
 
@@ -19,14 +20,14 @@ def _main():
         [0.1,   0.1, 0.0]
         ])
 
-    poly = p4g.add_polygon(X, lcar=0.05)
+    poly = pg.add_polygon(X, lcar=0.05)
 
     axis = [0, 0, 1]
-    # p4g.Extrude('Surface{%s}' % poly,
+    # pg.Extrude('Surface{%s}' % poly,
     #             translation_axis = axis
     #             )
 
-    p4g.Extrude(
+    pg.Extrude(
             'Surface{%s}' % poly,
             translation_axis=axis,
             rotation_axis=axis,
@@ -34,7 +35,7 @@ def _main():
             angle=1.0 / 6.0 * np.pi
             )
 
-    print(p4g.get_code())
+    print(pg.get_code())
     return
 
 
