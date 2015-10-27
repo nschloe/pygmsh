@@ -14,11 +14,7 @@ The goal PyGmsh is to combine the power of Gmsh with the versatility of
 Python and to provide useful abstractions from the Gmsh scripting language
 so you can create create complex geometries even more easily.
 
-<p align="center">
-  <a href="https://github.com/nschloe/pygmsh">
-    <img height="257" src="https://nschloe.github.io/pygmsh/screw.png">
-  </a>
-</p>
+![](https://nschloe.github.io/pygmsh/screw.png)
 
 To create the above mesh, simply do
 ```python
