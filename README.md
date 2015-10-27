@@ -12,3 +12,7 @@ The basic idea is to write a set of functions which automatically create a .geo-
 The folder examples/ contains scripts that showcase some of the methods.
 
 This is very much work in progress; your mileage may vary.
+
+### License
+
+PyGmsh is published under the [MIT license](https://en.wikipedia.org/wiki/MIT_License).
