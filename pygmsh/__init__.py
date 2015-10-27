@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-from basic import *
-from extra import *
+from pygmsh.basic import *
+from pygmsh.extra import *
 
 __all__ = [
         'basic',
