@@ -5,10 +5,8 @@ This module contains some convenience functions for building simple geometric
 objects with Gmsh.
 '''
 
+from pygmsh.basic import *
 import numpy
-from basic import Point, Line, LineLoop, PlaneSurface, Comment, Circle, \
-    CompoundLine, RuledSurface, Volume, PhysicalVolume, SurfaceLoop, Array, \
-    Extrude, CompoundVolume
 
 
 def rotation_matrix(u, theta):
@@ -272,7 +270,7 @@ def add_torus(irad, orad,
     # Now build surface loop and volume.
     all_surfaces = [name + '[1]' for name in all_names]
 
-    #compound_surface = CompoundSurface(all_surfaces)
+    # compound_surface = CompoundSurface(all_surfaces)
 
     surface_loop = SurfaceLoop(all_surfaces)
     vol = Volume(surface_loop)
@@ -373,7 +371,7 @@ def add_pipe(outer_radius, inner_radius, length,
     previous = e
     angle = '2*Pi/3'
     all_names = []
-    #com = []
+    # com = []
     Comment('Extrude in 3 steps.')
     for i in range(3):
         Comment('Step %s' % (i+1))
@@ -384,17 +382,17 @@ def add_pipe(outer_radius, inner_radius, length,
                            point_on_axis=point_on_rot_axis,
                            angle=angle
                            )
-            #if k==0:
-            #    com.append(name+'[1]')
-            #else:
-            #    all_names.append(name+'[1]')
+            # if k==0:
+            #     com.append(name+'[1]')
+            # else:
+            #     all_names.append(name+'[1]')
             all_names.append(name+'[1]')
             previous[k] = name + '[0]'
     #
-    #cs = CompoundSurface(com)
+    # cs = CompoundSurface(com)
     # Now just add surface loop and volume.
     all_surfaces = all_names
-    #all_surfaces = all_names + [cs]
+    # all_surfaces = all_names + [cs]
     surface_loop = SurfaceLoop(all_surfaces)
     vol = Volume(surface_loop)
     if label:
