@@ -1,10 +1,10 @@
 .. PyGmsh documentation master file, created by
-   sphinx-quickstart on Tue Mar  4 15:40:57 2014.
+   sphinx-quickstart on Tue Oct 27 19:56:53 2015.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
 Welcome to PyGmsh's documentation!
-=======================================
+==================================
 
 Contents:
 
@@ -12,7 +12,7 @@ Contents:
    :maxdepth: 2
 
 :mod:`PyGmsh.basic`
-========================
+===================
 
 .. automodule:: pygmsh.basic
     :members:
@@ -20,7 +20,7 @@ Contents:
     :show-inheritance:
 
 :mod:`PyGmsh.extra`
-========================
+-==================
 
 .. automodule:: pygmsh.extra
     :members:
