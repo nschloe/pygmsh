@@ -6,10 +6,8 @@ import numpy as np
 
 
 def generate():
-    '''Screw
-    '''
-    # Form a cross.
-    X = np.array([
+    # Draw a cross.
+    poly = pg.add_polygon([
         [0.0,   0.5, 0.0],
         [-0.1,  0.1, 0.0],
         [-0.5,  0.0, 0.0],
@@ -18,22 +16,19 @@ def generate():
         [0.1,  -0.1, 0.0],
         [0.5,   0.0, 0.0],
         [0.1,   0.1, 0.0]
-        ])
-
-    poly = pg.add_polygon(X, lcar=0.05)
+        ],
+        lcar=0.05
+        )
 
     axis = [0, 0, 1]
-    # pg.Extrude('Surface{%s}' % poly,
-    #             translation_axis = axis
-    #             )
 
     pg.Extrude(
-            'Surface{%s}' % poly,
-            translation_axis=axis,
-            rotation_axis=axis,
-            point_on_axis=[0, 0, 0],
-            angle=1.0 / 6.0 * np.pi
-            )
+        'Surface{%s}' % poly,
+        translation_axis=axis,
+        rotation_axis=axis,
+        point_on_axis=[0, 0, 0],
+        angle=2.0 / 6.0 * np.pi
+        )
 
     return pg.get_code()
 
