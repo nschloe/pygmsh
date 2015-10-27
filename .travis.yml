@@ -1,0 +1,34 @@
+#sudo: false
+sudo: required
+dist: trusty
+
+language: python
+
+python:
+    - "2.7"
+    - "3.4"
+
+virtualenv:
+  system_site_packages: true
+
+# install dependencies
+addons:
+  apt:
+    packages:
+      - gmsh
+      - python-numpy
+      - python3-numpy
+
+install:
+  - pip install -r requirements.txt
+  - pip install coveralls
+  # Alternative: setup.py install.
+  # Using pip makes sure that the package is pip-compatible, too.
+  - pip install .
+
+# run tests
+script:
+  - nosetests --with-coverage --cover-package=pygmsh
+
+after_success:
+  - coveralls
