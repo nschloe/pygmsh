@@ -12,7 +12,7 @@ scripting language is notoriously hard to write.
 
 The goal PyGmsh is to combine the power of Gmsh with the versatility of
 Python and to provide useful abstractions from the Gmsh scripting language
-so you can create create complex geometries even more easily.
+so you can create complex geometries even more easily.
 
 ![](https://nschloe.github.io/pygmsh/screw.png)
 
