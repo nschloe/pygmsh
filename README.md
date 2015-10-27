@@ -1,5 +1,6 @@
 # PyGmsh
 
+[![Build Status](https://travis-ci.org/nschloe/pygmsh.svg)](https://travis-ci.org/nschloe/pygmsh)
 [![Code Health](https://landscape.io/github/nschloe/pygmsh/master/landscape.png)](https://landscape.io/github/nschloe/pygmsh/master)
 [![Documentation Status](https://readthedocs.org/projects/pygmsh/badge/?version=latest)](https://readthedocs.org/projects/pygmsh/?badge=latest)
 
