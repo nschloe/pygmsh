@@ -2,8 +2,8 @@
 
 [![Build Status](https://travis-ci.org/nschloe/pygmsh.svg)](https://travis-ci.org/nschloe/pygmsh)
 [![Code Health](https://landscape.io/github/nschloe/pygmsh/master/landscape.png)](https://landscape.io/github/nschloe/pygmsh/master)
+[![Coverage Status](https://coveralls.io/repos/nschloe/pygmsh/badge.svg?branch=master&service=github)](https://coveralls.io/github/nschloe/pygmsh?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/pygmsh/badge/?version=latest)](https://readthedocs.org/projects/pygmsh/?badge=latest)
-
 
 Python interface for Gmsh.
 
