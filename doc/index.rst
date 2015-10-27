@@ -19,8 +19,9 @@ Contents:
     :undoc-members:
     :show-inheritance:
 
+
 :mod:`PyGmsh.extra`
--==================
+===================
 
 .. automodule:: pygmsh.extra
     :members:
