@@ -8,7 +8,7 @@
 [![PyPi Downloads](https://img.shields.io/pypi/dm/pygmsh.svg)](https://pypi.python.org/pypi/pygmsh)
 
 [Gmsh](http://geuz.org/gmsh/) is powerful mesh generation tool and its
-scripting language is noriuously hard to write.
+scripting language is notoriously hard to write.
 
 The goal PyGmsh is to combine the power of Gmsh with the versatility of
 Python and to provide useful abstractions from the Gmsh scripting language
@@ -23,6 +23,7 @@ so you can create create complex geometries even more easily.
 To create the above mesh, simply do
 ```python
 import pygmsh as pg
+import numpy as np
 
 # Draw a cross.
 poly = pg.add_polygon([
