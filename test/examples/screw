@@ -1,11 +1,11 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import pygmsh as pg
-
 import numpy as np
 
 
-def _main():
+def generate():
     '''Screw
     '''
     # Form a cross.
@@ -35,9 +35,8 @@ def _main():
             angle=1.0 / 6.0 * np.pi
             )
 
-    print(pg.get_code())
-    return
+    return pg.get_code()
 
 
 if __name__ == '__main__':
-    _main()
+    print(generate())
