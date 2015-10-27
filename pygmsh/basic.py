@@ -59,7 +59,7 @@ _FIELD_ID = 0
 def _header():
     '''Return file header.
     '''
-    name = 'python4gmsh'
+    name = 'pygmsh'
     version = '0.1'
     years = '2013'
     author = 'Nico Schlömer'

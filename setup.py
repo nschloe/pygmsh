@@ -3,20 +3,21 @@ import os
 from distutils.core import setup
 import codecs
 
+from pygmsh import __name__, __version__, __author__, __author_email__
 
 def read(fname):
     return codecs.open(os.path.join(os.path.dirname(__file__), fname),
                        encoding='utf-8'
                        ).read()
 
-setup(name='python4gmsh',
-      packages=['python4gmsh'],
-      version='0.1.0',
+setup(name=__name__,
+      packages=['pygmsh'],
+      version=__version__,
       description='Python frontend for Gmsh',
       long_description=read('README.md'),
-      author='Nico Schlömer',
-      author_email='nico.schloemer@gmail.com',
-      url='https://github.com/nschloe/python4gmsh/',
+      author=__author__,
+      author_email=__author_email__,
+      url='https://github.com/nschloe/pygmsh/',
       classifiers=[
           'Development Status :: 3 - Alpha',
           'Intended Audience :: Science/Research',

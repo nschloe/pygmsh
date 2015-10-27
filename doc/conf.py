@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# python4gmsh documentation build configuration file, created by
+# pygmsh documentation build configuration file, created by
 # sphinx-quickstart on Tue Mar  4 15:40:57 2014.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -38,7 +38,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'python4gmsh'
+project = u'PyGmsh'
 copyright = u'2014, Nico Schlömer'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -162,7 +162,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'python4gmshdoc'
+htmlhelp_basename = 'PyGmshdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -181,7 +181,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'python4gmsh.tex', u'python4gmsh Documentation',
+  ('index', 'pygmsh.tex', u'PyGmsh Documentation',
    u'Nico Schlömer', 'manual'),
 ]
 
@@ -211,7 +211,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'python4gmsh', u'python4gmsh Documentation',
+    ('index', 'PyGmsh', u'PyGmsh Documentation',
      [u'Nico Schlömer'], 1)
 ]
 
@@ -225,8 +225,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'python4gmsh', u'python4gmsh Documentation',
-   u'Nico Schlömer', 'python4gmsh', 'One line description of project.',
+  ('index', 'PyGmsh', u'PyGmsh Documentation',
+   u'Nico Schlömer', 'PyGmsh', 'One line description of project.',
    'Miscellaneous'),
 ]
 
