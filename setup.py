@@ -18,10 +18,11 @@ setup(name=__name__,
       author=__author__,
       author_email=__author_email__,
       url='https://github.com/nschloe/pygmsh/',
+      license='License :: OSI Approved :: MIT License',
       classifiers=[
           'Development Status :: 3 - Alpha',
           'Intended Audience :: Science/Research',
-          'License :: OSI Approved :: BSD License',
+          'License :: OSI Approved :: MIT License',
           'Operating System :: OS Independent',
           'Programming Language :: Python',
           'Topic :: Scientific/Engineering :: Mathematics'
