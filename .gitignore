@@ -1,3 +1,7 @@
 *.pyc
 *.geo
 *.msh
+README.rst
+build/
+dist/
+pygmsh.egg-info/
