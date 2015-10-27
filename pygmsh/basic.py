@@ -237,11 +237,11 @@ def Extrude(entity,
     if translation_axis is not None and rotation_axis is not None:
         _GMSH_CODE.append(('%s[] = Extrude{{%s,%s,%s}, '
                            '{%s,%s,%s}, {%s,%s,%s}, %s}{%s;};')
-                          % ((name,)
-                             + tuple(translation_axis)
-                             + tuple(rotation_axis)
-                             + tuple(point_on_axis)
-                             + (angle, entity))
+                          % ((name,) +
+                             tuple(translation_axis) +
+                             tuple(rotation_axis) +
+                             tuple(point_on_axis) +
+                             (angle, entity))
                           )
 
     elif translation_axis is not None:
@@ -251,10 +251,10 @@ def Extrude(entity,
     elif rotation_axis is not None:
         # Only rotation
         _GMSH_CODE.append('%s[] = Extrude{{%s,%s,%s}, {%s,%s,%s}, %s}{%s;};'
-                          % ((name,)
-                             + tuple(rotation_axis)
-                             + tuple(point_on_axis)
-                             + (angle, entity))
+                          % ((name,) +
+                             tuple(rotation_axis) +
+                             tuple(point_on_axis) +
+                             (angle, entity))
                           )
 
     else:
@@ -274,7 +274,7 @@ def BoundaryLayer(edges_list=None,
                   ):
     '''Add boundary layer.
     '''
-    # Don't use [] as default argument,cf.
+    # Don't use [] as default argument, cf.
     # <http://stackoverflow.com/a/113198/353337>
     if edges_list is None:
         edges_list = []
