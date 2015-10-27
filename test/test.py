@@ -16,11 +16,18 @@ def test_generator():
 
 
 def check_output(test, name):
-    handle, tmp_base = tempfile.mkstemp(prefix=name)
-    with open(handle, 'w') as f:
-        f.write(test.generate())
+    handle, filename = tempfile.mkstemp(
+        prefix=name,
+        suffix='.geo'
+        )
+    print(filename)
+
+    with os.fdopen(handle, 'w') as h:
+        h.write(test.generate())
 
     gmsh_out = subprocess.check_output(
-        ['gmsh', '-3', handle],
+        ['gmsh', '-3', filename],
         stderr=subprocess.STDOUT
         )
+
+    return

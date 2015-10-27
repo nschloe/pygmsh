@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
 __all__ = [
-  'pipe-with-rings',
+  'pipe_with_rings',
   'screw',
-  'swiss-cheese',
-  'torus-crowd'
+  'swiss_cheese',
+  'torus_crowd'
   ]
