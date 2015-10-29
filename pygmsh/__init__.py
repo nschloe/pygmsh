@@ -8,9 +8,11 @@ __website__ = 'https://github.com/nschloe/pygmsh'
 from pygmsh.basic import *
 from pygmsh.extra import *
 from pygmsh.reader import read
+from pygmsh.writer import write
 
 __all__ = [
         'basic',
         'extra',
-        'reader'
+        'reader',
+        'writer'
         ]
