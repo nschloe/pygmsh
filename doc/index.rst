@@ -11,19 +11,19 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-:mod:`PyGmsh.basic`
-===================
+:mod:`pygmsh.geometry`
+=====================
 
-.. automodule:: pygmsh.basic
+.. automodule:: pygmsh.geometry
     :members:
     :undoc-members:
     :show-inheritance:
 
 
-:mod:`PyGmsh.extra`
-===================
+:mod:`pygmsh.helper`
+=====================
 
-.. automodule:: pygmsh.extra
+.. automodule:: pygmsh.helper
     :members:
     :undoc-members:
     :show-inheritance:
