@@ -5,14 +5,14 @@ __author__ = 'Nico Schlömer'
 __author_email__ = 'nico.schloemer@gmail.com'
 __website__ = 'https://github.com/nschloe/pygmsh'
 
-from pygmsh.basic import *
-from pygmsh.extra import *
+from pygmsh.geometry import Geometry
+from pygmsh.helper import *
 from pygmsh.reader import read
 from pygmsh.writer import write
 
 __all__ = [
-        'basic',
-        'extra',
+        'geometry',
+        'helper',
         'reader',
         'writer'
         ]
