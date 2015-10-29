@@ -21,8 +21,10 @@ To create the above mesh, simply do
 import pygmsh as pg
 import numpy as np
 
+geom = pg.Geometry()
+
 # Draw a cross.
-poly = pg.add_polygon([
+poly = geom.add_polygon([
     [0.0,   0.5, 0.0],
     [-0.1,  0.1, 0.0],
     [-0.5,  0.0, 0.0],
@@ -37,7 +39,7 @@ poly = pg.add_polygon([
 
 axis = [0, 0, 1]
 
-pg.Extrude(
+geom.extrude(
     'Surface{%s}' % poly,
     translation_axis=axis,
     rotation_axis=axis,
@@ -45,16 +47,23 @@ pg.Extrude(
     angle=2.0 / 6.0 * np.pi
     )
 
-print(pg.get_code())
+print(geom.get_code())
 ```
 and write the output to a file, e.g., `screw.geo`. Then use Gmsh to generate
-the mesh
+the mesh `screw.msh`,
 ```bash
-$ gmsh -3 screw.geo
+gmsh -3 screw.geo
 ```
-
-You will find this example in the directory `test/examples/` along with other
+You will find this case in the directory `test/examples/` along with other
 small examples.
+
+To convert from Gmsh's mesh format to other, more common formats (VTK, VTU,
+Exodus), PyGmsh provides the script `pygmesh-convert`. Converting is as easy as
+```
+pygmesh-convert screw.msh screw.vtu
+```
+The output file can be visualized with various tools, e.g.,
+[ParaView](http://www.paraview.org/).
 
 ### Installation
 
@@ -118,14 +127,14 @@ To create a new release
 
 2. create a Git tag,
     ```
-    $ git tag -a v0.3.1
-    $ git push --tags
+    git tag -a v0.3.1
+    git push --tags
     ```
     and
 
 3. upload to PyPi:
     ```
-    $ make upload
+    make upload
     ```
 
 
