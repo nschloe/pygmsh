@@ -26,12 +26,11 @@ def check_output(test, name):
     os.close(handle)
 
     print(filename)
-    assert(False)
 
-    #gmsh_out = subprocess.check_output(
-    #    ['gmsh', '-3', filename],
-    #    stderr=subprocess.STDOUT
-    #    )
+    gmsh_out = subprocess.check_output(
+        ['gmsh', '-3', filename],
+        stderr=subprocess.STDOUT
+        )
 
     return
 
