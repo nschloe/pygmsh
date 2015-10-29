@@ -35,7 +35,7 @@ class Geometry(object):
         self._ARRAY_ID = 0
         self._FIELD_ID = 0
         self._GMSH_CODE = [
-                _header()
+                self._header()
                 ]
         return
 
@@ -81,7 +81,9 @@ class Geometry(object):
             )
         return name
 
-    def add_circle(self, point_ids):
+    def add_circle_sector(self, point_ids):
+        '''This is Gmsh's Circle.
+        '''
         self._CIRCLE_ID += 1
         name = 'c%d' % self._CIRCLE_ID
         self._GMSH_CODE.append('%s = newl;' % name)
@@ -191,14 +193,12 @@ class Geometry(object):
         # out[] = Extrude{0,1,0}{ Line{1}; };
         name = 'ex%d' % self._EXTRUDE_ID
         if translation_axis is not None and rotation_axis is not None:
-            _GMSH_CODE.append(('%s[] = Extrude{{%s,%s,%s}, '
-                               '{%s,%s,%s}, {%s,%s,%s}, %s}{%s;};')
-                              % ((name,) +
-                                 tuple(translation_axis) +
-                                 tuple(rotation_axis) +
-                                 tuple(point_on_axis) +
-                                 (angle, entity))
-                              )
+            self._GMSH_CODE.append(
+                    ('%s[] = Extrude{{%s,%s,%s}, '
+                     '{%s,%s,%s}, {%s,%s,%s}, %s}{%s;};') %
+                    ((name,) + tuple(translation_axis) + tuple(rotation_axis) +
+                     tuple(point_on_axis) + (angle, entity))
+                    )
 
         elif translation_axis is not None:
             # Only translation
@@ -274,7 +274,7 @@ class Geometry(object):
                 )
         return name
 
-    def array(self, entities):
+    def add_array(self, entities):
         '''Forms a Gmsh array from a list of entities.
         '''
         self._ARRAY_ID += 1
@@ -332,11 +332,13 @@ class Geometry(object):
         X = [[0.0, 0.0, 0.0]]
         if num_sections == 4:
             # For accuracy, the points are provided explicitly.
-            X = [[0.0, 0.0,     0.0],
-                 [0.0, radius,  0.0],
-                 [0.0, 0.0,     radius],
-                 [0.0, -radius, 0.0],
-                 [0.0, 0.0,     -radius]]
+            X = [
+                [0.0, 0.0,     0.0],
+                [0.0, radius,  0.0],
+                [0.0, 0.0,     radius],
+                [0.0, -radius, 0.0],
+                [0.0, 0.0,     -radius]
+                ]
         else:
             for k in range(num_sections):
                 alpha = 2*numpy.pi * k / num_sections
@@ -357,9 +359,9 @@ class Geometry(object):
         self.add_comment('Circle arcs')
         c = []
         for k in range(1, len(p)-1):
-            c.append(self.add_circle([p[k], p[0], p[k+1]]))
+            c.append(self.add_circle_sector([p[k], p[0], p[k+1]]))
         # Don't forget the closing arc.
-        c.append(self.add_circle([p[-1], p[0], p[1]]))
+        c.append(self.add_circle_sector([p[-1], p[0], p[1]]))
         if compound:
             c = [self.add_compound_line(c)]
         return c
@@ -389,18 +391,18 @@ class Geometry(object):
             self.add_point([x0[0],        x0[1],        x0[2]-radius], lcar=l)
             ]
         # Add ball skeleton.
-        c = [self.add_circle([p[1], p[0], p[6]]),
-             self.add_circle([p[6], p[0], p[4]]),
-             self.add_circle([p[4], p[0], p[3]]),
-             self.add_circle([p[3], p[0], p[1]]),
-             self.add_circle([p[1], p[0], p[2]]),
-             self.add_circle([p[2], p[0], p[4]]),
-             self.add_circle([p[4], p[0], p[5]]),
-             self.add_circle([p[5], p[0], p[1]]),
-             self.add_circle([p[6], p[0], p[2]]),
-             self.add_circle([p[2], p[0], p[3]]),
-             self.add_circle([p[3], p[0], p[5]]),
-             self.add_circle([p[5], p[0], p[6]])
+        c = [self.add_circle_sector([p[1], p[0], p[6]]),
+             self.add_circle_sector([p[6], p[0], p[4]]),
+             self.add_circle_sector([p[4], p[0], p[3]]),
+             self.add_circle_sector([p[3], p[0], p[1]]),
+             self.add_circle_sector([p[1], p[0], p[2]]),
+             self.add_circle_sector([p[2], p[0], p[4]]),
+             self.add_circle_sector([p[4], p[0], p[5]]),
+             self.add_circle_sector([p[5], p[0], p[1]]),
+             self.add_circle_sector([p[6], p[0], p[2]]),
+             self.add_circle_sector([p[2], p[0], p[3]]),
+             self.add_circle_sector([p[3], p[0], p[5]]),
+             self.add_circle_sector([p[5], p[0], p[6]])
              ]
         # Add surfaces (1/8th of the ball surface).
         ll = [self.add_line_loop([c[4],      c[9],     c[3]]),
@@ -532,7 +534,7 @@ class Geometry(object):
             for k in range(len(previous)):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
                 # ...
-                tmp_name = Extrude(
+                tmp_name = self.extrude(
                     'Line{%s}' % previous[k],
                     rotation_axis=rot_axis,
                     point_on_axis=point_on_rot_axis,
@@ -546,67 +548,68 @@ class Geometry(object):
 
         # compound_surface = CompoundSurface(all_surfaces)
 
-        surface_loop = SurfaceLoop(all_surfaces)
-        vol = Volume(surface_loop)
+        surface_loop = self.add_surface_loop(all_surfaces)
+        vol = self.add_volume(surface_loop)
         if label:
-            PhysicalVolume(vol, label)
+            self.add_physical_volume(vol, label)
         self.add_comment(76*'-')
         return
 
+    def add_torus2(
+            self,
+            irad, orad,
+            lcar,
+            R=numpy.eye(3),
+            x0=numpy.array([0.0, 0.0, 0.0]),
+            label=None
+            ):
+        '''Create Gmsh code for the torus under the coordinate transformation
 
-def add_torus2(irad, orad,
-               lcar,
-               R=numpy.eye(3),
-               x0=numpy.array([0.0, 0.0, 0.0]),
-               label=None
-               ):
-    '''Create Gmsh code for the torus under the coordinate transformation
+        .. math::
+            \hat{x} = R x + x_0.
 
-    .. math::
-        \hat{x} = R x + x_0.
+        :param irad: inner radius of the torus
+        :param orad: outer radius of the torus
+        '''
+        self.add_comment(76*'-')
+        self.add_comment('Torus')
 
-    :param irad: inner radius of the torus
-    :param orad: outer radius of the torus
-    '''
-    self.add_comment(76*'-')
-    self.add_comment('Torus')
+        # Add circle
+        x0t = numpy.dot(R, numpy.array([0.0, orad, 0.0]))
+        c = self.add_circle(irad, lcar, R=R, x0=x0+x0t)
+        ll = self.add_line_loop(c)
+        s = self.add_plane_surface(ll)
 
-    # Add circle
-    x0t = numpy.dot(R, numpy.array([0.0, orad, 0.0]))
-    c = self.add_circle(irad, lcar, R=R, x0=x0+x0t)
-    ll = self.add_line_loop(c)
-    s = self.add_plane_surface(ll)
+        rot_axis = [0.0, 0.0, 1.0]
+        rot_axis = numpy.dot(R, rot_axis)
+        point_on_rot_axis = [0.0, 0.0, 0.0]
+        point_on_rot_axis = numpy.dot(R, point_on_rot_axis) + x0
 
-    rot_axis = [0.0, 0.0, 1.0]
-    rot_axis = numpy.dot(R, rot_axis)
-    point_on_rot_axis = [0.0, 0.0, 0.0]
-    point_on_rot_axis = numpy.dot(R, point_on_rot_axis) + x0
+        # Form the torus by extruding the circle three times by 2/3*pi. This
+        # works around the inability of Gmsh to extrude by pi or more. The
+        # Extrude() macro returns an array; the first [0] entry in the array is
+        # the entity that has been extruded at the far end. This can be used
+        # for the following Extrude() step.  The second [1] entry of the array
+        # is the surface that was created by the extrusion.
+        previous = s
+        all_names = []
+        num_steps = 3
+        for _ in range(num_steps):
+            tmp_name = self.extrude(
+                'Surface{%s}' % previous,
+                rotation_axis=rot_axis,
+                point_on_axis=point_on_rot_axis,
+                angle='2*Pi/%d' % num_steps
+                )
+            previous = tmp_name + '[0]'
+            all_names.append(tmp_name)
 
-    # Form the torus by extruding the circle three times by 2/3*pi.
-    # This works around the inability of Gmsh to extrude by pi or more.  The
-    # Extrude() macro returns an array; the first [0] entry in the array is
-    # the entity that has been extruded at the far end. This can be used for
-    # the following Extrude() step.  The second [1] entry of the array is the
-    # surface that was created by the extrusion.
-    previous = s
-    all_names = []
-    num_steps = 3
-    for _ in range(num_steps):
-        tmp_name = self.extrude(
-            'Surface{%s}' % previous,
-            rotation_axis=rot_axis,
-            point_on_axis=point_on_rot_axis,
-            angle='2*Pi/%d' % num_steps
-            )
-        previous = tmp_name + '[0]'
-        all_names.append(tmp_name)
-
-    all_volumes = [name + '[1]' for name in all_names]
-    vol = self.add_compound_volume(all_volumes)
-    if label:
-        self.add_physical_volume(vol, label)
-    self.add_comment(76*'-')
-    return
+        all_volumes = [name + '[1]' for name in all_names]
+        vol = self.add_compound_volume(all_volumes)
+        if label:
+            self.add_physical_volume(vol, label)
+        self.add_comment(76*'-')
+        return
 
     def add_pipe(
             self,
@@ -670,44 +673,45 @@ def add_torus2(irad, orad,
         # Now just add surface loop and volume.
         all_surfaces = all_names
         # all_surfaces = all_names + [cs]
-        surface_loop = self.surface_loop(all_surfaces)
+        surface_loop = self.add_surface_loop(all_surfaces)
         vol = self.add_volume(surface_loop)
         if label:
             self.add_physical_volume(vol, label)
         return
 
+    def add_pipe2(
+            self,
+            outer_radius, inner_radius, length,
+            R=numpy.eye(3),
+            x0=numpy.array([0.0, 0.0, 0.0]),
+            label=None,
+            lcar=0.1
+            ):
+        '''Hollow cylinder.
+        Define a ring, extrude it by translation.
+        '''
+        # Define ring which to Extrude by translation.
+        c_inner = self.add_circle(
+                inner_radius,
+                lcar,
+                R=R,
+                x0=x0
+                )
+        ll_inner = self.add_line_loop(c_inner)
 
-def add_pipe2(
-        outer_radius, inner_radius, length,
-        R=numpy.eye(3),
-        x0=numpy.array([0.0, 0.0, 0.0]),
-        label=None,
-        lcar=0.1
-        ):
-    '''Hollow cylinder.
-    Define a ring, extrude it by translation.
-    '''
-    # Define ring which to Extrude by translation.
-    c_inner = self.add_circle(
-            inner_radius, lcar,
-            R=R,
-            x0=x0
-            )
-    ll_inner = self.add_line_loop(c_inner)
+        c_outer = self.add_circle(
+                outer_radius, lcar, R=R, x0=x0
+                )
+        ll_outer = self.add_line_loop(c_outer)
 
-    c_outer = self.add_circle(
-            outer_radius, lcar, R=R, x0=x0
-            )
-    ll_outer = self.add_line_loop(c_outer)
+        surf = self.add_plane_surface(','.join([ll_outer, ll_inner]))
 
-    surf = self.add_plane_surface(','.join([ll_outer, ll_inner]))
-
-    # Now Extrude the ring surface.
-    name = self.extrude(
-            'Surface{%s}' % surf,
-            translation_axis=[length, 0, 0]
-            )
-    vol = name + '[0]'
-    if label:
-        self.add_physical_volume(vol, label)
-    return vol
+        # Now Extrude the ring surface.
+        name = self.extrude(
+                'Surface{%s}' % surf,
+                translation_axis=[length, 0, 0]
+                )
+        vol = name + '[0]'
+        if label:
+            self.add_physical_volume(vol, label)
+        return vol

@@ -1,5 +1,6 @@
 # -*- coding: utf8 -*-
 #
+import numpy
 
 
 def rotation_matrix(u, theta):
@@ -11,9 +12,11 @@ def rotation_matrix(u, theta):
     :param theta: rotation angle
     '''
     # Cross-product matrix.
-    cpm = numpy.array([[0.0,   -u[2],  u[1]],
-                      [u[2],    0.0, -u[0]],
-                      [-u[1],  u[0],  0.0]])
+    cpm = numpy.array([
+        [0.0,   -u[2],  u[1]],
+        [u[2],    0.0, -u[0]],
+        [-u[1],  u[0],  0.0]
+        ])
     c = numpy.cos(theta)
     s = numpy.sin(theta)
     R = numpy.eye(3) * c \

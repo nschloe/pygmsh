@@ -8,10 +8,11 @@ import numpy as np
 def generate():
     '''Pipe with double-ring enclosure, rotated in space.
     '''
+    geom = pg.Geometry()
 
     R = pg.rotation_matrix([1, 0, 0], np.pi/6.0)
 
-    pg.add_pipe(
+    geom.add_pipe(
             inner_radius=0.3,
             outer_radius=0.4,
             length=1.0,
@@ -20,20 +21,20 @@ def generate():
             )
 
     # x0 = np.array([0, 0, 0.3])
-    # pg.add_torus(
+    # geom.add_torus(
     #         irad=0.05, orad=0.6, lcar=0.1,
     #         R=R,
     #         x0=np.dot(R, x0)
     #         )
 
     # x0 = np.array([0, 0, -0.3])
-    # pg.add_torus(
+    # geom.add_torus(
     #         irad=0.05, orad=0.6, lcar=0.1,
     #         R=R,
     #         x0=np.dot(R, x0)
     #         )
 
-    return pg.get_code()
+    return geom.get_code()
 
 
 if __name__ == '__main__':

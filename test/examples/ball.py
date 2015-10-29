@@ -6,10 +6,11 @@ Creates a mesh for a ball.
 import pygmsh as pg
 
 def generate():
+    geom = pg.Geometry()
 
-    ball = pg.add_ball([0.0, 0.0, 0.0], 1.0, 0.05)
+    geom.add_ball([0.0, 0.0, 0.0], 1.0, 0.05)
 
-    return pg.get_code()
+    return geom.get_code()
 
 
 if __name__ == '__main__':
