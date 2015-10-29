@@ -158,26 +158,26 @@ def _read_vtk_mesh(reader, file_name):
     return reader.GetOutput()
 
 
-#def _read_exodus_mesh(reader, file_name):
-    #'''Uses a vtkExodusIIReader to return a vtkUnstructuredGrid.
-    #'''
-    #reader.SetFileName(file_name)
-
-    ## Create Exodus metadata that can be used later when writing the file.
-    #reader.ExodusModelMetadataOn()
-
-    ## Fetch metadata.
-    #reader.UpdateInformation()
-
-    ## Make sure the point fields are read during Update().
-    #for k in range(reader.GetNumberOfPointArrays()):
-        #arr_name = reader.GetPointArrayName(k)
-        #reader.SetPointArrayStatus(arr_name, 1)
-
-    ## Read the file.
-    #reader.Update()
-
-    #return reader.GetOutput()
+# def _read_exodus_mesh(reader, file_name):
+#     '''Uses a vtkExodusIIReader to return a vtkUnstructuredGrid.
+#     '''
+#     reader.SetFileName(file_name)
+#
+#     # Create Exodus metadata that can be used later when writing the file.
+#     reader.ExodusModelMetadataOn()
+#
+#     # Fetch metadata.
+#     reader.UpdateInformation()
+#
+#     # Make sure the point fields are read during Update().
+#     for k in range(reader.GetNumberOfPointArrays()):
+#         arr_name = reader.GetPointArrayName(k)
+#         reader.SetPointArrayStatus(arr_name, 1)
+#
+#     # Read the file.
+#     reader.Update()
+#
+#     return reader.GetOutput()
 
 
 def _read_exodusii_mesh(reader, timestep=None):

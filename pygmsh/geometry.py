@@ -7,7 +7,7 @@ assign an ID for every entity created) and providing access to Python's
 features.
 '''
 
-from pygmsh import __name__, __version__
+from pygmsh import __version__
 
 import numpy
 
@@ -42,8 +42,7 @@ class Geometry(object):
     def _header(self):
         '''Return file header.
         '''
-        header = '// This code was created by %s v%s.' % \
-            (__name__, __version__)
+        header = '// This code was created by PyGmsh v%s.' % __version__
         return header
 
     def get_code(self):
@@ -380,15 +379,15 @@ class Geometry(object):
             holes = []
 
         # Add points.
-        l = lcar
+        a = lcar
         p = [
             self.add_point(x0, lcar=lcar),
-            self.add_point([x0[0]+radius, x0[1],        x0[2]],        lcar=l),
-            self.add_point([x0[0],        x0[1]+radius, x0[2]],        lcar=l),
-            self.add_point([x0[0],        x0[1],        x0[2]+radius], lcar=l),
-            self.add_point([x0[0]-radius, x0[1],        x0[2]],        lcar=l),
-            self.add_point([x0[0],        x0[1]-radius, x0[2]],        lcar=l),
-            self.add_point([x0[0],        x0[1],        x0[2]-radius], lcar=l)
+            self.add_point([x0[0]+radius, x0[1],        x0[2]],        lcar=a),
+            self.add_point([x0[0],        x0[1]+radius, x0[2]],        lcar=a),
+            self.add_point([x0[0],        x0[1],        x0[2]+radius], lcar=a),
+            self.add_point([x0[0]-radius, x0[1],        x0[2]],        lcar=a),
+            self.add_point([x0[0],        x0[1]-radius, x0[2]],        lcar=a),
+            self.add_point([x0[0],        x0[1],        x0[2]-radius], lcar=a)
             ]
         # Add ball skeleton.
         c = [self.add_circle_sector([p[1], p[0], p[6]]),
