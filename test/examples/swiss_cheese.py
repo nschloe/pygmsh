@@ -7,6 +7,8 @@ import numpy as np
 
 def generate():
 
+    geom = pg.Geometry()
+
     X0 = np.array([
         [0.0,   0.0, 0.0],
         [0.5,   0.3, 0.1],
@@ -18,10 +20,10 @@ def generate():
 
     holes = []
     for x0, r in zip(X0, R):
-        vol, sl = pg.add_ball(x0, r, with_volume=False, lcar=0.2*r)
+        vol, sl = geom.add_ball(x0, r, with_volume=False, lcar=0.2*r)
         holes.append(sl)
 
-    # pg.add_box(
+    # geom.add_box(
     #         -1, 1,
     #         -1, 1,
     #         -1, 1,
@@ -29,13 +31,13 @@ def generate():
     #         holes=holes
     #         )
 
-    pg.add_ball(
+    geom.add_ball(
             [0, 0, 0], 1.0,
             lcar=0.2,
             holes=holes
             )
 
-    return pg.get_code()
+    return geom.get_code()
 
 
 if __name__ == '__main__':

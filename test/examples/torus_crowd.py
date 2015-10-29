@@ -7,6 +7,8 @@ import numpy as np
 
 def generate():
 
+    geom = pg.Geometry()
+
     # internal radius of torus
     irad = 0.15
     # external radius of torus
@@ -46,7 +48,7 @@ def generate():
         #
         #    xnew = R2*(R1*x+x0) + x1
         #
-        pg.add_torus(
+        geom.add_torus(
                 irad=irad,
                 orad=orad,
                 lcar=0.1,
@@ -54,14 +56,14 @@ def generate():
                 x0=np.dot(R2, x0) + x1
                 )
 
-    pg.add_box(
+    geom.add_box(
             -1.0, 1.0,
             -1.0, 1.0,
             -1.0, 1.0,
             lcar=0.3
             )
 
-    return pg.get_code()
+    return geom.get_code()
 
 
 if __name__ == '__main__':

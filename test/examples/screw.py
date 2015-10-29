@@ -5,9 +5,12 @@ import pygmsh as pg
 import numpy as np
 
 
-def generate():
+def generate(lcar=0.05):
+
+    geom = pg.Geometry()
+
     # Draw a cross.
-    poly = pg.add_polygon([
+    poly = geom.add_polygon([
         [0.0,   0.5, 0.0],
         [-0.1,  0.1, 0.0],
         [-0.5,  0.0, 0.0],
@@ -17,12 +20,12 @@ def generate():
         [0.5,   0.0, 0.0],
         [0.1,   0.1, 0.0]
         ],
-        lcar=0.05
+        lcar=lcar
         )
 
     axis = [0, 0, 1]
 
-    pg.Extrude(
+    geom.extrude(
         'Surface{%s}' % poly,
         translation_axis=axis,
         rotation_axis=axis,
@@ -30,7 +33,7 @@ def generate():
         angle=2.0 / 6.0 * np.pi
         )
 
-    return pg.get_code()
+    return geom.get_code()
 
 
 if __name__ == '__main__':

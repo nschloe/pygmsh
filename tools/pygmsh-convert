@@ -1,0 +1,57 @@
+#! /usr/bin/env python
+'''
+Convert a mesh file to another.
+'''
+import pygmsh
+
+import numpy as np
+
+
+def _main():
+    # Parse command line arguments.
+    args = _parse_options()
+
+    # read mesh data
+    points, cells, field_data, point_data = \
+        pygmsh.read(args.infile, timestep=args.timesteps)
+
+    # write it out
+    pygmsh.write(args.outfile, points, cells)
+
+    return
+
+
+def _parse_options():
+    '''Parse input options.'''
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description='Convert mesh formats (msh, vtk, vtu, exudus, ...).'
+        )
+
+    parser.add_argument(
+        'infile',
+        type=str,
+        help='mesh file to be read from'
+        )
+
+    parser.add_argument(
+        'outfile',
+        type=str,
+        help='mesh file to be written to'
+        )
+
+    parser.add_argument(
+        '--timesteps', '-t',
+        metavar='TIMESTEP',
+        type=int,
+        nargs='+',
+        default=None,
+        help='read a particular time step/range (default: all)'
+        )
+
+    return parser.parse_args()
+
+
+if __name__ == '__main__':
+    _main()
