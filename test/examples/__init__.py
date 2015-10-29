@@ -2,6 +2,7 @@
 #
 __all__ = [
   'ball',
+  'cube',
   'pipe_with_rings',
   'screw',
   'swiss_cheese',
