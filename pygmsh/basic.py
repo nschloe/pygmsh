@@ -40,7 +40,9 @@ _GMSH_CODE = [_header()]
 def get_code():
     '''Returns properly formatted Gmsh code.
     '''
-    return '\n'.join(_GMSH_CODE)
+    code = '\n'.join(_GMSH_CODE)
+    _GMSH_CODE = ''
+    return code
 
 
 def Point(x, lcar):

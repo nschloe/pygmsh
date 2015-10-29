@@ -5,7 +5,7 @@ import pygmsh as pg
 import numpy as np
 
 
-def generate():
+def generate(lcar=0.05):
     # Draw a cross.
     poly = pg.add_polygon([
         [0.0,   0.5, 0.0],
@@ -17,7 +17,7 @@ def generate():
         [0.5,   0.0, 0.0],
         [0.1,   0.1, 0.0]
         ],
-        lcar=0.05
+        lcar=lcar
         )
 
     axis = [0, 0, 1]

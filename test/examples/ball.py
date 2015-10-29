@@ -12,5 +12,5 @@ def generate():
     return pg.get_code()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     print(generate())
