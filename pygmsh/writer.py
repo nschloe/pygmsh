@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 #
+import h5py
 import numpy
 import os
 import re
@@ -22,7 +23,10 @@ def write(filename,
     '''
     extension = os.path.splitext(filename)[1]
 
-    if extension == '.msh':
+    if extension == '.h5m':
+        _write_h5m(filename, points, cells)
+        return
+    elif extension == '.msh':
         _write_gmsh(filename, points, cells)
         return
     else:
@@ -92,8 +96,34 @@ def _write_gmsh(filename, points, cells):
     raise NotImplementedError()
 
 
+def _write_h5m(filename, points, cells):
+    '''Writes H5M files, cf.
+    https://trac.mcs.anl.gov/projects/ITAPS/wiki/MOAB/h5m.
+    '''
+    f = h5py.File(filename, 'w')
+
+    tstt = f.create_group('tstt')
+
+    # add nodes
+    nodes = tstt.create_group('nodes')
+    coords = nodes.create_dataset('coordinates', data=points)
+
+    # add elements
+    elements = tstt.create_group('elements')
+
+    names = {
+        3: 'Tri3',
+        4: 'Tet4'
+        }
+    elem_group = elements.create_group(names[cells.shape[1]])
+    # h5m indices are off by 1
+    elements.create_dataset('connectivity', data=cells + 1)
+
+    return
+
+
 def _generate_vtk_mesh(points, cellsNodes):
-    from vtk import vtkUnstructuredGrid, VTK_TRIANGLE, VTK_TETRA, \
+    from vtk import vtkUnstructuredGrid, VTK_LINE, VTK_TRIANGLE, VTK_TETRA, \
         vtkIdList, vtkPoints
     mesh = vtkUnstructuredGrid()
 
@@ -106,7 +136,7 @@ def _generate_vtk_mesh(points, cellsNodes):
         for point in points:
             vtk_points.InsertNextPoint(point[0], point[1], point[2])
     else:
-        raise RuntimeError('???')
+        raise RuntimeError('len(point0) == ', len(points[0]))
     mesh.SetPoints(vtk_points)
 
     # set cells
@@ -118,12 +148,14 @@ def _generate_vtk_mesh(points, cellsNodes):
         for k, node_index in enumerate(cellNodes):
             pts.InsertId(k, node_index)
 
-        if num_local_nodes == 3:
+        if num_local_nodes == 2:
+            cell_type = VTK_LINE
+        elif num_local_nodes == 3:
             cell_type = VTK_TRIANGLE
         elif num_local_nodes == 4:
             cell_type = VTK_TETRA
         else:
-            raise RuntimeError('???')
+            raise RuntimeError('num_local_nodes: ', num_local_nodes)
 
         mesh.InsertNextCell(cell_type, pts)
     return mesh

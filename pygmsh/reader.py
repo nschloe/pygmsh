@@ -6,10 +6,12 @@ formats.
 
 .. moduleauthor:: Nico Schlömer <nico.schloemer@gmail.com>
 '''
+import h5py
 from itertools import islice
 import os
 import numpy
 import re
+
 
 def read(filenames, timestep=None):
     '''Reads an unstructured mesh with added data.
@@ -39,6 +41,11 @@ def read(filenames, timestep=None):
             # Gmsh file
             points, cells_nodes = _read_gmsh(filename)
             return points, cells_nodes, None, None
+        # setup the reader
+        elif extension == '.h5m':
+            # H5M file
+            points, cells = _read_h5m(filename)
+            return points, cells, None, None
         else:
             if extension == '.vtu':
                 from vtk import vtkXMLUnstructuredGridReader
@@ -146,6 +153,25 @@ def _read_gmsh(filename):
         cells = elems['triangles']
     else:
         raise RuntimeError('Expected at least triangles.')
+
+    return points, cells
+
+
+def _read_h5m(filename):
+    '''Reads H5M files, cf.
+    https://trac.mcs.anl.gov/projects/ITAPS/wiki/MOAB/h5m.
+    '''
+    f = h5py.File(filename, 'r')
+    dset = f['tstt']
+
+    points = dset['nodes']['coordinates']
+
+    if 'Tri3' in dset['elements'].keys():
+        cells = dset['elements']['Tri3']['connectivity'] - 1
+    elif 'Tet4' in dset['elements'].keys():
+        cells = dset['elements']['Tet4']['connectivity'] - 1
+    else:
+        raise RuntimeError('Need at Tets or Tris.')
 
     return points, cells
 
