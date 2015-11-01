@@ -100,24 +100,57 @@ def _write_h5m(filename, points, cells):
     '''Writes H5M files, cf.
     https://trac.mcs.anl.gov/projects/ITAPS/wiki/MOAB/h5m.
     '''
+
     f = h5py.File(filename, 'w')
 
     tstt = f.create_group('tstt')
 
+    # The base index for h5m is 1.
+    global_id = 1
+
     # add nodes
     nodes = tstt.create_group('nodes')
     coords = nodes.create_dataset('coordinates', data=points)
+    coords.attrs.create('start_id', global_id)
+    global_id += len(points)
 
     # add elements
     elements = tstt.create_group('elements')
 
-    names = {
-        3: 'Tri3',
-        4: 'Tet4'
-        }
-    elem_group = elements.create_group(names[cells.shape[1]])
+    elem_dt = h5py.special_dtype(
+        enum=('i', {
+            'Edge': 1,
+            'Tri': 2,
+            'Quad': 3,
+            'Polygon': 4,
+            'Tet': 5,
+            'Pyramid': 6,
+            'Prism': 7,
+            'Knife': 8,
+            'Hex': 9,
+            'Polyhedron': 10
+            })
+        )
+
+    # number of nodes to h5m name, element type
+    h5m_type = {
+            2: {'name': 'Edge2', 'type': 1},
+            3: {'name': 'Tri3', 'type': 2},
+            4: {'name': 'Tet4', 'type': 5}
+            }
+    this_type = h5m_type[cells.shape[1]]
+    elem_group = elements.create_group(this_type['name'])
+    elem_group.attrs.create('element_type', this_type['type'], dtype=elem_dt)
     # h5m indices are off by 1
-    elements.create_dataset('connectivity', data=cells + 1)
+    conn = elem_group.create_dataset('connectivity', data=(cells + 1))
+    conn.attrs.create('start_id', global_id)
+    global_id += len(cells)
+
+    # Add tags
+    tstt_tags = tstt.create_group('tags')
+
+    # set max_id
+    tstt.attrs.create('max_id', global_id, dtype='u8')
 
     return
 
