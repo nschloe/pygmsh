@@ -4,6 +4,8 @@ import h5py
 import numpy
 import os
 import re
+import vtk
+from vtk.util import numpy_support
 
 
 def write(filename,
@@ -157,21 +159,26 @@ def _write_h5m(filename, points, cells):
 
 def _generate_vtk_mesh(points, cellsNodes):
     from vtk import vtkUnstructuredGrid, VTK_LINE, VTK_TRIANGLE, VTK_TETRA, \
-        vtkIdList, vtkPoints
+        vtkIdList, vtkPoints, vtkDoubleArray, vtkCellArray
     mesh = vtkUnstructuredGrid()
 
     # set points
     vtk_points = vtkPoints()
-    if len(points[0]) == 2:
-        for point in points:
-            vtk_points.InsertNextPoint(point[0], point[1], 0.0)
-    elif len(points[0]) == 3:
-        for point in points:
-            vtk_points.InsertNextPoint(point[0], point[1], point[2])
-    else:
-        raise RuntimeError('len(point0) == ', len(points[0]))
+    # Not using a deep copy here results in a segfault.
+    vtk_array = numpy_support.numpy_to_vtk(points, deep=True)
+    vtk_points.SetData(vtk_array)
     mesh.SetPoints(vtk_points)
 
+    numnodes_to_type = {
+        2: VTK_LINE,
+        3: VTK_TRIANGLE,
+        4: VTK_TETRA
+        }
+
+    # TODO use numpy_support here, avoid the copying
+    print('set cells...')
+    cell_array = vtk.vtkCellArray()
+    print(cellsNodes - 1)
     # set cells
     for cellNodes in cellsNodes:
         pts = vtkIdList()
@@ -180,17 +187,15 @@ def _generate_vtk_mesh(points, cellsNodes):
         # Get the connectivity for this element.
         for k, node_index in enumerate(cellNodes):
             pts.InsertId(k, node_index)
+            # pts.InsertId(k, node_index - 1)
+        cell_array.InsertNextCell(pts)
 
-        if num_local_nodes == 2:
-            cell_type = VTK_LINE
-        elif num_local_nodes == 3:
-            cell_type = VTK_TRIANGLE
-        elif num_local_nodes == 4:
-            cell_type = VTK_TETRA
-        else:
-            raise RuntimeError('num_local_nodes: ', num_local_nodes)
+    mesh.SetCells(
+        # simply use the type of the last cell
+        numnodes_to_type[num_local_nodes],
+        cell_array
+        )
 
-        mesh.InsertNextCell(cell_type, pts)
     return mesh
 
 
