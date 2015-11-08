@@ -176,9 +176,7 @@ def _generate_vtk_mesh(points, cellsNodes):
         }
 
     # TODO use numpy_support here, avoid the copying
-    print('set cells...')
     cell_array = vtk.vtkCellArray()
-    print(cellsNodes - 1)
     # set cells
     for cellNodes in cellsNodes:
         pts = vtkIdList()
@@ -187,7 +185,6 @@ def _generate_vtk_mesh(points, cellsNodes):
         # Get the connectivity for this element.
         for k, node_index in enumerate(cellNodes):
             pts.InsertId(k, node_index)
-            # pts.InsertId(k, node_index - 1)
         cell_array.InsertNextCell(pts)
 
     mesh.SetCells(
