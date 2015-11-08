@@ -164,12 +164,13 @@ def _read_h5m(filename):
     f = h5py.File(filename, 'r')
     dset = f['tstt']
 
-    points = dset['nodes']['coordinates']
+    points = dset['nodes']['coordinates'][()]
 
+    # Note that the indices are off by 1 in h5m.
     if 'Tri3' in dset['elements'].keys():
-        cells = dset['elements']['Tri3']['connectivity']
+        cells = dset['elements']['Tri3']['connectivity'][()] - 1
     elif 'Tet4' in dset['elements'].keys():
-        cells = dset['elements']['Tet4']['connectivity']
+        cells = dset['elements']['Tet4']['connectivity'][()] - 1
     else:
         raise RuntimeError('Need at Tets or Tris.')
 
