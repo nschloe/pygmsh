@@ -158,6 +158,12 @@ def _read_gmsh(filename):
     return points, cells
 
 
+def int_to_bool_list(num):
+    # From <http://stackoverflow.com/a/33608387/353337>.
+    bin_string = format(num, '04b')
+    return [x == '1' for x in bin_string[::-1]]
+
+
 def _read_h5m(filename):
     '''Reads H5M files, cf.
     https://trac.mcs.anl.gov/projects/ITAPS/wiki/MOAB/h5m.
@@ -199,7 +205,7 @@ def _read_h5m(filename):
         cell_data[key] = numpy.empty(len(cells), dtype=int)
         end = 0
         for k, row in enumerate(sets_list):
-            bits = '{0:04b}'.format(row[3])
+            bits = int_to_bool_list(row[3])
             # is_owner = bits[3]
             # is_unique = bits[2]
             # is_ordered = bits[1]
@@ -217,7 +223,8 @@ def _read_h5m(filename):
                         # TODO deal with point data
                         raise RuntimeError('')
             else:
-                cell_data[key][sets_contents[end:row[0]]] = value[k]
+                gids = sets_contents[end:row[0]+1]
+                cell_data[key][gids - cell_start_gid] = value[k]
 
             end = row[0] + 1
 
