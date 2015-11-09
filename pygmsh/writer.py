@@ -54,8 +54,8 @@ def write(filename,
         # add cell data
         if cell_data:
             for key, value in cell_data.iteritems():
-                vtk_mesh.GetCellData() \
-                        .AddArray(_create_vtkarray(value, key))
+                cd = vtk_mesh.GetCellData()
+                cd.AddArray(_create_vtkarray(value, key))
 
         # add field data
         if field_data:
@@ -169,12 +169,6 @@ def _generate_vtk_mesh(points, cellsNodes):
     vtk_points.SetData(vtk_array)
     mesh.SetPoints(vtk_points)
 
-    numnodes_to_type = {
-        2: VTK_LINE,
-        3: VTK_TRIANGLE,
-        4: VTK_TETRA
-        }
-
     # TODO use numpy_support here, avoid the copying
     cell_array = vtk.vtkCellArray()
     # set cells
@@ -187,6 +181,11 @@ def _generate_vtk_mesh(points, cellsNodes):
             pts.InsertId(k, node_index)
         cell_array.InsertNextCell(pts)
 
+    numnodes_to_type = {
+        2: VTK_LINE,
+        3: VTK_TRIANGLE,
+        4: VTK_TETRA
+        }
     mesh.SetCells(
         # simply use the type of the last cell
         numnodes_to_type[num_local_nodes],

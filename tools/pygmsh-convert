@@ -12,11 +12,16 @@ def _main():
     args = _parse_options()
 
     # read mesh data
-    points, cells, field_data, point_data = \
+    points, cells, point_data, cell_data, field_data = \
         pygmsh.read(args.infile, timestep=args.timesteps)
 
     # write it out
-    pygmsh.write(args.outfile, points, cells)
+    pygmsh.write(
+        args.outfile, points, cells,
+        point_data=point_data,
+        cell_data=cell_data,
+        field_data=field_data
+        )
 
     return
 
