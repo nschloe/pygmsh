@@ -40,12 +40,12 @@ def read(filenames, timestep=None):
         if extension == '.msh':
             # Gmsh file
             points, cells_nodes = _read_gmsh(filename)
-            return points, cells_nodes, None, None
+            return points, cells_nodes, None, None, None
         # setup the reader
         elif extension == '.h5m':
             # H5M file
-            points, cells = _read_h5m(filename)
-            return points, cells, None, None
+            points, cells, point_data, cell_data = _read_h5m(filename)
+            return points, cells, point_data, cell_data, None
         else:
             if extension == '.vtu':
                 from vtk import vtkXMLUnstructuredGridReader
@@ -82,9 +82,10 @@ def read(filenames, timestep=None):
         points = _read_points(vtk_mesh)
         cells_nodes = _read_cells_nodes(vtk_mesh)
         point_data = _read_point_data(vtk_mesh)
+        cell_data = None
         field_data = _read_field_data(vtk_mesh)
 
-        return points, cells_nodes, point_data, field_data
+        return points, cells_nodes, point_data, cell_data, field_data
 
 
 def _read_gmsh(filename):
@@ -165,16 +166,62 @@ def _read_h5m(filename):
     dset = f['tstt']
 
     points = dset['nodes']['coordinates'][()]
+    # Assert that the GLOBAL_IDs are contiguous.
+    point_gids = dset['nodes']['tags']['GLOBAL_ID'][()]
+    point_start_gid = dset['nodes']['coordinates'].attrs['start_id']
+    point_end_gid = point_start_gid + len(point_gids) - 1
+    assert all(point_gids == range(point_start_gid, point_end_gid + 1))
 
     # Note that the indices are off by 1 in h5m.
-    if 'Tri3' in dset['elements'].keys():
-        cells = dset['elements']['Tri3']['connectivity'][()] - 1
-    elif 'Tet4' in dset['elements'].keys():
-        cells = dset['elements']['Tet4']['connectivity'][()] - 1
+    if 'Tri3' in dset['elements']:
+        elems = dset['elements']['Tri3']
+    elif 'Tet4' in dset['elements']:
+        elems = dset['elements']['Tet4']
     else:
-        raise RuntimeError('Need at Tets or Tris.')
+        raise RuntimeError('Need Tri3s or Tet4s.')
 
-    return points, cells
+    conn = elems['connectivity']
+    cells = conn[()] - 1
+    cell_start_gid = conn.attrs['start_id']
+    cell_gids = cell_start_gid + elems['tags']['GLOBAL_ID'][()]
+    cell_end_gid = cell_start_gid + len(cell_gids) - 1
+    assert all(cell_gids == range(cell_start_gid, cell_end_gid + 1))
+
+    # read sets
+    sets_contents = dset['sets']['contents'][()]
+    sets_list = dset['sets']['list'][()]
+    sets_tags = dset['sets']['tags']
+
+    # create the sets
+    point_data = {}
+    cell_data = {}
+    for key, value in sets_tags.items():
+        cell_data[key] = numpy.empty(len(cells), dtype=int)
+        end = 0
+        for k, row in enumerate(sets_list):
+            bits = '{0:04b}'.format(row[3])
+            # is_owner = bits[3]
+            # is_unique = bits[2]
+            # is_ordered = bits[1]
+            is_range_compressed = bits[0]
+            if is_range_compressed:
+                start_gids = sets_contents[end:row[0]+1:2]
+                lengths = sets_contents[end+1:row[0]+1:2]
+                for start_gid, length in zip(start_gids, lengths):
+                    end_gid = start_gid + length - 1
+                    if start_gid >= cell_start_gid and end_gid <= cell_end_gid:
+                        i0 = start_gid - cell_start_gid
+                        i1 = end_gid - cell_start_gid + 1
+                        cell_data[key][i0:i1] = value[k]
+                    else:
+                        # TODO deal with point data
+                        raise RuntimeError('')
+            else:
+                cell_data[key][sets_contents[end:row[0]]] = value[k]
+
+            end = row[0] + 1
+
+    return points, cells, point_data, cell_data
 
 
 def _read_vtk_mesh(reader, file_name):
