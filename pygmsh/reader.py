@@ -11,6 +11,7 @@ from itertools import islice
 import os
 import numpy
 import re
+import vtk
 
 
 def read(filenames, timestep=None):
@@ -82,7 +83,7 @@ def read(filenames, timestep=None):
         points = _read_points(vtk_mesh)
         cells_nodes = _read_cells_nodes(vtk_mesh)
         point_data = _read_point_data(vtk_mesh)
-        cell_data = None
+        cell_data = _read_cell_data(vtk_mesh)
         field_data = _read_field_data(vtk_mesh)
 
         return points, cells_nodes, point_data, cell_data, field_data
@@ -353,14 +354,23 @@ def _read_point_data(vtk_data):
     # Go through all arrays, fetch psi and A.
     out = {}
     for array in arrays:
-        # read the array
         array_name = array.GetName()
-        num_entries = array.GetNumberOfTuples()
-        num_components = array.GetNumberOfComponents()
-        out[array_name] = numpy.empty((num_entries, num_components))
-        for k in range(num_entries):
-            for i in range(num_components):
-                out[array_name][k][i] = array.GetComponent(k, i)
+        out[array_name] = vtk.util.numpy_support.vtk_to_numpy(array)
+
+    return out
+
+
+def _read_cell_data(vtk_data):
+    '''Extract cell data from a VTK data set.
+    '''
+    arrays = []
+    for k in range(vtk_data.GetCellData().GetNumberOfArrays()):
+        arrays.append(vtk_data.GetCellData().GetArray(k))
+
+    out = {}
+    for array in arrays:
+        array_name = array.GetName()
+        out[array_name] = vtk.util.numpy_support.vtk_to_numpy(array)
 
     return out
 
