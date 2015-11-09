@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 #
+from collections import defaultdict
 import h5py
 import numpy
 import os
@@ -26,7 +27,14 @@ def write(filename,
     extension = os.path.splitext(filename)[1]
 
     if extension == '.h5m':
-        _write_h5m(filename, points, cells)
+        _write_h5m(
+            filename,
+            points,
+            cells,
+            point_data=point_data,
+            cell_data=cell_data,
+            field_data=field_data
+            )
         return
     elif extension == '.msh':
         _write_gmsh(filename, points, cells)
@@ -98,7 +106,14 @@ def _write_gmsh(filename, points, cells):
     raise NotImplementedError()
 
 
-def _write_h5m(filename, points, cells):
+def _write_h5m(
+        filename,
+        points,
+        cells,
+        point_data=None,
+        cell_data=None,
+        field_data=None
+        ):
     '''Writes H5M files, cf.
     https://trac.mcs.anl.gov/projects/ITAPS/wiki/MOAB/h5m.
     '''
@@ -143,7 +158,7 @@ def _write_h5m(filename, points, cells):
     this_type = h5m_type[cells.shape[1]]
     elem_group = elements.create_group(this_type['name'])
     elem_group.attrs.create('element_type', this_type['type'], dtype=elem_dt)
-    # h5m indices are off by 1
+    # h5m node indices are 1-based
     conn = elem_group.create_dataset('connectivity', data=(cells + 1))
     conn.attrs.create('start_id', global_id)
     global_id += len(cells)
@@ -206,70 +221,11 @@ def recreate_cells_with_qhull(nodes):
 
 
 def _create_vtkarray(X, name):
-    from vtk import vtkBitArray, vtkIntArray, vtkDoubleArray, vtkCharArray
-
     # If something isn't a Numpy array already, try to make it one.
     if not isinstance(X, numpy.ndarray) and not isinstance(X, str):
         X = numpy.array(X)
 
-    # This could be a lot more fine-grained:
-    # vtkLongLongArray, vtkFloatArray,...
-    if isinstance(X, str) or X.dtype.kind == 'S':
-        array = vtkCharArray()
-    elif X.dtype == bool:
-        array = vtkBitArray()
-    elif X.dtype == int:
-        array = vtkIntArray()
-    elif X.dtype == float:
-        array = vtkDoubleArray()
-    elif X.dtype == complex:
-        # Convert complex arrays to double.
-        Y = numpy.empty((len(X), 2), dtype=float)
-        if len(X.shape) == 1:
-            Y[:, 0] = X.real
-            Y[:, 1] = X.imag
-        elif len(X.shape) == 2:
-            Y[:, 0] = X[:, 0].real
-            Y[:, 1] = X[:, 0].imag
-        else:
-            raise RuntimeError()
-        X = Y
-        array = vtkDoubleArray()
-    else:
-        raise TypeError('Unknown VTK data type', X.dtype, '.')
-
-    # For some reason, setting the number of tuples and then using
-    # SetNextTuple() or similar doesn't seem to work:
-    # The application segfaults or, worse, yields an irrecoverable
-    # glibc memory corruption.
-    # Most likely the cause: You have to call SetNumberOfTuples()
-    # AFTER SetNumberOfComponents().
-    #   array.SetNumberOfTuples(X.shape[0])
-    # Special treatment for strings:
-    if isinstance(X, str):
-        array.SetNumberOfComponents(len(X))
-        array.SetNumberOfTuples(1)
-        array.SetTupleValue(0, X)
-    elif len(X.shape) == 0:
-        array.SetNumberOfComponents(1)
-        # Set values.
-        array.InsertNextValue(X)
-    elif len(X.shape) == 1:
-        array.SetNumberOfComponents(1)
-        # Set values.
-        for k in range(X.shape[0]):
-            array.InsertNextValue(X[k])
-    elif len(X.shape) == 2:
-        array.SetNumberOfComponents(X.shape[1])
-        # Set values.
-        for k in range(X.shape[0]):
-            for k2 in range(X.shape[1]):
-                array.InsertNextValue(X[k][k2])
-    else:
-        raise ValueError('Don''t know what to do with '
-                         'many-dimensional array ''%s''.' % name
-                         )
-
+    array = vtk.util.numpy_support.numpy_to_vtk(X, deep=1)
     array.SetName(name)
 
     return array
