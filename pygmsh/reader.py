@@ -177,11 +177,11 @@ def _read_h5m(filename):
     for name, dataset in dset['nodes']['tags'].items():
         point_data[name] = dataset[()]
 
-    ## Assert that the GLOBAL_IDs are contiguous.
-    #point_gids = dset['nodes']['tags']['GLOBAL_ID'][()]
-    #point_start_gid = dset['nodes']['coordinates'].attrs['start_id']
-    #point_end_gid = point_start_gid + len(point_gids) - 1
-    #assert all(point_gids == range(point_start_gid, point_end_gid + 1))
+    # # Assert that the GLOBAL_IDs are contiguous.
+    # point_gids = dset['nodes']['tags']['GLOBAL_ID'][()]
+    # point_start_gid = dset['nodes']['coordinates'].attrs['start_id']
+    # point_end_gid = point_start_gid + len(point_gids) - 1
+    # assert all(point_gids == range(point_start_gid, point_end_gid + 1))
 
     # Note that the indices are off by 1 in h5m.
     if 'Tri3' in dset['elements']:
@@ -197,7 +197,6 @@ def _read_h5m(filename):
     cell_data = {}
     for name, dataset in elems['tags'].items():
         cell_data[name] = dataset[()]
-
 
     # read sets
     sets_contents = dset['sets']['contents'][()]

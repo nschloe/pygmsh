@@ -131,6 +131,12 @@ def _write_h5m(
     coords.attrs.create('start_id', global_id)
     global_id += len(points)
 
+    # add point data
+    if point_data:
+        tags = nodes.create_group('tags')
+        for key, value in point_data.items():
+            tags.create_dataset(key, data=value)
+
     # add elements
     elements = tstt.create_group('elements')
 
@@ -162,6 +168,12 @@ def _write_h5m(
     conn = elem_group.create_dataset('connectivity', data=(cells + 1))
     conn.attrs.create('start_id', global_id)
     global_id += len(cells)
+
+    # add cell data
+    if cell_data:
+        tags = elem_group.create_group('tags')
+        for key, value in cell_data.items():
+            tags.create_dataset(key, data=value)
 
     # Add tags
     tstt_tags = tstt.create_group('tags')
