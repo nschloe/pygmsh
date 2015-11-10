@@ -16,9 +16,7 @@ addons:
   apt:
     packages:
       - gmsh
-      - python-h5py
       - python-numpy
-      - python-vtk
 
 install:
   - pip install -r requirements.txt
