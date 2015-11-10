@@ -94,7 +94,6 @@ python setup.py install
 
 PyGmsh depends on
 
- * [MeshIO](https://github.com/nschloe/meshio)
  * [NumPy](http://www.numpy.org/)
 
 and, obviously, [Gmsh](http://geuz.org/gmsh/).
