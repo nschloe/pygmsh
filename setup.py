@@ -30,12 +30,10 @@ setup(
     license='License :: OSI Approved :: MIT License',
     platforms='any',
     requires=[
+        'meshio',
         'numpy',
         'vtk'
         ],
-    scripts=[
-      'tools/pygmsh-convert',
-      ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: MIT License',

@@ -7,12 +7,8 @@ __website__ = 'https://github.com/nschloe/pygmsh'
 
 from pygmsh.geometry import Geometry
 from pygmsh.helper import *
-from pygmsh.reader import read
-from pygmsh.writer import write
 
 __all__ = [
         'geometry',
-        'helper',
-        'reader',
-        'writer'
+        'helper'
         ]
