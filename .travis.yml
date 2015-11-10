@@ -16,8 +16,8 @@ addons:
   apt:
     packages:
       - gmsh
+      - python-h5py
       - python-numpy
-      - python3-numpy
       - python-vtk
 
 install:

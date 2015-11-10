@@ -58,9 +58,10 @@ You will find this case in the directory `test/examples/` along with other
 small examples.
 
 To convert from Gmsh's mesh format to other, more common formats (VTK, VTU,
-Exodus), PyGmsh provides the script `pygmesh-convert`. Converting is as easy as
+Exodus), you can use [MeshIO](https://github.com/nschloe/meshio)'s
+`meshio-convert`. Converting is as easy as
 ```
-pygmesh-convert screw.msh screw.vtu
+meshio-convert screw.msh screw.vtu
 ```
 The output file can be visualized with various tools, e.g.,
 [ParaView](http://www.paraview.org/).
@@ -93,6 +94,7 @@ python setup.py install
 
 PyGmsh depends on
 
+ * [MeshIO](https://github.com/nschloe/meshio)
  * [NumPy](http://www.numpy.org/)
 
 and, obviously, [Gmsh](http://geuz.org/gmsh/).
