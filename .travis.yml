@@ -6,7 +6,7 @@ language: python
 
 python:
     - "2.7"
-    #- "3.2"
+    - "3.2"
 
 virtualenv:
   system_site_packages: true
@@ -16,9 +16,7 @@ addons:
   apt:
     packages:
       - gmsh
-      - python-h5py
       - python-numpy
-      - python-vtk
 
 install:
   - pip install -r requirements.txt
