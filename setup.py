@@ -30,9 +30,7 @@ setup(
     license='License :: OSI Approved :: MIT License',
     platforms='any',
     requires=[
-        'meshio',
-        'numpy',
-        'vtk'
+        'numpy'
         ],
     classifiers=[
         'Development Status :: 4 - Beta',
