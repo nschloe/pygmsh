@@ -1,9 +1,9 @@
-.. PyGmsh documentation master file, created by
+.. MeshIO documentation master file, created by
    sphinx-quickstart on Tue Oct 27 19:56:53 2015.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to PyGmsh's documentation!
+Welcome to MeshIO's documentation!
 ==================================
 
 Contents:
@@ -11,19 +11,19 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-:mod:`pygmsh.geometry`
+:mod:`meshio.reader`
 =====================
 
-.. automodule:: pygmsh.geometry
+.. automodule:: meshio.reader
     :members:
     :undoc-members:
     :show-inheritance:
 
 
-:mod:`pygmsh.helper`
+:mod:`meshio.writer`
 =====================
 
-.. automodule:: pygmsh.helper
+.. automodule:: meshio.writer
     :members:
     :undoc-members:
     :show-inheritance:
