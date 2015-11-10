@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# MeshIO documentation build configuration file, created by
+# PyGmsh documentation build configuration file, created by
 # sphinx-quickstart on Tue Oct 27 19:56:53 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -60,7 +60,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'MeshIO'
+project = u'PyGmsh'
 copyright = u'2015, Nico Schlömer'
 author = u'Nico Schlömer'
 
@@ -68,7 +68,7 @@ author = u'Nico Schlömer'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-from meshio import __version__
+from pygmsh import __version__
 # The short X.Y version.
 version = '.'.join(__version__.split('.')[:2])
 # The full version, including alpha/beta/rc tags.
@@ -215,7 +215,7 @@ html_static_path = ['_static']
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'MeshIOdoc'
+htmlhelp_basename = 'PyGmshdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -237,7 +237,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'MeshIO.tex', u'MeshIO Documentation',
+  (master_doc, 'PyGmsh.tex', u'PyGmsh Documentation',
    u'Nico Schlömer', 'manual'),
 ]
 
@@ -267,7 +267,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'meshio', u'MeshIO Documentation',
+    (master_doc, 'pygmsh', u'PyGmsh Documentation',
      [author], 1)
 ]
 
@@ -281,8 +281,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'MeshIO', u'MeshIO Documentation',
-   author, 'MeshIO', 'One line description of project.',
+  (master_doc, 'PyGmsh', u'PyGmsh Documentation',
+   author, 'PyGmsh', 'One line description of project.',
    'Miscellaneous'),
 ]
 
