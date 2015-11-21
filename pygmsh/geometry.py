@@ -31,6 +31,7 @@ class Geometry(object):
         self._SURFACELOOP_ID = 0
         self._VOLUME_ID = 0
         self._CIRCLE_ID = 0
+        self._ELLIPSE_ID = 0
         self._EXTRUDE_ID = 0
         self._ARRAY_ID = 0
         self._FIELD_ID = 0
@@ -89,6 +90,18 @@ class Geometry(object):
         self._GMSH_CODE.append(
             'Circle(%s) = {%s, %s, %s};' %
             (name, point_ids[0], point_ids[1], point_ids[2])
+            )
+        return name
+
+    def add_ellipse_sector(self, point_ids):
+        '''This is Gmsh's Ellipse.
+        '''
+        self._ELLIPSE_ID += 1
+        name = 'e%d' % self._ELLIPSE_ID
+        self._GMSH_CODE.append('%s = newl;' % name)
+        self._GMSH_CODE.append(
+            'Ellipse(%s) = {%s, %s, %s, %s};' %
+            (name, point_ids[0], point_ids[1], point_ids[2], point_ids[3])
             )
         return name
 
@@ -365,14 +378,14 @@ class Geometry(object):
             c = [self.add_compound_line(c)]
         return c
 
-    def add_ball(
+    def add_ellipsoid(
             self,
-            x0, radius, lcar,
+            x0, radii, lcar,
             with_volume=True,
             holes=None,
             label=None
             ):
-        '''Creates a ball with a given radius around a given midpoint
+        '''Creates an ellipsoid with radii around a given midpoint
         :math:`x_0`.
         '''
         if holes is None:
@@ -382,26 +395,46 @@ class Geometry(object):
         a = lcar
         p = [
             self.add_point(x0, lcar=lcar),
-            self.add_point([x0[0]+radius, x0[1],        x0[2]],        lcar=a),
-            self.add_point([x0[0],        x0[1]+radius, x0[2]],        lcar=a),
-            self.add_point([x0[0],        x0[1],        x0[2]+radius], lcar=a),
-            self.add_point([x0[0]-radius, x0[1],        x0[2]],        lcar=a),
-            self.add_point([x0[0],        x0[1]-radius, x0[2]],        lcar=a),
-            self.add_point([x0[0],        x0[1],        x0[2]-radius], lcar=a)
+            self.add_point(
+                [x0[0]+radii[0], x0[1], x0[2]],
+                lcar=a
+                ),
+            self.add_point(
+                [x0[0], x0[1]+radii[1], x0[2]],
+                lcar=a
+                ),
+            self.add_point(
+                [x0[0], x0[1], x0[2]+radii[2]],
+                lcar=a
+                ),
+            self.add_point(
+                [x0[0]-radii[0], x0[1], x0[2]],
+                lcar=a
+                ),
+            self.add_point(
+                [x0[0], x0[1]-radii[1], x0[2]],
+                lcar=a
+                ),
+            self.add_point(
+                [x0[0], x0[1], x0[2]-radii[2]],
+                lcar=a
+                )
             ]
-        # Add ball skeleton.
-        c = [self.add_circle_sector([p[1], p[0], p[6]]),
-             self.add_circle_sector([p[6], p[0], p[4]]),
-             self.add_circle_sector([p[4], p[0], p[3]]),
-             self.add_circle_sector([p[3], p[0], p[1]]),
-             self.add_circle_sector([p[1], p[0], p[2]]),
-             self.add_circle_sector([p[2], p[0], p[4]]),
-             self.add_circle_sector([p[4], p[0], p[5]]),
-             self.add_circle_sector([p[5], p[0], p[1]]),
-             self.add_circle_sector([p[6], p[0], p[2]]),
-             self.add_circle_sector([p[2], p[0], p[3]]),
-             self.add_circle_sector([p[3], p[0], p[5]]),
-             self.add_circle_sector([p[5], p[0], p[6]])
+        # Add skeleton.
+        # Alternative for circles:
+        # `self.add_circle_sector([a, b, c])`
+        c = [self.add_ellipse_sector([p[1], p[0], p[6], p[6]]),
+             self.add_ellipse_sector([p[6], p[0], p[4], p[4]]),
+             self.add_ellipse_sector([p[4], p[0], p[3], p[3]]),
+             self.add_ellipse_sector([p[3], p[0], p[1], p[1]]),
+             self.add_ellipse_sector([p[1], p[0], p[2], p[2]]),
+             self.add_ellipse_sector([p[2], p[0], p[4], p[4]]),
+             self.add_ellipse_sector([p[4], p[0], p[5], p[5]]),
+             self.add_ellipse_sector([p[5], p[0], p[1], p[1]]),
+             self.add_ellipse_sector([p[6], p[0], p[2], p[2]]),
+             self.add_ellipse_sector([p[2], p[0], p[3], p[3]]),
+             self.add_ellipse_sector([p[3], p[0], p[5], p[5]]),
+             self.add_ellipse_sector([p[5], p[0], p[6], p[6]])
              ]
         # Add surfaces (1/8th of the ball surface).
         ll = [self.add_line_loop([c[4],      c[9],     c[3]]),
@@ -429,6 +462,24 @@ class Geometry(object):
         else:
             volume = None
         return volume, surface_loop
+
+    def add_ball(
+            self,
+            x0, radius, lcar,
+            with_volume=True,
+            holes=None,
+            label=None
+            ):
+        '''Creates a ball with a given radius around a given midpoint
+        :math:`x_0`.
+        '''
+        return self.add_ellipsoid(
+                x0, [radius, radius, radius],
+                lcar,
+                with_volume=with_volume,
+                holes=holes,
+                label=label
+                )
 
     def add_box(
             self,
