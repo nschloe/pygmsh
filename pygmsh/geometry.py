@@ -437,19 +437,28 @@ class Geometry(object):
              self.add_ellipse_sector([p[5], p[0], p[6], p[6]])
              ]
         # Add surfaces (1/8th of the ball surface).
-        ll = [self.add_line_loop([c[4],      c[9],     c[3]]),
-              self.add_line_loop([c[8],      '-'+c[4], c[0]]),
-              self.add_line_loop([c[11],     '-'+c[7], '-'+c[0]]),
-              self.add_line_loop([c[7],      '-'+c[3], c[10]]),
-              self.add_line_loop(['-'+c[9],  c[5],     c[2]]),
-              self.add_line_loop(['-'+c[10], '-'+c[2], c[6]]),
-              self.add_line_loop(['-'+c[1],  '-'+c[6], '-'+c[11]]),
-              self.add_line_loop(['-'+c[5],  '-'+c[8], c[1]])
-              ]
+        ll = [
+            # one half
+            self.add_line_loop([c[4],      c[9],     c[3]]),
+            self.add_line_loop([c[8],      '-'+c[4], c[0]]),
+            self.add_line_loop(['-'+c[9],  c[5],     c[2]]),
+            self.add_line_loop(['-'+c[5],  '-'+c[8], c[1]]),
+            # the other half
+            self.add_line_loop([c[7],      '-'+c[3], c[10]]),
+            self.add_line_loop([c[11],     '-'+c[7], '-'+c[0]]),
+            self.add_line_loop(['-'+c[10], '-'+c[2], c[6]]),
+            self.add_line_loop(['-'+c[1],  '-'+c[6], '-'+c[11]])
+            ]
         # Create a surface for each line loop.
         s = [self.add_ruled_surface(l) for l in ll]
+        # Combine the surfaces to avoid seams
+        new_surfs = [
+                self.add_compound_surface(s[:4]),
+                self.add_compound_surface(s[4:])
+                ]
+
         # Create the surface loop.
-        surface_loop = self.add_surface_loop(s)
+        surface_loop = self.add_surface_loop(new_surfs)
         if holes:
             # Create an array of surface loops; the first entry is the outer
             # surface loop, the following ones are holes.
