@@ -127,9 +127,14 @@ class Geometry(object):
         self._SURFACE_ID += 1
         sname = 'surf%d' % self._SURFACE_ID
         self._GMSH_CODE.append('%s = news;' % sname)
-        self._GMSH_CODE.append(
-            'Plane Surface(%s) = {%s};' % (sname, line_loop)
-            )
+        if isinstance(line_loop, list):
+            self._GMSH_CODE.append(
+                'Plane Surface(%s) = {%s};' % (sname, ','.join(line_loop))
+                )
+        else:
+            self._GMSH_CODE.append(
+                'Plane Surface(%s) = {%s};' % (sname, line_loop)
+                )
         return sname
 
     def add_ruled_surface(self, line_loop):
