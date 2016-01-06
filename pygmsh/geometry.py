@@ -305,6 +305,19 @@ class Geometry(object):
             self._GMSH_CODE.append(string)
         return
 
+    def add_rectangle_loop(self, xmin, xmax, ymin, ymax, z, lcar):
+        X = [[xmin, ymin, z],
+             [xmax, ymin, z],
+             [xmax, ymax, z],
+             [xmin, ymax, z]]
+        # Create points.
+        p = [self.add_point(x, lcar) for x in X]
+        # Create lines
+        e = [self.add_line(p[k], p[k+1]) for k in range(len(p)-1)]
+        e.append(self.add_line(p[-1], p[0]))
+        ll = self.add_line_loop(e)
+        return ll
+
     def add_rectangle(self, xmin, xmax, ymin, ymax, z, lcar):
         X = [[xmin, ymin, z],
              [xmax, ymin, z],
