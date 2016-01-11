@@ -328,12 +328,8 @@ class Geometry(object):
              [xmax, ymin, z],
              [xmax, ymax, z],
              [xmin, ymax, z]]
-        # Create points.
-        p = [self.add_point(x, lcar) for x in X]
-        # Create lines
-        e = [self.add_line(p[k], p[k+1]) for k in range(len(p)-1)]
-        e.append(self.add_line(p[-1], p[0]))
-        ll = self.add_line_loop(e)
+        # Create line loop
+        ll = self.add_polygon_loop(X, lcar)
         s = self.add_plane_surface(ll)
         return s
 
