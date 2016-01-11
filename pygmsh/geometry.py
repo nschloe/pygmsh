@@ -310,14 +310,17 @@ class Geometry(object):
             self._GMSH_CODE.append(string)
         return
 
-    def add_rectangle(self, xmin, xmax, ymin, ymax, z, lcar):
+    def add_rectangle(self, xmin, xmax, ymin, ymax, z, lcar, holes=None):
         X = [[xmin, ymin, z],
              [xmax, ymin, z],
              [xmax, ymax, z],
              [xmin, ymax, z]]
         # Create line loop
         ll = self.add_polygon_loop(X, lcar)
-        s = self.add_plane_surface(ll)
+        if holes is None:
+            s = self.add_plane_surface(ll)
+        else:
+            s = self.add_plane_surface([ll] + holes)
         return s
 
     def add_polygon_loop(self, X, lcar):
