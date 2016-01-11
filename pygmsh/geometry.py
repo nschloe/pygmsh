@@ -346,14 +346,14 @@ class Geometry(object):
         ll = self.add_line_loop(e)
         return ll
 
-    def add_polygon(self, X, lcar):
-        # Create points.
-        p = [self.add_point(x, lcar) for x in X]
-        # Create lines
-        e = [self.add_line(p[k], p[k+1]) for k in range(len(p)-1)]
-        e.append(self.add_line(p[-1], p[0]))
-        ll = self.add_line_loop(e)
-        s = self.add_plane_surface(ll)
+    def add_polygon(self, X, lcar, holes=None):
+        # Create line loop
+        ll = self.add_polygon_loop(X, lcar)
+        # Create surface (including optional holes)
+        if holes is None:
+            s = self.add_plane_surface(ll)
+        else:
+            s = self.add_plane_surface([ll] + holes)
         return s
 
     def add_circle(
