@@ -7,12 +7,12 @@
 [![PyPi Version](https://img.shields.io/pypi/v/pygmsh.svg)](https://pypi.python.org/pypi/pygmsh)
 [![PyPi Downloads](https://img.shields.io/pypi/dm/pygmsh.svg)](https://pypi.python.org/pypi/pygmsh)
 
-[Gmsh](http://geuz.org/gmsh/) is powerful mesh generation tool and its
-scripting language is notoriously hard to write.
+[Gmsh](http://geuz.org/gmsh/) is a powerful mesh generation tool with a
+scripting language that is notoriously hard to write.
 
-The goal PyGmsh is to combine the power of Gmsh with the versatility of
+The goal of PyGmsh is to combine the power of Gmsh with the versatility of
 Python and to provide useful abstractions from the Gmsh scripting language
-so you can create complex geometries even more easily.
+so you can create complex geometries more easily.
 
 ![](https://nschloe.github.io/pygmsh/screw.png)
 

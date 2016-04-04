@@ -127,9 +127,14 @@ class Geometry(object):
         self._SURFACE_ID += 1
         sname = 'surf%d' % self._SURFACE_ID
         self._GMSH_CODE.append('%s = news;' % sname)
-        self._GMSH_CODE.append(
-            'Plane Surface(%s) = {%s};' % (sname, line_loop)
-            )
+        if isinstance(line_loop, list):
+            self._GMSH_CODE.append(
+                'Plane Surface(%s) = {%s};' % (sname, ','.join(line_loop))
+                )
+        else:
+            self._GMSH_CODE.append(
+                'Plane Surface(%s) = {%s};' % (sname, line_loop)
+                )
         return sname
 
     def add_ruled_surface(self, line_loop):
@@ -305,28 +310,36 @@ class Geometry(object):
             self._GMSH_CODE.append(string)
         return
 
-    def add_rectangle(self, xmin, xmax, ymin, ymax, z, lcar):
+    def add_rectangle(self, xmin, xmax, ymin, ymax, z, lcar, holes=None):
         X = [[xmin, ymin, z],
              [xmax, ymin, z],
              [xmax, ymax, z],
              [xmin, ymax, z]]
-        # Create points.
-        p = [self.add_point(x, lcar) for x in X]
-        # Create lines
-        e = [self.add_line(p[k], p[k+1]) for k in range(len(p)-1)]
-        e.append(self.add_line(p[-1], p[0]))
-        ll = self.add_line_loop(e)
-        s = self.add_plane_surface(ll)
+        # Create line loop
+        ll = self.add_polygon_loop(X, lcar)
+        if holes is None:
+            s = self.add_plane_surface(ll)
+        else:
+            s = self.add_plane_surface([ll] + holes)
         return s
 
-    def add_polygon(self, X, lcar):
+    def add_polygon_loop(self, X, lcar):
         # Create points.
         p = [self.add_point(x, lcar) for x in X]
         # Create lines
         e = [self.add_line(p[k], p[k+1]) for k in range(len(p)-1)]
         e.append(self.add_line(p[-1], p[0]))
         ll = self.add_line_loop(e)
-        s = self.add_plane_surface(ll)
+        return ll
+
+    def add_polygon(self, X, lcar, holes=None):
+        # Create line loop
+        ll = self.add_polygon_loop(X, lcar)
+        # Create surface (including optional holes)
+        if holes is None:
+            s = self.add_plane_surface(ll)
+        else:
+            s = self.add_plane_surface([ll] + holes)
         return s
 
     def add_circle(
