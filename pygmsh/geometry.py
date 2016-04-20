@@ -123,6 +123,12 @@ class Geometry(object):
             )
         return name
 
+    def add_physical_line(self, line, label):
+        self._GMSH_CODE.append(
+            'Physical Line("%s") = %s;' % (label, line)
+            )
+        return
+
     def add_plane_surface(self, line_loop):
         self._SURFACE_ID += 1
         sname = 'surf%d' % self._SURFACE_ID
