@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 #
 '''
 This class provides a Python interface for the Gmsh scripting language.  It
