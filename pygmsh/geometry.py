@@ -60,6 +60,12 @@ class Geometry(object):
             )
         return name
 
+    def add_physical_point(self, point, label):
+        self._GMSH_CODE.append(
+            'Physical Point("%s") = %s;' % (label, point)
+            )
+        return
+
     def add_line(self, p0, p1):
         self._LINE_ID += 1
         name = 'l%d' % self._LINE_ID
