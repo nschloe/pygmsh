@@ -37,7 +37,7 @@ def generate_mesh(geo_object):
 
     handle, outname = tempfile.mkstemp(suffix='.msh')
 
-    gmsh_out = subprocess.check_output(
+    subprocess.check_output(
         ['gmsh', '-3', filename, '-o', outname],
         stderr=subprocess.STDOUT
         )
