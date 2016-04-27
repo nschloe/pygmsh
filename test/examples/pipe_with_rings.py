@@ -38,4 +38,6 @@ def generate():
 
 
 if __name__ == '__main__':
-    print(generate())
+    import meshio
+    points, cells = pg.generate_mesh(generate())
+    meshio.write('pipe_with_rings.vtu', points, cells)

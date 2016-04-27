@@ -32,4 +32,6 @@ def generate():
     return geom
 
 if __name__ == '__main__':
-    print(generate())
+    import meshio
+    points, cells = pg.generate_mesh(generate())
+    meshio.write('hole_in_square.vtu', points, cells)
