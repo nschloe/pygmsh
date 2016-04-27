@@ -4,9 +4,9 @@
 [![Code Health](https://landscape.io/github/nschloe/pygmsh/master/landscape.png)](https://landscape.io/github/nschloe/pygmsh/master)
 [![Coverage Status](https://coveralls.io/repos/nschloe/pygmsh/badge.svg?branch=master&service=github)](https://coveralls.io/github/nschloe/pygmsh?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/pygmsh/badge/?version=latest)](http://pygmsh.readthedocs.org/en/latest/?badge=latest)
-[![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?style=social&label=Star&maxAge=2592000)]()
 [![PyPi Version](https://img.shields.io/pypi/v/pygmsh.svg)](https://pypi.python.org/pypi/pygmsh)
 [![PyPi Downloads](https://img.shields.io/pypi/dm/pygmsh.svg)](https://pypi.python.org/pypi/pygmsh)
+[![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?style=social&label=Star&maxAge=2592000)]()
 
 [Gmsh](http://geuz.org/gmsh/) is a powerful mesh generation tool with a
 scripting language that is notoriously hard to write.
