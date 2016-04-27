@@ -14,10 +14,8 @@ def generate():
 
     geom.add_box(0, 1, 0, 1, 0, 1, 0.05)
 
-    points, cells = pg.generate_mesh(geom)
-
-    return points, cells
+    return geom
 
 
 if __name__ == '__main__':
-    generate()
+    print(generate())

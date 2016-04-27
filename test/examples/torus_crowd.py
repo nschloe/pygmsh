@@ -63,7 +63,7 @@ def generate():
             lcar=0.3
             )
 
-    return geom.get_code()
+    return geom
 
 
 if __name__ == '__main__':

@@ -9,15 +9,15 @@ import numpy as np
 def generate():
     #-------------------------------------------------------------------------------------------------------------------
     coord = 1.
-    
+
     domainShape = 'rectangular'
     leftDist = 1.
     rightDist = 3.
     topDist = 1.
     bottomDist = 1.
-    
+
     charLength = 1e-2
-    
+
     # Airfoil coordinates
     airfoilCoordinates = np.array([[1.000000,0.000000],
     [0.999023,0.000209],
@@ -120,23 +120,23 @@ def generate():
     [0.996020,-0.000308],
     [0.999004,-0.000077]]
     )
-    
+
     # Scale airfoil to input coord
     airfoilCoordinates *= coord
-    
+
     # Dat-file dimensions
     numPoints = airfoilCoordinates.shape[0]
     dimPoints = airfoilCoordinates.shape[1]
-    
+
     # Move points from 1D or 2D space to 3D space
     if 0 < dimPoints < 3:
         airfoilCoordinates = np.hstack((airfoilCoordinates, np.zeros([numPoints, 3-dimPoints])))
     else:
         sys.exit('The airfoil dat-file should contain either 1, 2 or 3 columns.')
-    
+
     # Instantiate geometry object
     geom = pg.Geometry()
-    
+
     # Create line loop for airfoil
     airfoil = [geom.add_polygon_loop(airfoilCoordinates, charLength)]
 
@@ -153,12 +153,12 @@ def generate():
         domainCoordinates[3, 1] = airfoilCoordinates[:, 1].max() + topDist*coord
     elif domainShape == 'elliptic':
         sys.exit('Elliptic domain is not yet implemented.')
-    
+
     # Create surface for numerical domain with an airfoil-shaped hole
     geom.add_polygon(domainCoordinates, charLength, holes=airfoil)
-    
-    # Return geo-file code   
-    return geom.get_code()
-    
+
+    # Return geo-file code
+    return geom
+
 if __name__ == '__main__':
     print(generate())

@@ -34,7 +34,7 @@ def generate():
     #         x0=np.dot(R, x0)
     #         )
 
-    return geom.get_code()
+    return geom
 
 
 if __name__ == '__main__':
