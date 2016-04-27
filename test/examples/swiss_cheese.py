@@ -37,8 +37,10 @@ def generate():
             holes=holes
             )
 
-    return geom.get_code()
+    return geom
 
 
 if __name__ == '__main__':
-    print(generate())
+    import meshio
+    points, cells = pg.generate_mesh(generate())
+    meshio.write('swiss_cheese.vtu', points, cells)

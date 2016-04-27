@@ -63,8 +63,10 @@ def generate():
             lcar=0.3
             )
 
-    return geom.get_code()
+    return geom
 
 
 if __name__ == '__main__':
-    print(generate())
+    import meshio
+    points, cells = pg.generate_mesh(generate())
+    meshio.write('torus_crowd.vtu', points, cells)

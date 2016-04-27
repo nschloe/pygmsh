@@ -29,8 +29,9 @@ def generate():
     # Create square domain with square hole
     geom.add_rectangle(xmin, xmax, ymin, ymax, 0.0, lcar, holes=squareHole)
 
-    # Return geo-file code
-    return geom.get_code()
+    return geom
 
 if __name__ == '__main__':
-    print(generate())
+    import meshio
+    points, cells = pg.generate_mesh(generate())
+    meshio.write('hole_in_square.vtu', points, cells)

@@ -23,3 +23,26 @@ def rotation_matrix(u, theta):
         + s * cpm \
         + (1.0 - c) * numpy.outer(u, u)
     return R
+
+
+def generate_mesh(geo_object, optimize=True):
+    import meshio
+    import os
+    import subprocess
+    import tempfile
+
+    handle, filename = tempfile.mkstemp(suffix='.geo')
+    os.write(handle, geo_object.get_code())
+    os.close(handle)
+
+    handle, outname = tempfile.mkstemp(suffix='.msh')
+
+    cmd = ['gmsh', '-3', filename, '-o', outname]
+    if optimize:
+        cmd += ['-optimize']
+    out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+    print(out)
+
+    points, cells, _, _, _ = meshio.read(outname)
+
+    return points, cells

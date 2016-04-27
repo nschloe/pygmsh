@@ -33,8 +33,10 @@ def generate(lcar=0.05):
         angle=2.0 / 6.0 * np.pi
         )
 
-    return geom.get_code()
+    return geom
 
 
 if __name__ == '__main__':
-    print(generate())
+    import meshio
+    points, cells = pg.generate_mesh(generate())
+    meshio.write('screw.vtu', points, cells)

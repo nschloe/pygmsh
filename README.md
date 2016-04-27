@@ -2,10 +2,11 @@
 
 [![Build Status](https://travis-ci.org/nschloe/pygmsh.svg)](https://travis-ci.org/nschloe/pygmsh)
 [![Code Health](https://landscape.io/github/nschloe/pygmsh/master/landscape.png)](https://landscape.io/github/nschloe/pygmsh/master)
-[![Coverage Status](https://coveralls.io/repos/nschloe/pygmsh/badge.svg?branch=master&service=github)](https://coveralls.io/github/nschloe/pygmsh?branch=master)
+[![codecov](https://codecov.io/gh/nschloe/pygmsh/branch/master/graph/badge.svg)](https://codecov.io/gh/nschloe/pygmsh)
 [![Documentation Status](https://readthedocs.org/projects/pygmsh/badge/?version=latest)](http://pygmsh.readthedocs.org/en/latest/?badge=latest)
 [![PyPi Version](https://img.shields.io/pypi/v/pygmsh.svg)](https://pypi.python.org/pypi/pygmsh)
 [![PyPi Downloads](https://img.shields.io/pypi/dm/pygmsh.svg)](https://pypi.python.org/pypi/pygmsh)
+[![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?style=social&label=Star&maxAge=2592000)](https://github.com/nschloe/pygmsh)
 
 [Gmsh](http://geuz.org/gmsh/) is a powerful mesh generation tool with a
 scripting language that is notoriously hard to write.
@@ -47,24 +48,20 @@ geom.extrude(
     angle=2.0 / 6.0 * np.pi
     )
 
-print(geom.get_code())
+points, cells = pg.generate_mesh(geom)
 ```
-and write the output to a file, e.g., `screw.geo`. Then use Gmsh to generate
-the mesh `screw.msh`,
-```bash
-gmsh -3 screw.geo
-```
-You will find this case in the directory `test/examples/` along with other
-small examples.
-
-To convert from Gmsh's mesh format to other, more common formats (VTK, VTU,
-Exodus), you can use [MeshIO](https://github.com/nschloe/meshio)'s
-`meshio-convert`. Converting is as easy as
-```
-meshio-convert screw.msh screw.vtu
+to retrieve all points and cells of the mesh for the specified geometry.
+To store the mesh, you can use [meshio](https://pypi.python.org/pypi/meshio);
+for example
+```python
+import meshio
+meshio.write('test.vtu', points, cells)
 ```
 The output file can be visualized with various tools, e.g.,
 [ParaView](http://www.paraview.org/).
+
+You will find the above mesh in the directory `test/examples/` along with other
+small examples.
 
 ### Installation
 

@@ -14,8 +14,10 @@ def generate():
         0.05
         )
 
-    return geom.get_code()
+    return geom
 
 
 if __name__ == '__main__':
-    print(generate())
+    import meshio
+    points, cells = pg.generate_mesh(generate())
+    meshio.write('ellipsoid.vtu', points, cells)

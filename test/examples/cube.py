@@ -14,8 +14,10 @@ def generate():
 
     geom.add_box(0, 1, 0, 1, 0, 1, 0.05)
 
-    return geom.get_code()
+    return geom
 
 
 if __name__ == '__main__':
-    print(generate())
+    import meshio
+    points, cells = pg.generate_mesh(generate())
+    meshio.write('cube.vtu', points, cells)
