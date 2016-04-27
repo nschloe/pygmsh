@@ -6,7 +6,7 @@
 [![Documentation Status](https://readthedocs.org/projects/pygmsh/badge/?version=latest)](http://pygmsh.readthedocs.org/en/latest/?badge=latest)
 [![PyPi Version](https://img.shields.io/pypi/v/pygmsh.svg)](https://pypi.python.org/pypi/pygmsh)
 [![PyPi Downloads](https://img.shields.io/pypi/dm/pygmsh.svg)](https://pypi.python.org/pypi/pygmsh)
-[![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?style=social&label=Star&maxAge=2592000)]()
+[![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?style=social&label=Star&maxAge=2592000)](https://github.com/nschloe/pygmsh)
 
 [Gmsh](http://geuz.org/gmsh/) is a powerful mesh generation tool with a
 scripting language that is notoriously hard to write.
