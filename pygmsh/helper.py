@@ -2,6 +2,14 @@
 #
 import numpy
 
+import sys
+
+if sys.platform == 'darwin':
+    # likely there. 
+    gmsh_executable = '/Applications/Gmsh.app/Contents/MacOS/gmsh'
+else:
+    gmsh_executable = 'gmsh'
+
 
 def rotation_matrix(u, theta):
     '''Return matrix that implements the rotation around the vector :math:`u`
@@ -32,16 +40,16 @@ def generate_mesh(geo_object, optimize=True):
     import tempfile
 
     handle, filename = tempfile.mkstemp(suffix='.geo')
-    os.write(handle, geo_object.get_code())
+    os.write(handle, geo_object.get_code().encode())
     os.close(handle)
 
     handle, outname = tempfile.mkstemp(suffix='.msh')
 
-    cmd = ['gmsh', '-3', filename, '-o', outname]
+    cmd = [gmsh_executable, '-3', filename, '-o', outname]
     if optimize:
         cmd += ['-optimize']
     out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-    print(out)
+    print(out.decode())
 
     points, cells, _, _, _ = meshio.read(outname)
 
