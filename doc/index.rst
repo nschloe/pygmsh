@@ -11,8 +11,10 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   self
+
 :mod:`pygmsh.geometry`
-=====================
+======================
 
 .. automodule:: pygmsh.geometry
     :members:
