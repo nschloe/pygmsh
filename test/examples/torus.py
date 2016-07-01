@@ -10,8 +10,14 @@ def generate():
     '''
     geom = pg.Geometry()
 
+    R = np.array([
+        [1.0, 0.0, 0.0],
+        [0.0, 0.0, 1.0],
+        [0.0, 1.0, 0.0]
+        ])
     geom.add_torus(
-            irad=0.05, orad=0.6, lcar=0.03
+            irad=0.05, orad=0.6, lcar=0.03,
+            R=R
             )
 
     return geom
