@@ -752,6 +752,36 @@ class Geometry(object):
             R=numpy.eye(3),
             x0=numpy.array([0.0, 0.0, 0.0]),
             label=None,
+            lcar=0.1,
+            variant='rectangle_rotation'
+            ):
+        if variant == 'rectangle_rotation':
+            return self._add_pipe_by_rectangle_rotation(
+                outer_radius, inner_radius, length,
+                R=R,
+                x0=x0,
+                label=label,
+                lcar=lcar
+                )
+        elif variant == 'circle_extrusion':
+            return self._add_pipe_by_circle_extrusion(
+                outer_radius, inner_radius, length,
+                R=R,
+                x0=x0,
+                label=label,
+                lcar=lcar
+                )
+        else:
+            raise ValueError(
+                'Illegal variant \'%s\'.' % variant
+                )
+
+    def _add_pipe_by_rectangle_rotation(
+            self,
+            outer_radius, inner_radius, length,
+            R=numpy.eye(3),
+            x0=numpy.array([0.0, 0.0, 0.0]),
+            label=None,
             lcar=0.1
             ):
         '''Hollow cylinder.
@@ -814,7 +844,7 @@ class Geometry(object):
             self.add_physical_volume(vol, label)
         return
 
-    def add_pipe2(
+    def _add_pipe_by_circle_extrusion(
             self,
             outer_radius, inner_radius, length,
             R=numpy.eye(3),
@@ -826,16 +856,21 @@ class Geometry(object):
         Define a ring, extrude it by translation.
         '''
         # Define ring which to Extrude by translation.
+        Rc = numpy.array([
+            [0.0, 0.0, 1.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0]
+            ])
         c_inner = self.add_circle(
+                x0,
                 inner_radius,
                 lcar,
-                R=R,
-                x0=x0
+                R=numpy.matmul(R, Rc)
                 )
         ll_inner = self.add_line_loop(c_inner)
 
         c_outer = self.add_circle(
-                outer_radius, lcar, R=R, x0=x0
+                x0, outer_radius, lcar, R=numpy.matmul(R, Rc)
                 )
         ll_outer = self.add_line_loop(c_outer)
 
