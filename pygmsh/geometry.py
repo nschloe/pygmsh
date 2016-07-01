@@ -639,7 +639,7 @@ class Geometry(object):
             [0.0, 1.0, 0.0]
             ])
 
-        c = self.add_circle(x0+x0t, irad, lcar, R=numpy.matmul(R, Rc))
+        c = self.add_circle(x0+x0t, irad, lcar, R=numpy.dot(R, Rc))
 
         rot_axis = [0.0, 0.0, 1.0]
         rot_axis = numpy.dot(R, rot_axis)
@@ -711,7 +711,7 @@ class Geometry(object):
             [1.0, 0.0, 0.0],
             [0.0, 1.0, 0.0]
             ])
-        c = self.add_circle(x0+x0t, irad, lcar, R=numpy.matmul(R, Rc))
+        c = self.add_circle(x0+x0t, irad, lcar, R=numpy.dot(R, Rc))
         ll = self.add_line_loop(c)
         s = self.add_plane_surface(ll)
 
@@ -865,12 +865,12 @@ class Geometry(object):
                 x0,
                 inner_radius,
                 lcar,
-                R=numpy.matmul(R, Rc)
+                R=numpy.dot(R, Rc)
                 )
         ll_inner = self.add_line_loop(c_inner)
 
         c_outer = self.add_circle(
-                x0, outer_radius, lcar, R=numpy.matmul(R, Rc)
+                x0, outer_radius, lcar, R=numpy.dot(R, Rc)
                 )
         ll_outer = self.add_line_loop(c_outer)
 
