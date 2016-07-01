@@ -16,8 +16,6 @@ def generate():
             1.0
             )
 
-    exit(1)
-
     return geom
 
 
