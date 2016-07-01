@@ -323,10 +323,12 @@ class Geometry(object):
         return
 
     def add_rectangle(self, xmin, xmax, ymin, ymax, z, lcar, holes=None):
-        X = [[xmin, ymin, z],
-             [xmax, ymin, z],
-             [xmax, ymax, z],
-             [xmin, ymax, z]]
+        X = [
+            [xmin, ymin, z],
+            [xmax, ymin, z],
+            [xmax, ymax, z],
+            [xmin, ymax, z]
+            ]
         # Create line loop
         ll = self.add_polygon_loop(X, lcar)
         if holes is None:
@@ -356,33 +358,34 @@ class Geometry(object):
 
     def add_circle(
             self,
-            radius, lcar,
+            x0, radius, lcar,
             R=numpy.eye(3),
-            x0=numpy.array([0.0, 0.0, 0.0]),
             compound=False,
             num_sections=3
             ):
-        '''Add circle in the :math:`y`-:math:`z`-plane.
+        '''Add circle in the :math:`x`-:math:`y`-plane.
         '''
         # Define points that make the circle (midpoint and the four cardinal
         # directions).
-        X = [[0.0, 0.0, 0.0]]
         if num_sections == 4:
             # For accuracy, the points are provided explicitly.
             X = [
-                [0.0, 0.0,     0.0],
-                [0.0, radius,  0.0],
-                [0.0, 0.0,     radius],
-                [0.0, -radius, 0.0],
-                [0.0, 0.0,     -radius]
+                [0.0,     0.0,     0.0],
+                [radius,  0.0,     0.0],
+                [0.0,     radius,  0.0],
+                [-radius, 0.0,     0.0],
+                [0.0,     -radius, 0.0]
                 ]
         else:
+            X = [
+                [0.0, 0.0, 0.0]
+                ]
             for k in range(num_sections):
                 alpha = 2*numpy.pi * k / num_sections
                 X.append([
-                    0.0,
                     radius*numpy.cos(alpha),
-                    radius*numpy.sin(alpha)
+                    radius*numpy.sin(alpha),
+                    0.0
                     ])
 
         # Apply the transformation.
@@ -400,7 +403,7 @@ class Geometry(object):
         # Don't forget the closing arc.
         c.append(self.add_circle_sector([p[-1], p[0], p[1]]))
         if compound:
-            c = [self.add_compound_line(c)]
+            c = self.add_compound_line(c)
         return c
 
     def add_ellipsoid(
