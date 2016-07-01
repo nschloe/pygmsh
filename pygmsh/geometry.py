@@ -323,10 +323,12 @@ class Geometry(object):
         return
 
     def add_rectangle(self, xmin, xmax, ymin, ymax, z, lcar, holes=None):
-        X = [[xmin, ymin, z],
-             [xmax, ymin, z],
-             [xmax, ymax, z],
-             [xmin, ymax, z]]
+        X = [
+            [xmin, ymin, z],
+            [xmax, ymin, z],
+            [xmax, ymax, z],
+            [xmin, ymax, z]
+            ]
         # Create line loop
         ll = self.add_polygon_loop(X, lcar)
         if holes is None:
@@ -356,33 +358,34 @@ class Geometry(object):
 
     def add_circle(
             self,
-            radius, lcar,
+            x0, radius, lcar,
             R=numpy.eye(3),
-            x0=numpy.array([0.0, 0.0, 0.0]),
             compound=False,
             num_sections=3
             ):
-        '''Add circle in the :math:`y`-:math:`z`-plane.
+        '''Add circle in the :math:`x`-:math:`y`-plane.
         '''
         # Define points that make the circle (midpoint and the four cardinal
         # directions).
-        X = [[0.0, 0.0, 0.0]]
         if num_sections == 4:
             # For accuracy, the points are provided explicitly.
             X = [
-                [0.0, 0.0,     0.0],
-                [0.0, radius,  0.0],
-                [0.0, 0.0,     radius],
-                [0.0, -radius, 0.0],
-                [0.0, 0.0,     -radius]
+                [0.0,     0.0,     0.0],
+                [radius,  0.0,     0.0],
+                [0.0,     radius,  0.0],
+                [-radius, 0.0,     0.0],
+                [0.0,     -radius, 0.0]
                 ]
         else:
+            X = [
+                [0.0, 0.0, 0.0]
+                ]
             for k in range(num_sections):
                 alpha = 2*numpy.pi * k / num_sections
                 X.append([
-                    0.0,
                     radius*numpy.cos(alpha),
-                    radius*numpy.sin(alpha)
+                    radius*numpy.sin(alpha),
+                    0.0
                     ])
 
         # Apply the transformation.
@@ -400,7 +403,7 @@ class Geometry(object):
         # Don't forget the closing arc.
         c.append(self.add_circle_sector([p[-1], p[0], p[1]]))
         if compound:
-            c = [self.add_compound_line(c)]
+            c = self.add_compound_line(c)
         return c
 
     def add_ellipsoid(
@@ -582,9 +585,41 @@ class Geometry(object):
             lcar,
             R=numpy.eye(3),
             x0=numpy.array([0.0, 0.0, 0.0]),
+            label=None,
+            variant='extrude_lines'
+            ):
+
+        if variant == 'extrude_lines':
+            return self._add_torus_extrude_lines(
+                irad, orad,
+                lcar,
+                R=R,
+                x0=x0,
+                label=label
+                )
+        elif variant == 'extrude_circle':
+            return self._add_torus_extrude_circle(
+                irad, orad,
+                lcar,
+                R=R,
+                x0=x0,
+                label=label
+                )
+        else:
+            raise ValueError(
+                'Illegal variant \'%s\'.' % variant
+                )
+
+    def _add_torus_extrude_lines(
+            self,
+            irad, orad,
+            lcar,
+            R=numpy.eye(3),
+            x0=numpy.array([0.0, 0.0, 0.0]),
             label=None
             ):
-        '''Create Gmsh code for the torus under the coordinate transformation
+        '''Create Gmsh code for the torus in the x-y plane under the coordinate
+        transformation
 
         .. math::
             \hat{x} = R x + x_0.
@@ -597,7 +632,14 @@ class Geometry(object):
 
         # Add circle
         x0t = numpy.dot(R, numpy.array([0.0, orad, 0.0]))
-        c = self.add_circle(irad, lcar, R=R, x0=x0+x0t)
+        # Get circles in y-z plane
+        Rc = numpy.array([
+            [0.0, 0.0, 1.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0]
+            ])
+
+        c = self.add_circle(x0+x0t, irad, lcar, R=numpy.dot(R, Rc))
 
         rot_axis = [0.0, 0.0, 1.0]
         rot_axis = numpy.dot(R, rot_axis)
@@ -636,10 +678,14 @@ class Geometry(object):
         vol = self.add_volume(surface_loop)
         if label:
             self.add_physical_volume(vol, label)
-        self.add_comment(76*'-')
+
+        # The newline at the end is essential:
+        # If a GEO file doesn't end in a newline, Gmsh will report a syntax
+        # error.
+        self.add_comment(76*'-' + '\n')
         return
 
-    def add_torus2(
+    def _add_torus_extrude_circle(
             self,
             irad, orad,
             lcar,
@@ -660,7 +706,12 @@ class Geometry(object):
 
         # Add circle
         x0t = numpy.dot(R, numpy.array([0.0, orad, 0.0]))
-        c = self.add_circle(irad, lcar, R=R, x0=x0+x0t)
+        Rc = numpy.array([
+            [0.0, 0.0, 1.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0]
+            ])
+        c = self.add_circle(x0+x0t, irad, lcar, R=numpy.dot(R, Rc))
         ll = self.add_line_loop(c)
         s = self.add_plane_surface(ll)
 
@@ -692,10 +743,40 @@ class Geometry(object):
         vol = self.add_compound_volume(all_volumes)
         if label:
             self.add_physical_volume(vol, label)
-        self.add_comment(76*'-')
+        self.add_comment(76*'-' + '\n')
         return
 
     def add_pipe(
+            self,
+            outer_radius, inner_radius, length,
+            R=numpy.eye(3),
+            x0=numpy.array([0.0, 0.0, 0.0]),
+            label=None,
+            lcar=0.1,
+            variant='rectangle_rotation'
+            ):
+        if variant == 'rectangle_rotation':
+            return self._add_pipe_by_rectangle_rotation(
+                outer_radius, inner_radius, length,
+                R=R,
+                x0=x0,
+                label=label,
+                lcar=lcar
+                )
+        elif variant == 'circle_extrusion':
+            return self._add_pipe_by_circle_extrusion(
+                outer_radius, inner_radius, length,
+                R=R,
+                x0=x0,
+                label=label,
+                lcar=lcar
+                )
+        else:
+            raise ValueError(
+                'Illegal variant \'%s\'.' % variant
+                )
+
+    def _add_pipe_by_rectangle_rotation(
             self,
             outer_radius, inner_radius, length,
             R=numpy.eye(3),
@@ -763,7 +844,7 @@ class Geometry(object):
             self.add_physical_volume(vol, label)
         return
 
-    def add_pipe2(
+    def _add_pipe_by_circle_extrusion(
             self,
             outer_radius, inner_radius, length,
             R=numpy.eye(3),
@@ -775,16 +856,21 @@ class Geometry(object):
         Define a ring, extrude it by translation.
         '''
         # Define ring which to Extrude by translation.
+        Rc = numpy.array([
+            [0.0, 0.0, 1.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0]
+            ])
         c_inner = self.add_circle(
+                x0,
                 inner_radius,
                 lcar,
-                R=R,
-                x0=x0
+                R=numpy.dot(R, Rc)
                 )
         ll_inner = self.add_line_loop(c_inner)
 
         c_outer = self.add_circle(
-                outer_radius, lcar, R=R, x0=x0
+                x0, outer_radius, lcar, R=numpy.dot(R, Rc)
                 )
         ll_outer = self.add_line_loop(c_outer)
 
@@ -793,7 +879,7 @@ class Geometry(object):
         # Now Extrude the ring surface.
         name = self.extrude(
                 'Surface{%s}' % surf,
-                translation_axis=[length, 0, 0]
+                translation_axis=numpy.dot(R, [length, 0, 0])
                 )
         vol = name + '[0]'
         if label:

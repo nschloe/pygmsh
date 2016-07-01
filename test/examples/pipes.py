@@ -10,8 +10,7 @@ def generate():
     '''
     geom = pg.Geometry()
 
-    R = pg.rotation_matrix([1, 0, 0], np.pi/6.0)
-
+    R = pg.rotation_matrix([1, 1, 0], np.pi/6.0)
     geom.add_pipe(
             inner_radius=0.3,
             outer_radius=0.4,
@@ -20,19 +19,19 @@ def generate():
             lcar=0.04
             )
 
-    # x0 = np.array([0, 0, 0.3])
-    # geom.add_torus(
-    #         irad=0.05, orad=0.6, lcar=0.1,
-    #         R=R,
-    #         x0=np.dot(R, x0)
-    #         )
-
-    # x0 = np.array([0, 0, -0.3])
-    # geom.add_torus(
-    #         irad=0.05, orad=0.6, lcar=0.1,
-    #         R=R,
-    #         x0=np.dot(R, x0)
-    #         )
+    R = np.array([
+        [0.0, 0.0, 1.0],
+        [0.0, 1.0, 0.0],
+        [1.0, 0.0, 0.0]
+        ])
+    geom.add_pipe(
+            inner_radius=0.3,
+            outer_radius=0.4,
+            length=1.0,
+            lcar=0.04,
+            R=R,
+            variant='circle_extrusion'
+            )
 
     return geom
 
@@ -40,4 +39,4 @@ def generate():
 if __name__ == '__main__':
     import meshio
     points, cells = pg.generate_mesh(generate())
-    meshio.write('pipe_with_rings.vtu', points, cells)
+    meshio.write('pipes.vtu', points, cells)
