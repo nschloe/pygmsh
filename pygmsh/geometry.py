@@ -585,6 +585,37 @@ class Geometry(object):
             lcar,
             R=numpy.eye(3),
             x0=numpy.array([0.0, 0.0, 0.0]),
+            label=None,
+            variant='extrude_lines'
+            ):
+
+        if variant == 'extrude_lines':
+            return self._add_torus_extrude_lines(
+                irad, orad,
+                lcar,
+                R=numpy.eye(3),
+                x0=numpy.array([0.0, 0.0, 0.0]),
+                label=None
+                )
+        elif variant == 'extrude_circle':
+            return self._add_torus_extrude_circle(
+                irad, orad,
+                lcar,
+                R=numpy.eye(3),
+                x0=numpy.array([0.0, 0.0, 0.0]),
+                label=None
+                )
+        else:
+            raise ValueError(
+                'Illegal variant \'%s\'.' % variant
+                )
+
+    def _add_torus_extrude_lines(
+            self,
+            irad, orad,
+            lcar,
+            R=numpy.eye(3),
+            x0=numpy.array([0.0, 0.0, 0.0]),
             label=None
             ):
         '''Create Gmsh code for the torus in the x-y plane under the coordinate
@@ -653,7 +684,7 @@ class Geometry(object):
         self.add_comment(76*'-' + '\n')
         return
 
-    def add_torus2(
+    def _add_torus_extrude_circle(
             self,
             irad, orad,
             lcar,
@@ -674,7 +705,12 @@ class Geometry(object):
 
         # Add circle
         x0t = numpy.dot(R, numpy.array([0.0, orad, 0.0]))
-        c = self.add_circle(irad, lcar, R=R, x0=x0+x0t)
+        Rc = numpy.array([
+            [0.0, 0.0, 1.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0]
+            ])
+        c = self.add_circle(x0+x0t, irad, lcar, R=numpy.matmul(R, Rc))
         ll = self.add_line_loop(c)
         s = self.add_plane_surface(ll)
 
@@ -706,7 +742,7 @@ class Geometry(object):
         vol = self.add_compound_volume(all_volumes)
         if label:
             self.add_physical_volume(vol, label)
-        self.add_comment(76*'-')
+        self.add_comment(76*'-' + '\n')
         return
 
     def add_pipe(
