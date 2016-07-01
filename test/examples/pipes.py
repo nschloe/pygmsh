@@ -11,7 +11,6 @@ def generate():
     geom = pg.Geometry()
 
     R = pg.rotation_matrix([1, 1, 0], np.pi/6.0)
-
     geom.add_pipe(
             inner_radius=0.3,
             outer_radius=0.4,
@@ -20,11 +19,17 @@ def generate():
             lcar=0.04
             )
 
+    R = np.array([
+        [0.0, 0.0, 1.0],
+        [0.0, 1.0, 0.0],
+        [1.0, 0.0, 0.0]
+        ])
     geom.add_pipe(
             inner_radius=0.3,
             outer_radius=0.4,
             length=1.0,
             lcar=0.04,
+            R=R,
             variant='circle_extrusion'
             )
 

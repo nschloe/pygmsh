@@ -879,7 +879,7 @@ class Geometry(object):
         # Now Extrude the ring surface.
         name = self.extrude(
                 'Surface{%s}' % surf,
-                translation_axis=[length, 0, 0]
+                translation_axis=numpy.dot(R, [length, 0, 0])
                 )
         vol = name + '[0]'
         if label:
