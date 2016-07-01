@@ -3,8 +3,10 @@
 __all__ = [
   'cube',
   'ellipsoid',
-  'pipe_with_rings',
+  'pipes',
+  'rectangle_with_hole',
   'screw',
   'swiss_cheese',
+  'tori',
   'torus_crowd'
   ]
