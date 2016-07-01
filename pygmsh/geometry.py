@@ -593,17 +593,17 @@ class Geometry(object):
             return self._add_torus_extrude_lines(
                 irad, orad,
                 lcar,
-                R=numpy.eye(3),
-                x0=numpy.array([0.0, 0.0, 0.0]),
-                label=None
+                R=R,
+                x0=x0,
+                label=label
                 )
         elif variant == 'extrude_circle':
             return self._add_torus_extrude_circle(
                 irad, orad,
                 lcar,
-                R=numpy.eye(3),
-                x0=numpy.array([0.0, 0.0, 0.0]),
-                label=None
+                R=R,
+                x0=x0,
+                label=label
                 )
         else:
             raise ValueError(
@@ -638,6 +638,7 @@ class Geometry(object):
             [1.0, 0.0, 0.0],
             [0.0, 1.0, 0.0]
             ])
+
         c = self.add_circle(x0+x0t, irad, lcar, R=numpy.matmul(R, Rc))
 
         rot_axis = [0.0, 0.0, 1.0]
