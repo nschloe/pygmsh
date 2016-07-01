@@ -587,7 +587,8 @@ class Geometry(object):
             x0=numpy.array([0.0, 0.0, 0.0]),
             label=None
             ):
-        '''Create Gmsh code for the torus under the coordinate transformation
+        '''Create Gmsh code for the torus in the x-y plane under the coordinate
+        transformation
 
         .. math::
             \hat{x} = R x + x_0.
@@ -600,7 +601,13 @@ class Geometry(object):
 
         # Add circle
         x0t = numpy.dot(R, numpy.array([0.0, orad, 0.0]))
-        c = self.add_circle(irad, lcar, R=R, x0=x0+x0t)
+        # Get circles in y-z plane
+        Rc = numpy.array([
+            [0.0, 0.0, 1.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0]
+            ])
+        c = self.add_circle(x0+x0t, irad, lcar, R=numpy.matmul(Rc, R))
 
         rot_axis = [0.0, 0.0, 1.0]
         rot_axis = numpy.dot(R, rot_axis)
@@ -639,7 +646,11 @@ class Geometry(object):
         vol = self.add_volume(surface_loop)
         if label:
             self.add_physical_volume(vol, label)
-        self.add_comment(76*'-')
+
+        # The newline at the end is essential:
+        # If a GEO file doesn't end in a newline, Gmsh will report a syntax
+        # error.
+        self.add_comment(76*'-' + '\n')
         return
 
     def add_torus2(
