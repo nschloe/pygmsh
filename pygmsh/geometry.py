@@ -399,7 +399,7 @@ class Geometry(object):
         # Don't forget the closing arc.
         c.append(self.add_circle_sector([p[-1], p[0], p[1]]))
         if compound:
-            c = self.add_compound_line(c)
+            c = [self.add_compound_line(c)]
         return c
 
     def add_ellipsoid(

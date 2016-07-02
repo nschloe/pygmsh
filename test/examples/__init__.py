@@ -2,6 +2,7 @@
 #
 __all__ = [
   'bsplines',
+  'circle',
   'cube',
   'ellipsoid',
   'pipes',
