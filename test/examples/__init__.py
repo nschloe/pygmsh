@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 #
 __all__ = [
+  'boundary_layers',
   'bsplines',
+  'circle',
   'cube',
   'ellipsoid',
   'pipes',

@@ -1,8 +1,5 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-'''
-Creates a mesh for an ellipsoid.
-'''
 import pygmsh as pg
 
 
