@@ -14,7 +14,7 @@ virtualenv:
 # install dependencies
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get -y install gmsh python-numpy
+  - sudo apt-get -y install gmsh python-numpy python-nose
   - sudo apt-get -y install pandoc
 
 install:
