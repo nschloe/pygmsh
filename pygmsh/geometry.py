@@ -323,19 +323,15 @@ class Geometry(object):
         return
 
     def add_rectangle(self, xmin, xmax, ymin, ymax, z, lcar, holes=None):
-        X = [
-            [xmin, ymin, z],
-            [xmax, ymin, z],
-            [xmax, ymax, z],
-            [xmin, ymax, z]
-            ]
-        # Create line loop
-        ll = self.add_polygon_loop(X, lcar)
-        if holes is None:
-            s = self.add_plane_surface(ll)
-        else:
-            s = self.add_plane_surface([ll] + holes)
-        return s
+        return self.add_polygon([
+                [xmin, ymin, z],
+                [xmax, ymin, z],
+                [xmax, ymax, z],
+                [xmin, ymax, z]
+                ],
+                lcar,
+                holes=holes
+                )
 
     def add_polygon_loop(self, X, lcar):
         # Create points.
