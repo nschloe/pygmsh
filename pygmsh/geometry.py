@@ -303,6 +303,23 @@ class Geometry(object):
                 )
         return name
 
+    def add_background_field(self, fields, aggregation_type='Min'):
+        self._FIELD_ID += 1
+        name = 'field%d' % self._FIELD_ID
+        self._GMSH_CODE.append(
+            '%s = newf;' % name
+            )
+        self._GMSH_CODE.append(
+            'Field[%s] = %s;' % (name, aggregation_type)
+            )
+        self._GMSH_CODE.append(
+            'Field[%s].FieldsList = {%s};' % (name, ', '.join(fields))
+            )
+        self._GMSH_CODE.append(
+            'Background Field = %s;' % name
+            )
+        return name
+
     def add_array(self, entities):
         '''Forms a Gmsh array from a list of entities.
         '''
