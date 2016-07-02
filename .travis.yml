@@ -1,6 +1,6 @@
-sudo: false
-#sudo: required
-#dist: trusty
+# sudo: false
+sudo: required
+dist: trusty
 
 language: python
 
@@ -12,22 +12,21 @@ virtualenv:
   system_site_packages: true
 
 # install dependencies
-addons:
-  apt:
-    packages:
-      - gmsh
-      - python-numpy
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get -y install gmsh python-numpy
+  - sudo apt-get -y install pandoc
 
 install:
   - pip install -r requirements.txt
-  - pip install codecov
   # Alternative: setup.py install.
   # Using pip makes sure that the package is pip-compatible, too.
   - pip install .
+  - pip install coverage
 
 # run tests
 script:
   - nosetests --with-coverage --cover-package=pygmsh
 
 after_success:
-  - codecov
+  - bash <(curl -s https://codecov.io/bash)
