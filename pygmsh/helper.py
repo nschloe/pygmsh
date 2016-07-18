@@ -33,7 +33,7 @@ def rotation_matrix(u, theta):
     return R
 
 
-def generate_mesh(geo_object, optimize=True, do_print=True):
+def generate_mesh(geo_object, optimize=True, verbose=True):
     import meshio
     import os
     import subprocess
@@ -49,7 +49,7 @@ def generate_mesh(geo_object, optimize=True, do_print=True):
     if optimize:
         cmd += ['-optimize']
     out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-    if do_print:
+    if verbose:
         print(out.decode())
 
     points, cells, _, _, _ = meshio.read(outname)
