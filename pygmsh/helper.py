@@ -5,7 +5,7 @@ import numpy
 import sys
 
 if sys.platform == 'darwin':
-    # likely there. 
+    # likely there.
     gmsh_executable = '/Applications/Gmsh.app/Contents/MacOS/gmsh'
 else:
     gmsh_executable = 'gmsh'
@@ -33,7 +33,7 @@ def rotation_matrix(u, theta):
     return R
 
 
-def generate_mesh(geo_object, optimize=True):
+def generate_mesh(geo_object, optimize=True, do_print=True):
     import meshio
     import os
     import subprocess
@@ -49,7 +49,8 @@ def generate_mesh(geo_object, optimize=True):
     if optimize:
         cmd += ['-optimize']
     out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-    print(out.decode())
+    if do_print:
+        print(out.decode())
 
     points, cells, _, _, _ = meshio.read(outname)
 
