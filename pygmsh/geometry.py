@@ -35,6 +35,7 @@ class Geometry(object):
         self._EXTRUDE_ID = 0
         self._ARRAY_ID = 0
         self._FIELD_ID = 0
+        self._PHYSICALGROUP_ID = 0
         self._GMSH_CODE = [
                 self._header()
                 ]
@@ -59,12 +60,6 @@ class Geometry(object):
             'Point(%s) = {%g, %g, %g, %g};' % (name, x[0], x[1], x[2], lcar)
             )
         return name
-
-    def add_physical_point(self, point, label):
-        self._GMSH_CODE.append(
-            'Physical Point("%s") = %s;' % (label, point)
-            )
-        return
 
     def add_line(self, p0, p1):
         self._LINE_ID += 1
@@ -129,12 +124,6 @@ class Geometry(object):
             )
         return name
 
-    def add_physical_line(self, line, label):
-        self._GMSH_CODE.append(
-            'Physical Line("%s") = %s;' % (label, line)
-            )
-        return
-
     def add_plane_surface(self, line_loop):
         self._SURFACE_ID += 1
         sname = 'surf%d' % self._SURFACE_ID
@@ -176,12 +165,6 @@ class Geometry(object):
             )
         return name
 
-    def add_physical_surface(self, surface, label):
-        self._GMSH_CODE.append(
-            'Physical Surface("%s") = %s;' % (label, surface)
-            )
-        return
-
     def add_volume(self, surface_loop):
         self._VOLUME_ID += 1
         name = 'vol%d' % self._VOLUME_ID
@@ -198,9 +181,39 @@ class Geometry(object):
             )
         return name
 
-    def add_physical_volume(self, volume, label):
+    def _new_physical_group(self, label=None):
+        self._PHYSICALGROUP_ID += 1
+        if label is None:
+            label = '%d' % self._PHYSICALGROUP_ID
+        else:
+            label = '"%s"' % label
+        return label
+
+    def add_physical_point(self, point, label=None):
+        label = self._new_physical_group(label)
         self._GMSH_CODE.append(
-            'Physical Volume("%s") = %s;' % (label, volume)
+            'Physical Point(%s) = %s;' % (label, point)
+            )
+        return
+
+    def add_physical_line(self, line, label=None):
+        label = self._new_physical_group(label)
+        self._GMSH_CODE.append(
+            'Physical Line(%s) = %s;' % (label, line)
+            )
+        return
+
+    def add_physical_surface(self, surface, label=None):
+        label = self._new_physical_group(label)
+        self._GMSH_CODE.append(
+            'Physical Surface(%s) = %s;' % (label, surface)
+            )
+        return
+
+    def add_physical_volume(self, volume, label=None):
+        label = self._new_physical_group(label)
+        self._GMSH_CODE.append(
+            'Physical Volume(%s) = %s;' % (label, volume)
             )
         return
 
