@@ -21,7 +21,6 @@ before_install:
 
 install:
   - pip install .
-  - pip install coverage
 
 # run tests
 script:
