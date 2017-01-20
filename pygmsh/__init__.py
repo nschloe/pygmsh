@@ -10,6 +10,12 @@ from pygmsh.__about__ import (
         __website__,
         )
 
+import pipdated
+if pipdated.needs_checking('pygmsh'):
+    msg = pipdated.check('pygmsh', __version__)
+    if msg:
+        print(msg)
+
 __all__ = [
         'geometry',
         'helper'

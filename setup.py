@@ -35,7 +35,8 @@ setup(
     license='License :: OSI Approved :: MIT License',
     platforms='any',
     install_requires=[
-        'numpy'
+        'numpy',
+        'pipdated',
         ],
     classifiers=[
         'Development Status :: 4 - Beta',
