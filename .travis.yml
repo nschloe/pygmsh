@@ -20,7 +20,6 @@ before_install:
   - pip install pytest pytest-cov
 
 install:
-  - pip install -r test_requirements.txt
   - pip install .
   - pip install coverage
 
