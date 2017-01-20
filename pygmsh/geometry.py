@@ -7,7 +7,7 @@ assign an ID for every entity created) and providing access to Python's
 features.
 '''
 
-from pygmsh import __version__
+from pygmsh.__about__ import __version__
 
 import numpy
 
