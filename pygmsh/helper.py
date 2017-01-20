@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 #
 import numpy
-
 import sys
 
 if sys.platform == 'darwin':
@@ -48,7 +47,14 @@ def generate_mesh(geo_object, optimize=True, verbose=True):
     cmd = [gmsh_executable, '-3', filename, '-o', outname]
     if optimize:
         cmd += ['-optimize']
-    out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+
+    try:
+        out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        print('Failure! Gmsh output:')
+        print(e.output)
+        raise
+
     if verbose:
         print(out.decode())
 
