@@ -1,6 +1,12 @@
+VERSION=$(shell python -c "import pygmsh; print(pygmsh.__version__)")
+
+# Make sure we're on the master branch
+ifneq "$(shell git rev-parse --abbrev-ref HEAD)" "master"
+$(error Not on master branch)
+endif
 
 default:
-	@echo "\"make release\"?"
+	@echo "\"make publish\"?"
 
 README.rst: README.md
 	pandoc README.md -o README.rst
@@ -9,14 +15,12 @@ README.rst: README.md
 upload: setup.py README.rst
 	python setup.py sdist upload --sign
 
-V=`python -c "import pygmsh; print(pygmsh.__version__)"`
 tag:
-	git tag -a `@echo -n v$V` -m "tagging v$V" && git push --tags
+	@echo "Tagging v$(VERSION)..."
+	git tag v$(VERSION)
+	git push --tags
 
-release: upload tag
+publish: tag upload
 
 clean:
-	rm -rf \
-	 README.rst \
-	 pygmsh.egg-info/ \
-	 dist
+	rm -f README.rst
