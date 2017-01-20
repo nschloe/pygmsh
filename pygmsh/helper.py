@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 #
 import numpy
-
 import sys
 
 if sys.platform == 'darwin':
