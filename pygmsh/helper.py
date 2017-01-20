@@ -52,7 +52,6 @@ def generate_mesh(geo_object, optimize=True, verbose=True):
         out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
         print('Failure! Gmsh output:')
-        print(type(e.output))
         print(e.output)
         raise
 
