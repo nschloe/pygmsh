@@ -4,7 +4,11 @@ import os
 from distutils.core import setup
 import codecs
 
-from pygmsh import __name__, __version__, __author__, __author_email__
+# https://packaging.python.org/single_source_version/
+base_dir = os.path.abspath(os.path.dirname(__file__))
+about = {}
+with open(os.path.join(base_dir, 'pygmsh', '__about__.py')) as f:
+    exec(f.read(), about)
 
 
 def read(fname):
@@ -17,11 +21,12 @@ def read(fname):
         content = ''
     return content
 
+
 setup(
-    name=__name__,
-    version=__version__,
-    author=__author__,
-    author_email=__author_email__,
+    name='pygmsh',
+    version=about['__version__'],
+    author=about['__author__'],
+    author_email=about['__author_email__'],
     packages=['pygmsh'],
     description='Python frontend for Gmsh',
     long_description=read('README.rst'),
@@ -29,8 +34,9 @@ setup(
     download_url='https://pypi.python.org/pypi/pygmsh',
     license='License :: OSI Approved :: MIT License',
     platforms='any',
-    requires=[
-        'numpy'
+    install_requires=[
+        'numpy',
+        'pipdated',
         ],
     classifiers=[
         'Development Status :: 4 - Beta',

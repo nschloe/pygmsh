@@ -109,11 +109,7 @@ and make use of all the goodies the module provides. The
 
 To run the PyGmsh unit tests, check out this repository and type
 ```
-nosetests
-```
-or
-```
-nose2 -s test
+pytest
 ```
 
 ### Distribution
@@ -122,18 +118,10 @@ To create a new release
 
 1. bump the `__version__` number,
 
-2. create a Git tag,
+2. publish to PyPi and GitHub:
     ```
-    git tag v0.3.1
-    git push --tags
+    $ make publish
     ```
-    and
-
-3. upload to PyPi:
-    ```
-    make upload
-    ```
-
 
 ### License
 
