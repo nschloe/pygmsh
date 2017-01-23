@@ -909,7 +909,7 @@ class Geometry(object):
         surf = self.add_plane_surface(','.join([ll_outer, ll_inner]))
 
         # Now Extrude the ring surface.
-        top, vol = self.extrude(
+        _, vol = self.extrude(
                 'Surface{%s}' % surf,
                 translation_axis=numpy.dot(R, [length, 0, 0])
                 )
