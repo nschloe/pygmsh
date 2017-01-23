@@ -257,7 +257,18 @@ class Geometry(object):
                 )
         else:
             raise RuntimeError('Specify at least translation or rotation.')
-        return name
+
+        # From <http://www.manpagez.com/info/gmsh/gmsh-2.4.0/gmsh_66.php>:
+        #
+        # > In this last extrusion command we retrieved the volume number
+        # > programatically by saving the output of the command into a
+        # > list. This list will contain the "top" of the extruded surface (in
+        # > out[0]) as well as the newly created volume (in out[1]).
+        #
+        top = '%s[0]' % name
+        extruded = '%s[1]' % name
+
+        return top, extruded
 
     def add_boundary_layer(
             self,
@@ -680,23 +691,20 @@ class Geometry(object):
         # is the surface that was created by the extrusion.
         previous = c
         angle = '2*Pi/3'
-        all_names = []
+        all_surfaces = []
         for i in range(3):
             self.add_comment('Round no. %s' % (i+1))
             for k in range(len(previous)):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
                 # ...
-                tmp_name = self.extrude(
+                top, surf = self.extrude(
                     'Line{%s}' % previous[k],
                     rotation_axis=rot_axis,
                     point_on_axis=point_on_rot_axis,
                     angle=angle
                     )
-                all_names.append(tmp_name)
-                previous[k] = tmp_name + '[0]'
-
-        # Now build surface loop and volume.
-        all_surfaces = [name + '[1]' for name in all_names]
+                all_surfaces.append(surf)
+                previous[k] = top
 
         # compound_surface = CompoundSurface(all_surfaces)
 
@@ -753,19 +761,18 @@ class Geometry(object):
         # for the following Extrude() step.  The second [1] entry of the array
         # is the surface that was created by the extrusion.
         previous = s
-        all_names = []
+        all_volumes = []
         num_steps = 3
         for _ in range(num_steps):
-            tmp_name = self.extrude(
+            top, vol = self.extrude(
                 'Surface{%s}' % previous,
                 rotation_axis=rot_axis,
                 point_on_axis=point_on_rot_axis,
                 angle='2*Pi/%d' % num_steps
                 )
-            previous = tmp_name + '[0]'
-            all_names.append(tmp_name)
+            previous = top
+            all_volumes.append(vol)
 
-        all_volumes = [name + '[1]' for name in all_names]
         vol = self.add_compound_volume(all_volumes)
         if label:
             self.add_physical_volume(vol, label)
@@ -840,29 +847,28 @@ class Geometry(object):
         # Extrude all edges three times by 2*Pi/3.
         previous = e
         angle = '2*Pi/3'
-        all_names = []
+        all_surfaces = []
         # com = []
         self.add_comment('Extrude in 3 steps.')
         for i in range(3):
             self.add_comment('Step %s' % (i+1))
             for k in range(len(previous)):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
-                name = self.extrude(
+                top, surf = self.extrude(
                         'Line{%s}' % previous[k],
                         rotation_axis=rot_axis,
                         point_on_axis=point_on_rot_axis,
                         angle=angle
                         )
                 # if k==0:
-                #     com.append(name+'[1]')
+                #     com.append(surf)
                 # else:
-                #     all_names.append(name+'[1]')
-                all_names.append(name+'[1]')
-                previous[k] = name + '[0]'
+                #     all_names.appends(surf)
+                all_surfaces.append(surf)
+                previous[k] = top
         #
         # cs = CompoundSurface(com)
         # Now just add surface loop and volume.
-        all_surfaces = all_names
         # all_surfaces = all_names + [cs]
         surface_loop = self.add_surface_loop(all_surfaces)
         vol = self.add_volume(surface_loop)
@@ -903,11 +909,10 @@ class Geometry(object):
         surf = self.add_plane_surface(','.join([ll_outer, ll_inner]))
 
         # Now Extrude the ring surface.
-        name = self.extrude(
+        top, vol = self.extrude(
                 'Surface{%s}' % surf,
                 translation_axis=numpy.dot(R, [length, 0, 0])
                 )
-        vol = name + '[0]'
         if label:
             self.add_physical_volume(vol, label)
         return vol
