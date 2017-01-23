@@ -4,6 +4,7 @@
 *.e
 *.vtk
 *.vtu
+.cache/
 MANIFEST
 README.rst
 build/
