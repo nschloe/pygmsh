@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 #
+from __future__ import print_function
 import numpy
 import sys
 
@@ -32,7 +33,7 @@ def rotation_matrix(u, theta):
     return R
 
 
-def generate_mesh(geo_object, optimize=True, verbose=True):
+def generate_mesh(geo_object, optimize=True, num_lloyd_steps=10, verbose=True):
     import meshio
     import os
     import subprocess
@@ -42,21 +43,36 @@ def generate_mesh(geo_object, optimize=True, verbose=True):
     os.write(handle, geo_object.get_code().encode())
     os.close(handle)
 
+    print
+    with open(filename, 'r') as fin:
+        print(fin.read())
+    print
+
     handle, outname = tempfile.mkstemp(suffix='.msh')
 
     cmd = [gmsh_executable, '-3', filename, '-o', outname]
     if optimize:
         cmd += ['-optimize']
+    if num_lloyd_steps > 0:
+        cmd += ['-optimize_lloyd', str(num_lloyd_steps)]
 
-    try:
-        out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError as e:
-        print('Failure! Gmsh output:')
-        print(e.output)
-        raise
-
+    # http://stackoverflow.com/a/803421/353337
+    p = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
     if verbose:
-        print(out.decode())
+        while True:
+            line = p.stdout.readline()
+            if not line:
+                break
+            print(line, end='')
+
+    p.communicate()[0]
+    if p.returncode != 0:
+        raise RuntimeError(
+            'Gmsh exited with error (return code %d).' %
+            p.returncode
+            )
 
     points, cells, _, _, _ = meshio.read(outname)
 

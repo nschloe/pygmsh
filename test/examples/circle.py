@@ -18,7 +18,7 @@ def generate():
             )
 
     ll = geom.add_line_loop(circle)
-    surf = geom.add_plane_surface(ll)
+    geom.add_plane_surface(ll)
 
     return geom
 

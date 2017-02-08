@@ -11,3 +11,4 @@ build/
 dist/
 pygmsh.egg-info/
 doc/_build/
+*.pos
