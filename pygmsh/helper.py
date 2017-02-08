@@ -32,7 +32,7 @@ def rotation_matrix(u, theta):
     return R
 
 
-def generate_mesh(geo_object, optimize=True, verbose=True):
+def generate_mesh(geo_object, optimize=True, lloyd_steps=10, verbose=True):
     import meshio
     import os
     import subprocess
@@ -47,6 +47,8 @@ def generate_mesh(geo_object, optimize=True, verbose=True):
     cmd = [gmsh_executable, '-3', filename, '-o', outname]
     if optimize:
         cmd += ['-optimize']
+    if lloyd_steps > 0:
+        cmd += ['-optimize_lloyd', str(lloyd_steps)]
 
     try:
         out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
