@@ -356,11 +356,14 @@ class Geometry(object):
         self._GMSH_CODE.append('// ' + string)
         return
 
-    def add_raw_code(self, list_of_strings):
+    def add_raw_code(self, string_or_list):
         '''Add raw Gmsh code.
         '''
-        for string in list_of_strings:
-            self._GMSH_CODE.append(string)
+        if isinstance(string_or_list, str):
+            self._GMSH_CODE.append(string_or_list)
+        else:
+            for string in string_or_list:
+                self._GMSH_CODE.append(string)
         return
 
     def add_rectangle(self, xmin, xmax, ymin, ymax, z, lcar, holes=None):

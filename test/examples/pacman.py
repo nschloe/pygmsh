@@ -10,14 +10,18 @@ def generate(lcar=0.3):
 
     r = 1.25 * 3.4
     p1 = geom.add_point([0.0, 0.0, 0.0], lcar)
-    p2 = geom.add_point([+r, 0.0, 0.0], lcar)
+    # p2 = geom.add_point([+r, 0.0, 0.0], lcar)
     p3 = geom.add_point([-r, 0.0, 0.0], lcar)
     p4 = geom.add_point([0.0, +r, 0.0], lcar)
     p5 = geom.add_point([0.0, -r, 0.0], lcar)
-    p6 = geom.add_point([r*np.cos(+np.pi/12.0), r*np.sin(+np.pi/12.0), 0.0],
-            lcar)
-    p7 = geom.add_point([r*np.cos(-np.pi/12.0), r*np.sin(-np.pi/12.0), 0.0],
-            lcar)
+    p6 = geom.add_point(
+            [r*np.cos(+np.pi/12.0), r*np.sin(+np.pi/12.0), 0.0],
+            lcar
+            )
+    p7 = geom.add_point(
+            [r*np.cos(-np.pi/12.0), r*np.sin(-np.pi/12.0), 0.0],
+            lcar
+            )
     p8 = geom.add_point([0.5*r, 0.0, 0.0], lcar)
 
     c0 = geom.add_circle_sector([p6, p1, p4])
@@ -28,7 +32,15 @@ def generate(lcar=0.3):
     l2 = geom.add_line(p8, p6)
     ll = geom.add_line_loop([c0, c1, c2, c3, l1, l2])
 
-    geom.add_plane_surface(ll)
+    pacman = geom.add_plane_surface(ll)
+
+    # test setting physical groups
+    geom.add_physical_point(p1, label='cut')
+    geom.add_physical_line(c0, label='arc')
+    geom.add_physical_surface(pacman, label='pacman')
+    # test adding raw code
+    geom.add_raw_code('// test comment')
+    geom.add_raw_code(['// test comment'])
 
     return geom
 
