@@ -24,7 +24,7 @@ import numpy as np
 geom = pg.Geometry()
 
 # Draw a cross.
-poly = geom.add_polygon([
+poly, _, _ = geom.add_polygon([
     [0.0,   0.5, 0.0],
     [-0.1,  0.1, 0.0],
     [-0.5,  0.0, 0.0],
