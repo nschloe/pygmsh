@@ -30,9 +30,9 @@ setup(
     packages=['pygmsh'],
     description='Python frontend for Gmsh',
     long_description=read('README.rst'),
-    url='https://github.com/nschloe/pygmsh',
+    url=about['__website__'],
     download_url='https://pypi.python.org/pypi/pygmsh',
-    license='License :: OSI Approved :: MIT License',
+    license=about['__license__'],
     platforms='any',
     install_requires=[
         'meshio',
@@ -40,8 +40,8 @@ setup(
         'pipdated',
         ],
     classifiers=[
-        'Development Status :: 4 - Beta',
-        'License :: OSI Approved :: MIT License',
+        about['__status__'],
+        about['__license__'],
         'Intended Audience :: Science/Research',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
