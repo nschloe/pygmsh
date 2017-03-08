@@ -43,11 +43,6 @@ def generate_mesh(geo_object, optimize=True, num_lloyd_steps=10, verbose=True):
     os.write(handle, geo_object.get_code().encode())
     os.close(handle)
 
-    print
-    with open(filename, 'r') as fin:
-        print(fin.read())
-    print
-
     handle, outname = tempfile.mkstemp(suffix='.msh')
 
     cmd = [gmsh_executable, '-3', filename, '-o', outname]
