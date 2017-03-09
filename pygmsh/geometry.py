@@ -61,65 +61,6 @@ class Geometry(object):
         self._GMSH_CODE.append(entity.code)
         return entity
 
-    # def add_point(self, x, lcar):
-    #     p = Point(x, lcar)
-    #     self._GMSH_CODE.append(p.code)
-    #     return p
-
-    # def add_line(self, p0, p1):
-    #     line = Line(p0, p1)
-    #     self._GMSH_CODE.append(line.code)
-    #     return line.id
-
-    # def add_bspline(self, control_points):
-    #     n = len(control_points)
-    #     if n < 4:
-    #         raise RuntimeError(
-    #             ('BSpline needs at least four control points (%d given).')
-    #              % n)
-    #     self._LINE_ID += 1
-    #     name = 'bspline%d' % self._LINE_ID
-    #     self._GMSH_CODE.append('%s = newl;' % name)
-    #     self._GMSH_CODE.append(
-    #         'BSpline(%s) = {%s};' %
-    #         (name, ', '.join([c.id for c in control_points]))
-    #         )
-    #     return name
-
-    # def add_circle_arc(self, points):
-    #     '''This is Gmsh's Circle.
-    #     '''
-    #     self._CIRCLE_ID += 1
-    #     name = 'c%d' % self._CIRCLE_ID
-    #     self._GMSH_CODE.append('%s = newl;' % name)
-    #     self._GMSH_CODE.append(
-    #         'Circle(%s) = {%s, %s, %s};' %
-    #         (name, points[0].id, points[1].id, points[2].id)
-    #         )
-    #     return name
-
-    # def add_ellipse_arc(self, points):
-    #     '''This is Gmsh's Ellipse.
-    #     '''
-    #     self._ELLIPSE_ID += 1
-    #     name = 'e%d' % self._ELLIPSE_ID
-    #     self._GMSH_CODE.append('%s = newl;' % name)
-    #     self._GMSH_CODE.append(
-    #         'Ellipse(%s) = {%s, %s, %s, %s};' %
-    #         (name, points[0].id, points[1].id, points[2].id, points[3].id)
-    #         )
-    #     return name
-
-    # def add_compound_line(self, lines):
-    #     self._LINE_ID += 1
-    #     name = 'l%d' % self._LINE_ID
-    #     self._GMSH_CODE.append('%s = newl;' % name)
-    #     self._GMSH_CODE.append(
-    #         'Compound Line(%s) = {%s};'
-    #         % (name, ','.join([l.id for l in lines]))
-    #         )
-    #     return name
-
     def add_line_loop(self, lines):
         self._LINELOOP_ID += 1
         name = 'll%d' % self._LINELOOP_ID
