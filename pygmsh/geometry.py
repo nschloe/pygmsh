@@ -7,7 +7,9 @@ assign an ID for every entity created) and providing access to Python's
 features.
 '''
 
-from pygmsh.__about__ import __version__
+from .__about__ import __version__
+from .line import Line
+from .point import Point
 
 import numpy
 
@@ -52,21 +54,19 @@ class Geometry(object):
         '''
         return '\n'.join(self._GMSH_CODE)
 
+    def add(self, entity):
+        self._GMSH_CODE.append(entity.code)
+        return entity
+
     def add_point(self, x, lcar):
-        self._POINT_ID += 1
-        name = 'p%d' % self._POINT_ID
-        self._GMSH_CODE.append('%s = newp;' % name)
-        self._GMSH_CODE.append(
-            'Point(%s) = {%r, %r, %r, %r};' % (name, x[0], x[1], x[2], lcar)
-            )
-        return name
+        p = Point(x, lcar)
+        self._GMSH_CODE.append(p.code)
+        return p
 
     def add_line(self, p0, p1):
-        self._LINE_ID += 1
-        name = 'l%d' % self._LINE_ID
-        self._GMSH_CODE.append('%s = newl;' % name)
-        self._GMSH_CODE.append('Line(%s) = {%s, %s};' % (name, p0, p1))
-        return name
+        line = Line(p0, p1)
+        self._GMSH_CODE.append(line.code)
+        return line.id
 
     def add_bspline(self, control_points):
         n = len(control_points)
@@ -78,11 +78,12 @@ class Geometry(object):
         name = 'bspline%d' % self._LINE_ID
         self._GMSH_CODE.append('%s = newl;' % name)
         self._GMSH_CODE.append(
-            'BSpline(%s) = {%s};' % (name, ', '.join(control_points))
+            'BSpline(%s) = {%s};' %
+            (name, ', '.join([c.id for c in control_points]))
             )
         return name
 
-    def add_circle_sector(self, point_ids):
+    def add_circle_arc(self, points):
         '''This is Gmsh's Circle.
         '''
         self._CIRCLE_ID += 1
@@ -90,11 +91,11 @@ class Geometry(object):
         self._GMSH_CODE.append('%s = newl;' % name)
         self._GMSH_CODE.append(
             'Circle(%s) = {%s, %s, %s};' %
-            (name, point_ids[0], point_ids[1], point_ids[2])
+            (name, points[0].id, points[1].id, points[2].id)
             )
         return name
 
-    def add_ellipse_sector(self, point_ids):
+    def add_ellipse_arc(self, points):
         '''This is Gmsh's Ellipse.
         '''
         self._ELLIPSE_ID += 1
@@ -102,7 +103,7 @@ class Geometry(object):
         self._GMSH_CODE.append('%s = newl;' % name)
         self._GMSH_CODE.append(
             'Ellipse(%s) = {%s, %s, %s, %s};' %
-            (name, point_ids[0], point_ids[1], point_ids[2], point_ids[3])
+            (name, points[0].id, points[1].id, points[2].id, points[3].id)
             )
         return name
 
@@ -307,7 +308,8 @@ class Geometry(object):
                 )
         if nodes_list:
             self._GMSH_CODE.append(
-                'Field[%s].NodesList = {%s};' % (name, ','.join(nodes_list))
+                'Field[%s].NodesList = {%s};' %
+                (name, ','.join([n.id for n in nodes_list]))
                 )
         if hfar:
             self._GMSH_CODE.append('Field[%s].hfar= %r;' % (name, hfar))
@@ -439,9 +441,9 @@ class Geometry(object):
         self.add_comment('Circle arcs')
         c = []
         for k in range(1, len(p)-1):
-            c.append(self.add_circle_sector([p[k], p[0], p[k+1]]))
+            c.append(self.add_circle_arc([p[k], p[0], p[k+1]]))
         # Don't forget the closing arc.
-        c.append(self.add_circle_sector([p[-1], p[0], p[1]]))
+        c.append(self.add_circle_arc([p[-1], p[0], p[1]]))
         if compound:
             c = [self.add_compound_line(c)]
         return c
@@ -490,19 +492,19 @@ class Geometry(object):
             ]
         # Add skeleton.
         # Alternative for circles:
-        # `self.add_circle_sector([a, b, c])`
-        c = [self.add_ellipse_sector([p[1], p[0], p[6], p[6]]),
-             self.add_ellipse_sector([p[6], p[0], p[4], p[4]]),
-             self.add_ellipse_sector([p[4], p[0], p[3], p[3]]),
-             self.add_ellipse_sector([p[3], p[0], p[1], p[1]]),
-             self.add_ellipse_sector([p[1], p[0], p[2], p[2]]),
-             self.add_ellipse_sector([p[2], p[0], p[4], p[4]]),
-             self.add_ellipse_sector([p[4], p[0], p[5], p[5]]),
-             self.add_ellipse_sector([p[5], p[0], p[1], p[1]]),
-             self.add_ellipse_sector([p[6], p[0], p[2], p[2]]),
-             self.add_ellipse_sector([p[2], p[0], p[3], p[3]]),
-             self.add_ellipse_sector([p[3], p[0], p[5], p[5]]),
-             self.add_ellipse_sector([p[5], p[0], p[6], p[6]])
+        # `self.add_circle_arc([a, b, c])`
+        c = [self.add_ellipse_arc([p[1], p[0], p[6], p[6]]),
+             self.add_ellipse_arc([p[6], p[0], p[4], p[4]]),
+             self.add_ellipse_arc([p[4], p[0], p[3], p[3]]),
+             self.add_ellipse_arc([p[3], p[0], p[1], p[1]]),
+             self.add_ellipse_arc([p[1], p[0], p[2], p[2]]),
+             self.add_ellipse_arc([p[2], p[0], p[4], p[4]]),
+             self.add_ellipse_arc([p[4], p[0], p[5], p[5]]),
+             self.add_ellipse_arc([p[5], p[0], p[1], p[1]]),
+             self.add_ellipse_arc([p[6], p[0], p[2], p[2]]),
+             self.add_ellipse_arc([p[2], p[0], p[3], p[3]]),
+             self.add_ellipse_arc([p[3], p[0], p[5], p[5]]),
+             self.add_ellipse_arc([p[5], p[0], p[6], p[6]])
              ]
         # Add surfaces (1/8th of the ball surface).
         ll = [
