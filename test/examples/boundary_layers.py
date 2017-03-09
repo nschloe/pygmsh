@@ -7,21 +7,21 @@ def generate():
     geom = pg.Geometry()
 
     lcar = 0.1
-    p0 = geom.add_point([0.0, 0.0, 0.0], lcar)
-    p1 = geom.add_point([2.0, 0.0, 0.0], lcar)
-    p2 = geom.add_point([3.0, 1.0, 0.0], lcar)
-    p3 = geom.add_point([1.0, 2.0, 0.0], lcar)
-    p4 = geom.add_point([0.0, 1.0, 0.0], lcar)
+    p0 = geom.add(pg.Point([0.0, 0.0, 0.0], lcar))
+    p1 = geom.add(pg.Point([2.0, 0.0, 0.0], lcar))
+    p2 = geom.add(pg.Point([3.0, 1.0, 0.0], lcar))
+    p3 = geom.add(pg.Point([1.0, 2.0, 0.0], lcar))
+    p4 = geom.add(pg.Point([0.0, 1.0, 0.0], lcar))
 
-    l0 = geom.add_line(p0, p1)
-    l1 = geom.add_line(p1, p2)
-    l2 = geom.add_line(p2, p3)
-    l3 = geom.add_line(p3, p4)
-    l4 = geom.add_line(p4, p0)
+    l0 = geom.add(pg.Line(p0, p1))
+    l1 = geom.add(pg.Line(p1, p2))
+    l2 = geom.add(pg.Line(p2, p3))
+    l3 = geom.add(pg.Line(p3, p4))
+    l4 = geom.add(pg.Line(p4, p0))
 
     ll = geom.add_line_loop([l0, l1, l2, l3, l4])
 
-    surf = geom.add_plane_surface(ll)
+    geom.add_plane_surface(ll)
 
     field0 = geom.add_boundary_layer(
         edges_list=[l0],

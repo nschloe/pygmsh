@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 from .point import Point
+import copy
 
 
 class Line(object):
@@ -20,3 +21,8 @@ class Line(object):
             'Line(%s) = {%s, %s};' % (self.id, p0.id, p1.id)
             ])
         return
+
+    def __neg__(self):
+        neg_self = copy.deepcopy(self)
+        neg_self.id = '-' + neg_self.id
+        return neg_self

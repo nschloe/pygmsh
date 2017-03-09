@@ -10,7 +10,7 @@ __all__ = [
   'pacman',
   'pipes',
   'rectangle_with_hole',
-  'screw',
+  # 'screw',
   'subdomains',
   'swiss_cheese',
   'tori',

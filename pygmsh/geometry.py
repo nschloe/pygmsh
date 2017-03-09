@@ -8,6 +8,10 @@ features.
 '''
 
 from .__about__ import __version__
+from .circle_arc import CircleArc
+from .compound_line import CompoundLine
+from .dummy import Dummy
+from .ellipse_arc import EllipseArc
 from .line import Line
 from .point import Point
 
@@ -26,7 +30,6 @@ class Geometry(object):
         # names in Gmsh unique, keep track of how many points, cirlces, etc.
         # have already been created. Variable names will then be p1, p2, etc.
         # for points, c1, c2, etc. for circles and so on.
-        self._POINT_ID = 0
         self._LINE_ID = 0
         self._LINELOOP_ID = 0
         self._SURFACE_ID = 0
@@ -58,70 +61,71 @@ class Geometry(object):
         self._GMSH_CODE.append(entity.code)
         return entity
 
-    def add_point(self, x, lcar):
-        p = Point(x, lcar)
-        self._GMSH_CODE.append(p.code)
-        return p
+    # def add_point(self, x, lcar):
+    #     p = Point(x, lcar)
+    #     self._GMSH_CODE.append(p.code)
+    #     return p
 
-    def add_line(self, p0, p1):
-        line = Line(p0, p1)
-        self._GMSH_CODE.append(line.code)
-        return line.id
+    # def add_line(self, p0, p1):
+    #     line = Line(p0, p1)
+    #     self._GMSH_CODE.append(line.code)
+    #     return line.id
 
-    def add_bspline(self, control_points):
-        n = len(control_points)
-        if n < 4:
-            raise RuntimeError(
-                ('BSpline needs at least four control points (%d given).') % n
-                )
-        self._LINE_ID += 1
-        name = 'bspline%d' % self._LINE_ID
-        self._GMSH_CODE.append('%s = newl;' % name)
-        self._GMSH_CODE.append(
-            'BSpline(%s) = {%s};' %
-            (name, ', '.join([c.id for c in control_points]))
-            )
-        return name
+    # def add_bspline(self, control_points):
+    #     n = len(control_points)
+    #     if n < 4:
+    #         raise RuntimeError(
+    #             ('BSpline needs at least four control points (%d given).')
+    #              % n)
+    #     self._LINE_ID += 1
+    #     name = 'bspline%d' % self._LINE_ID
+    #     self._GMSH_CODE.append('%s = newl;' % name)
+    #     self._GMSH_CODE.append(
+    #         'BSpline(%s) = {%s};' %
+    #         (name, ', '.join([c.id for c in control_points]))
+    #         )
+    #     return name
 
-    def add_circle_arc(self, points):
-        '''This is Gmsh's Circle.
-        '''
-        self._CIRCLE_ID += 1
-        name = 'c%d' % self._CIRCLE_ID
-        self._GMSH_CODE.append('%s = newl;' % name)
-        self._GMSH_CODE.append(
-            'Circle(%s) = {%s, %s, %s};' %
-            (name, points[0].id, points[1].id, points[2].id)
-            )
-        return name
+    # def add_circle_arc(self, points):
+    #     '''This is Gmsh's Circle.
+    #     '''
+    #     self._CIRCLE_ID += 1
+    #     name = 'c%d' % self._CIRCLE_ID
+    #     self._GMSH_CODE.append('%s = newl;' % name)
+    #     self._GMSH_CODE.append(
+    #         'Circle(%s) = {%s, %s, %s};' %
+    #         (name, points[0].id, points[1].id, points[2].id)
+    #         )
+    #     return name
 
-    def add_ellipse_arc(self, points):
-        '''This is Gmsh's Ellipse.
-        '''
-        self._ELLIPSE_ID += 1
-        name = 'e%d' % self._ELLIPSE_ID
-        self._GMSH_CODE.append('%s = newl;' % name)
-        self._GMSH_CODE.append(
-            'Ellipse(%s) = {%s, %s, %s, %s};' %
-            (name, points[0].id, points[1].id, points[2].id, points[3].id)
-            )
-        return name
+    # def add_ellipse_arc(self, points):
+    #     '''This is Gmsh's Ellipse.
+    #     '''
+    #     self._ELLIPSE_ID += 1
+    #     name = 'e%d' % self._ELLIPSE_ID
+    #     self._GMSH_CODE.append('%s = newl;' % name)
+    #     self._GMSH_CODE.append(
+    #         'Ellipse(%s) = {%s, %s, %s, %s};' %
+    #         (name, points[0].id, points[1].id, points[2].id, points[3].id)
+    #         )
+    #     return name
 
-    def add_compound_line(self, lines):
-        self._LINE_ID += 1
-        name = 'l%d' % self._LINE_ID
-        self._GMSH_CODE.append('%s = newl;' % name)
-        self._GMSH_CODE.append(
-            'Compound Line(%s) = {%s};' % (name, ','.join(lines))
-            )
-        return name
+    # def add_compound_line(self, lines):
+    #     self._LINE_ID += 1
+    #     name = 'l%d' % self._LINE_ID
+    #     self._GMSH_CODE.append('%s = newl;' % name)
+    #     self._GMSH_CODE.append(
+    #         'Compound Line(%s) = {%s};'
+    #         % (name, ','.join([l.id for l in lines]))
+    #         )
+    #     return name
 
     def add_line_loop(self, lines):
         self._LINELOOP_ID += 1
         name = 'll%d' % self._LINELOOP_ID
         self._GMSH_CODE.append('%s = newll;' % name)
         self._GMSH_CODE.append(
-            'Line Loop(%s) = {%s};' % (name, ','.join(lines))
+            'Line Loop(%s) = {%s};' % (name, ','.join([l.id for l in lines]))
             )
         return name
 
@@ -137,7 +141,7 @@ class Geometry(object):
             self._GMSH_CODE.append(
                 'Plane Surface(%s) = {%s};' % (sname, line_loop)
                 )
-        return sname
+        return Dummy(sname)
 
     def add_ruled_surface(self, line_loop):
         self._SURFACE_ID += 1
@@ -146,23 +150,25 @@ class Geometry(object):
         self._GMSH_CODE.append(
             'Ruled Surface(%s) = {%s};' % (sname, line_loop)
             )
-        return sname
+        return Dummy(sname)
 
     def add_compound_surface(self, surfaces):
         self._SURFACE_ID += 1
         name = 'surf%d' % self._SURFACE_ID
         self._GMSH_CODE.append('%s = news;' % name)
         self._GMSH_CODE.append(
-            'Compound Surface(%s) = {%s};' % (name, ','.join(surfaces))
+            'Compound Surface(%s) = {%s};'
+            % (name, ','.join([s.id for s in surfaces]))
             )
-        return name
+        return Dummy(name)
 
     def add_surface_loop(self, surfaces):
         self._SURFACELOOP_ID += 1
         name = 'surfloop%d' % self._SURFACELOOP_ID
         self._GMSH_CODE.append('%s = newsl;' % name)
         self._GMSH_CODE.append(
-            'Surface Loop(%s) = {%s};' % (name, ','.join(surfaces))
+            'Surface Loop(%s) = {%s};'
+            % (name, ','.join([s.id for s in surfaces]))
             )
         return name
 
@@ -178,7 +184,8 @@ class Geometry(object):
         name = 'cv%d' % self._VOLUME_ID
         self._GMSH_CODE.append('%s = newv;' % name)
         self._GMSH_CODE.append(
-            'Compound Volume(%s) = {%s};' % (name, ','.join(volumes))
+            'Compound Volume(%s) = {%s};'
+            % (name, ','.join([v.id for v in volumes]))
             )
         return name
 
@@ -233,6 +240,10 @@ class Geometry(object):
         '''
         self._EXTRUDE_ID += 1
 
+        # TODO remove this workaround
+        if isinstance(entity, str):
+            entity = Dummy(entity)
+
         # out[] = Extrude{0,1,0}{ Line{1}; };
         name = 'ex%d' % self._EXTRUDE_ID
         if translation_axis is not None and rotation_axis is not None:
@@ -240,21 +251,21 @@ class Geometry(object):
                     ('%s[] = Extrude{{%s,%s,%s}, '
                      '{%s,%s,%s}, {%s,%s,%s}, %s}{%s;};') %
                     ((name,) + tuple(translation_axis) + tuple(rotation_axis) +
-                     tuple(point_on_axis) + (angle, entity))
+                     tuple(point_on_axis) + (angle, entity.id))
                     )
 
         elif translation_axis is not None:
             # Only translation
             self._GMSH_CODE.append(
                 '%s[] = Extrude{%s,%s,%s}{%s;};' %
-                ((name,) + tuple(translation_axis) + (entity,))
+                ((name,) + tuple(translation_axis) + (entity.id,))
                 )
         elif rotation_axis is not None:
             # Only rotation
             self._GMSH_CODE.append(
                 '%s[] = Extrude{{%s,%s,%s}, {%s,%s,%s}, %s}{%s;};' %
                 ((name,) + tuple(rotation_axis) + tuple(point_on_axis) +
-                    (angle, entity))
+                    (angle, entity.id))
                 )
         else:
             raise RuntimeError('Specify at least translation or rotation.')
@@ -266,8 +277,8 @@ class Geometry(object):
         # > list. This list will contain the "top" of the extruded surface (in
         # > out[0]) as well as the newly created volume (in out[1]).
         #
-        top = '%s[0]' % name
-        extruded = '%s[1]' % name
+        top = Dummy('%s[0]' % name)
+        extruded = Dummy('%s[1]' % name)
 
         return top, extruded
 
@@ -300,7 +311,8 @@ class Geometry(object):
         self._GMSH_CODE.append('Field[%s] = BoundaryLayer;' % name)
         if edges_list:
             self._GMSH_CODE.append(
-                'Field[%s].EdgesList = {%s};' % (name, ','.join(edges_list))
+                'Field[%s].EdgesList = {%s};'
+                % (name, ','.join([e.id for e in edges_list]))
                 )
         if faces_list:
             self._GMSH_CODE.append(
@@ -381,10 +393,10 @@ class Geometry(object):
 
     def add_polygon_loop(self, X, lcar):
         # Create points.
-        p = [self.add_point(x, lcar) for x in X]
+        p = [self.add(Point(x, lcar)) for x in X]
         # Create lines
-        lines = [self.add_line(p[k], p[k+1]) for k in range(len(p)-1)]
-        lines.append(self.add_line(p[-1], p[0]))
+        lines = [self.add(Line(p[k], p[k+1])) for k in range(len(p)-1)]
+        lines.append(self.add(Line(p[-1], p[0])))
         ll = self.add_line_loop(lines)
         return ll, lines
 
@@ -396,7 +408,7 @@ class Geometry(object):
             s = self.add_plane_surface(ll)
         else:
             s = self.add_plane_surface([ll] + holes)
-        return s, ll, lines
+        return Dummy(s), ll, lines
 
     def add_circle(
             self,
@@ -435,17 +447,17 @@ class Geometry(object):
         X = [numpy.dot(R, x) + x0 for x in X]
         # Add Gmsh Points.
         self.add_comment('Points')
-        p = [self.add_point(x, lcar) for x in X]
+        p = [self.add(Point(x, lcar)) for x in X]
 
         # Define the circle arcs.
         self.add_comment('Circle arcs')
         c = []
         for k in range(1, len(p)-1):
-            c.append(self.add_circle_arc([p[k], p[0], p[k+1]]))
+            c.append(self.add(CircleArc([p[k], p[0], p[k+1]])))
         # Don't forget the closing arc.
-        c.append(self.add_circle_arc([p[-1], p[0], p[1]]))
+        c.append(self.add(CircleArc([p[-1], p[0], p[1]])))
         if compound:
-            c = [self.add_compound_line(c)]
+            c = [self.add(CompoundLine(c))]
         return c
 
     def add_ellipsoid(
@@ -464,60 +476,60 @@ class Geometry(object):
         # Add points.
         a = lcar
         p = [
-            self.add_point(x0, lcar=lcar),
-            self.add_point(
+            self.add(Point(x0, lcar=lcar)),
+            self.add(Point(
                 [x0[0]+radii[0], x0[1], x0[2]],
                 lcar=a
-                ),
-            self.add_point(
+                )),
+            self.add(Point(
                 [x0[0], x0[1]+radii[1], x0[2]],
                 lcar=a
-                ),
-            self.add_point(
+                )),
+            self.add(Point(
                 [x0[0], x0[1], x0[2]+radii[2]],
                 lcar=a
-                ),
-            self.add_point(
+                )),
+            self.add(Point(
                 [x0[0]-radii[0], x0[1], x0[2]],
                 lcar=a
-                ),
-            self.add_point(
+                )),
+            self.add(Point(
                 [x0[0], x0[1]-radii[1], x0[2]],
                 lcar=a
-                ),
-            self.add_point(
+                )),
+            self.add(Point(
                 [x0[0], x0[1], x0[2]-radii[2]],
                 lcar=a
-                )
+                ))
             ]
         # Add skeleton.
         # Alternative for circles:
         # `self.add_circle_arc([a, b, c])`
-        c = [self.add_ellipse_arc([p[1], p[0], p[6], p[6]]),
-             self.add_ellipse_arc([p[6], p[0], p[4], p[4]]),
-             self.add_ellipse_arc([p[4], p[0], p[3], p[3]]),
-             self.add_ellipse_arc([p[3], p[0], p[1], p[1]]),
-             self.add_ellipse_arc([p[1], p[0], p[2], p[2]]),
-             self.add_ellipse_arc([p[2], p[0], p[4], p[4]]),
-             self.add_ellipse_arc([p[4], p[0], p[5], p[5]]),
-             self.add_ellipse_arc([p[5], p[0], p[1], p[1]]),
-             self.add_ellipse_arc([p[6], p[0], p[2], p[2]]),
-             self.add_ellipse_arc([p[2], p[0], p[3], p[3]]),
-             self.add_ellipse_arc([p[3], p[0], p[5], p[5]]),
-             self.add_ellipse_arc([p[5], p[0], p[6], p[6]])
+        c = [self.add(EllipseArc([p[1], p[0], p[6], p[6]])),
+             self.add(EllipseArc([p[6], p[0], p[4], p[4]])),
+             self.add(EllipseArc([p[4], p[0], p[3], p[3]])),
+             self.add(EllipseArc([p[3], p[0], p[1], p[1]])),
+             self.add(EllipseArc([p[1], p[0], p[2], p[2]])),
+             self.add(EllipseArc([p[2], p[0], p[4], p[4]])),
+             self.add(EllipseArc([p[4], p[0], p[5], p[5]])),
+             self.add(EllipseArc([p[5], p[0], p[1], p[1]])),
+             self.add(EllipseArc([p[6], p[0], p[2], p[2]])),
+             self.add(EllipseArc([p[2], p[0], p[3], p[3]])),
+             self.add(EllipseArc([p[3], p[0], p[5], p[5]])),
+             self.add(EllipseArc([p[5], p[0], p[6], p[6]])),
              ]
         # Add surfaces (1/8th of the ball surface).
         ll = [
             # one half
-            self.add_line_loop([c[4],      c[9],     c[3]]),
-            self.add_line_loop([c[8],      '-'+c[4], c[0]]),
-            self.add_line_loop(['-'+c[9],  c[5],     c[2]]),
-            self.add_line_loop(['-'+c[5],  '-'+c[8], c[1]]),
+            self.add_line_loop([c[4],   c[9],  c[3]]),
+            self.add_line_loop([c[8],  -c[4], c[0]]),
+            self.add_line_loop([-c[9],  c[5],  c[2]]),
+            self.add_line_loop([-c[5], -c[8], c[1]]),
             # the other half
-            self.add_line_loop([c[7],      '-'+c[3], c[10]]),
-            self.add_line_loop([c[11],     '-'+c[7], '-'+c[0]]),
-            self.add_line_loop(['-'+c[10], '-'+c[2], c[6]]),
-            self.add_line_loop(['-'+c[1],  '-'+c[6], '-'+c[11]])
+            self.add_line_loop([c[7],   -c[3],  c[10]]),
+            self.add_line_loop([c[11],  -c[7], -c[0]]),
+            self.add_line_loop([-c[10], -c[2],  c[6]]),
+            self.add_line_loop([-c[1],  -c[6], -c[11]])
             ]
         # Create a surface for each line loop.
         s = [self.add_ruled_surface(l) for l in ll]
@@ -573,36 +585,36 @@ class Geometry(object):
             holes = []
 
         # Define corner points.
-        p = [self.add_point([x1, y1, z1], lcar=lcar),
-             self.add_point([x1, y1, z0], lcar=lcar),
-             self.add_point([x1, y0, z1], lcar=lcar),
-             self.add_point([x1, y0, z0], lcar=lcar),
-             self.add_point([x0, y1, z1], lcar=lcar),
-             self.add_point([x0, y1, z0], lcar=lcar),
-             self.add_point([x0, y0, z1], lcar=lcar),
-             self.add_point([x0, y0, z0], lcar=lcar)
+        p = [self.add(Point([x1, y1, z1], lcar=lcar)),
+             self.add(Point([x1, y1, z0], lcar=lcar)),
+             self.add(Point([x1, y0, z1], lcar=lcar)),
+             self.add(Point([x1, y0, z0], lcar=lcar)),
+             self.add(Point([x0, y1, z1], lcar=lcar)),
+             self.add(Point([x0, y1, z0], lcar=lcar)),
+             self.add(Point([x0, y0, z1], lcar=lcar)),
+             self.add(Point([x0, y0, z0], lcar=lcar))
              ]
         # Define edges.
-        e = [self.add_line(p[0], p[1]),
-             self.add_line(p[0], p[2]),
-             self.add_line(p[0], p[4]),
-             self.add_line(p[1], p[3]),
-             self.add_line(p[1], p[5]),
-             self.add_line(p[2], p[3]),
-             self.add_line(p[2], p[6]),
-             self.add_line(p[3], p[7]),
-             self.add_line(p[4], p[5]),
-             self.add_line(p[4], p[6]),
-             self.add_line(p[5], p[7]),
-             self.add_line(p[6], p[7])
+        e = [self.add(Line(p[0], p[1])),
+             self.add(Line(p[0], p[2])),
+             self.add(Line(p[0], p[4])),
+             self.add(Line(p[1], p[3])),
+             self.add(Line(p[1], p[5])),
+             self.add(Line(p[2], p[3])),
+             self.add(Line(p[2], p[6])),
+             self.add(Line(p[3], p[7])),
+             self.add(Line(p[4], p[5])),
+             self.add(Line(p[4], p[6])),
+             self.add(Line(p[5], p[7])),
+             self.add(Line(p[6], p[7]))
              ]
         # Define the six line loops.
-        ll = [self.add_line_loop([e[0], e[3],  '-'+e[5],  '-'+e[1]]),
-              self.add_line_loop([e[0], e[4],  '-'+e[8],  '-'+e[2]]),
-              self.add_line_loop([e[1], e[6],  '-'+e[9],  '-'+e[2]]),
-              self.add_line_loop([e[3], e[7],  '-'+e[10], '-'+e[4]]),
-              self.add_line_loop([e[5], e[7],  '-'+e[11], '-'+e[6]]),
-              self.add_line_loop([e[8], e[10], '-'+e[11], '-'+e[9]])
+        ll = [self.add_line_loop([e[0], e[3],  -e[5],  -e[1]]),
+              self.add_line_loop([e[0], e[4],  -e[8],  -e[2]]),
+              self.add_line_loop([e[1], e[6],  -e[9],  -e[2]]),
+              self.add_line_loop([e[3], e[7],  -e[10], -e[4]]),
+              self.add_line_loop([e[5], e[7],  -e[11], -e[6]]),
+              self.add_line_loop([e[8], e[10], -e[11], -e[9]])
               ]
         # Create a surface for each line loop.
         s = [self.add_ruled_surface(l) for l in ll]
@@ -703,7 +715,7 @@ class Geometry(object):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
                 # ...
                 top, surf = self.extrude(
-                    'Line{%s}' % previous[k],
+                    'Line{%s}' % previous[k].id,
                     rotation_axis=rot_axis,
                     point_on_axis=point_on_rot_axis,
                     angle=angle
@@ -770,7 +782,7 @@ class Geometry(object):
         num_steps = 3
         for _ in range(num_steps):
             top, vol = self.extrude(
-                'Surface{%s}' % previous,
+                'Surface{%s}' % previous.id,
                 rotation_axis=rot_axis,
                 point_on_axis=point_on_rot_axis,
                 angle='2*Pi/%d' % num_steps
@@ -835,13 +847,13 @@ class Geometry(object):
         # Apply transformation.
         X = [numpy.dot(R, x) + x0 for x in X]
         # Create points set.
-        p = [self.add_point(x, lcar) for x in X]
+        p = [self.add(Point(x, lcar)) for x in X]
 
         # Define edges.
-        e = [self.add_line(p[0], p[1]),
-             self.add_line(p[1], p[2]),
-             self.add_line(p[2], p[3]),
-             self.add_line(p[3], p[0])
+        e = [self.add(Line(p[0], p[1])),
+             self.add(Line(p[1], p[2])),
+             self.add(Line(p[2], p[3])),
+             self.add(Line(p[3], p[0]))
              ]
 
         rot_axis = [0.0, 0.0, 1.0]
@@ -860,7 +872,7 @@ class Geometry(object):
             for k in range(len(previous)):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
                 top, surf = self.extrude(
-                        'Line{%s}' % previous[k],
+                        'Line{%s}' % previous[k].id,
                         rotation_axis=rot_axis,
                         point_on_axis=point_on_rot_axis,
                         angle=angle
@@ -915,7 +927,7 @@ class Geometry(object):
 
         # Now Extrude the ring surface.
         _, vol = self.extrude(
-                'Surface{%s}' % surf,
+                'Surface{%s}' % surf.id,
                 translation_axis=numpy.dot(R, [length, 0, 0])
                 )
         if label:

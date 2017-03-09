@@ -3,6 +3,13 @@
 from pygmsh.geometry import Geometry
 from pygmsh.helper import *
 
+from .bspline import Bspline
+from .circle_arc import CircleArc
+from .compound_line import CompoundLine
+from .ellipse_arc import EllipseArc
+from .line import Line
+from .point import Point
+
 from pygmsh.__about__ import (
         __version__,
         __author__,
