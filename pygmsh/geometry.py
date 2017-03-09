@@ -57,7 +57,7 @@ class Geometry(object):
         name = 'p%d' % self._POINT_ID
         self._GMSH_CODE.append('%s = newp;' % name)
         self._GMSH_CODE.append(
-            'Point(%s) = {%g, %g, %g, %g};' % (name, x[0], x[1], x[2], lcar)
+            'Point(%s) = {%r, %r, %r, %r};' % (name, x[0], x[1], x[2], lcar)
             )
         return name
 
@@ -310,20 +310,20 @@ class Geometry(object):
                 'Field[%s].NodesList = {%s};' % (name, ','.join(nodes_list))
                 )
         if hfar:
-            self._GMSH_CODE.append('Field[%s].hfar= %g;' % (name, hfar))
+            self._GMSH_CODE.append('Field[%s].hfar= %r;' % (name, hfar))
         if hwall_t:
-            self._GMSH_CODE.append('Field[%s].hwall_t= %g;' % (name, hwall_t))
+            self._GMSH_CODE.append('Field[%s].hwall_t= %r;' % (name, hwall_t))
         if hwall_n:
-            self._GMSH_CODE.append('Field[%s].hwall_n= %g;' % (name, hwall_n))
+            self._GMSH_CODE.append('Field[%s].hwall_n= %r;' % (name, hwall_n))
         if ratio:
-            self._GMSH_CODE.append('Field[%s].ratio= %g;' % (name, ratio))
+            self._GMSH_CODE.append('Field[%s].ratio= %r;' % (name, ratio))
         if thickness:
             self._GMSH_CODE.append(
-                'Field[%s].thickness= %g;' % (name, thickness)
+                'Field[%s].thickness= %r;' % (name, thickness)
                 )
         if anisomax:
             self._GMSH_CODE.append(
-                'Field[%s].AnisoMax= %g;' % (name, anisomax)
+                'Field[%s].AnisoMax= %r;' % (name, anisomax)
                 )
         return name
 
