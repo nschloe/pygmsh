@@ -69,6 +69,4 @@ def generate_mesh(geo_object, optimize=True, num_lloyd_steps=10, verbose=True):
             p.returncode
             )
 
-    points, cells, _, _, _ = meshio.read(outname)
-
-    return points, cells
+    return meshio.read(outname)
