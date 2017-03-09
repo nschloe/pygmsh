@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 __all__ = [
+  'airfoil',
   'boundary_layers',
   'bsplines',
   'circle',
@@ -10,6 +11,7 @@ __all__ = [
   'pipes',
   'rectangle_with_hole',
   'screw',
+  'subdomains',
   'swiss_cheese',
   'tori',
   'torus_crowd'
