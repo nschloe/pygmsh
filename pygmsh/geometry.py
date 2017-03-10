@@ -11,12 +11,17 @@ from .__about__ import __version__
 from .bspline import Bspline
 from .circle import Circle
 from .circle_arc import CircleArc
+from .compound_surface import CompoundSurface
+from .compound_volume import CompoundVolume
 from .dummy import Dummy
 from .ellipse_arc import EllipseArc
 from .line import Line
 from .line_loop import LineLoop
 from .plane_surface import PlaneSurface
 from .point import Point
+from .ruled_surface import RuledSurface
+from .surface_loop import SurfaceLoop
+from .volume import Volume
 
 import numpy
 
@@ -90,6 +95,16 @@ class Geometry(object):
         self._GMSH_CODE.append(p.code)
         return p
 
+    def add_compound_surface(self, *args, **kwargs):
+        e = CompoundSurface(*args, **kwargs)
+        self._GMSH_CODE.append(e.code)
+        return e
+
+    def add_compound_volume(self, *args, **kwargs):
+        e = CompoundVolume(*args, **kwargs)
+        self._GMSH_CODE.append(e.code)
+        return e
+
     def add_ellipse_arc(self, *args, **kwargs):
         p = EllipseArc(*args, **kwargs)
         self._GMSH_CODE.append(p.code)
@@ -115,51 +130,20 @@ class Geometry(object):
         self._GMSH_CODE.append(p.code)
         return p
 
-    def add_ruled_surface(self, line_loop):
-        self._SURFACE_ID += 1
-        sname = 'surf%d' % self._SURFACE_ID
-        self._GMSH_CODE.append('%s = news;' % sname)
-        self._GMSH_CODE.append(
-            'Ruled Surface(%s) = {%s};' % (sname, line_loop.id)
-            )
-        return Dummy(sname)
+    def add_ruled_surface(self, *args, **kwargs):
+        p = RuledSurface(*args, **kwargs)
+        self._GMSH_CODE.append(p.code)
+        return p
 
-    def add_compound_surface(self, surfaces):
-        self._SURFACE_ID += 1
-        name = 'surf%d' % self._SURFACE_ID
-        self._GMSH_CODE.append('%s = news;' % name)
-        self._GMSH_CODE.append(
-            'Compound Surface(%s) = {%s};'
-            % (name, ','.join([s.id for s in surfaces]))
-            )
-        return Dummy(name)
+    def add_surface_loop(self, *args, **kwargs):
+        e = SurfaceLoop(*args, **kwargs)
+        self._GMSH_CODE.append(e.code)
+        return e
 
-    def add_surface_loop(self, surfaces):
-        self._SURFACELOOP_ID += 1
-        name = 'surfloop%d' % self._SURFACELOOP_ID
-        self._GMSH_CODE.append('%s = newsl;' % name)
-        self._GMSH_CODE.append(
-            'Surface Loop(%s) = {%s};'
-            % (name, ','.join([s.id for s in surfaces]))
-            )
-        return name
-
-    def add_volume(self, surface_loop):
-        self._VOLUME_ID += 1
-        name = 'vol%d' % self._VOLUME_ID
-        self._GMSH_CODE.append('%s = newv;' % name)
-        self._GMSH_CODE.append('Volume(%s) = %s;' % (name, surface_loop))
-        return name
-
-    def add_compound_volume(self, volumes):
-        self._VOLUME_ID += 1
-        name = 'cv%d' % self._VOLUME_ID
-        self._GMSH_CODE.append('%s = newv;' % name)
-        self._GMSH_CODE.append(
-            'Compound Volume(%s) = {%s};'
-            % (name, ','.join([v.id for v in volumes]))
-            )
-        return name
+    def add_volume(self, *args, **kwargs):
+        e = Volume(*args, **kwargs)
+        self._GMSH_CODE.append(e.code)
+        return e
 
     def _new_physical_group(self, label=None):
         self._PHYSICALGROUP_ID += 1
@@ -335,7 +319,10 @@ class Geometry(object):
         '''
         self._ARRAY_ID += 1
         name = 'array%d' % self._ARRAY_ID
-        self._GMSH_CODE.append('%s[] = {%s};' % (name, ','.join(entities)))
+        self._GMSH_CODE.append(
+                '%s[] = {%s};'
+                % (name, ','.join([e.id for e in entities]))
+                )
         return name + '[]'
 
     def add_comment(self, string):
@@ -363,22 +350,31 @@ class Geometry(object):
                 holes=holes
                 )
 
-    # TODO polygon and polygon loop are different in that the former allows for
-    #      holes. do the same for circle?
-    def add_polygon_loop(self, X, lcar):
+    def add_polygon(self, X, lcar, holes=None, make_surface=True):
+        if holes is None:
+            holes = []
+        else:
+            assert make_surface
+
         # Create points.
         p = [self.add_point(x, lcar) for x in X]
         # Create lines
         lines = [self.add_line(p[k], p[k+1]) for k in range(len(p)-1)]
         lines.append(self.add_line(p[-1], p[0]))
         ll = self.add_line_loop((lines))
-        return ll
+        if make_surface:
+            surface = self.add_plane_surface(ll, holes)
+        else:
+            surface = None
 
-    def add_polygon(self, X, lcar, holes=None):
-        # Create line loop
-        ll = self.add_polygon_loop(X, lcar)
-        s = self.add_plane_surface(ll, holes)
-        return s
+        class Polygon(object):
+            def __init__(self, line_loop, surface, lcar):
+                self.line_loop = line_loop
+                self.surface = surface
+                self.lcar = lcar
+                return
+
+        return Polygon(ll, surface, lcar)
 
     def add_ellipsoid(
             self,
@@ -443,18 +439,28 @@ class Geometry(object):
 
         # Create the surface loop.
         surface_loop = self.add_surface_loop(new_surfs)
-        if holes:
-            # Create an array of surface loops; the first entry is the outer
-            # surface loop, the following ones are holes.
-            surface_loop = self.add_array([surface_loop] + holes)
+        # if holes:
+        #     # Create an array of surface loops; the first entry is the outer
+        #     # surface loop, the following ones are holes.
+        #     surface_loop = self.add_array([surface_loop] + holes)
         # Create volume.
         if with_volume:
-            volume = self.add_volume(surface_loop)
+            volume = self.add_volume(surface_loop, holes)
             if label:
                 self.add_physical_volume(volume, label)
         else:
             volume = None
-        return volume, surface_loop
+
+        class Ellipsoid(object):
+            def __init__(self, x0, radii, lcar, surface_loop, volume):
+                self.x0 = x0
+                self.lcar = lcar
+                self.radii = radii
+                self.surface_loop = surface_loop
+                self.volume = volume
+                return
+
+        return Ellipsoid(x0, radii, lcar, surface_loop, volume)
 
     def add_ball(
             self,
@@ -463,16 +469,12 @@ class Geometry(object):
             holes=None,
             label=None
             ):
-        '''Creates a ball with a given radius around a given midpoint
-        :math:`x_0`.
-        '''
         return self.add_ellipsoid(
-                x0, [radius, radius, radius],
-                lcar,
-                with_volume=with_volume,
-                holes=holes,
-                label=label
-                )
+            x0, [radius, radius, radius], lcar,
+            with_volume,
+            holes,
+            label
+            )
 
     def add_box(
             self,
@@ -533,7 +535,24 @@ class Geometry(object):
                 self.add_physical_volume(vol, label)
         else:
             vol = None
-        return vol, surface_loop
+
+        class Box(object):
+            def __init__(
+                    self, x0, x1, y0, y1, z0, z1,
+                    lcar, surface_loop, volume
+                    ):
+                self.x0 = x0
+                self.x1 = x1
+                self.y0 = y0
+                self.y1 = y1
+                self.z0 = z0
+                self.z1 = z1
+                self.lcar = lcar
+                self.surface_loop = surface_loop
+                self.volume = volume
+                return
+
+        return Box(x0, x1, y0, y1, z0, z1, lcar, surface_loop, vol)
 
     def add_torus(
             self,

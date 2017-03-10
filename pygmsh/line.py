@@ -5,7 +5,7 @@ import copy
 
 
 class Line(object):
-    _LINE_ID = 0
+    _ID = 0
 
     def __init__(self, p0, p1):
         assert isinstance(p0, Point)
@@ -13,8 +13,8 @@ class Line(object):
 
         self.points = [p0, p1]
 
-        self.id = 'l%d' % Line._LINE_ID
-        Line._LINE_ID += 1
+        self.id = 'l%d' % Line._ID
+        Line._ID += 1
 
         self.code = '\n'.join([
             '%s = newl;' % self.id,

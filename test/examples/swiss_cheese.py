@@ -18,10 +18,10 @@ def generate():
 
     R = np.array([0.1, 0.2, 0.1, 0.14])
 
-    holes = []
-    for x0, r in zip(X0, R):
-        vol, sl = geom.add_ball(x0, r, with_volume=False, lcar=0.2*r)
-        holes.append(sl)
+    holes = [
+        geom.add_ball(x0, r, with_volume=False, lcar=0.2*r).surface_loop
+        for x0, r in zip(X0, R)
+        ]
 
     # geom.add_box(
     #         -1, 1,
@@ -31,11 +31,7 @@ def generate():
     #         holes=holes
     #         )
 
-    ball, _ = geom.add_ball(
-            [0, 0, 0], 1.0,
-            lcar=0.2,
-            holes=holes
-            )
+    geom.add_ball([0, 0, 0], 1.0, lcar=0.2, holes=holes)
 
     # Fails on travis for some reason. TODO fix
     # geom.add_physical_volume(ball, label='cheese')

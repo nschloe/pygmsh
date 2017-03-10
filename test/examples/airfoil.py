@@ -119,7 +119,11 @@ def generate():
 
     # Create line loop for airfoil
     char_length = 1.0e-1
-    airfoil = geom.add_polygon_loop(airfoil_coordinates, char_length)
+    airfoil = geom.add_polygon(
+            airfoil_coordinates,
+            char_length,
+            make_surface=False
+            )
 
     # Create line loop for numerical domain
     left_dist = 1.0
@@ -138,7 +142,7 @@ def generate():
         ])
 
     # Create surface for numerical domain with an airfoil-shaped hole
-    geom.add_polygon(domainCoordinates, char_length, holes=[airfoil])
+    geom.add_polygon(domainCoordinates, char_length, holes=[airfoil.line_loop])
 
     # Return geo-file code
     return geom

@@ -20,16 +20,12 @@ def generate():
     rectangle = geom.add_rectangle(4.75, 6.25, -0.24, 1.25, 0.0, lcar)
 
     # hold all domain
-    ll = geom.add_polygon_loop([
+    geom.add_polygon([
         [-1.0, -1.0, 0.0],
         [+7.0, -1.0, 0.0],
         [+7.0, +2.0, 0.0],
         [-1.0, +2.0, 0.0],
-        ], lcar
-        )
-
-    geom.add_plane_surface(
-        ll,
+        ], lcar,
         holes=[circle.line_loop, triangle.line_loop, rectangle.line_loop]
         )
 
