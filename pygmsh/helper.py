@@ -2,6 +2,7 @@
 #
 from __future__ import print_function
 import numpy
+import voropy
 import sys
 
 if sys.platform == 'darwin':
@@ -33,7 +34,13 @@ def rotation_matrix(u, theta):
     return R
 
 
-def generate_mesh(geo_object, optimize=True, num_lloyd_steps=10, verbose=True):
+def generate_mesh(
+        geo_object,
+        optimize=True,
+        num_quad_lloyd_steps=10,
+        num_lloyd_steps=1000,
+        verbose=True
+        ):
     import meshio
     import os
     import subprocess
@@ -48,8 +55,8 @@ def generate_mesh(geo_object, optimize=True, num_lloyd_steps=10, verbose=True):
     cmd = [gmsh_executable, '-3', filename, '-o', outname]
     if optimize:
         cmd += ['-optimize']
-    if num_lloyd_steps > 0:
-        cmd += ['-optimize_lloyd', str(num_lloyd_steps)]
+    if num_quad_lloyd_steps > 0:
+        cmd += ['-optimize_lloyd', str(num_quad_lloyd_steps)]
 
     # http://stackoverflow.com/a/803421/353337
     p = subprocess.Popen(
@@ -69,4 +76,30 @@ def generate_mesh(geo_object, optimize=True, num_lloyd_steps=10, verbose=True):
             p.returncode
             )
 
-    return meshio.read(outname)
+    pts, cells, pt_data, cell_data, field_data = meshio.read(outname)
+
+    # TODO exclude locally refined meshes
+    if (abs(pts[:, 2]) < 1.0e-15).all() \
+        and 'triangle' in cell_data \
+        and (
+            cell_data['triangle']['geometrical'] ==
+            cell_data['triangle']['geometrical'][0]
+            ).all():
+        print('Lloyd smoothing (voropy)...')
+        # filter only the nodes used by the triangle cells
+        uvertices, uidx = numpy.unique(cells['triangle'], return_inverse=True)
+        ucells = uidx.reshape(cells['triangle'].shape)
+        upts = pts[uvertices]
+        # perform Lloyd smoothing
+        mesh = voropy.smoothing.lloyd(
+            voropy.mesh_tri.MeshTri(upts, ucells),
+            0.0,
+            max_steps=num_lloyd_steps,
+            flip_frequency=1,
+            verbose=False,
+            )
+        # write the points and cells back
+        pts[uvertices] = mesh.node_coords
+        cells['triangle'] = uvertices[mesh.cells['nodes']]
+
+    return pts, cells, pt_data, cell_data, field_data

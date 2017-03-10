@@ -43,5 +43,5 @@ def generate():
 
 if __name__ == '__main__':
     import meshio
-    points, cells = pg.generate_mesh(generate())
+    points, cells, _, _, _ = pg.generate_mesh(generate())
     meshio.write('hole_in_square.vtu', points, cells)
