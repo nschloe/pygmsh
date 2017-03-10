@@ -30,9 +30,9 @@ def generate(lcar=0.3):
     c3 = geom.add(pg.CircleArc([p5, p1, p7]))
     l1 = geom.add(pg.Line(p7, p8))
     l2 = geom.add(pg.Line(p8, p6))
-    ll = geom.add_line_loop([c0, c1, c2, c3, l1, l2])
+    ll = geom.add(pg.LineLoop([c0, c1, c2, c3, l1, l2]))
 
-    geom.add_plane_surface(ll)
+    geom.add(pg.PlaneSurface(ll))
 
     # Fails on travis for some reason. TODO fix
     # test setting physical groups

@@ -5,8 +5,8 @@ import pygmsh as pg
 
 def generate():
     geom = pg.Geometry()
-
-    circle = geom.add_circle(
+    geom.add(
+        pg.Circle(
             [0.0, 0.0, 0.0],
             1.0,
             0.1,
@@ -15,11 +15,7 @@ def generate():
             # discretization. If using a compound circle, they don't; gmsh can
             # choose by itself where to point the circle points.
             compound=True
-            )
-
-    ll = geom.add_line_loop(circle)
-    geom.add_plane_surface(ll)
-
+            ))
     return geom
 
 

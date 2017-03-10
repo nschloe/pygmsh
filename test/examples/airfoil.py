@@ -119,7 +119,7 @@ def generate():
 
     # Create line loop for airfoil
     char_length = 1.0e-1
-    airfoil, _ = geom.add_polygon_loop(airfoil_coordinates, char_length)
+    airfoil = geom.add_polygon_loop(airfoil_coordinates, char_length)
 
     # Create line loop for numerical domain
     left_dist = 1.0

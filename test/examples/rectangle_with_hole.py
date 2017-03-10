@@ -9,20 +9,20 @@ import pygmsh as pg
 def generate():
     geom = pg.Geometry()
 
-    circle = geom.add_circle(
+    circle = geom.add(pg.Circle(
             x0=[0.5, 0.5, 0.0],
             radius=0.25,
             lcar=0.1,
-            num_sections=4
-            )
-    circle_ll = geom.add_line_loop(circle)
+            num_sections=4,
+            make_surface=False
+            ))
 
     geom.add_rectangle(
             0.0, 1.0,
             0.0, 1.0,
             0.0,
             lcar=0.1,
-            holes=[circle_ll]
+            holes=[circle.line_loop]
             )
 
     return geom

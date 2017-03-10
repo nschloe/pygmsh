@@ -17,8 +17,8 @@ def generate():
     p3 = geom.add(pg.Point([0.5, 1.0, 0.0], lcar))
     s2 = geom.add(pg.Bspline([p4, p3, p2, p1]))
 
-    ll = geom.add_line_loop([s1, s2])
-    geom.add_plane_surface(ll)
+    ll = geom.add(pg.LineLoop([s1, s2]))
+    geom.add(pg.PlaneSurface(ll))
 
     return geom
 

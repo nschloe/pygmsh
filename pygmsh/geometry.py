@@ -8,11 +8,12 @@ features.
 '''
 
 from .__about__ import __version__
-from .circle_arc import CircleArc
-from .compound_line import CompoundLine
+from .circle import Circle
 from .dummy import Dummy
 from .ellipse_arc import EllipseArc
 from .line import Line
+from .line_loop import LineLoop
+from .plane_surface import PlaneSurface
 from .point import Point
 
 import numpy
@@ -30,12 +31,9 @@ class Geometry(object):
         # names in Gmsh unique, keep track of how many points, cirlces, etc.
         # have already been created. Variable names will then be p1, p2, etc.
         # for points, c1, c2, etc. for circles and so on.
-        self._LINE_ID = 0
-        self._LINELOOP_ID = 0
         self._SURFACE_ID = 0
         self._SURFACELOOP_ID = 0
         self._VOLUME_ID = 0
-        self._CIRCLE_ID = 0
         self._ELLIPSE_ID = 0
         self._EXTRUDE_ID = 0
         self._ARRAY_ID = 0
@@ -61,35 +59,12 @@ class Geometry(object):
         self._GMSH_CODE.append(entity.code)
         return entity
 
-    def add_line_loop(self, lines):
-        self._LINELOOP_ID += 1
-        name = 'll%d' % self._LINELOOP_ID
-        self._GMSH_CODE.append('%s = newll;' % name)
-        self._GMSH_CODE.append(
-            'Line Loop(%s) = {%s};' % (name, ','.join([l.id for l in lines]))
-            )
-        return name
-
-    def add_plane_surface(self, line_loop):
-        self._SURFACE_ID += 1
-        sname = 'surf%d' % self._SURFACE_ID
-        self._GMSH_CODE.append('%s = news;' % sname)
-        if isinstance(line_loop, list):
-            self._GMSH_CODE.append(
-                'Plane Surface(%s) = {%s};' % (sname, ','.join(line_loop))
-                )
-        else:
-            self._GMSH_CODE.append(
-                'Plane Surface(%s) = {%s};' % (sname, line_loop)
-                )
-        return Dummy(sname)
-
     def add_ruled_surface(self, line_loop):
         self._SURFACE_ID += 1
         sname = 'surf%d' % self._SURFACE_ID
         self._GMSH_CODE.append('%s = news;' % sname)
         self._GMSH_CODE.append(
-            'Ruled Surface(%s) = {%s};' % (sname, line_loop)
+            'Ruled Surface(%s) = {%s};' % (sname, line_loop.id)
             )
         return Dummy(sname)
 
@@ -332,74 +307,22 @@ class Geometry(object):
                 holes=holes
                 )
 
+    # TODO polygon and polygon loop are different in that the former allows for
+    #      holes. do the same for circle?
     def add_polygon_loop(self, X, lcar):
         # Create points.
         p = [self.add(Point(x, lcar)) for x in X]
         # Create lines
         lines = [self.add(Line(p[k], p[k+1])) for k in range(len(p)-1)]
         lines.append(self.add(Line(p[-1], p[0])))
-        ll = self.add_line_loop(lines)
-        return ll, lines
+        ll = self.add(LineLoop((lines)))
+        return ll
 
     def add_polygon(self, X, lcar, holes=None):
         # Create line loop
-        ll, lines = self.add_polygon_loop(X, lcar)
-        # Create surface (including optional holes)
-        if holes is None:
-            s = self.add_plane_surface(ll)
-        else:
-            s = self.add_plane_surface([ll] + holes)
-        return Dummy(s), ll, lines
-
-    def add_circle(
-            self,
-            x0, radius, lcar,
-            R=numpy.eye(3),
-            compound=False,
-            num_sections=3
-            ):
-        '''Add circle in the :math:`x`-:math:`y`-plane.
-        '''
-        # Define points that make the circle (midpoint and the four cardinal
-        # directions).
-        if num_sections == 4:
-            # For accuracy, the points are provided explicitly.
-            X = [
-                [0.0,     0.0,     0.0],
-                [radius,  0.0,     0.0],
-                [0.0,     radius,  0.0],
-                [-radius, 0.0,     0.0],
-                [0.0,     -radius, 0.0]
-                ]
-        else:
-            X = [
-                [0.0, 0.0, 0.0]
-                ]
-            for k in range(num_sections):
-                alpha = 2*numpy.pi * k / num_sections
-                X.append([
-                    radius*numpy.cos(alpha),
-                    radius*numpy.sin(alpha),
-                    0.0
-                    ])
-
-        # Apply the transformation.
-        # TODO assert that the transformation preserves circles
-        X = [numpy.dot(R, x) + x0 for x in X]
-        # Add Gmsh Points.
-        self.add_comment('Points')
-        p = [self.add(Point(x, lcar)) for x in X]
-
-        # Define the circle arcs.
-        self.add_comment('Circle arcs')
-        c = []
-        for k in range(1, len(p)-1):
-            c.append(self.add(CircleArc([p[k], p[0], p[k+1]])))
-        # Don't forget the closing arc.
-        c.append(self.add(CircleArc([p[-1], p[0], p[1]])))
-        if compound:
-            c = [self.add(CompoundLine(c))]
-        return c
+        ll = self.add_polygon_loop(X, lcar)
+        s = self.add(PlaneSurface(ll, holes))
+        return s
 
     def add_ellipsoid(
             self,
@@ -462,15 +385,15 @@ class Geometry(object):
         # Add surfaces (1/8th of the ball surface).
         ll = [
             # one half
-            self.add_line_loop([c[4],   c[9],  c[3]]),
-            self.add_line_loop([c[8],  -c[4], c[0]]),
-            self.add_line_loop([-c[9],  c[5],  c[2]]),
-            self.add_line_loop([-c[5], -c[8], c[1]]),
+            self.add(LineLoop([c[4],   c[9],  c[3]])),
+            self.add(LineLoop([c[8],  -c[4], c[0]])),
+            self.add(LineLoop([-c[9],  c[5],  c[2]])),
+            self.add(LineLoop([-c[5], -c[8], c[1]])),
             # the other half
-            self.add_line_loop([c[7],   -c[3],  c[10]]),
-            self.add_line_loop([c[11],  -c[7], -c[0]]),
-            self.add_line_loop([-c[10], -c[2],  c[6]]),
-            self.add_line_loop([-c[1],  -c[6], -c[11]])
+            self.add(LineLoop([c[7],   -c[3],  c[10]])),
+            self.add(LineLoop([c[11],  -c[7], -c[0]])),
+            self.add(LineLoop([-c[10], -c[2],  c[6]])),
+            self.add(LineLoop([-c[1],  -c[6], -c[11]]))
             ]
         # Create a surface for each line loop.
         s = [self.add_ruled_surface(l) for l in ll]
@@ -550,12 +473,12 @@ class Geometry(object):
              self.add(Line(p[6], p[7]))
              ]
         # Define the six line loops.
-        ll = [self.add_line_loop([e[0], e[3],  -e[5],  -e[1]]),
-              self.add_line_loop([e[0], e[4],  -e[8],  -e[2]]),
-              self.add_line_loop([e[1], e[6],  -e[9],  -e[2]]),
-              self.add_line_loop([e[3], e[7],  -e[10], -e[4]]),
-              self.add_line_loop([e[5], e[7],  -e[11], -e[6]]),
-              self.add_line_loop([e[8], e[10], -e[11], -e[9]])
+        ll = [self.add(LineLoop([e[0], e[3],  -e[5],  -e[1]])),
+              self.add(LineLoop([e[0], e[4],  -e[8],  -e[2]])),
+              self.add(LineLoop([e[1], e[6],  -e[9],  -e[2]])),
+              self.add(LineLoop([e[3], e[7],  -e[10], -e[4]])),
+              self.add(LineLoop([e[5], e[7],  -e[11], -e[6]])),
+              self.add(LineLoop([e[8], e[10], -e[11], -e[9]])),
               ]
         # Create a surface for each line loop.
         s = [self.add_ruled_surface(l) for l in ll]
@@ -634,7 +557,7 @@ class Geometry(object):
             [0.0, 1.0, 0.0]
             ])
 
-        c = self.add_circle(x0+x0t, irad, lcar, R=numpy.dot(R, Rc))
+        c = self.add(Circle(x0+x0t, irad, lcar, R=numpy.dot(R, Rc)))
 
         rot_axis = [0.0, 0.0, 1.0]
         rot_axis = numpy.dot(R, rot_axis)
@@ -647,7 +570,7 @@ class Geometry(object):
         # the entity that has been extruded at the far end. This can be used
         # for the following Extrude() step.  The second [1] entry of the array
         # is the surface that was created by the extrusion.
-        previous = c
+        previous = c.line_loop.lines
         angle = '2*Pi/3'
         all_surfaces = []
         for i in range(3):
@@ -703,9 +626,7 @@ class Geometry(object):
             [1.0, 0.0, 0.0],
             [0.0, 1.0, 0.0]
             ])
-        c = self.add_circle(x0+x0t, irad, lcar, R=numpy.dot(R, Rc))
-        ll = self.add_line_loop(c)
-        s = self.add_plane_surface(ll)
+        c = self.add(Circle(x0+x0t, irad, lcar, R=numpy.dot(R, Rc)))
 
         rot_axis = [0.0, 0.0, 1.0]
         rot_axis = numpy.dot(R, rot_axis)
@@ -718,7 +639,7 @@ class Geometry(object):
         # the entity that has been extruded at the far end. This can be used
         # for the following Extrude() step.  The second [1] entry of the array
         # is the surface that was created by the extrusion.
-        previous = s
+        previous = c.plane_surface
         all_volumes = []
         num_steps = 3
         for _ in range(num_steps):
@@ -851,24 +772,18 @@ class Geometry(object):
             [1.0, 0.0, 0.0],
             [0.0, 1.0, 0.0]
             ])
-        c_inner = self.add_circle(
-                x0,
-                inner_radius,
-                lcar,
-                R=numpy.dot(R, Rc)
-                )
-        ll_inner = self.add_line_loop(c_inner)
-
-        c_outer = self.add_circle(
-                x0, outer_radius, lcar, R=numpy.dot(R, Rc)
-                )
-        ll_outer = self.add_line_loop(c_outer)
-
-        surf = self.add_plane_surface(','.join([ll_outer, ll_inner]))
+        c_inner = self.add(Circle(
+                x0, inner_radius, lcar, R=numpy.dot(R, Rc),
+                make_surface=False
+                ))
+        circ = self.add(Circle(
+                x0, outer_radius, lcar, R=numpy.dot(R, Rc),
+                holes=[c_inner.line_loop]
+                ))
 
         # Now Extrude the ring surface.
         _, vol = self.extrude(
-                'Surface{%s}' % surf.id,
+                'Surface{%s}' % circ.plane_surface.id,
                 translation_axis=numpy.dot(R, [length, 0, 0])
                 )
         if label:
