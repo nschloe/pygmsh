@@ -143,7 +143,7 @@ def generate():
     geom.add_polygon(
             domainCoordinates,
             char_length,
-            holes=[airfoil.line_loop]
+            holes=[airfoil]
             )
 
     # Return geo-file code

@@ -283,6 +283,8 @@ class Geometry(object):
             entity = Dummy(input_entity)
         elif isinstance(input_entity, SurfaceBase):
             entity = Dummy('Surface{%s}' % input_entity.id)
+        elif hasattr(input_entity, 'surface'):
+            entity = Dummy('Surface{%s}' % input_entity.surface.id)
         elif isinstance(input_entity, LineBase):
             entity = Dummy('Line{%s}' % input_entity.id)
         else:

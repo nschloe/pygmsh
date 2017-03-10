@@ -8,17 +8,20 @@ class PlaneSurface(SurfaceBase):
     def __init__(self, line_loop, holes=None):
         super(PlaneSurface, self).__init__()
 
+        assert isinstance(line_loop, LineLoop)
+        self.line_loop = line_loop
+
         if holes is None:
             holes = []
 
-        assert isinstance(line_loop, LineLoop)
-        for ll in holes:
-            assert isinstance(ll, LineLoop)
+        # The input holes are either line loops or entities that contain line
+        # loops (like polygons).
+        self.holes = [
+            h if isinstance(h, LineLoop) else h.line_loop
+            for h in holes
+            ]
 
-        self.line_loop = line_loop
-        self.holes = holes
-
-        line_loops = [line_loop] + holes
+        line_loops = [self.line_loop] + self.holes
         self.code = '\n'.join([
             '%s = news;' % self.id,
             'Plane Surface(%s) = {%s};'

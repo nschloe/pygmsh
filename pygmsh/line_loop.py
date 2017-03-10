@@ -14,6 +14,6 @@ class LineLoop(object):
         self.code = '\n'.join([
             '%s = newll;' % self.id,
             'Line Loop(%s) = {%s};'
-            % (self.id, ','.join([l.id for l in lines]))
+            % (self.id, ', '.join([l.id for l in lines]))
             ])
         return
