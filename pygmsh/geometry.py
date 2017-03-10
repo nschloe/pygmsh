@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 '''
-This class provides a Python interface for the Gmsh scripting language.  It
-aims at working around some of Gmsh's inconveniences (e.g., having to manually
+This class provides a Python interface for the Gmsh scripting language. It aims
+at working around some of Gmsh's inconveniences (e.g., having to manually
 assign an ID for every entity created) and providing access to Python's
 features.
 '''
 
 from .__about__ import __version__
+
 from .bspline import Bspline
 from .circle_arc import CircleArc
 from .compound_line import CompoundLine
@@ -16,12 +17,15 @@ from .compound_volume import CompoundVolume
 from .dummy import Dummy
 from .ellipse_arc import EllipseArc
 from .line import Line
+from .line_base import LineBase
 from .line_loop import LineLoop
 from .plane_surface import PlaneSurface
 from .point import Point
 from .ruled_surface import RuledSurface
+from .surface_base import SurfaceBase
 from .surface_loop import SurfaceLoop
 from .volume import Volume
+from .volume_base import VolumeBase
 
 import numpy
 
@@ -38,10 +42,6 @@ class Geometry(object):
         # names in Gmsh unique, keep track of how many points, cirlces, etc.
         # have already been created. Variable names will then be p1, p2, etc.
         # for points, c1, c2, etc. for circles and so on.
-        self._SURFACE_ID = 0
-        self._SURFACELOOP_ID = 0
-        self._VOLUME_ID = 0
-        self._ELLIPSE_ID = 0
         self._EXTRUDE_ID = 0
         self._ARRAY_ID = 0
         self._FIELD_ID = 0
@@ -266,7 +266,7 @@ class Geometry(object):
 
     def extrude(
             self,
-            entity,
+            input_entity,
             translation_axis=None,
             rotation_axis=None,
             point_on_axis=None,
@@ -279,9 +279,14 @@ class Geometry(object):
         '''
         self._EXTRUDE_ID += 1
 
-        # TODO remove this workaround
-        if isinstance(entity, str):
-            entity = Dummy(entity)
+        if isinstance(input_entity, str):
+            entity = Dummy(input_entity)
+        elif isinstance(input_entity, SurfaceBase):
+            entity = Dummy('Surface{%s}' % input_entity.id)
+        elif isinstance(input_entity, LineBase):
+            entity = Dummy('Line{%s}' % input_entity.id)
+        else:
+            raise RuntimeError('Illegal extrude entity.')
 
         # out[] = Extrude{0,1,0}{ Line{1}; };
         name = 'ex%d' % self._EXTRUDE_ID
@@ -316,8 +321,18 @@ class Geometry(object):
         # > list. This list will contain the "top" of the extruded surface (in
         # > out[0]) as well as the newly created volume (in out[1]).
         #
-        top = Dummy('%s[0]' % name)
-        extruded = Dummy('%s[1]' % name)
+        top = '%s[0]' % name
+        extruded = '%s[1]' % name
+
+        if isinstance(input_entity, LineBase):
+            top = LineBase(top)
+            extruded = SurfaceBase(extruded)
+        elif isinstance(input_entity, SurfaceBase):
+            top = SurfaceBase(top)
+            extruded = VolumeBase(extruded)
+        else:
+            top = Dummy(top)
+            extruded = Dummy(extruded)
 
         return top, extruded
 
@@ -719,7 +734,7 @@ class Geometry(object):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
                 # ...
                 top, surf = self.extrude(
-                    'Line{%s}' % previous[k].id,
+                    previous[k],
                     rotation_axis=rot_axis,
                     point_on_axis=point_on_rot_axis,
                     angle=angle
@@ -784,7 +799,7 @@ class Geometry(object):
         num_steps = 3
         for _ in range(num_steps):
             top, vol = self.extrude(
-                'Surface{%s}' % previous.id,
+                previous,
                 rotation_axis=rot_axis,
                 point_on_axis=point_on_rot_axis,
                 angle='2*Pi/%d' % num_steps
@@ -874,7 +889,7 @@ class Geometry(object):
             for k in range(len(previous)):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
                 top, surf = self.extrude(
-                        'Line{%s}' % previous[k].id,
+                        previous[k],
                         rotation_axis=rot_axis,
                         point_on_axis=point_on_rot_axis,
                         angle=angle
@@ -923,7 +938,7 @@ class Geometry(object):
 
         # Now Extrude the ring surface.
         _, vol = self.extrude(
-                'Surface{%s}' % circ.plane_surface.id,
+                circ.plane_surface,
                 translation_axis=numpy.dot(R, [length, 0, 0])
                 )
         if label:

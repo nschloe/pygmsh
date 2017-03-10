@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 #
+from .line_base import LineBase
 from .point import Point
 
 
-class Bspline(object):
-    _BSPLINE_ID = 0
-
+class Bspline(LineBase):
     def __init__(self, control_points):
+        super(Bspline, self).__init__()
+
         for c in control_points:
             assert isinstance(c, Point)
         assert len(control_points) > 3
 
         self.control_points = control_points
-
-        self.id = 'bspline%d' % Bspline._BSPLINE_ID
-        Bspline._BSPLINE_ID += 1
 
         self.code = '\n'.join([
             '%s = newl;' % self.id,

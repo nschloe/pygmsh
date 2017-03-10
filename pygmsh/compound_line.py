@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #
+from .line_base import LineBase
 
 
-class CompoundLine(object):
-    _LINE_ID = 0
-
+class CompoundLine(LineBase):
     def __init__(self, lines):
-        self.lines = lines
+        super(CompoundLine, self).__init__()
 
-        self.id = 'cl%d' % CompoundLine._LINE_ID
-        CompoundLine._LINE_ID += 1
+        self.lines = lines
 
         self.code = '\n'.join([
             '%s = newl;' % self.id,

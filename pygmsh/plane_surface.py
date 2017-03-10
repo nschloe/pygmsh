@@ -1,21 +1,19 @@
 # -*- coding: utf-8 -*-
 #
+from .surface_base import SurfaceBase
 from .line_loop import LineLoop
 
 
-class PlaneSurface(object):
-    _ID = 0
-
+class PlaneSurface(SurfaceBase):
     def __init__(self, line_loop, holes=None):
+        super(PlaneSurface, self).__init__()
+
         if holes is None:
             holes = []
 
         assert isinstance(line_loop, LineLoop)
         for ll in holes:
             assert isinstance(ll, LineLoop)
-
-        self.id = 'ps%d' % PlaneSurface._ID
-        PlaneSurface._ID += 1
 
         self.line_loop = line_loop
         self.holes = holes

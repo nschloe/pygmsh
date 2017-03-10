@@ -1,21 +1,19 @@
 # -*- coding: utf-8 -*-
 #
+from .line_base import LineBase
 from .point import Point
 import copy
 
 
-class EllipseArc(object):
-    _ELLIPSE_ID = 0
-
+class EllipseArc(LineBase):
     def __init__(self, points):
+        super(EllipseArc, self).__init__()
+
         for p in points:
             assert isinstance(p, Point)
         assert len(points) == 4
 
         self.points = points
-
-        self.id = 'ell%d' % EllipseArc._ELLIPSE_ID
-        EllipseArc._ELLIPSE_ID += 1
 
         self.code = '\n'.join([
             '%s = newl;' % self.id,

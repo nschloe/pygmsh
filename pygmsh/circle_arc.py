@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
 #
+from .line_base import LineBase
 from .point import Point
 
 
-class CircleArc(object):
-    _CIRCLE_ID = 0
-
+class CircleArc(LineBase):
     def __init__(self, points):
+        super(CircleArc, self).__init__()
+
         for p in points:
             assert isinstance(p, Point)
 
         self.points = points
-
-        self.id = 'c%d' % CircleArc._CIRCLE_ID
-        CircleArc._CIRCLE_ID += 1
 
         self.code = '\n'.join([
             '%s = newl;' % self.id,
