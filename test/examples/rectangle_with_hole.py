@@ -30,5 +30,5 @@ def generate():
 
 if __name__ == '__main__':
     import meshio
-    points, cells, _, _, _ = pg.generate_mesh(generate())
-    meshio.write('rectangle_with_hole.vtu', points, cells)
+    out = pg.generate_mesh(generate())
+    meshio.write('rectangle_with_hole.vtu', *out)

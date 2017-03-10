@@ -34,11 +34,5 @@ def generate():
 
 if __name__ == '__main__':
     import meshio
-    points, cells, point_data, cell_data, _ = pg.generate_mesh(generate())
-    meshio.write(
-            'subdomains.vtu',
-            points,
-            cells,
-            point_data=point_data,
-            cell_data=cell_data
-            )
+    out = pg.generate_mesh(generate())
+    meshio.write('subdomains.vtu', *out)

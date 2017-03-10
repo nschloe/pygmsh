@@ -43,5 +43,5 @@ def generate():
 
 if __name__ == '__main__':
     import meshio
-    points, cells = pg.generate_mesh(generate())
-    meshio.write('boundary_layers.vtu', points, cells)
+    out = pg.generate_mesh(generate())
+    meshio.write('boundary_layers.vtu', *out)
