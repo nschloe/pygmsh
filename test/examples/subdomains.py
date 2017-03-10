@@ -9,7 +9,7 @@ def generate():
 
     lcar = 0.1
 
-    circle = geom.add(pg.Circle([0.5, 0.5, 0.0], 1.0, lcar))
+    circle = geom.add_circle([0.5, 0.5, 0.0], 1.0, lcar)
 
     triangle = geom.add_polygon([
             [2.0, -0.5, 0.0],
@@ -28,10 +28,10 @@ def generate():
         ], lcar
         )
 
-    geom.add(pg.PlaneSurface(
+    geom.add_plane_surface(
         ll,
         holes=[circle.line_loop, triangle.line_loop, rectangle.line_loop]
-        ))
+        )
 
     return geom
 

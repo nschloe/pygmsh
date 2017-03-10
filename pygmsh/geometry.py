@@ -8,7 +8,9 @@ features.
 '''
 
 from .__about__ import __version__
+from .bspline import Bspline
 from .circle import Circle
+from .circle_arc import CircleArc
 from .dummy import Dummy
 from .ellipse_arc import EllipseArc
 from .line import Line
@@ -55,9 +57,63 @@ class Geometry(object):
         '''
         return '\n'.join(self._GMSH_CODE)
 
-    def add(self, entity):
-        self._GMSH_CODE.append(entity.code)
-        return entity
+    # All of the add_* method below could be replaced by
+    #
+    #   def add(self, entity):
+    #       self._GMSH_CODE.append(entity.code)
+    #       return entity
+    #
+    # to be used like
+    #
+    #    geom.add(pg.Circle(...))
+    #
+    # However, this would break backwards compatibility and perhaps encourage
+    # users to do
+    #
+    #    c = pg.Circle(...)
+    #    # ... use c
+    #
+    # in which case the circle code never gets added to geom.
+
+    def add_bspline(self, *args, **kwargs):
+        p = Bspline(*args, **kwargs)
+        self._GMSH_CODE.append(p.code)
+        return p
+
+    def add_circle(self, *args, **kwargs):
+        p = Circle(*args, **kwargs)
+        self._GMSH_CODE.append(p.code)
+        return p
+
+    def add_circle_arc(self, *args, **kwargs):
+        p = CircleArc(*args, **kwargs)
+        self._GMSH_CODE.append(p.code)
+        return p
+
+    def add_ellipse_arc(self, *args, **kwargs):
+        p = EllipseArc(*args, **kwargs)
+        self._GMSH_CODE.append(p.code)
+        return p
+
+    def add_line(self, *args, **kwargs):
+        p = Line(*args, **kwargs)
+        self._GMSH_CODE.append(p.code)
+        return p
+
+    def add_line_loop(self, *args, **kwargs):
+        p = LineLoop(*args, **kwargs)
+        self._GMSH_CODE.append(p.code)
+        return p
+
+    def add_plane_surface(self, *args, **kwargs):
+        p = PlaneSurface(*args, **kwargs)
+        self._GMSH_CODE.append(p.code)
+        return p
+
+    def add_point(self, *args, **kwargs):
+        p = Point(*args, **kwargs)
+        self._GMSH_CODE.append(p.code)
+        return p
 
     def add_ruled_surface(self, line_loop):
         self._SURFACE_ID += 1
@@ -311,17 +367,17 @@ class Geometry(object):
     #      holes. do the same for circle?
     def add_polygon_loop(self, X, lcar):
         # Create points.
-        p = [self.add(Point(x, lcar)) for x in X]
+        p = [self.add_point(x, lcar) for x in X]
         # Create lines
-        lines = [self.add(Line(p[k], p[k+1])) for k in range(len(p)-1)]
-        lines.append(self.add(Line(p[-1], p[0])))
-        ll = self.add(LineLoop((lines)))
+        lines = [self.add_line(p[k], p[k+1]) for k in range(len(p)-1)]
+        lines.append(self.add_line(p[-1], p[0]))
+        ll = self.add_line_loop((lines))
         return ll
 
     def add_polygon(self, X, lcar, holes=None):
         # Create line loop
         ll = self.add_polygon_loop(X, lcar)
-        s = self.add(PlaneSurface(ll, holes))
+        s = self.add_plane_surface(ll, holes)
         return s
 
     def add_ellipsoid(
@@ -340,60 +396,42 @@ class Geometry(object):
         # Add points.
         a = lcar
         p = [
-            self.add(Point(x0, lcar=lcar)),
-            self.add(Point(
-                [x0[0]+radii[0], x0[1], x0[2]],
-                lcar=a
-                )),
-            self.add(Point(
-                [x0[0], x0[1]+radii[1], x0[2]],
-                lcar=a
-                )),
-            self.add(Point(
-                [x0[0], x0[1], x0[2]+radii[2]],
-                lcar=a
-                )),
-            self.add(Point(
-                [x0[0]-radii[0], x0[1], x0[2]],
-                lcar=a
-                )),
-            self.add(Point(
-                [x0[0], x0[1]-radii[1], x0[2]],
-                lcar=a
-                )),
-            self.add(Point(
-                [x0[0], x0[1], x0[2]-radii[2]],
-                lcar=a
-                ))
+            self.add_point(x0, lcar=lcar),
+            self.add_point([x0[0]+radii[0], x0[1], x0[2]], lcar=a),
+            self.add_point([x0[0], x0[1]+radii[1], x0[2]], lcar=a),
+            self.add_point([x0[0], x0[1], x0[2]+radii[2]], lcar=a),
+            self.add_point([x0[0]-radii[0], x0[1], x0[2]], lcar=a),
+            self.add_point([x0[0], x0[1]-radii[1], x0[2]], lcar=a),
+            self.add_point([x0[0], x0[1], x0[2]-radii[2]], lcar=a),
             ]
         # Add skeleton.
         # Alternative for circles:
         # `self.add_circle_arc([a, b, c])`
-        c = [self.add(EllipseArc([p[1], p[0], p[6], p[6]])),
-             self.add(EllipseArc([p[6], p[0], p[4], p[4]])),
-             self.add(EllipseArc([p[4], p[0], p[3], p[3]])),
-             self.add(EllipseArc([p[3], p[0], p[1], p[1]])),
-             self.add(EllipseArc([p[1], p[0], p[2], p[2]])),
-             self.add(EllipseArc([p[2], p[0], p[4], p[4]])),
-             self.add(EllipseArc([p[4], p[0], p[5], p[5]])),
-             self.add(EllipseArc([p[5], p[0], p[1], p[1]])),
-             self.add(EllipseArc([p[6], p[0], p[2], p[2]])),
-             self.add(EllipseArc([p[2], p[0], p[3], p[3]])),
-             self.add(EllipseArc([p[3], p[0], p[5], p[5]])),
-             self.add(EllipseArc([p[5], p[0], p[6], p[6]])),
+        c = [self.add_ellipse_arc([p[1], p[0], p[6], p[6]]),
+             self.add_ellipse_arc([p[6], p[0], p[4], p[4]]),
+             self.add_ellipse_arc([p[4], p[0], p[3], p[3]]),
+             self.add_ellipse_arc([p[3], p[0], p[1], p[1]]),
+             self.add_ellipse_arc([p[1], p[0], p[2], p[2]]),
+             self.add_ellipse_arc([p[2], p[0], p[4], p[4]]),
+             self.add_ellipse_arc([p[4], p[0], p[5], p[5]]),
+             self.add_ellipse_arc([p[5], p[0], p[1], p[1]]),
+             self.add_ellipse_arc([p[6], p[0], p[2], p[2]]),
+             self.add_ellipse_arc([p[2], p[0], p[3], p[3]]),
+             self.add_ellipse_arc([p[3], p[0], p[5], p[5]]),
+             self.add_ellipse_arc([p[5], p[0], p[6], p[6]]),
              ]
         # Add surfaces (1/8th of the ball surface).
         ll = [
             # one half
-            self.add(LineLoop([c[4],   c[9],  c[3]])),
-            self.add(LineLoop([c[8],  -c[4], c[0]])),
-            self.add(LineLoop([-c[9],  c[5],  c[2]])),
-            self.add(LineLoop([-c[5], -c[8], c[1]])),
+            self.add_line_loop([c[4],   c[9],  c[3]]),
+            self.add_line_loop([c[8],  -c[4], c[0]]),
+            self.add_line_loop([-c[9],  c[5],  c[2]]),
+            self.add_line_loop([-c[5], -c[8], c[1]]),
             # the other half
-            self.add(LineLoop([c[7],   -c[3],  c[10]])),
-            self.add(LineLoop([c[11],  -c[7], -c[0]])),
-            self.add(LineLoop([-c[10], -c[2],  c[6]])),
-            self.add(LineLoop([-c[1],  -c[6], -c[11]]))
+            self.add_line_loop([c[7],   -c[3],  c[10]]),
+            self.add_line_loop([c[11],  -c[7], -c[0]]),
+            self.add_line_loop([-c[10], -c[2],  c[6]]),
+            self.add_line_loop([-c[1],  -c[6], -c[11]]),
             ]
         # Create a surface for each line loop.
         s = [self.add_ruled_surface(l) for l in ll]
@@ -449,36 +487,36 @@ class Geometry(object):
             holes = []
 
         # Define corner points.
-        p = [self.add(Point([x1, y1, z1], lcar=lcar)),
-             self.add(Point([x1, y1, z0], lcar=lcar)),
-             self.add(Point([x1, y0, z1], lcar=lcar)),
-             self.add(Point([x1, y0, z0], lcar=lcar)),
-             self.add(Point([x0, y1, z1], lcar=lcar)),
-             self.add(Point([x0, y1, z0], lcar=lcar)),
-             self.add(Point([x0, y0, z1], lcar=lcar)),
-             self.add(Point([x0, y0, z0], lcar=lcar))
+        p = [self.add_point([x1, y1, z1], lcar=lcar),
+             self.add_point([x1, y1, z0], lcar=lcar),
+             self.add_point([x1, y0, z1], lcar=lcar),
+             self.add_point([x1, y0, z0], lcar=lcar),
+             self.add_point([x0, y1, z1], lcar=lcar),
+             self.add_point([x0, y1, z0], lcar=lcar),
+             self.add_point([x0, y0, z1], lcar=lcar),
+             self.add_point([x0, y0, z0], lcar=lcar),
              ]
         # Define edges.
-        e = [self.add(Line(p[0], p[1])),
-             self.add(Line(p[0], p[2])),
-             self.add(Line(p[0], p[4])),
-             self.add(Line(p[1], p[3])),
-             self.add(Line(p[1], p[5])),
-             self.add(Line(p[2], p[3])),
-             self.add(Line(p[2], p[6])),
-             self.add(Line(p[3], p[7])),
-             self.add(Line(p[4], p[5])),
-             self.add(Line(p[4], p[6])),
-             self.add(Line(p[5], p[7])),
-             self.add(Line(p[6], p[7]))
+        e = [self.add_line(p[0], p[1]),
+             self.add_line(p[0], p[2]),
+             self.add_line(p[0], p[4]),
+             self.add_line(p[1], p[3]),
+             self.add_line(p[1], p[5]),
+             self.add_line(p[2], p[3]),
+             self.add_line(p[2], p[6]),
+             self.add_line(p[3], p[7]),
+             self.add_line(p[4], p[5]),
+             self.add_line(p[4], p[6]),
+             self.add_line(p[5], p[7]),
+             self.add_line(p[6], p[7]),
              ]
         # Define the six line loops.
-        ll = [self.add(LineLoop([e[0], e[3],  -e[5],  -e[1]])),
-              self.add(LineLoop([e[0], e[4],  -e[8],  -e[2]])),
-              self.add(LineLoop([e[1], e[6],  -e[9],  -e[2]])),
-              self.add(LineLoop([e[3], e[7],  -e[10], -e[4]])),
-              self.add(LineLoop([e[5], e[7],  -e[11], -e[6]])),
-              self.add(LineLoop([e[8], e[10], -e[11], -e[9]])),
+        ll = [self.add_line_loop([e[0], e[3],  -e[5],  -e[1]]),
+              self.add_line_loop([e[0], e[4],  -e[8],  -e[2]]),
+              self.add_line_loop([e[1], e[6],  -e[9],  -e[2]]),
+              self.add_line_loop([e[3], e[7],  -e[10], -e[4]]),
+              self.add_line_loop([e[5], e[7],  -e[11], -e[6]]),
+              self.add_line_loop([e[8], e[10], -e[11], -e[9]]),
               ]
         # Create a surface for each line loop.
         s = [self.add_ruled_surface(l) for l in ll]
@@ -557,7 +595,7 @@ class Geometry(object):
             [0.0, 1.0, 0.0]
             ])
 
-        c = self.add(Circle(x0+x0t, irad, lcar, R=numpy.dot(R, Rc)))
+        c = self.add_circle(x0+x0t, irad, lcar, R=numpy.dot(R, Rc))
 
         rot_axis = [0.0, 0.0, 1.0]
         rot_axis = numpy.dot(R, rot_axis)
@@ -626,7 +664,7 @@ class Geometry(object):
             [1.0, 0.0, 0.0],
             [0.0, 1.0, 0.0]
             ])
-        c = self.add(Circle(x0+x0t, irad, lcar, R=numpy.dot(R, Rc)))
+        c = self.add_circle(x0+x0t, irad, lcar, R=numpy.dot(R, Rc))
 
         rot_axis = [0.0, 0.0, 1.0]
         rot_axis = numpy.dot(R, rot_axis)
@@ -709,13 +747,13 @@ class Geometry(object):
         # Apply transformation.
         X = [numpy.dot(R, x) + x0 for x in X]
         # Create points set.
-        p = [self.add(Point(x, lcar)) for x in X]
+        p = [self.add_point(x, lcar) for x in X]
 
         # Define edges.
-        e = [self.add(Line(p[0], p[1])),
-             self.add(Line(p[1], p[2])),
-             self.add(Line(p[2], p[3])),
-             self.add(Line(p[3], p[0]))
+        e = [self.add_line(p[0], p[1]),
+             self.add_line(p[1], p[2]),
+             self.add_line(p[2], p[3]),
+             self.add_line(p[3], p[0])
              ]
 
         rot_axis = [0.0, 0.0, 1.0]
@@ -772,14 +810,14 @@ class Geometry(object):
             [1.0, 0.0, 0.0],
             [0.0, 1.0, 0.0]
             ])
-        c_inner = self.add(Circle(
+        c_inner = self.add_circle(
                 x0, inner_radius, lcar, R=numpy.dot(R, Rc),
                 make_surface=False
-                ))
-        circ = self.add(Circle(
+                )
+        circ = self.add_circle(
                 x0, outer_radius, lcar, R=numpy.dot(R, Rc),
                 holes=[c_inner.line_loop]
-                ))
+                )
 
         # Now Extrude the ring surface.
         _, vol = self.extrude(
