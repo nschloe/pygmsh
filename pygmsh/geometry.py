@@ -9,8 +9,8 @@ features.
 
 from .__about__ import __version__
 from .bspline import Bspline
-from .circle import Circle
 from .circle_arc import CircleArc
+from .compound_line import CompoundLine
 from .compound_surface import CompoundSurface
 from .compound_volume import CompoundVolume
 from .dummy import Dummy
@@ -85,15 +85,15 @@ class Geometry(object):
         self._GMSH_CODE.append(p.code)
         return p
 
-    def add_circle(self, *args, **kwargs):
-        p = Circle(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
-
     def add_circle_arc(self, *args, **kwargs):
         p = CircleArc(*args, **kwargs)
         self._GMSH_CODE.append(p.code)
         return p
+
+    def add_compound_line(self, *args, **kwargs):
+        e = CompoundLine(*args, **kwargs)
+        self._GMSH_CODE.append(e.code)
+        return e
 
     def add_compound_surface(self, *args, **kwargs):
         e = CompoundSurface(*args, **kwargs)
@@ -180,6 +180,89 @@ class Geometry(object):
             'Physical Volume(%s) = %s;' % (label, volume)
             )
         return
+
+    def add_circle(
+            self,
+            x0, radius, lcar,
+            R=numpy.eye(3),
+            compound=False,
+            num_sections=3,
+            holes=None,
+            make_surface=True
+            ):
+        '''Add circle in the :math:`x`-:math:`y`-plane.
+        '''
+        if holes is None:
+            holes = []
+        else:
+            assert make_surface
+
+        # Define points that make the circle (midpoint and the four cardinal
+        # directions).
+        if num_sections == 4:
+            # For accuracy, the points are provided explicitly.
+            X = [
+                [0.0,     0.0,     0.0],
+                [radius,  0.0,     0.0],
+                [0.0,     radius,  0.0],
+                [-radius, 0.0,     0.0],
+                [0.0,     -radius, 0.0]
+                ]
+        else:
+            X = [
+                [0.0, 0.0, 0.0]
+                ]
+            for k in range(num_sections):
+                alpha = 2*numpy.pi * k / num_sections
+                X.append([
+                    radius*numpy.cos(alpha),
+                    radius*numpy.sin(alpha),
+                    0.0
+                    ])
+
+        # Apply the transformation.
+        # TODO assert that the transformation preserves circles
+        X = [numpy.dot(R, x) + x0 for x in X]
+        # Add Gmsh Points.
+        p = [self.add_point(x, lcar) for x in X]
+
+        # Define the circle arcs.
+        arcs = [
+            self.add_circle_arc([p[k], p[0], p[k+1]])
+            for k in range(1, len(p)-1)
+            ]
+        arcs.append(self.add_circle_arc([p[-1], p[0], p[1]]))
+
+        if compound:
+            arcs = [self.add_compound_line(arcs)]
+
+        line_loop = self.add_line_loop(arcs)
+
+        if make_surface:
+            plane_surface = self.add_plane_surface(line_loop, holes)
+        else:
+            plane_surface = None
+
+        class Circle(object):
+            def __init__(
+                    self, x0, radius, lcar, R, compound, num_sections, holes,
+                    line_loop, plane_surface
+                    ):
+                self.x0 = x0
+                self.radius = radius
+                self.lcar = lcar
+                self.R = R
+                self.compound = compound
+                self.num_sections = num_sections
+                self.holes = holes
+                self.line_loop = line_loop
+                self.plane_surface = plane_surface
+                return
+
+        return Circle(
+            x0, radius, lcar, R, compound, num_sections, holes,
+            line_loop, plane_surface
+            )
 
     def extrude(
             self,

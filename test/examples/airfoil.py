@@ -117,7 +117,7 @@ def generate():
     # Instantiate geometry object
     geom = pygmsh.Geometry()
 
-    # Create line loop for airfoil
+    # Create polygon for airfoil
     char_length = 1.0e-1
     airfoil = geom.add_polygon(
             airfoil_coordinates,
@@ -125,7 +125,7 @@ def generate():
             make_surface=False
             )
 
-    # Create line loop for numerical domain
+    # Create surface for numerical domain with an airfoil-shaped hole
     left_dist = 1.0
     right_dist = 3.0
     top_dist = 1.0
@@ -140,9 +140,11 @@ def generate():
         [xmax, ymax, 0.0],
         [xmin, ymax, 0.0],
         ])
-
-    # Create surface for numerical domain with an airfoil-shaped hole
-    geom.add_polygon(domainCoordinates, char_length, holes=[airfoil.line_loop])
+    geom.add_polygon(
+            domainCoordinates,
+            char_length,
+            holes=[airfoil.line_loop]
+            )
 
     # Return geo-file code
     return geom
