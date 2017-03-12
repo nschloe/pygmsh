@@ -156,28 +156,28 @@ class Geometry(object):
     def add_physical_point(self, point, label=None):
         label = self._new_physical_group(label)
         self._GMSH_CODE.append(
-            'Physical Point(%s) = %s;' % (label, point)
+            'Physical Point(%s) = %s;' % (label, point.id)
             )
         return
 
     def add_physical_line(self, line, label=None):
         label = self._new_physical_group(label)
         self._GMSH_CODE.append(
-            'Physical Line(%s) = %s;' % (label, line)
+            'Physical Line(%s) = %s;' % (label, line.id)
             )
         return
 
     def add_physical_surface(self, surface, label=None):
         label = self._new_physical_group(label)
         self._GMSH_CODE.append(
-            'Physical Surface(%s) = %s;' % (label, surface)
+            'Physical Surface(%s) = %s;' % (label, surface.id)
             )
         return
 
     def add_physical_volume(self, volume, label=None):
         label = self._new_physical_group(label)
         self._GMSH_CODE.append(
-            'Physical Volume(%s) = %s;' % (label, volume)
+            'Physical Volume(%s) = %s;' % (label, volume.id)
             )
         return
 

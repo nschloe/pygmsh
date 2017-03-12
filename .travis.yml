@@ -15,7 +15,7 @@ virtualenv:
 before_install:
   - sudo apt-add-repository -y ppa:nschloe/gmsh-backports
   - sudo apt-get update -qq
-  - sudo apt-get -y install gmsh python-numpy python-h5py
+  - sudo apt-get -y install gmsh python-numpy python-scipy python-h5py
   - sudo apt-get -y install pandoc
   - pip install pytest pytest-cov
 
