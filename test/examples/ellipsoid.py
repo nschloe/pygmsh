@@ -5,19 +5,18 @@ Creates a mesh for an ellipsoid.
 '''
 import pygmsh as pg
 
+
 def generate():
     geom = pg.Geometry()
-
     geom.add_ellipsoid(
         [0.0, 0.0, 0.0],
         [1.0, 0.5, 0.75],
         0.05
         )
-
     return geom
 
 
 if __name__ == '__main__':
     import meshio
-    points, cells = pg.generate_mesh(generate())
-    meshio.write('ellipsoid.vtu', points, cells)
+    out = pg.generate_mesh(generate())
+    meshio.write('ellipsoid.vtu', *out)

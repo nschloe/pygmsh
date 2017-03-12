@@ -5,8 +5,7 @@ import pygmsh as pg
 
 def generate():
     geom = pg.Geometry()
-
-    circle = geom.add_circle(
+    geom.add_circle(
             [0.0, 0.0, 0.0],
             1.0,
             0.1,
@@ -16,14 +15,10 @@ def generate():
             # choose by itself where to point the circle points.
             compound=True
             )
-
-    ll = geom.add_line_loop(circle)
-    geom.add_plane_surface(ll)
-
     return geom
 
 
 if __name__ == '__main__':
     import meshio
-    points, cells = pg.generate_mesh(generate())
-    meshio.write('circle.vtu', points, cells)
+    out = pg.generate_mesh(generate())
+    meshio.write('circle.vtu', *out)

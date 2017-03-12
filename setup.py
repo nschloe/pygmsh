@@ -38,6 +38,7 @@ setup(
         'meshio',
         'numpy',
         'pipdated',
+        'voropy',
         ],
     classifiers=[
         about['__status__'],

@@ -68,5 +68,5 @@ def generate():
 
 if __name__ == '__main__':
     import meshio
-    points, cells = pg.generate_mesh(generate())
-    meshio.write('torus_crowd.vtu', points, cells)
+    out = pg.generate_mesh(generate())
+    meshio.write('torus_crowd.vtu', *out)

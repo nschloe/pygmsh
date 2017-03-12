@@ -40,21 +40,21 @@ poly, _, _ = geom.add_polygon([
 axis = [0, 0, 1]
 
 geom.extrude(
-    'Surface{%s}' % poly,
+    poly,
     translation_axis=axis,
     rotation_axis=axis,
     point_on_axis=[0, 0, 0],
     angle=2.0 / 6.0 * np.pi
     )
 
-points, cells = pg.generate_mesh(geom)
+points, cells, point_data, cell_data, field_data = pg.generate_mesh(geom)
 ```
 to retrieve all points and cells of the mesh for the specified geometry.
 To store the mesh, you can use [meshio](https://pypi.python.org/pypi/meshio);
 for example
 ```python
 import meshio
-meshio.write('test.vtu', points, cells)
+meshio.write('test.vtu', points, cells, cell_data=cell_data)
 ```
 The output file can be visualized with various tools, e.g.,
 [ParaView](http://www.paraview.org/).

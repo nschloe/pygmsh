@@ -18,12 +18,12 @@ def generate():
     s2 = geom.add_bspline([p4, p3, p2, p1])
 
     ll = geom.add_line_loop([s1, s2])
-    surf = geom.add_plane_surface(ll)
+    geom.add_plane_surface(ll)
 
     return geom
 
 
 if __name__ == '__main__':
     import meshio
-    points, cells = pg.generate_mesh(generate())
-    meshio.write('bsplines.vtu', points, cells)
+    out = pg.generate_mesh(generate())
+    meshio.write('bsplines.vtu', *out)
