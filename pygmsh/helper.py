@@ -38,7 +38,7 @@ def lloyd(X, cells, cell_data, num_lloyd_steps):
 
     if (abs(X[:, 2]) > 1.0e-15).any():
         print('Not performing Lloyd smoothing (only works for 2D meshes).')
-        return
+        return X, cells
 
     # filter only the nodes used by the triangle cells
     uvertices, uidx = numpy.unique(cells['triangle'], return_inverse=True)
