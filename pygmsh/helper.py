@@ -45,32 +45,51 @@ def lloyd(X, cells, cell_data, num_lloyd_steps):
     cells = uidx.reshape(cells['triangle'].shape)
     X = X[uvertices]
 
-    # find subdomains
+    # find submeshes
     a = cell_data['triangle']['geometrical']
     # http://stackoverflow.com/q/42740483/353337
-    subdomain_dict = {v: numpy.where(v == a)[0] for v in set(a)}
+    submesh_dict = {v: numpy.where(v == a)[0] for v in set(a)}
 
-    # perform lloyd on each subdomain separately
+    # perform lloyd on each submesh separately
     fcc_type = 'full'
-    print('Llloyd smoothing...')
-    for subdomain_id, cell_ids in subdomain_dict.items():
-        print('Subdomain %d...' % subdomain_id)
-        # Build subdomain mesh.
+    print('Lloyd smoothing...')
+    for submesh_id, cell_ids in submesh_dict.items():
+        print('    Subdomain %d...' % submesh_id)
+        # Build submesh mesh.
         # Get cells
-        subdomain_cells = cells[cell_ids]
+        submesh_cells = cells[cell_ids]
         # Get the vertices
-        subdomain_verts, uidx = \
-            numpy.unique(subdomain_cells, return_inverse=True)
-        subdomain_X = X[subdomain_verts]
+        submesh_verts, uidx = \
+            numpy.unique(submesh_cells, return_inverse=True)
+        submesh_X = X[submesh_verts]
         #
-        subdomain_cells = uidx.reshape(subdomain_cells.shape)
+        submesh_cells = uidx.reshape(submesh_cells.shape)
 
-        sub_mesh = voropy.mesh_tri.MeshTri(
-            subdomain_X, subdomain_cells, flat_cell_correction=fcc_type
+        submesh = voropy.mesh_tri.MeshTri(
+            submesh_X, submesh_cells, flat_cell_correction=fcc_type
             )
 
+        # Since we don't have access to the density field here, voropy's Lloyd
+        # smoothing will always make all cells roughly equally large. This is
+        # inappropriate if the mesh is meant to be inhomegenous, e.g., if there
+        # are boundary layers. As a heuristic for inhomogenous meshes, check
+        # the lengths of the longest and the shortest boundary edge. If they
+        # are roughtly equal, perform Lloyd smoothing.
+        submesh.create_edges()
+        x = submesh_X[submesh.edges['nodes'][submesh.is_boundary_edge]]
+        e = x[:, 0] - x[:, 1]
+        edge_lengths2 = numpy.einsum('ij, ij->i', e, e)
+        ratio = numpy.sqrt(max(edge_lengths2) / min(edge_lengths2))
+        if ratio > 1.5:
+            print((
+                4*' ' + 'Subdomain boundary inhomogeneous ' +
+                '(edge length ratio %1.3f). Skipping.'
+                ) % ratio
+                )
+            continue
+
         mesh = voropy.smoothing.lloyd(
-            sub_mesh,
+            submesh,
             tol=0.0,
             max_steps=num_lloyd_steps,
             flip_frequency=1,
@@ -78,8 +97,8 @@ def lloyd(X, cells, cell_data, num_lloyd_steps):
             fcc_type=fcc_type,
             )
         # write the points and cells back
-        X[subdomain_verts] = mesh.node_coords
-        cells[cell_ids] = subdomain_verts[mesh.cells['nodes']]
+        X[submesh_verts] = mesh.node_coords
+        cells[cell_ids] = submesh_verts[mesh.cells['nodes']]
 
     return X, {'triangle': cells}
 
