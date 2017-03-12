@@ -24,7 +24,7 @@ import numpy as np
 geom = pg.Geometry()
 
 # Draw a cross.
-poly, _, _ = geom.add_polygon([
+poly = geom.add_polygon([
     [0.0,   0.5, 0.0],
     [-0.1,  0.1, 0.0],
     [-0.5,  0.0, 0.0],
@@ -64,27 +64,12 @@ small examples.
 
 ### Installation
 
-#### Python Package Index
-
 PyGmsh is [available from the Python Package
 Index](https://pypi.python.org/pypi/pygmsh/), so simply type
 ```
-pip install pygmsh
+pip install -U pygmsh
 ```
-to install or
-```
-pip install pygmsh -U
-```
-to upgrade.
-
-#### Manual installation
-
-Download PyGmsh from [PyPi](https://pypi.python.org/pypi/pygmsh/)
-or [GitHub](https://github.com/nschloe/pygmsh) and
-install it with
-```
-python setup.py install
-```
+to install or upgrade.
 
 ### Requirements
 
