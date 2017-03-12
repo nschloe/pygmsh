@@ -34,6 +34,56 @@ def rotation_matrix(u, theta):
     return R
 
 
+def lloyd(X, cells, cell_data, num_lloyd_steps):
+
+    if (abs(X[:, 2]) > 1.0e-15).any():
+        print('Not performing Lloyd smoothing (only works for 2D meshes).')
+        return
+
+    # filter only the nodes used by the triangle cells
+    uvertices, uidx = numpy.unique(cells['triangle'], return_inverse=True)
+    cells = uidx.reshape(cells['triangle'].shape)
+    X = X[uvertices]
+
+    # find subdomains
+    a = cell_data['triangle']['geometrical']
+    # http://stackoverflow.com/q/42740483/353337
+    subdomain_dict = {v: numpy.where(v == a)[0] for v in set(a)}
+
+    # perform lloyd on each subdomain separately
+    fcc_type = 'full'
+    print('Llloyd smoothing...')
+    for subdomain_id, cell_ids in subdomain_dict.items():
+        print('Subdomain %d...' % subdomain_id)
+        # Build subdomain mesh.
+        # Get cells
+        subdomain_cells = cells[cell_ids]
+        # Get the vertices
+        subdomain_verts, uidx = \
+            numpy.unique(subdomain_cells, return_inverse=True)
+        subdomain_X = X[subdomain_verts]
+        #
+        subdomain_cells = uidx.reshape(subdomain_cells.shape)
+
+        sub_mesh = voropy.mesh_tri.MeshTri(
+            subdomain_X, subdomain_cells, flat_cell_correction=fcc_type
+            )
+
+        mesh = voropy.smoothing.lloyd(
+            sub_mesh,
+            tol=0.0,
+            max_steps=num_lloyd_steps,
+            flip_frequency=1,
+            verbose=False,
+            fcc_type=fcc_type,
+            )
+        # write the points and cells back
+        X[subdomain_verts] = mesh.node_coords
+        cells[cell_ids] = subdomain_verts[mesh.cells['nodes']]
+
+    return X, {'triangle': cells}
+
+
 def generate_mesh(
         geo_object,
         optimize=True,
@@ -77,29 +127,6 @@ def generate_mesh(
             )
 
     pts, cells, pt_data, cell_data, field_data = meshio.read(outname)
-
-    # TODO exclude locally refined meshes
-    if (abs(pts[:, 2]) < 1.0e-15).all() \
-        and 'triangle' in cell_data \
-        and (
-            cell_data['triangle']['geometrical'] ==
-            cell_data['triangle']['geometrical'][0]
-            ).all():
-        print('Lloyd smoothing (voropy)...')
-        # filter only the nodes used by the triangle cells
-        uvertices, uidx = numpy.unique(cells['triangle'], return_inverse=True)
-        ucells = uidx.reshape(cells['triangle'].shape)
-        upts = pts[uvertices]
-        # perform Lloyd smoothing
-        mesh = voropy.smoothing.lloyd(
-            voropy.mesh_tri.MeshTri(upts, ucells),
-            0.0,
-            max_steps=num_lloyd_steps,
-            flip_frequency=1,
-            verbose=False,
-            )
-        # write the points and cells back
-        pts[uvertices] = mesh.node_coords
-        cells['triangle'] = uvertices[mesh.cells['nodes']]
+    pts, cells = lloyd(pts, cells, cell_data, num_lloyd_steps)
 
     return pts, cells, pt_data, cell_data, field_data
