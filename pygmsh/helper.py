@@ -48,16 +48,16 @@ def lloyd(X, cells, cell_data, num_lloyd_steps):
     # find submeshes
     a = cell_data['triangle']['geometrical']
     # http://stackoverflow.com/q/42740483/353337
-    submesh_dict = {v: numpy.where(v == a)[0] for v in set(a)}
+    submesh_bools = {v: v == a for v in set(a)}
 
     # perform lloyd on each submesh separately
     fcc_type = 'full'
     print('Lloyd smoothing...')
-    for submesh_id, cell_ids in submesh_dict.items():
+    for submesh_id, cell_in_submesh in submesh_bools.items():
         print('    Subdomain %d...' % submesh_id)
         # Build submesh mesh.
         # Get cells
-        submesh_cells = cells[cell_ids]
+        submesh_cells = cells[cell_in_submesh]
         # Get the vertices
         submesh_verts, uidx = \
             numpy.unique(submesh_cells, return_inverse=True)
@@ -98,7 +98,7 @@ def lloyd(X, cells, cell_data, num_lloyd_steps):
             )
         # write the points and cells back
         X[submesh_verts] = mesh.node_coords
-        cells[cell_ids] = submesh_verts[mesh.cells['nodes']]
+        cells[cell_in_submesh] = submesh_verts[mesh.cells['nodes']]
 
     return X, {'triangle': cells}
 
