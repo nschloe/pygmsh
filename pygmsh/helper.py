@@ -82,12 +82,13 @@ def generate_mesh(
     if (abs(X[:, 2]) > 1.0e-15).any():
         print('Not performing Lloyd smoothing (only works for 2D meshes).')
         return X, cells, pt_data, cell_data, field_data
+    print('Lloyd smoothing...')
     # find submeshes
     a = cell_data['triangle']['geometrical']
     # http://stackoverflow.com/q/42740483/353337
-    submesh_bools = {v: v == a for v in set(a)}
-    X, cells = voropy.smoothing.lloyd_submesh(
-            X, cells, submesh_bools,
+    submesh_bools = {v: v == a for v in numpy.unique(a)}
+    X, cells['triangle'] = voropy.smoothing.lloyd_submesh(
+            X, cells['triangle'], submesh_bools,
             tol=0.0, max_steps=num_lloyd_steps,
             verbose=False
             )
