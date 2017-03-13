@@ -34,75 +34,6 @@ def rotation_matrix(u, theta):
     return R
 
 
-def lloyd(X, cells, cell_data, num_lloyd_steps):
-
-    if (abs(X[:, 2]) > 1.0e-15).any():
-        print('Not performing Lloyd smoothing (only works for 2D meshes).')
-        return X, cells
-
-    # filter only the nodes used by the triangle cells
-    uvertices, uidx = numpy.unique(cells['triangle'], return_inverse=True)
-    cells = uidx.reshape(cells['triangle'].shape)
-    X = X[uvertices]
-
-    # find submeshes
-    a = cell_data['triangle']['geometrical']
-    # http://stackoverflow.com/q/42740483/353337
-    submesh_dict = {v: numpy.where(v == a)[0] for v in set(a)}
-
-    # perform lloyd on each submesh separately
-    fcc_type = 'full'
-    print('Lloyd smoothing...')
-    for submesh_id, cell_ids in submesh_dict.items():
-        print('    Subdomain %d...' % submesh_id)
-        # Build submesh mesh.
-        # Get cells
-        submesh_cells = cells[cell_ids]
-        # Get the vertices
-        submesh_verts, uidx = \
-            numpy.unique(submesh_cells, return_inverse=True)
-        submesh_X = X[submesh_verts]
-        #
-        submesh_cells = uidx.reshape(submesh_cells.shape)
-
-        submesh = voropy.mesh_tri.MeshTri(
-            submesh_X, submesh_cells, flat_cell_correction=fcc_type
-            )
-
-        # Since we don't have access to the density field here, voropy's Lloyd
-        # smoothing will always make all cells roughly equally large. This is
-        # inappropriate if the mesh is meant to be inhomegenous, e.g., if there
-        # are boundary layers. As a heuristic for inhomogenous meshes, check
-        # the lengths of the longest and the shortest boundary edge. If they
-        # are roughtly equal, perform Lloyd smoothing.
-        submesh.create_edges()
-        x = submesh_X[submesh.edges['nodes'][submesh.is_boundary_edge]]
-        e = x[:, 0] - x[:, 1]
-        edge_lengths2 = numpy.einsum('ij, ij->i', e, e)
-        ratio = numpy.sqrt(max(edge_lengths2) / min(edge_lengths2))
-        if ratio > 1.5:
-            print((
-                4*' ' + 'Subdomain boundary inhomogeneous ' +
-                '(edge length ratio %1.3f). Skipping.'
-                ) % ratio
-                )
-            continue
-
-        mesh = voropy.smoothing.lloyd(
-            submesh,
-            tol=0.0,
-            max_steps=num_lloyd_steps,
-            flip_frequency=1,
-            verbose=False,
-            fcc_type=fcc_type,
-            )
-        # write the points and cells back
-        X[submesh_verts] = mesh.node_coords
-        cells[cell_ids] = submesh_verts[mesh.cells['nodes']]
-
-    return X, {'triangle': cells}
-
-
 def generate_mesh(
         geo_object,
         optimize=True,
@@ -145,7 +76,21 @@ def generate_mesh(
             p.returncode
             )
 
-    pts, cells, pt_data, cell_data, field_data = meshio.read(outname)
-    pts, cells = lloyd(pts, cells, cell_data, num_lloyd_steps)
+    X, cells, pt_data, cell_data, field_data = meshio.read(outname)
 
-    return pts, cells, pt_data, cell_data, field_data
+    # Lloyd smoothing
+    if (abs(X[:, 2]) > 1.0e-15).any():
+        print('Not performing Lloyd smoothing (only works for 2D meshes).')
+        return X, cells, pt_data, cell_data, field_data
+    print('Lloyd smoothing...')
+    # find submeshes
+    a = cell_data['triangle']['geometrical']
+    # http://stackoverflow.com/q/42740483/353337
+    submesh_bools = {v: v == a for v in numpy.unique(a)}
+    X, cells['triangle'] = voropy.smoothing.lloyd_submesh(
+            X, cells['triangle'], submesh_bools,
+            tol=0.0, max_steps=num_lloyd_steps,
+            verbose=False
+            )
+
+    return X, cells, pt_data, cell_data, field_data
