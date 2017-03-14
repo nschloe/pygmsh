@@ -6,7 +6,8 @@ language: python
 
 python:
     - "2.7"
-    - "3.5"
+    # can't use anything higher than 3.4 with sudo :/
+    - "3.4"
 
 virtualenv:
   system_site_packages: true
