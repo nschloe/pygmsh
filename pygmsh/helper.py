@@ -90,7 +90,7 @@ def generate_mesh(
 
     cells['triangle'].sort(axis=1)
     cells['triangle'] = cells['triangle'][cells['triangle'][:, 0].argsort()]
-    is_used = numpy.zeros(len(nodes), dtype=bool)
+    is_used = numpy.zeros(len(X), dtype=bool)
     is_used[cells['triangle'].flat] = True
 
     X, cells['triangle'] = voropy.smoothing.lloyd_submesh(
