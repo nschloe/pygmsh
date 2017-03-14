@@ -36,7 +36,7 @@ def generate(lcar=0.3):
     # test setting physical groups
     # geom.add_physical_point(p1, label='c')
     # geom.add_physical_line(c0, label='arc')
-    # geom.add_physical_surface(pacman, label='pacman')
+    geom.add_physical_surface(pacman)
 
     return geom
 
