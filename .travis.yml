@@ -6,7 +6,8 @@ language: python
 
 python:
     - "2.7"
-    #- "3.2"
+    # can't use anything higher than 3.4 with sudo :/
+    - "3.4"
 
 virtualenv:
   system_site_packages: true
@@ -15,7 +16,9 @@ virtualenv:
 before_install:
   - sudo apt-add-repository -y ppa:nschloe/gmsh-backports
   - sudo apt-get update -qq
-  - sudo apt-get -y install gmsh python-numpy python-scipy python-matplotlib
+  - sudo apt-get -y install gmsh
+  - sudo apt-get -y install python-numpy python-scipy python-matplotlib
+  - sudo apt-get -y install python3-numpy python3-scipy python3-matplotlib
   - sudo apt-get -y install pandoc
   - pip install pytest pytest-cov
 

@@ -67,7 +67,7 @@ def generate_mesh(
             line = p.stdout.readline()
             if not line:
                 break
-            print(line, end='')
+            print(line.decode('utf-8'), end='')
 
     p.communicate()[0]
     if p.returncode != 0:
@@ -87,6 +87,7 @@ def generate_mesh(
     a = cell_data['triangle']['geometrical']
     # http://stackoverflow.com/q/42740483/353337
     submesh_bools = {v: v == a for v in numpy.unique(a)}
+
     X, cells['triangle'] = voropy.smoothing.lloyd_submesh(
             X, cells['triangle'], submesh_bools,
             tol=0.0, max_steps=num_lloyd_steps,
