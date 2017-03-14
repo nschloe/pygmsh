@@ -49,6 +49,10 @@ def generate_mesh(
     handle, filename = tempfile.mkstemp(suffix='.geo')
     os.write(handle, geo_object.get_code().encode())
     os.close(handle)
+    print()
+    print('XXXX')
+    print(geo_object.get_code())
+    print()
 
     handle, outname = tempfile.mkstemp(suffix='.msh')
 
