@@ -71,14 +71,6 @@ pip install -U pygmsh
 ```
 to install or upgrade.
 
-### Requirements
-
-PyGmsh depends on
-
- * [NumPy](http://www.numpy.org/)
-
-and, obviously, [Gmsh](http://geuz.org/gmsh/).
-
 ### Usage
 
 Just
@@ -87,7 +79,8 @@ import pygmsh as pg
 ```
 and make use of all the goodies the module provides. The
 [documentation](http://pygmsh.readthedocs.org/) and the examples under
-`test/examples/` might inspire you.
+[`test/examples/`](https://github.com/nschloe/pygmsh/tree/master/test/examples)
+might inspire you.
 
 
 ### Testing
