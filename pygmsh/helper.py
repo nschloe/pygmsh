@@ -67,7 +67,7 @@ def generate_mesh(
             line = p.stdout.readline()
             if not line:
                 break
-            print(line, end='')
+            print(line.decode('utf-8'), end='')
 
     p.communicate()[0]
     if p.returncode != 0:
