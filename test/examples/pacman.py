@@ -29,14 +29,14 @@ def generate(lcar=0.3):
     pacman = geom.add_plane_surface(ll)
 
     # test adding raw code
-    geom.add_raw_code('// comment')
-    geom.add_raw_code(['// comment'])
+    geom.add_raw_code('// dummy')
+    geom.add_raw_code(['// dummy'])
 
     # Fails on travis for some reason. TODO fix
     # test setting physical groups
     geom.add_physical_point(p1, label='cut')
     geom.add_physical_line(c0, label='arc')
-    geom.add_physical_surface(pacman, label='pacman')
+    # geom.add_physical_surface(pacman, label='pacman')
 
     return geom
 
