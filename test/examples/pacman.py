@@ -32,9 +32,9 @@ def generate(lcar=0.3):
 
     pacman = geom.add_plane_surface(ll)
 
-    # Fails on travis for some reason. TODO fix
+    # Fails on travis for some reason, probably because of an old gmsh version.
     # test setting physical groups
-    geom.add_physical_point(p1, label='c')
+    # geom.add_physical_point(p1, label='c')
     # geom.add_physical_line(c0, label='arc')
     # geom.add_physical_surface(pacman, label='pacman')
 
