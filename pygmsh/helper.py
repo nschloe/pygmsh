@@ -87,6 +87,12 @@ def generate_mesh(
     a = cell_data['triangle']['geometrical']
     # http://stackoverflow.com/q/42740483/353337
     submesh_bools = {v: v == a for v in numpy.unique(a)}
+
+    cells['triangle'].sort(axis=1)
+    cells['triangle'] = cells['triangle'][cells['triangle'][:, 0].argsort()]
+    is_used = numpy.zeros(len(nodes), dtype=bool)
+    is_used[cells['triangle'].flat] = True
+
     X, cells['triangle'] = voropy.smoothing.lloyd_submesh(
             X, cells['triangle'], submesh_bools,
             tol=0.0, max_steps=num_lloyd_steps,
