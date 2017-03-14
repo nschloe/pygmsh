@@ -435,6 +435,7 @@ class Geometry(object):
         if isinstance(string_or_list, str):
             self._GMSH_CODE.append(string_or_list)
         else:
+            assert isinstance(string_or_list, list)
             for string in string_or_list:
                 self._GMSH_CODE.append(string)
         return
