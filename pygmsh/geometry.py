@@ -153,32 +153,30 @@ class Geometry(object):
             label = '"%s"' % label
         return label
 
-    def add_physical_point(self, point, label=None):
+    def _add_physical(self, tpe, entities, label=None):
         label = self._new_physical_group(label)
+        if not isinstance(entities, list):
+            entities = [entities]
         self._GMSH_CODE.append(
-            'Physical Point(%s) = %s;' % (label, point.id)
+            'Physical %s(%s) = {%s};' %
+            (tpe, label, ', '.join([e.id for e in entities]))
             )
         return
 
-    def add_physical_line(self, line, label=None):
-        label = self._new_physical_group(label)
-        self._GMSH_CODE.append(
-            'Physical Line(%s) = %s;' % (label, line.id)
-            )
+    def add_physical_point(self, points, label=None):
+        self._add_physical('Point', points, label=label)
         return
 
-    def add_physical_surface(self, surface, label=None):
-        label = self._new_physical_group(label)
-        self._GMSH_CODE.append(
-            'Physical Surface(%s) = %s;' % (label, surface.id)
-            )
+    def add_physical_line(self, lines, label=None):
+        self._add_physical('Line', lines, label=label)
         return
 
-    def add_physical_volume(self, volume, label=None):
-        label = self._new_physical_group(label)
-        self._GMSH_CODE.append(
-            'Physical Volume(%s) = %s;' % (label, volume.id)
-            )
+    def add_physical_surface(self, surfaces, label=None):
+        self._add_physical('Surface', surfaces, label=label)
+        return
+
+    def add_physical_volume(self, volumes, label=None):
+        self._add_physical('Volume', volumes, label=label)
         return
 
     def add_circle(
@@ -435,6 +433,7 @@ class Geometry(object):
         if isinstance(string_or_list, str):
             self._GMSH_CODE.append(string_or_list)
         else:
+            assert isinstance(string_or_list, list)
             for string in string_or_list:
                 self._GMSH_CODE.append(string)
         return

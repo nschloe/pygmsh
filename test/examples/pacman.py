@@ -26,16 +26,17 @@ def generate(lcar=0.3):
     l2 = geom.add_line(p8, p6)
     ll = geom.add_line_loop([c0, c1, c2, c3, l1, l2])
 
-    geom.add_plane_surface(ll)
-
-    # Fails on travis for some reason. TODO fix
-    # test setting physical groups
-    # geom.add_physical_point(p1, label='cut')
-    # geom.add_physical_line(c0, label='arc')
-    # geom.add_physical_surface(pacman, label='pacman')
     # test adding raw code
-    # geom.add_raw_code('// test comment')
-    # geom.add_raw_code(['// test comment'])
+    geom.add_raw_code('// dummy')
+    geom.add_raw_code(['// dummy'])
+
+    pacman = geom.add_plane_surface(ll)
+
+    # Fails on travis for some reason, probably because of an old gmsh version.
+    # test setting physical groups
+    # geom.add_physical_point(p1, label='c')
+    # geom.add_physical_line(c0, label='arc')
+    geom.add_physical_surface(pacman)
 
     return geom
 

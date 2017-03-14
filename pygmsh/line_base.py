@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 #
+import copy
 
 
 class LineBase(object):
@@ -12,3 +13,8 @@ class LineBase(object):
             self.id = 'l%d' % LineBase._ID
             LineBase._ID += 1
         return
+
+    def __neg__(self):
+        neg_self = copy.deepcopy(self)
+        neg_self.id = '-' + neg_self.id
+        return neg_self

@@ -2,7 +2,6 @@
 #
 from .line_base import LineBase
 from .point import Point
-import copy
 
 
 class EllipseArc(LineBase):
@@ -21,8 +20,3 @@ class EllipseArc(LineBase):
             % (self.id, points[0].id, points[1].id, points[2].id, points[3].id)
             ])
         return
-
-    def __neg__(self):
-        neg_self = copy.deepcopy(self)
-        neg_self.id = '-' + neg_self.id
-        return neg_self
