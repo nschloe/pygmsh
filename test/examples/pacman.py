@@ -34,8 +34,8 @@ def generate(lcar=0.3):
     geom.add_physical_line(c0, label='arc')
     geom.add_physical_surface(pacman, label='pacman')
     # test adding raw code
-    geom.add_raw_code('// test comment')
-    geom.add_raw_code(['// test comment'])
+    geom.add_raw_code('// dummy comment')
+    geom.add_raw_code(['// dummy comment'])
 
     return geom
 
