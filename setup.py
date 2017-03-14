@@ -36,7 +36,7 @@ setup(
     platforms='any',
     install_requires=[
         'meshio',
-        'numpy',
+        'numpy>=1.9',
         'pipdated',
         'voropy',
         ],
