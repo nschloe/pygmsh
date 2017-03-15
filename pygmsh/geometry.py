@@ -45,7 +45,7 @@ class Geometry(object):
         self._EXTRUDE_ID = 0
         self._ARRAY_ID = 0
         self._FIELD_ID = 0
-        self._PHYSICALGROUP_ID = 0
+        self._TAKEN_PHYSICALGROUP_IDS = []
         self._GMSH_CODE = [
                 self._header()
                 ]
@@ -146,12 +146,23 @@ class Geometry(object):
         return e
 
     def _new_physical_group(self, label=None):
-        self._PHYSICALGROUP_ID += 1
+        # See <https://github.com/nschloe/pygmsh/issues/46#issuecomment-286684321>
+        # for context.
+        max_id = \
+            0 if len(self._TAKEN_PHYSICALGROUP_IDS) == 0 \
+            else max(self._TAKEN_PHYSICALGROUP_IDS)
+
         if label is None:
-            label = '%d' % self._PHYSICALGROUP_ID
-        else:
-            label = '"%s"' % label
-        return label
+            label = max_id + 1
+
+        if isinstance(label, int):
+            assert label not in self._TAKEN_PHYSICALGROUP_IDS
+            self._TAKEN_PHYSICALGROUP_IDS += [label]
+            return '%d' % label
+
+        assert isinstance(label, str)
+        self._TAKEN_PHYSICALGROUP_IDS += [max_id + 1]
+        return '"%s"' % label
 
     def _add_physical(self, tpe, entities, label=None):
         label = self._new_physical_group(label)
