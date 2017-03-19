@@ -39,12 +39,16 @@ def generate_mesh(
         optimize=True,
         num_quad_lloyd_steps=10,
         num_lloyd_steps=1000,
-        verbose=True
+        verbose=True,
+        mesh_dimension=3
         ):
     import meshio
     import os
     import subprocess
     import tempfile
+
+    if mesh_dimension not in {1,2,3}:
+        raise ValueError('Wrong mesh dimension, should be 1, 2, or 3')
 
     handle, filename = tempfile.mkstemp(suffix='.geo')
     os.write(handle, geo_object.get_code().encode())
@@ -52,7 +56,7 @@ def generate_mesh(
 
     handle, outname = tempfile.mkstemp(suffix='.msh')
 
-    cmd = [gmsh_executable, '-3', filename, '-o', outname]
+    cmd = [gmsh_executable, '-%s' % mesh_dimension, filename, '-o', outname]
     if optimize:
         cmd += ['-optimize']
     if num_quad_lloyd_steps > 0:
@@ -79,7 +83,7 @@ def generate_mesh(
     X, cells, pt_data, cell_data, field_data = meshio.read(outname)
 
     # Lloyd smoothing
-    if (abs(X[:, 2]) > 1.0e-15).any():
+    if (abs(X[:, mesh_dimension-1]) > 1.0e-15).any():
         print('Not performing Lloyd smoothing (only works for 2D meshes).')
         return X, cells, pt_data, cell_data, field_data
     print('Lloyd smoothing...')
