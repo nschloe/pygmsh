@@ -14,6 +14,6 @@ class Point(object):
 
         self.code = '\n'.join([
             '%s = newp;' % self.id,
-            'Point(%s) = {%r, %r, %r, %r};' % (self.id, x[0], x[1], x[2], lcar)
+            ('Point(%s) = {' +'%r,'*len(x)+'%r};') % (self.id, *x, lcar)
             ])
         return
