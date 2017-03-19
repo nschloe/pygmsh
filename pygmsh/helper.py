@@ -79,7 +79,7 @@ def generate_mesh(
     X, cells, pt_data, cell_data, field_data = meshio.read(outname)
 
     # Lloyd smoothing
-    if (abs(X[:, 2]) > 1.0e-15).any():
+    if (abs(X[:, 2]) > 1.0e-15).any() or (abs(X[:, 1]) <= 1.0e-15).all():
         print('Not performing Lloyd smoothing (only works for 2D meshes).')
         return X, cells, pt_data, cell_data, field_data
     print('Lloyd smoothing...')
