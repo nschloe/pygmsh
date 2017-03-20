@@ -3,13 +3,6 @@
 from __future__ import print_function
 import numpy
 import voropy
-import sys
-
-if sys.platform == 'darwin':
-    # likely there.
-    gmsh_executable = '/Applications/Gmsh.app/Contents/MacOS/gmsh'
-else:
-    gmsh_executable = 'gmsh'
 
 
 def rotation_matrix(u, theta):
@@ -60,6 +53,12 @@ def generate_mesh(
     os.close(handle)
 
     handle, outname = tempfile.mkstemp(suffix='.msh')
+
+    macos_gmsh_location = '/Applications/Gmsh.app/Contents/MacOS/gmsh'
+    if os.path.isfile(macos_gmsh_location):
+        gmsh_executable = macos_gmsh_location
+    else:
+        gmsh_executable = 'gmsh'
 
     cmd = [gmsh_executable, '-%d' % dim, filename, '-o', outname]
     if optimize:
