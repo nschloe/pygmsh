@@ -47,7 +47,8 @@ def generate_mesh(
         optimize=True,
         num_quad_lloyd_steps=10,
         num_lloyd_steps=1000,
-        verbose=True
+        verbose=True,
+        dim=3
         ):
     import meshio
     import os
@@ -60,7 +61,7 @@ def generate_mesh(
 
     handle, outname = tempfile.mkstemp(suffix='.msh')
 
-    cmd = [gmsh_executable, '-3', filename, '-o', outname]
+    cmd = [gmsh_executable, '-%d' % dim, filename, '-o', outname]
     if optimize:
         cmd += ['-optimize']
     if num_quad_lloyd_steps > 0:

@@ -135,10 +135,10 @@ def generate():
     ymin = airfoil_coordinates[:, 1].min() - bottom_dist*coord
     ymax = airfoil_coordinates[:, 1].max() + top_dist*coord
     domainCoordinates = numpy.array([
-        [xmin, ymin, 0.0],
-        [xmax, ymin, 0.0],
-        [xmax, ymax, 0.0],
-        [xmin, ymax, 0.0],
+        [xmin, ymin],
+        [xmax, ymin],
+        [xmax, ymax],
+        [xmin, ymax],
         ])
     geom.add_polygon(
             domainCoordinates,
@@ -152,7 +152,8 @@ def generate():
 
 if __name__ == '__main__':
     import meshio
-    points, cells, point_data, cell_data, _ = pygmsh.generate_mesh(generate())
+    points, cells, point_data, cell_data, _ = \
+        pygmsh.generate_mesh(generate(), dim=2)
     meshio.write(
             'airfoil.vtu',
             points,
