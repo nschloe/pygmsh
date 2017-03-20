@@ -8,7 +8,7 @@ import pygmsh as pg
 def generate():
     geom = pg.Geometry()
     geom.add_box(0, 1, 0, 1, 0, 1, 0.05)
-    return geom
+    return geom, 6.0
 
 
 if __name__ == '__main__':

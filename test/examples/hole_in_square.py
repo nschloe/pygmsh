@@ -38,7 +38,7 @@ def generate():
             holes=[squareHole.line_loop]
             )
 
-    return geom
+    return geom, 1.0
 
 
 if __name__ == '__main__':

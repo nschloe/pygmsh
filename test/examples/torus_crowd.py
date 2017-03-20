@@ -6,7 +6,6 @@ import numpy as np
 
 
 def generate():
-
     geom = pg.Geometry()
 
     # internal radius of torus
@@ -14,28 +13,27 @@ def generate():
     # external radius of torus
     orad = 0.27
 
-    #
-    Z_pos = (irad+orad) * np.r_[
-            np.ones(8),
+    Z_pos = (irad+orad) * np.concatenate([
+            +np.ones(8),
             -np.ones(8),
-            np.ones(8),
+            +np.ones(8),
             -np.ones(8)
-            ]
+            ])
 
-    Alpha = np.r_[
+    Alpha = np.concatenate([
             np.arange(8) * np.pi/4.0,
             np.arange(8) * np.pi/4.0 + np.pi/16.0,
             np.arange(8) * np.pi/4.0,
             np.arange(8) * np.pi/4.0 + np.pi/16.0
-            ]
+            ])
 
     A1 = (irad+orad) / np.tan(np.pi/8.0) * \
-        np.r_[
+        np.concatenate([
             1.6*np.ones(8),
             1.6*np.ones(8),
             1.9*np.ones(8),
             1.9*np.ones(8)
-            ]
+            ])
 
     for alpha, a1, z in zip(Alpha, A1, Z_pos):
         # Rotate torus to the y-z-plane.
@@ -63,10 +61,11 @@ def generate():
             lcar=0.3
             )
 
-    return geom
+    return geom, 141.40995203778223
 
 
 if __name__ == '__main__':
     import meshio
-    out = pg.generate_mesh(generate())
+    geom, _ = generate()
+    out = pg.generate_mesh(geom)
     meshio.write('torus_crowd.vtu', *out)

@@ -33,10 +33,11 @@ def generate():
             variant='circle_extrusion'
             )
 
-    return geom
+    return geom, 10.928927982874846
 
 
 if __name__ == '__main__':
     import meshio
-    out = pg.generate_mesh(generate())
+    geom, vol = generate()
+    out = pg.generate_mesh(geom)
     meshio.write('pipes.vtu', *out)

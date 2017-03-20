@@ -146,8 +146,8 @@ def generate():
             holes=[airfoil]
             )
 
-    # Return geo-file code
-    return geom
+    # Return geo-file code (and reference volume for testing)
+    return geom, 10.525891646546
 
 
 if __name__ == '__main__':

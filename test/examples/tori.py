@@ -32,7 +32,7 @@ def generate():
             variant='extrude_circle'
             )
 
-    return geom
+    return geom, 2.762585439629634
 
 
 if __name__ == '__main__':
