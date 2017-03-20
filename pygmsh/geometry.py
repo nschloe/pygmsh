@@ -208,26 +208,26 @@ class Geometry(object):
 
         # Define points that make the circle (midpoint and the four cardinal
         # directions).
+        X = numpy.zeros((num_sections+1, len(x0)))
         if num_sections == 4:
             # For accuracy, the points are provided explicitly.
-            X = [
-                [0.0,     0.0,     0.0],
-                [radius,  0.0,     0.0],
-                [0.0,     radius,  0.0],
-                [-radius, 0.0,     0.0],
-                [0.0,     -radius, 0.0]
-                ]
+            X[1:, [0, 1]] = numpy.array([
+                [radius, 0.0],
+                [0.0, radius],
+                [-radius, 0.0],
+                [0.0, -radius]
+                ])
         else:
-            X = [
-                [0.0, 0.0, 0.0]
+            X[1:, [0, 1]] = numpy.array([
+                [
+                    radius*numpy.cos(2*numpy.pi * k / num_sections),
+                    radius*numpy.sin(2*numpy.pi * k / num_sections),
+                    0.0,
                 ]
-            for k in range(num_sections):
-                alpha = 2*numpy.pi * k / num_sections
-                X.append([
-                    radius*numpy.cos(alpha),
-                    radius*numpy.sin(alpha),
-                    0.0
-                    ])
+                for k in range(num_sections)
+                ])
+
+        X += x0
 
         # Apply the transformation.
         # TODO assert that the transformation preserves circles
