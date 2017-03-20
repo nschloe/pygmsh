@@ -6,9 +6,6 @@ python:
     - '2.7'
     - '3.6'
 
-virtualenv:
-  system_site_packages: true
-
 addons:
   apt:
     sources:
