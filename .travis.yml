@@ -21,15 +21,13 @@ addons:
     #
     - python-numpy
     - python-scipy
-    - python-matplotlib
     #
     - python3-numpy
     - python3-scipy
-    - python3-matplotlib
 
 # install dependencies
 before_install:
-  - pip install pytest pytest-cov
+  - pip install pytest pytest-cov matplotlib
 
 install:
   - pip install .
