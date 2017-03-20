@@ -34,6 +34,14 @@ def rotation_matrix(u, theta):
     return R
 
 
+def _sit_in_plane(X, tol=1.0e-15):
+    '''Checks if all points X sit in a plane.
+    '''
+    orth = numpy.cross(X[1] - X[0], X[2] - X[0])
+    orth /= numpy.sqrt(numpy.dot(orth, orth))
+    return (abs(numpy.dot(X - X[0], orth)) < tol).all()
+
+
 def generate_mesh(
         geo_object,
         optimize=True,
@@ -79,7 +87,7 @@ def generate_mesh(
     X, cells, pt_data, cell_data, field_data = meshio.read(outname)
 
     # Lloyd smoothing
-    if (abs(X[:, 2]) > 1.0e-15).any():
+    if not _sit_in_plane(X) or 'triangle' not in cells:
         print('Not performing Lloyd smoothing (only works for 2D meshes).')
         return X, cells, pt_data, cell_data, field_data
     print('Lloyd smoothing...')
