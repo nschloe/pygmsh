@@ -15,6 +15,7 @@ addons:
   apt:
     sources:
     - sourceline: 'ppa:nschloe/gmsh-backports'
+    packages:
     - gmsh
     - pandoc
     #
