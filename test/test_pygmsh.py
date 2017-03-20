@@ -35,5 +35,5 @@ def test_check_output(name):
     points, cells, point_data, cell_data, _ = pygmsh.generate_mesh(geom)
 
     vol2 = _get_volume(points, cells)
-    assert abs(vol - vol2) < 1.0e-4 * vol
+    assert abs(vol - vol2) < 1.0e-3 * vol
     return
