@@ -20,7 +20,7 @@ def generate():
     ll = geom.add_line_loop([s1, s2])
     geom.add_plane_surface(ll)
 
-    return geom
+    return geom, 0.9156598733673261
 
 
 if __name__ == '__main__':

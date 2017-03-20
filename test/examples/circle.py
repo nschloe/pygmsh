@@ -6,7 +6,7 @@ import pygmsh as pg
 def generate():
     geom = pg.Geometry()
     geom.add_circle(
-            [0.0, 0.0, 0.0],
+            [0.0, 0.0],
             1.0,
             0.1,
             num_sections=4,
@@ -15,10 +15,11 @@ def generate():
             # choose by itself where to point the circle points.
             compound=True
             )
-    return geom
+    return geom, 3.1026628683057793
 
 
 if __name__ == '__main__':
     import meshio
-    out = pg.generate_mesh(generate())
-    meshio.write('circle.vtu', *out)
+    geom, _ = generate()
+    out = pg.generate_mesh(geom)
+    meshio.write('circle.vtk', *out)

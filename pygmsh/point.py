@@ -12,8 +12,10 @@ class Point(object):
         self.id = 'p%d' % Point._POINT_ID
         Point._POINT_ID += 1
 
+        fmt = ', '.join(len(x) * ['%r'])
         self.code = '\n'.join([
             '%s = newp;' % self.id,
-            'Point(%s) = {%r, %r, %r, %r};' % (self.id, x[0], x[1], x[2], lcar)
+            ('Point(%s) = {' + fmt + ', %r};')
+            % ((self.id,) + tuple(x) + (lcar,))
             ])
         return

@@ -13,7 +13,7 @@ def generate():
             0.1
             )
 
-    return geom
+    return geom, 1.0
 
 
 if __name__ == '__main__':

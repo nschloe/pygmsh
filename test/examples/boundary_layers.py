@@ -38,7 +38,7 @@ def generate():
 
     geom.add_background_field([field0, field1])
 
-    return geom
+    return geom, 4.0
 
 
 if __name__ == '__main__':

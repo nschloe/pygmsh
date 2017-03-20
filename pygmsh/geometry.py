@@ -193,7 +193,7 @@ class Geometry(object):
     def add_circle(
             self,
             x0, radius, lcar,
-            R=numpy.eye(3),
+            R=None,
             compound=False,
             num_sections=3,
             holes=None,
@@ -208,30 +208,31 @@ class Geometry(object):
 
         # Define points that make the circle (midpoint and the four cardinal
         # directions).
+        X = numpy.zeros((num_sections+1, len(x0)))
         if num_sections == 4:
             # For accuracy, the points are provided explicitly.
-            X = [
-                [0.0,     0.0,     0.0],
-                [radius,  0.0,     0.0],
-                [0.0,     radius,  0.0],
-                [-radius, 0.0,     0.0],
-                [0.0,     -radius, 0.0]
-                ]
+            X[1:, [0, 1]] = numpy.array([
+                [radius, 0.0],
+                [0.0, radius],
+                [-radius, 0.0],
+                [0.0, -radius]
+                ])
         else:
-            X = [
-                [0.0, 0.0, 0.0]
+            X[1:, [0, 1]] = numpy.array([
+                [
+                    radius*numpy.cos(2*numpy.pi * k / num_sections),
+                    radius*numpy.sin(2*numpy.pi * k / num_sections),
                 ]
-            for k in range(num_sections):
-                alpha = 2*numpy.pi * k / num_sections
-                X.append([
-                    radius*numpy.cos(alpha),
-                    radius*numpy.sin(alpha),
-                    0.0
-                    ])
+                for k in range(num_sections)
+                ])
 
         # Apply the transformation.
         # TODO assert that the transformation preserves circles
-        X = [numpy.dot(R, x) + x0 for x in X]
+        if R is not None:
+            X = [numpy.dot(R, x) + x0 for x in X]
+
+        X += x0
+
         # Add Gmsh Points.
         p = [self.add_point(x, lcar) for x in X]
 
@@ -712,7 +713,6 @@ class Geometry(object):
         :param irad: inner radius of the torus
         :param orad: outer radius of the torus
         '''
-        self.add_comment(76 * '-')
         self.add_comment('Torus')
 
         # Add circle
@@ -720,10 +720,9 @@ class Geometry(object):
         # Get circles in y-z plane
         Rc = numpy.array([
             [0.0, 0.0, 1.0],
-            [1.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0]
+            [0.0, 1.0, 0.0],
+            [1.0, 0.0, 0.0]
             ])
-
         c = self.add_circle(x0+x0t, irad, lcar, R=numpy.dot(R, Rc))
 
         rot_axis = [0.0, 0.0, 1.0]
@@ -764,7 +763,7 @@ class Geometry(object):
         # The newline at the end is essential:
         # If a GEO file doesn't end in a newline, Gmsh will report a syntax
         # error.
-        self.add_comment(76*'-' + '\n')
+        self.add_comment('\n')
         return
 
     def _add_torus_extrude_circle(

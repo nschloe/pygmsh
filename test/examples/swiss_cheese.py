@@ -36,7 +36,7 @@ def generate():
     # Fails on travis for some reason. TODO fix
     # geom.add_physical_volume(ball, label='cheese')
 
-    return geom
+    return geom, 4.07064892966291
 
 
 if __name__ == '__main__':

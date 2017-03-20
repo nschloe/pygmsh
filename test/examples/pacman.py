@@ -39,7 +39,7 @@ def generate(lcar=0.3):
     geom.add_physical_surface(pacman)
     # geom.add_physical_surface(pacman, label=77)
 
-    return geom
+    return geom, 54.312974717523744
 
 
 if __name__ == '__main__':

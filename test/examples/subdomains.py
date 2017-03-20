@@ -29,7 +29,7 @@ def generate():
         holes=[circle.line_loop, triangle.line_loop, rectangle.line_loop]
         )
 
-    return geom
+    return geom, 24.0
 
 
 if __name__ == '__main__':

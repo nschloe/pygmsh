@@ -25,7 +25,7 @@ def generate():
             holes=[circle.line_loop]
             )
 
-    return geom
+    return geom, 0.8086582838174551
 
 
 if __name__ == '__main__':
