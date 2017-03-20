@@ -193,7 +193,7 @@ class Geometry(object):
     def add_circle(
             self,
             x0, radius, lcar,
-            R=numpy.eye(3),
+            R=None,
             compound=False,
             num_sections=3,
             holes=None,
@@ -231,7 +231,8 @@ class Geometry(object):
 
         # Apply the transformation.
         # TODO assert that the transformation preserves circles
-        X = [numpy.dot(R, x) + x0 for x in X]
+        if R is not None:
+            X = [numpy.dot(R, x) + x0 for x in X]
         # Add Gmsh Points.
         p = [self.add_point(x, lcar) for x in X]
 
