@@ -61,7 +61,7 @@ def generate():
             lcar=0.3
             )
 
-    return geom, 141.40995203778223
+    return geom, 15.276653079300184
 
 
 if __name__ == '__main__':

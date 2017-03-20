@@ -33,7 +33,7 @@ def generate():
             variant='circle_extrusion'
             )
 
-    return geom, 10.928927982874846
+    return geom, 0.5317080205627609
 
 
 if __name__ == '__main__':

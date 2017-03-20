@@ -34,7 +34,7 @@ def generate(lcar=0.05):
         angle=2.0 / 6.0 * np.pi
         )
 
-    return geom, 4.44961578944814
+    return geom, 0.16951514066385628
 
 
 if __name__ == '__main__':

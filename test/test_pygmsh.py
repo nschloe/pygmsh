@@ -12,7 +12,7 @@ import voropy
 
 def _get_volume(points, cells):
     cells = \
-        cells['tetrahedron'] if 'tetrahedron' in cells \
+        cells['tetra'] if 'tetra' in cells \
         else cells['triangle']
 
     # Only points/cells that actually used
