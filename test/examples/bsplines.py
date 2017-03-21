@@ -25,5 +25,5 @@ def generate():
 
 if __name__ == '__main__':
     import meshio
-    out = pg.generate_mesh(generate())
+    out = pg.generate_mesh(generate()[0])
     meshio.write('bsplines.vtu', *out)
