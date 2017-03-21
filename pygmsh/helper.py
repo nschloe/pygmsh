@@ -27,12 +27,25 @@ def rotation_matrix(u, theta):
     return R
 
 
-def _sit_in_plane(X, tol=1.0e-15):
+def _is_flat(X, tol=1.0e-15):
     '''Checks if all points X sit in a plane.
     '''
-    orth = numpy.cross(X[1] - X[0], X[2] - X[0])
-    orth /= numpy.sqrt(numpy.dot(orth, orth))
-    return (abs(numpy.dot(X - X[0], orth)) < tol).all()
+    # find three points that don't sit on a line
+    found = False
+    for x2 in X:
+        orth = numpy.cross(X[1] - X[0], x2 - X[0])
+        orth_dot_orth = numpy.dot(orth, orth)
+        if orth_dot_orth > tol:
+            found = True
+            break
+    if not found:
+        # All points even sit on a line
+        return True
+    norm_orth = numpy.sqrt(orth_dot_orth)
+    norm_x_min_x0 = numpy.sqrt(numpy.einsum('ij, ij->i', X - X[0], X - X[0]))
+    return (
+        abs(numpy.dot(X - X[0], orth)) < tol * (1.0 + norm_orth*norm_x_min_x0)
+        ).all()
 
 
 def generate_mesh(
@@ -87,8 +100,11 @@ def generate_mesh(
     X, cells, pt_data, cell_data, field_data = meshio.read(outname)
 
     # Lloyd smoothing
-    if not _sit_in_plane(X) or 'triangle' not in cells:
-        print('Not performing Lloyd smoothing (only works for 2D meshes).')
+    if not _is_flat(X) or 'triangle' not in cells:
+        print(
+            'Not performing Lloyd smoothing '
+            '(only works for flat triangular meshes).'
+            )
         return X, cells, pt_data, cell_data, field_data
     print('Lloyd smoothing...')
     # find submeshes
