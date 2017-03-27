@@ -238,10 +238,10 @@ class Geometry(object):
 
         # Define the circle arcs.
         arcs = [
-            self.add_circle_arc([p[k], p[0], p[k+1]])
+            self.add_circle_arc(p[k], p[0], p[k+1])
             for k in range(1, len(p)-1)
             ]
-        arcs.append(self.add_circle_arc([p[-1], p[0], p[1]]))
+        arcs.append(self.add_circle_arc(p[-1], p[0], p[1]])
 
         if compound:
             arcs = [self.add_compound_line(arcs)]
@@ -513,7 +513,7 @@ class Geometry(object):
             ]
         # Add skeleton.
         # Alternative for circles:
-        # `self.add_circle_arc([a, b, c])`
+        # `self.add_circle_arc(a, b, c)`
         c = [self.add_ellipse_arc([p[1], p[0], p[6], p[6]]),
              self.add_ellipse_arc([p[6], p[0], p[4], p[4]]),
              self.add_ellipse_arc([p[4], p[0], p[3], p[3]]),
