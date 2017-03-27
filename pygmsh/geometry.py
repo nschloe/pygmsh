@@ -514,18 +514,18 @@ class Geometry(object):
         # Add skeleton.
         # Alternative for circles:
         # `self.add_circle_arc(a, b, c)`
-        c = [self.add_ellipse_arc([p[1], p[0], p[6], p[6]]),
-             self.add_ellipse_arc([p[6], p[0], p[4], p[4]]),
-             self.add_ellipse_arc([p[4], p[0], p[3], p[3]]),
-             self.add_ellipse_arc([p[3], p[0], p[1], p[1]]),
-             self.add_ellipse_arc([p[1], p[0], p[2], p[2]]),
-             self.add_ellipse_arc([p[2], p[0], p[4], p[4]]),
-             self.add_ellipse_arc([p[4], p[0], p[5], p[5]]),
-             self.add_ellipse_arc([p[5], p[0], p[1], p[1]]),
-             self.add_ellipse_arc([p[6], p[0], p[2], p[2]]),
-             self.add_ellipse_arc([p[2], p[0], p[3], p[3]]),
-             self.add_ellipse_arc([p[3], p[0], p[5], p[5]]),
-             self.add_ellipse_arc([p[5], p[0], p[6], p[6]]),
+        c = [self.add_ellipse_arc(p[1], p[0], p[6], p[6]),
+             self.add_ellipse_arc(p[6], p[0], p[4], p[4]),
+             self.add_ellipse_arc(p[4], p[0], p[3], p[3]),
+             self.add_ellipse_arc(p[3], p[0], p[1], p[1]),
+             self.add_ellipse_arc(p[1], p[0], p[2], p[2]),
+             self.add_ellipse_arc(p[2], p[0], p[4], p[4]),
+             self.add_ellipse_arc(p[4], p[0], p[5], p[5]),
+             self.add_ellipse_arc(p[5], p[0], p[1], p[1]),
+             self.add_ellipse_arc(p[6], p[0], p[2], p[2]),
+             self.add_ellipse_arc(p[2], p[0], p[3], p[3]),
+             self.add_ellipse_arc(p[3], p[0], p[5], p[5]),
+             self.add_ellipse_arc(p[5], p[0], p[6], p[6]),
              ]
         # Add surfaces (1/8th of the ball surface).
         ll = [
