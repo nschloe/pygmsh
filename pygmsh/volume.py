@@ -16,6 +16,7 @@ class Volume(object):
         Volume._ID += 1
 
         surface_loops = [surface_loop] + holes
+
         self.code = '\n'.join([
             '%s = newv;' % self.id,
             'Volume(%s) = {%s};'

@@ -5,17 +5,20 @@ from .point import Point
 
 
 class CircleArc(LineBase):
-    def __init__(self, points):
+    def __init__(self, start, center, end):
         super(CircleArc, self).__init__()
 
-        for p in points:
-            assert isinstance(p, Point)
+        assert isinstance(start, Point)
+        assert isinstance(center, Point)
+        assert isinstance(end, Point)
 
-        self.points = points
+        self.start = start
+        self.center = center
+        self.end = end
 
         self.code = '\n'.join([
             '%s = newl;' % self.id,
             'Circle(%s) = {%s, %s, %s};'
-            % (self.id, points[0].id, points[1].id, points[2].id)
+            % (self.id, start.id, center.id, end.id)
             ])
         return

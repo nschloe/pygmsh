@@ -5,18 +5,22 @@ from .point import Point
 
 
 class EllipseArc(LineBase):
-    def __init__(self, points):
+    def __init__(self, start, center, point_on_major_axis, end):
         super(EllipseArc, self).__init__()
 
-        for p in points:
-            assert isinstance(p, Point)
-        assert len(points) == 4
+        assert isinstance(start, Point)
+        assert isinstance(center, Point)
+        assert isinstance(point_on_major_axis, Point)
+        assert isinstance(end, Point)
 
-        self.points = points
+        self.start = start
+        self.center = center
+        self.point_on_major_axis = point_on_major_axis
+        self.end = end
 
         self.code = '\n'.join([
             '%s = newl;' % self.id,
             'Ellipse(%s) = {%s, %s, %s, %s};'
-            % (self.id, points[0].id, points[1].id, points[2].id, points[3].id)
+            % (self.id, start.id, center.id, point_on_major_axis.id, end.id)
             ])
         return
