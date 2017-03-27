@@ -7,6 +7,7 @@ __all__ = [
   'circle',
   'cube',
   'ellipsoid',
+  'hole_in_box',
   'pacman',
   'pipes',
   'rectangle_with_hole',
