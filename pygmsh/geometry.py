@@ -588,8 +588,7 @@ class Geometry(object):
             x0, x1, y0, y1, z0, z1,
             lcar,
             with_volume=True,
-            holes=None,
-            label=None
+            holes=None
             ):
 
         if holes is None:
@@ -638,8 +637,6 @@ class Geometry(object):
         if with_volume:
             # Create volume
             vol = self.add_volume(surface_loop)
-            if label:
-                self.add_physical_volume(vol, label)
         else:
             vol = None
 
