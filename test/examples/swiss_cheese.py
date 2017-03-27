@@ -31,10 +31,9 @@ def generate():
     #         holes=holes
     #         )
 
-    geom.add_ball([0, 0, 0], 1.0, lcar=0.2, holes=holes)
+    ball = geom.add_ball([0, 0, 0], 1.0, lcar=0.2, holes=holes)
 
-    # Fails on travis for some reason. TODO fix
-    # geom.add_physical_volume(ball, label='cheese')
+    geom.add_physical_volume(ball, label='cheese')
 
     return geom, 4.07064892966291
 
