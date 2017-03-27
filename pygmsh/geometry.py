@@ -146,7 +146,8 @@ class Geometry(object):
         return e
 
     def _new_physical_group(self, label=None):
-        # See <https://github.com/nschloe/pygmsh/issues/46#issuecomment-286684321>
+        # See
+        # https://github.com/nschloe/pygmsh/issues/46#issuecomment-286684321
         # for context.
         max_id = \
             0 if len(self._TAKEN_PHYSICALGROUP_IDS) == 0 \
@@ -241,7 +242,7 @@ class Geometry(object):
             self.add_circle_arc(p[k], p[0], p[k+1])
             for k in range(1, len(p)-1)
             ]
-        arcs.append(self.add_circle_arc(p[-1], p[0], p[1]])
+        arcs.append(self.add_circle_arc(p[-1], p[0], p[1]))
 
         if compound:
             arcs = [self.add_compound_line(arcs)]
@@ -491,8 +492,7 @@ class Geometry(object):
             self,
             x0, radii, lcar,
             with_volume=True,
-            holes=None,
-            label=None
+            holes=None
             ):
         '''Creates an ellipsoid with radii around a given midpoint
         :math:`x_0`.
@@ -557,8 +557,6 @@ class Geometry(object):
         # Create volume.
         if with_volume:
             volume = self.add_volume(surface_loop, holes)
-            if label:
-                self.add_physical_volume(volume, label)
         else:
             volume = None
 
@@ -577,14 +575,12 @@ class Geometry(object):
             self,
             x0, radius, lcar,
             with_volume=True,
-            holes=None,
-            label=None
+            holes=None
             ):
         return self.add_ellipsoid(
             x0, [radius, radius, radius], lcar,
             with_volume,
-            holes,
-            label
+            holes
             )
 
     def add_box(
@@ -671,7 +667,6 @@ class Geometry(object):
             lcar,
             R=numpy.eye(3),
             x0=numpy.array([0.0, 0.0, 0.0]),
-            label=None,
             variant='extrude_lines'
             ):
 
@@ -680,29 +675,24 @@ class Geometry(object):
                 irad, orad,
                 lcar,
                 R=R,
-                x0=x0,
-                label=label
+                x0=x0
                 )
-        elif variant == 'extrude_circle':
+        else:
+            assert variant == 'extrude_circle'
             return self._add_torus_extrude_circle(
                 irad, orad,
                 lcar,
                 R=R,
-                x0=x0,
-                label=label
+                x0=x0
                 )
-        else:
-            raise ValueError(
-                'Illegal variant \'%s\'.' % variant
-                )
+        return
 
     def _add_torus_extrude_lines(
             self,
             irad, orad,
             lcar,
             R=numpy.eye(3),
-            x0=numpy.array([0.0, 0.0, 0.0]),
-            label=None
+            x0=numpy.array([0.0, 0.0, 0.0])
             ):
         '''Create Gmsh code for the torus in the x-y plane under the coordinate
         transformation
@@ -757,22 +747,19 @@ class Geometry(object):
 
         surface_loop = self.add_surface_loop(all_surfaces)
         vol = self.add_volume(surface_loop)
-        if label:
-            self.add_physical_volume(vol, label)
 
         # The newline at the end is essential:
         # If a GEO file doesn't end in a newline, Gmsh will report a syntax
         # error.
         self.add_comment('\n')
-        return
+        return vol
 
     def _add_torus_extrude_circle(
             self,
             irad, orad,
             lcar,
             R=numpy.eye(3),
-            x0=numpy.array([0.0, 0.0, 0.0]),
-            label=None
+            x0=numpy.array([0.0, 0.0, 0.0])
             ):
         '''Create Gmsh code for the torus under the coordinate transformation
 
@@ -819,17 +806,14 @@ class Geometry(object):
             all_volumes.append(vol)
 
         vol = self.add_compound_volume(all_volumes)
-        if label:
-            self.add_physical_volume(vol, label)
         self.add_comment(76*'-' + '\n')
-        return
+        return vol
 
     def add_pipe(
             self,
             outer_radius, inner_radius, length,
             R=numpy.eye(3),
             x0=numpy.array([0.0, 0.0, 0.0]),
-            label=None,
             lcar=0.1,
             variant='rectangle_rotation'
             ):
@@ -838,28 +822,23 @@ class Geometry(object):
                 outer_radius, inner_radius, length,
                 R=R,
                 x0=x0,
-                label=label,
                 lcar=lcar
                 )
-        elif variant == 'circle_extrusion':
+        else:
+            assert variant == 'circle_extrusion'
             return self._add_pipe_by_circle_extrusion(
                 outer_radius, inner_radius, length,
                 R=R,
                 x0=x0,
-                label=label,
                 lcar=lcar
                 )
-        else:
-            raise ValueError(
-                'Illegal variant \'%s\'.' % variant
-                )
+        return
 
     def _add_pipe_by_rectangle_rotation(
             self,
             outer_radius, inner_radius, length,
             R=numpy.eye(3),
             x0=numpy.array([0.0, 0.0, 0.0]),
-            label=None,
             lcar=0.1
             ):
         '''Hollow cylinder.
@@ -917,16 +896,13 @@ class Geometry(object):
         # all_surfaces = all_names + [cs]
         surface_loop = self.add_surface_loop(all_surfaces)
         vol = self.add_volume(surface_loop)
-        if label:
-            self.add_physical_volume(vol, label)
-        return
+        return vol
 
     def _add_pipe_by_circle_extrusion(
             self,
             outer_radius, inner_radius, length,
             R=numpy.eye(3),
             x0=numpy.array([0.0, 0.0, 0.0]),
-            label=None,
             lcar=0.1
             ):
         '''Hollow cylinder.
@@ -952,6 +928,4 @@ class Geometry(object):
                 circ.plane_surface,
                 translation_axis=numpy.dot(R, [length, 0, 0])
                 )
-        if label:
-            self.add_physical_volume(vol, label)
         return vol
