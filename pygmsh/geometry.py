@@ -474,10 +474,7 @@ class Geometry(object):
         lines = [self.add_line(p[k], p[k+1]) for k in range(len(p)-1)]
         lines.append(self.add_line(p[-1], p[0]))
         ll = self.add_line_loop((lines))
-        if make_surface:
-            surface = self.add_plane_surface(ll, holes)
-        else:
-            surface = None
+        surface = self.add_plane_surface(ll, holes) if make_surface else None
 
         class Polygon(object):
             def __init__(self, line_loop, surface, lcar):
@@ -555,10 +552,7 @@ class Geometry(object):
         #     # surface loop, the following ones are holes.
         #     surface_loop = self.add_array([surface_loop] + holes)
         # Create volume.
-        if with_volume:
-            volume = self.add_volume(surface_loop, holes)
-        else:
-            volume = None
+        volume = self.add_volume(surface_loop, holes) if with_volume else None
 
         class Ellipsoid(object):
             def __init__(self, x0, radii, lcar, surface_loop, volume):
@@ -634,11 +628,9 @@ class Geometry(object):
             # Create an array of surface loops; the first entry is the outer
             # surface loop, the following ones are holes.
             surface_loop = self.add_array([surface_loop] + holes)
-        if with_volume:
-            # Create volume
-            vol = self.add_volume(surface_loop)
-        else:
-            vol = None
+
+        # Create volume
+        vol = self.add_volume(surface_loop) if with_volume else None
 
         class Box(object):
             def __init__(
