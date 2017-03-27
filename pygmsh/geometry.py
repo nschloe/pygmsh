@@ -613,7 +613,6 @@ class Geometry(object):
              self.add_line(p[6], p[7]),
              ]
         # Define the six line loops.
-        self.start = start
         ll = [self.add_line_loop([e[0], e[3],  -e[5],  -e[1]]),
               self.add_line_loop([e[0], e[4],  -e[8],  -e[2]]),
               self.add_line_loop([e[1], e[6],  -e[9],  -e[2]]),
