@@ -422,17 +422,6 @@ class Geometry(object):
             )
         return name
 
-    def add_array(self, entities):
-        '''Forms a Gmsh array from a list of entities.
-        '''
-        self._ARRAY_ID += 1
-        name = 'array%d' % self._ARRAY_ID
-        self._GMSH_CODE.append(
-                '%s[] = {%s};'
-                % (name, ','.join([e.id for e in entities]))
-                )
-        return name + '[]'
-
     def add_comment(self, string):
         self._GMSH_CODE.append('// ' + string)
         return
@@ -493,6 +482,9 @@ class Geometry(object):
         '''
         if holes is None:
             holes = []
+
+        if holes:
+            assert with_volume
 
         # Add points.
         a = lcar
@@ -585,6 +577,9 @@ class Geometry(object):
         if holes is None:
             holes = []
 
+        if holes:
+            assert with_volume
+
         # Define corner points.
         p = [self.add_point([x1, y1, z1], lcar=lcar),
              self.add_point([x1, y1, z0], lcar=lcar),
@@ -621,13 +616,9 @@ class Geometry(object):
         s = [self.add_ruled_surface(l) for l in ll]
         # Create the surface loop.
         surface_loop = self.add_surface_loop(s)
-        if holes:
-            # Create an array of surface loops; the first entry is the outer
-            # surface loop, the following ones are holes.
-            surface_loop = self.add_array([surface_loop] + holes)
 
         # Create volume
-        vol = self.add_volume(surface_loop) if with_volume else None
+        vol = self.add_volume(surface_loop, holes) if with_volume else None
 
         class Box(object):
             def __init__(
