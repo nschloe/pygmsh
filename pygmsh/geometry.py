@@ -357,7 +357,6 @@ class Geometry(object):
             anisomax=None,
             hfar=None,
             hwall_n=None,
-            hwall_t=None,
             ratio=None,
             thickness=None
             ):
@@ -392,8 +391,6 @@ class Geometry(object):
                 )
         if hfar:
             self._GMSH_CODE.append('Field[%s].hfar= %r;' % (name, hfar))
-        if hwall_t:
-            self._GMSH_CODE.append('Field[%s].hwall_t= %r;' % (name, hwall_t))
         if hwall_n:
             self._GMSH_CODE.append('Field[%s].hwall_n= %r;' % (name, hwall_n))
         if ratio:

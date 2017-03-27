@@ -20,7 +20,6 @@ def generate():
         edges_list=[poly.line_loop.lines[0]],
         hfar=0.1,
         hwall_n=0.01,
-        hwall_t=0.01,
         ratio=1.1,
         thickness=0.2,
         anisomax=100.0
@@ -30,7 +29,6 @@ def generate():
         nodes_list=[poly.line_loop.lines[1].points[1]],
         hfar=0.1,
         hwall_n=0.01,
-        hwall_t=0.01,
         ratio=1.1,
         thickness=0.2,
         anisomax=100.0
