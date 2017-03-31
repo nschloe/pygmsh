@@ -54,7 +54,8 @@ def generate_mesh(
         num_quad_lloyd_steps=10,
         num_lloyd_steps=1000,
         verbose=True,
-        dim=3
+        dim=3,
+        prune_vertices=True
         ):
     import meshio
     import os
@@ -117,5 +118,11 @@ def generate_mesh(
             tol=0.0, max_steps=num_lloyd_steps,
             verbose=False
             )
+
+    if prune_vertices:
+        # Make sure to include only those vertices which belong to a triangle.
+        uvertices, uidx = numpy.unique(cells['triangle'], return_inverse=True)
+        cells = {'triangle': uidx.reshape(cells['triangle'].shape)}
+        X = X[uvertices]
 
     return X, cells, pt_data, cell_data, field_data
