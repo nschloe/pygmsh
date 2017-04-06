@@ -11,10 +11,8 @@ from pygmsh.__about__ import (
         )
 
 import pipdated
-if pipdated.needs_checking('pygmsh'):
-    msg = pipdated.check('pygmsh', __version__)
-    if msg:
-        print(msg)
+if pipdated.needs_checking(__name__):
+    print(pipdated.check(__name__, __version__))
 
 __all__ = [
         'geometry',
