@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 import os
-from distutils.core import setup
+from setuptools import setup
 import codecs
 
 # https://packaging.python.org/single_source_version/
