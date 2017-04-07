@@ -4,6 +4,8 @@ from __future__ import print_function
 import numpy
 import voropy
 
+_gmsh_executable = None
+
 
 def rotation_matrix(u, theta):
     '''Return matrix that implements the rotation around the vector :math:`u`
@@ -48,6 +50,37 @@ def _is_flat(X, tol=1.0e-15):
         ).all()
 
 
+def set_gmsh_executable(filepath):
+    global _gmsh_executable
+    
+    import os
+        
+    if not os.path.isfile(filepath):
+        raise ValueError("Cannot set GMSH executable to '%s' because it cannot be found!" % filepath)
+    
+    basename = os.path.splitext(os.path.basename(filepath))[0].lower()
+    
+    if basename != 'gmsh':
+        raise ValueError("Cannot set GMSH executable to '%s' because it doesn't appear to be a valid GMSH executable!" % filepath)
+    
+    _gmsh_executable = filepath
+    
+
+def get_gmsh_executable():
+    global _gmsh_executable
+    
+    if _gmsh_executable is not None:
+        return _gmsh_executable
+    
+    macos_gmsh_location = '/Applications/Gmsh.app/Contents/MacOS/gmsh'
+    if os.path.isfile(macos_gmsh_location):
+        gmsh_executable = macos_gmsh_location
+    else:
+        gmsh_executable = 'gmsh'
+        
+    return gmsh_executable
+
+
 def generate_mesh(
         geo_object,
         optimize=True,
@@ -68,11 +101,7 @@ def generate_mesh(
 
     handle, outname = tempfile.mkstemp(suffix='.msh')
 
-    macos_gmsh_location = '/Applications/Gmsh.app/Contents/MacOS/gmsh'
-    if os.path.isfile(macos_gmsh_location):
-        gmsh_executable = macos_gmsh_location
-    else:
-        gmsh_executable = 'gmsh'
+    gmsh_executable = get_gmsh_executable()
 
     cmd = [gmsh_executable, '-%d' % dim, filename, '-o', outname]
     if optimize:
