@@ -71,6 +71,8 @@ def get_gmsh_executable():
     
     if _gmsh_executable is not None:
         return _gmsh_executable
+
+    import os
     
     macos_gmsh_location = '/Applications/Gmsh.app/Contents/MacOS/gmsh'
     if os.path.isfile(macos_gmsh_location):
