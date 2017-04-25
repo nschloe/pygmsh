@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 #
 from __future__ import print_function
+import meshio
 import numpy
+import os
+import subprocess
+import tempfile
 import voropy
 
 
@@ -48,6 +52,25 @@ def _is_flat(X, tol=1.0e-15):
         ).all()
 
 
+def _get_gmsh_exe():
+    macos_gmsh_location = '/Applications/Gmsh.app/Contents/MacOS/gmsh'
+    if os.path.isfile(macos_gmsh_location):
+        gmsh_executable = macos_gmsh_location
+    else:
+        gmsh_executable = 'gmsh'
+    return gmsh_executable
+
+
+def _get_gmsh_version():
+    gmsh_exe = _get_gmsh_exe()
+    out = subprocess.check_output(
+            [gmsh_exe, '--version'],
+            stderr=subprocess.STDOUT
+            ).strip().decode('utf8')
+    ex = out.split('.')
+    return [int(x) for x in ex]
+
+
 def generate_mesh(
         geo_object,
         optimize=True,
@@ -57,26 +80,20 @@ def generate_mesh(
         dim=3,
         prune_vertices=True
         ):
-    import meshio
-    import os
-    import subprocess
-    import tempfile
-
     handle, filename = tempfile.mkstemp(suffix='.geo')
     os.write(handle, geo_object.get_code().encode())
     os.close(handle)
 
     handle, outname = tempfile.mkstemp(suffix='.msh')
 
-    macos_gmsh_location = '/Applications/Gmsh.app/Contents/MacOS/gmsh'
-    if os.path.isfile(macos_gmsh_location):
-        gmsh_executable = macos_gmsh_location
-    else:
-        gmsh_executable = 'gmsh'
+    gmsh_executable = _get_gmsh_exe()
 
     cmd = [gmsh_executable, '-%d' % dim, filename, '-o', outname]
-    if optimize:
+
+    gmsh_version = _get_gmsh_version()
+    if gmsh_version[0] < 3 and optimize:
         cmd += ['-optimize']
+
     if num_quad_lloyd_steps > 0:
         cmd += ['-optimize_lloyd', str(num_quad_lloyd_steps)]
 
