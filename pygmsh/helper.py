@@ -61,14 +61,14 @@ def _get_gmsh_exe():
     return gmsh_executable
 
 
-def _get_gmsh_version():
+def _get_gmsh_major_version():
     gmsh_exe = _get_gmsh_exe()
     out = subprocess.check_output(
             [gmsh_exe, '--version'],
             stderr=subprocess.STDOUT
             ).strip().decode('utf8')
     ex = out.split('.')
-    return [int(x) for x in ex]
+    return int(ex[0])
 
 
 def generate_mesh(
@@ -90,8 +90,8 @@ def generate_mesh(
 
     cmd = [gmsh_executable, '-%d' % dim, filename, '-o', outname]
 
-    gmsh_version = _get_gmsh_version()
-    if gmsh_version[0] < 3 and optimize:
+    gmsh_major_version = _get_gmsh_major_version()
+    if gmsh_major_version < 3 and optimize:
         cmd += ['-optimize']
 
     if num_quad_lloyd_steps > 0:
