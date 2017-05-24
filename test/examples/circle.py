@@ -6,7 +6,7 @@ import pygmsh as pg
 def generate():
     geom = pg.Geometry()
     geom.add_circle(
-            [0.0, 0.0],
+            [0.0, 0.0, 0.0],
             1.0,
             0.1,
             num_sections=4,
@@ -15,7 +15,7 @@ def generate():
             # choose by itself where to point the circle points.
             compound=True
             )
-    return geom, 3.1026628683057793
+    return geom, 3.1363871677682247
 
 
 if __name__ == '__main__':
