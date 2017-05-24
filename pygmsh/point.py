@@ -12,7 +12,8 @@ class Point(object):
         self.id = 'p%d' % Point._POINT_ID
         Point._POINT_ID += 1
 
-        fmt = ', '.join(len(x) * ['%r'])
+        # Points are always 3D in gmsh
+        fmt = ', '.join(3*['%r'])
         self.code = '\n'.join([
             '%s = newp;' % self.id,
             ('Point(%s) = {' + fmt + ', %r};')
