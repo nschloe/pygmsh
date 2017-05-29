@@ -31,6 +31,15 @@ def rotation_matrix(u, theta):
     return R
 
 
+def _is_string(obj):
+    try:
+        # Python 2
+        return isinstance(obj, basestring)
+    except NameError:
+        # Python 3
+        return isinstance(obj, str)
+
+
 def _is_flat(X, tol=1.0e-15):
     '''Checks if all points X sit in a plane.
     '''

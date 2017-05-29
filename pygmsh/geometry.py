@@ -16,6 +16,7 @@ from .compound_surface import CompoundSurface
 from .compound_volume import CompoundVolume
 from .dummy import Dummy
 from .ellipse_arc import EllipseArc
+from .helper import _is_string
 from .line import Line
 from .line_base import LineBase
 from .line_loop import LineLoop
@@ -161,7 +162,7 @@ class Geometry(object):
             self._TAKEN_PHYSICALGROUP_IDS += [label]
             return '%d' % label
 
-        assert isinstance(label, str)
+        assert _is_string(label)
         self._TAKEN_PHYSICALGROUP_IDS += [max_id + 1]
         return '"%s"' % label
 
@@ -290,7 +291,7 @@ class Geometry(object):
         '''
         self._EXTRUDE_ID += 1
 
-        if isinstance(input_entity, str):
+        if _is_string(input_entity):
             entity = Dummy(input_entity)
         elif isinstance(input_entity, SurfaceBase):
             entity = Dummy('Surface{%s}' % input_entity.id)
@@ -429,7 +430,7 @@ class Geometry(object):
     def add_raw_code(self, string_or_list):
         '''Add raw Gmsh code.
         '''
-        if isinstance(string_or_list, str):
+        if _is_string(string_or_list):
             self._GMSH_CODE.append(string_or_list)
         else:
             assert isinstance(string_or_list, list)
