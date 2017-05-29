@@ -119,12 +119,14 @@ def generate_mesh(
 
     # Lloyd smoothing
     if not _is_flat(X) or 'triangle' not in cells:
-        print(
-            'Not performing Lloyd smoothing '
-            '(only works for flat triangular meshes).'
-            )
+        if verbose:
+            print(
+                'Not performing Lloyd smoothing '
+                '(only works for flat triangular meshes).'
+                )
         return X, cells, pt_data, cell_data, field_data
-    print('Lloyd smoothing...')
+    if verbose:
+        print('Lloyd smoothing...')
     # find submeshes
     a = cell_data['triangle']['geometrical']
     # http://stackoverflow.com/q/42740483/353337
