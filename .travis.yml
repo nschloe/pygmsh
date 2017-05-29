@@ -22,7 +22,8 @@ addons:
 
 # install dependencies
 before_install:
-  - pip install pytest pytest-cov matplotlib
+  - pip install pytest pytest-cov matplotlib code_extract
+  - code_extract README.md test/readme.py --filter python,test
 
 install:
   - pip install .

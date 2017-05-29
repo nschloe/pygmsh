@@ -17,7 +17,7 @@ so you can create complex geometries more easily.
 ![](https://nschloe.github.io/pygmsh/screw.png)
 
 To create the above mesh, simply do
-```python
+```python,test
 import pygmsh as pg
 import numpy as np
 
