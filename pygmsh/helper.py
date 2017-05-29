@@ -31,6 +31,15 @@ def rotation_matrix(u, theta):
     return R
 
 
+def _is_string(obj):
+    try:
+        # Python 2
+        return isinstance(obj, basestring)
+    except NameError:
+        # Python 3
+        return isinstance(obj, str)
+
+
 def _is_flat(X, tol=1.0e-15):
     '''Checks if all points X sit in a plane.
     '''
@@ -119,12 +128,14 @@ def generate_mesh(
 
     # Lloyd smoothing
     if not _is_flat(X) or 'triangle' not in cells:
-        print(
-            'Not performing Lloyd smoothing '
-            '(only works for flat triangular meshes).'
-            )
+        if verbose:
+            print(
+                'Not performing Lloyd smoothing '
+                '(only works for flat triangular meshes).'
+                )
         return X, cells, pt_data, cell_data, field_data
-    print('Lloyd smoothing...')
+    if verbose:
+        print('Lloyd smoothing...')
     # find submeshes
     a = cell_data['triangle']['geometrical']
     # http://stackoverflow.com/q/42740483/353337
