@@ -27,6 +27,7 @@ def generate():
             np.arange(8) * np.pi/4.0 + np.pi/16.0
             ])
 
+    # pylint: disable=no-member
     A1 = (irad+orad) / np.tan(np.pi/8.0) * \
         np.concatenate([
             1.6*np.ones(8),
@@ -66,6 +67,6 @@ def generate():
 
 if __name__ == '__main__':
     import meshio
-    geom, _ = generate()
-    out = pg.generate_mesh(geom)
+    geometry, _ = generate()
+    out = pg.generate_mesh(geometry)
     meshio.write('torus_crowd.vtu', *out)

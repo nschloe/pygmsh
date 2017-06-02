@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 #
 from __future__ import print_function
-import meshio
-import numpy
+
 import os
 import subprocess
 import tempfile
+
+import meshio
+import numpy
 import voropy
 
 
@@ -19,9 +21,9 @@ def rotation_matrix(u, theta):
     '''
     # Cross-product matrix.
     cpm = numpy.array([
-        [0.0,   -u[2],  u[1]],
-        [u[2],    0.0, -u[0]],
-        [-u[1],  u[0],  0.0]
+        [0.0, -u[2], u[1]],
+        [u[2], 0.0, -u[0]],
+        [-u[1], u[0], 0.0]
         ])
     c = numpy.cos(theta)
     s = numpy.sin(theta)
@@ -97,7 +99,7 @@ def generate_mesh(
 
     gmsh_executable = _get_gmsh_exe()
 
-    cmd = [gmsh_executable, '-%d' % dim, filename, '-o', outname]
+    cmd = [gmsh_executable, '-%d' % dim, '-bin', filename, '-o', outname]
 
     gmsh_major_version = _get_gmsh_major_version()
     if gmsh_major_version < 3 and optimize:
@@ -117,7 +119,7 @@ def generate_mesh(
                 break
             print(line.decode('utf-8'), end='')
 
-    p.communicate()[0]
+    p.communicate()
     if p.returncode != 0:
         raise RuntimeError(
             'Gmsh exited with error (return code %d).' %
@@ -151,6 +153,9 @@ def generate_mesh(
         # Make sure to include only those vertices which belong to a triangle.
         uvertices, uidx = numpy.unique(cells['triangle'], return_inverse=True)
         cells = {'triangle': uidx.reshape(cells['triangle'].shape)}
+        cell_data = {'triangle': cell_data['triangle']}
         X = X[uvertices]
+        for key in pt_data:
+            pt_data[key] = pt_data[key][uvertices]
 
     return X, cells, pt_data, cell_data, field_data
