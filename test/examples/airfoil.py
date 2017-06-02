@@ -152,8 +152,9 @@ def generate():
 
 if __name__ == '__main__':
     import meshio
-    geom, _ = generate()
-    points, cells, point_data, cell_data, _ = pygmsh.generate_mesh(geom, dim=2)
+    geometry, _ = generate()
+    points, cells, point_data, cell_data, _ = \
+        pygmsh.generate_mesh(geometry, dim=2)
     meshio.write(
             'airfoil.vtu',
             points,

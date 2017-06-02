@@ -20,6 +20,6 @@ def generate():
 
 if __name__ == '__main__':
     import meshio
-    geom, _ = generate()
-    out = pg.generate_mesh(geom)
+    geometry, _ = generate()
+    out = pg.generate_mesh(geometry)
     meshio.write('circle.vtk', *out)

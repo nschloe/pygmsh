@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 #
 from __future__ import print_function
-import meshio
-import numpy
+
 import os
 import subprocess
 import tempfile
+
+import meshio
+import numpy
 import voropy
 
 
@@ -19,9 +21,9 @@ def rotation_matrix(u, theta):
     '''
     # Cross-product matrix.
     cpm = numpy.array([
-        [0.0,   -u[2],  u[1]],
-        [u[2],    0.0, -u[0]],
-        [-u[1],  u[0],  0.0]
+        [0.0, -u[2], u[1]],
+        [u[2], 0.0, -u[0]],
+        [-u[1], u[0], 0.0]
         ])
     c = numpy.cos(theta)
     s = numpy.sin(theta)
@@ -117,7 +119,7 @@ def generate_mesh(
                 break
             print(line.decode('utf-8'), end='')
 
-    p.communicate()[0]
+    p.communicate()
     if p.returncode != 0:
         raise RuntimeError(
             'Gmsh exited with error (return code %d).' %

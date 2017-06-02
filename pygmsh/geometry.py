@@ -6,6 +6,7 @@ at working around some of Gmsh's inconveniences (e.g., having to manually
 assign an ID for every entity created) and providing access to Python's
 features.
 '''
+import numpy
 
 from .__about__ import __version__
 
@@ -28,8 +29,6 @@ from .surface_loop import SurfaceLoop
 from .volume import Volume
 from .volume_base import VolumeBase
 
-import numpy
-
 
 class Geometry(object):
 
@@ -48,15 +47,9 @@ class Geometry(object):
         self._FIELD_ID = 0
         self._TAKEN_PHYSICALGROUP_IDS = []
         self._GMSH_CODE = [
-                self._header()
+                '// This code was created by PyGmsh v%s.' % __version__
                 ]
         return
-
-    def _header(self):
-        '''Return file header.
-        '''
-        header = '// This code was created by PyGmsh v%s.' % __version__
-        return header
 
     def get_code(self):
         '''Returns properly formatted Gmsh code.
@@ -151,7 +144,7 @@ class Geometry(object):
         # https://github.com/nschloe/pygmsh/issues/46#issuecomment-286684321
         # for context.
         max_id = \
-            0 if len(self._TAKEN_PHYSICALGROUP_IDS) == 0 \
+            0 if not self._TAKEN_PHYSICALGROUP_IDS  \
             else max(self._TAKEN_PHYSICALGROUP_IDS)
 
         if label is None:
@@ -517,15 +510,15 @@ class Geometry(object):
         # Add surfaces (1/8th of the ball surface).
         ll = [
             # one half
-            self.add_line_loop([c[4],   c[9],  c[3]]),
-            self.add_line_loop([c[8],  -c[4], c[0]]),
-            self.add_line_loop([-c[9],  c[5],  c[2]]),
+            self.add_line_loop([c[4], c[9], c[3]]),
+            self.add_line_loop([c[8], -c[4], c[0]]),
+            self.add_line_loop([-c[9], c[5], c[2]]),
             self.add_line_loop([-c[5], -c[8], c[1]]),
             # the other half
-            self.add_line_loop([c[7],   -c[3],  c[10]]),
-            self.add_line_loop([c[11],  -c[7], -c[0]]),
-            self.add_line_loop([-c[10], -c[2],  c[6]]),
-            self.add_line_loop([-c[1],  -c[6], -c[11]]),
+            self.add_line_loop([c[7], -c[3], c[10]]),
+            self.add_line_loop([c[11], -c[7], -c[0]]),
+            self.add_line_loop([-c[10], -c[2], c[6]]),
+            self.add_line_loop([-c[1], -c[6], -c[11]]),
             ]
         # Create a surface for each line loop.
         s = [self.add_ruled_surface(l) for l in ll]
@@ -606,11 +599,11 @@ class Geometry(object):
              self.add_line(p[6], p[7]),
              ]
         # Define the six line loops.
-        ll = [self.add_line_loop([e[0], e[3],  -e[5],  -e[1]]),
-              self.add_line_loop([e[0], e[4],  -e[8],  -e[2]]),
-              self.add_line_loop([e[1], e[6],  -e[9],  -e[2]]),
-              self.add_line_loop([e[3], e[7],  -e[10], -e[4]]),
-              self.add_line_loop([e[5], e[7],  -e[11], -e[6]]),
+        ll = [self.add_line_loop([e[0], e[3], -e[5], -e[1]]),
+              self.add_line_loop([e[0], e[4], -e[8], -e[2]]),
+              self.add_line_loop([e[1], e[6], -e[9], -e[2]]),
+              self.add_line_loop([e[3], e[7], -e[10], -e[4]]),
+              self.add_line_loop([e[5], e[7], -e[11], -e[6]]),
               self.add_line_loop([e[8], e[10], -e[11], -e[9]]),
               ]
         # Create a surface for each line loop.
@@ -655,15 +648,13 @@ class Geometry(object):
                 R=R,
                 x0=x0
                 )
-        else:
-            assert variant == 'extrude_circle'
-            return self._add_torus_extrude_circle(
-                irad, orad,
-                lcar,
-                R=R,
-                x0=x0
-                )
-        return
+        assert variant == 'extrude_circle'
+        return self._add_torus_extrude_circle(
+            irad, orad,
+            lcar,
+            R=R,
+            x0=x0
+            )
 
     def _add_torus_extrude_lines(
             self,
@@ -676,7 +667,7 @@ class Geometry(object):
         transformation
 
         .. math::
-            \hat{x} = R x + x_0.
+            \\hat{x} = R x + x_0.
 
         :param irad: inner radius of the torus
         :param orad: outer radius of the torus
@@ -709,11 +700,11 @@ class Geometry(object):
         all_surfaces = []
         for i in range(3):
             self.add_comment('Round no. %s' % (i+1))
-            for k in range(len(previous)):
+            for k, p in enumerate(previous):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
                 # ...
                 top, surf = self.extrude(
-                    previous[k],
+                    p,
                     rotation_axis=rot_axis,
                     point_on_axis=point_on_rot_axis,
                     angle=angle
@@ -742,7 +733,7 @@ class Geometry(object):
         '''Create Gmsh code for the torus under the coordinate transformation
 
         .. math::
-            \hat{x} = R x + x_0.
+            \\hat{x} = R x + x_0.
 
         :param irad: inner radius of the torus
         :param orad: outer radius of the torus
@@ -802,15 +793,13 @@ class Geometry(object):
                 x0=x0,
                 lcar=lcar
                 )
-        else:
-            assert variant == 'circle_extrusion'
-            return self._add_pipe_by_circle_extrusion(
-                outer_radius, inner_radius, length,
-                R=R,
-                x0=x0,
-                lcar=lcar
-                )
-        return
+        assert variant == 'circle_extrusion'
+        return self._add_pipe_by_circle_extrusion(
+            outer_radius, inner_radius, length,
+            R=R,
+            x0=x0,
+            lcar=lcar
+            )
 
     def _add_pipe_by_rectangle_rotation(
             self,
@@ -825,8 +814,8 @@ class Geometry(object):
         self.add_comment('Define rectangle.')
         X = numpy.array([
             [0.0, outer_radius, -0.5*length],
-            [0.0, outer_radius,  0.5*length],
-            [0.0, inner_radius,  0.5*length],
+            [0.0, outer_radius, +0.5*length],
+            [0.0, inner_radius, +0.5*length],
             [0.0, inner_radius, -0.5*length]
             ])
         # Apply transformation.
@@ -854,10 +843,10 @@ class Geometry(object):
         self.add_comment('Extrude in 3 steps.')
         for i in range(3):
             self.add_comment('Step %s' % (i+1))
-            for k in range(len(previous)):
+            for k, p in enumerate(previous):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
                 top, surf = self.extrude(
-                        previous[k],
+                        p,
                         rotation_axis=rot_axis,
                         point_on_axis=point_on_rot_axis,
                         angle=angle

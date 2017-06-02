@@ -38,6 +38,6 @@ def generate():
 
 if __name__ == '__main__':
     import meshio
-    geom, vol = generate()
-    out = pg.generate_mesh(geom)
+    geometry, vol = generate()
+    out = pg.generate_mesh(geometry)
     meshio.write('pipes.vtu', *out)
