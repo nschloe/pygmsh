@@ -97,7 +97,7 @@ def generate_mesh(
 
     gmsh_executable = _get_gmsh_exe()
 
-    cmd = [gmsh_executable, '-%d' % dim, filename, '-o', outname]
+    cmd = [gmsh_executable, '-%d' % dim, '-bin', filename, '-o', outname]
 
     gmsh_major_version = _get_gmsh_major_version()
     if gmsh_major_version < 3 and optimize:
