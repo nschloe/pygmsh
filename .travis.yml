@@ -31,7 +31,6 @@ install:
 # run tests
 script:
   - pylint pygmsh
-  - pylint test/*py
   - pylint test/examples/*py
   - cd test/ && pytest --cov=pygmsh
 
