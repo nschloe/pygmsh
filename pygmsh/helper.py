@@ -151,6 +151,9 @@ def generate_mesh(
         # Make sure to include only those vertices which belong to a triangle.
         uvertices, uidx = numpy.unique(cells['triangle'], return_inverse=True)
         cells = {'triangle': uidx.reshape(cells['triangle'].shape)}
+        cell_data = {'triangle': cell_data['triangle']}
         X = X[uvertices]
+        for key in pt_data:
+            pt_data[key] = pt_data[key][uvertices]
 
     return X, cells, pt_data, cell_data, field_data
