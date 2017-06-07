@@ -275,7 +275,8 @@ class Geometry(object):
             translation_axis=None,
             rotation_axis=None,
             point_on_axis=None,
-            angle=None
+            angle=None,
+            get_lateral=False
             ):
         '''Extrusion (translation + rotation) of any entity along a given
         translation_axis, around a given rotation_axis, about a given angle. If
@@ -344,13 +345,20 @@ class Geometry(object):
             top = LineBase(top)
             extruded = SurfaceBase(extruded)
         elif isinstance(input_entity, SurfaceBase):
-            top = SurfaceBase(top)
+            top = SurfaceBase(len(input_entity), top)
             extruded = VolumeBase(extruded)
         else:
             top = Dummy(top)
             extruded = Dummy(extruded)
 
-        return top, extruded
+        lat = []
+        if isinstance(input_entity, SurfaceBase):
+            lat = [SurfaceBase(4, '{}[{}]'.format(name, i+2)) for i in range(len(input_entity))]
+
+        if get_lateral:
+            return top, extruded, lat
+        else:
+            return top, extruded
 
     def add_boundary_layer(
             self,
