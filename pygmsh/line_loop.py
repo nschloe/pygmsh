@@ -17,3 +17,6 @@ class LineLoop(object):
                 self.id, ', '.join([l.id for l in lines])
             )])
         return
+
+    def __len__(self):
+        return len(self.lines)
