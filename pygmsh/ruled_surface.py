@@ -11,11 +11,11 @@ class RuledSurface(object):
 
         self.line_loop = line_loop
 
-        self.id = 'rs%d' % RuledSurface._ID
+        self.id = 'rs{}'.format(RuledSurface._ID)
         RuledSurface._ID += 1
 
         self.code = '\n'.join([
-            '%s = news;' % self.id,
-            'Ruled Surface(%s) = {%s};' % (self.id, self.line_loop.id)
+            '{} = news;'.format(self.id),
+            'Ruled Surface({}) = {{{}}};'.format(self.id, self.line_loop.id)
             ])
         return

@@ -47,7 +47,7 @@ class Geometry(object):
         self._FIELD_ID = 0
         self._TAKEN_PHYSICALGROUP_IDS = []
         self._GMSH_CODE = [
-                '// This code was created by PyGmsh v%s.' % __version__
+                '// This code was created by PyGmsh v{}.'.format(__version__)
                 ]
         return
 
@@ -153,20 +153,20 @@ class Geometry(object):
         if isinstance(label, int):
             assert label not in self._TAKEN_PHYSICALGROUP_IDS
             self._TAKEN_PHYSICALGROUP_IDS += [label]
-            return '%d' % label
+            return str(label)
 
         assert _is_string(label)
         self._TAKEN_PHYSICALGROUP_IDS += [max_id + 1]
-        return '"%s"' % label
+        return '"{}"'.format(label)
 
     def _add_physical(self, tpe, entities, label=None):
         label = self._new_physical_group(label)
         if not isinstance(entities, list):
             entities = [entities]
         self._GMSH_CODE.append(
-            'Physical %s(%s) = {%s};' %
-            (tpe, label, ', '.join([e.id for e in entities]))
-            )
+            'Physical {}({}) = {{{}}};'.format(
+                tpe, label, ', '.join([e.id for e in entities])
+            ))
         return
 
     def add_physical_point(self, points, label=None):
@@ -287,39 +287,48 @@ class Geometry(object):
         if _is_string(input_entity):
             entity = Dummy(input_entity)
         elif isinstance(input_entity, SurfaceBase):
-            entity = Dummy('Surface{%s}' % input_entity.id)
+            entity = Dummy('Surface{{{}}}'.format(input_entity.id))
         elif hasattr(input_entity, 'surface'):
-            entity = Dummy('Surface{%s}' % input_entity.surface.id)
+            entity = Dummy('Surface{{{}}}'.format(input_entity.surface.id))
         elif isinstance(input_entity, LineBase):
-            entity = Dummy('Line{%s}' % input_entity.id)
+            entity = Dummy('Line{{{}}}'.format(input_entity.id))
         else:
             raise RuntimeError('Illegal extrude entity.')
 
         # out[] = Extrude{0,1,0}{ Line{1}; };
-        name = 'ex%d' % self._EXTRUDE_ID
+        name = 'ex{}'.format(self._EXTRUDE_ID)
         if translation_axis is not None and rotation_axis is not None:
             self._GMSH_CODE.append(
-                    ('%s[] = Extrude{{%s,%s,%s}, '
-                     '{%s,%s,%s}, {%s,%s,%s}, %s}{%s;};') %
-                    ((name,) + tuple(translation_axis) + tuple(rotation_axis) +
-                     tuple(point_on_axis) + (angle, entity.id))
-                    )
+                '{}[] = Extrude{{{{{}}}, {{{}}}, {{{}}}, {}}}{{{};}};'
+                .format(
+                    name,
+                    ','.join(repr(x) for x in translation_axis),
+                    ','.join(repr(x) for x in rotation_axis),
+                    ','.join(repr(x) for x in point_on_axis),
+                    angle,
+                    entity.id
+                ))
 
         elif translation_axis is not None:
             # Only translation
             self._GMSH_CODE.append(
-                '%s[] = Extrude{%s,%s,%s}{%s;};' %
-                ((name,) + tuple(translation_axis) + (entity.id,))
-                )
-        elif rotation_axis is not None:
+                '{}[] = Extrude{{{}}}{{{};}};'.format(
+                    name,
+                    ','.join(repr(x) for x in translation_axis),
+                    entity.id
+                ))
+        else:
+            assert rotation_axis is not None, \
+                'Specify at least translation or rotation.'
             # Only rotation
             self._GMSH_CODE.append(
-                '%s[] = Extrude{{%s,%s,%s}, {%s,%s,%s}, %s}{%s;};' %
-                ((name,) + tuple(rotation_axis) + tuple(point_on_axis) +
-                    (angle, entity.id))
-                )
-        else:
-            raise RuntimeError('Specify at least translation or rotation.')
+                '{}[] = Extrude{{{{{}}}, {{{}}}, {}}}{{{};}};'.format(
+                    name,
+                    ','.join(repr(x) for x in rotation_axis),
+                    ','.join(repr(x) for x in point_on_axis),
+                    angle,
+                    entity.id
+                ))
 
         # From <http://www.manpagez.com/info/gmsh/gmsh-2.4.0/gmsh_66.php>:
         #
@@ -328,8 +337,8 @@ class Geometry(object):
         # > list. This list will contain the "top" of the extruded surface (in
         # > out[0]) as well as the newly created volume (in out[1]).
         #
-        top = '%s[0]' % name
-        extruded = '%s[1]' % name
+        top = '{}[0]'.format(name)
+        extruded = '{}[1]'.format(name)
 
         if isinstance(input_entity, LineBase):
             top = LineBase(top)
@@ -364,55 +373,56 @@ class Geometry(object):
             nodes_list = []
 
         self._FIELD_ID += 1
-        name = 'field%d' % self._FIELD_ID
+        name = 'field{}'.format(self._FIELD_ID)
 
-        self._GMSH_CODE.append('%s = newf;' % name)
+        self._GMSH_CODE.append('{} = newf;'.format(name))
 
-        self._GMSH_CODE.append('Field[%s] = BoundaryLayer;' % name)
+        self._GMSH_CODE.append('Field[{}] = BoundaryLayer;'.format(name))
         if edges_list:
             self._GMSH_CODE.append(
-                'Field[%s].EdgesList = {%s};'
-                % (name, ','.join([e.id for e in edges_list]))
-                )
+                'Field[{}].EdgesList = {{{}}};'.format(
+                    name, ','.join([e.id for e in edges_list])
+                ))
         if faces_list:
             self._GMSH_CODE.append(
-                'Field[%s].FacesList = {%s};' % (name, ','.join(faces_list))
-                )
+                'Field[{}].FacesList = {{{}}};'.format(
+                    name, ','.join(faces_list)
+                ))
         if nodes_list:
             self._GMSH_CODE.append(
-                'Field[%s].NodesList = {%s};' %
-                (name, ','.join([n.id for n in nodes_list]))
-                )
+                'Field[{}].NodesList = {{{}}};'.format(
+                    name, ','.join([n.id for n in nodes_list])
+                ))
         if hfar:
-            self._GMSH_CODE.append('Field[%s].hfar= %r;' % (name, hfar))
+            self._GMSH_CODE.append('Field[{}].hfar= {!r};'.format(name, hfar))
         if hwall_n:
-            self._GMSH_CODE.append('Field[%s].hwall_n= %r;' % (name, hwall_n))
+            self._GMSH_CODE.append(
+                'Field[{}].hwall_n= {!r};'.format(name, hwall_n)
+                )
         if ratio:
-            self._GMSH_CODE.append('Field[%s].ratio= %r;' % (name, ratio))
+            self._GMSH_CODE.append('Field[{}].ratio= {!r};'.format(name, ratio))
         if thickness:
             self._GMSH_CODE.append(
-                'Field[%s].thickness= %r;' % (name, thickness)
+                'Field[{}].thickness= {!r};'.format(name, thickness)
                 )
         if anisomax:
             self._GMSH_CODE.append(
-                'Field[%s].AnisoMax= %r;' % (name, anisomax)
+                'Field[{}].AnisoMax= {!r};'.format(name, anisomax)
                 )
         return name
 
     def add_background_field(self, fields, aggregation_type='Min'):
         self._FIELD_ID += 1
-        name = 'field%d' % self._FIELD_ID
+        name = 'field{}'.format(self._FIELD_ID)
+        self._GMSH_CODE.append('{} = newf;'.format(name))
         self._GMSH_CODE.append(
-            '%s = newf;' % name
+            'Field[{}] = {};'.format(name, aggregation_type)
             )
         self._GMSH_CODE.append(
-            'Field[%s] = %s;' % (name, aggregation_type)
+            'Field[{}].FieldsList = {{{}}};'.format(name, ', '.join(fields))
             )
         self._GMSH_CODE.append(
-            'Field[%s].FieldsList = {%s};' % (name, ', '.join(fields))
-            )
-        self._GMSH_CODE.append(
-            'Background Field = %s;' % name
+            'Background Field = {};'.format(name)
             )
         return name
 
@@ -699,7 +709,7 @@ class Geometry(object):
         angle = '2*Pi/3'
         all_surfaces = []
         for i in range(3):
-            self.add_comment('Round no. %s' % (i+1))
+            self.add_comment('Round no. {}'.format(i+1))
             for k, p in enumerate(previous):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
                 # ...
@@ -769,7 +779,7 @@ class Geometry(object):
                 previous,
                 rotation_axis=rot_axis,
                 point_on_axis=point_on_rot_axis,
-                angle='2*Pi/%d' % num_steps
+                angle='2*Pi/{}'.format(num_steps)
                 )
             previous = top
             all_volumes.append(vol)
@@ -842,7 +852,7 @@ class Geometry(object):
         # com = []
         self.add_comment('Extrude in 3 steps.')
         for i in range(3):
-            self.add_comment('Step %s' % (i+1))
+            self.add_comment('Step {}'.format(i+1))
             for k, p in enumerate(previous):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
                 top, surf = self.extrude(

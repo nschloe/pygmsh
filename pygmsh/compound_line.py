@@ -10,8 +10,8 @@ class CompoundLine(LineBase):
         self.lines = lines
 
         self.code = '\n'.join([
-            '%s = newl;' % self.id,
-            'Compound Line(%s) = {%s};'
-            % (self.id, ','.join([l.id for l in self.lines]))
-            ])
+            '{} = newl;'.format(self.id),
+            'Compound Line({}) = {{{}}};'.format(
+                self.id, ','.join([l.id for l in self.lines])
+            )])
         return

@@ -8,12 +8,12 @@ class SurfaceLoop(object):
     def __init__(self, surfaces):
         self.surfaces = surfaces
 
-        self.id = 'sl%d' % SurfaceLoop._ID
+        self.id = 'sl{}'.format(SurfaceLoop._ID)
         SurfaceLoop._ID += 1
 
         self.code = '\n'.join([
-            '%s = news;' % self.id,
-            'Surface Loop(%s) = {%s};'
-            % (self.id, ','.join([s.id for s in surfaces]))
-            ])
+            '{} = news;'.format(self.id),
+            'Surface Loop({}) = {{{}}};'.format(
+                self.id, ','.join([s.id for s in surfaces])
+            )])
         return

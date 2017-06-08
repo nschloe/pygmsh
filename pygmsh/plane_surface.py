@@ -23,8 +23,8 @@ class PlaneSurface(SurfaceBase):
 
         line_loops = [self.line_loop] + self.holes
         self.code = '\n'.join([
-            '%s = news;' % self.id,
-            'Plane Surface(%s) = {%s};'
-            % (self.id, ','.join([ll.id for ll in line_loops]))
-            ])
+            '{} = news;'.format(self.id),
+            'Plane Surface({}) = {{{}}};'.format(
+                self.id, ','.join([ll.id for ll in line_loops])
+            )])
         return

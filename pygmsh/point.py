@@ -9,14 +9,13 @@ class Point(object):
         self.x = x
         self.lcar = lcar
 
-        self.id = 'p%d' % Point._POINT_ID
+        self.id = 'p{}'.format(Point._POINT_ID)
         Point._POINT_ID += 1
 
         # Points are always 3D in gmsh
-        fmt = ', '.join(3*['%r'])
         self.code = '\n'.join([
-            '%s = newp;' % self.id,
-            ('Point(%s) = {' + fmt + ', %r};')
-            % ((self.id,) + tuple(x) + (lcar,))
-            ])
+            '{} = newp;'.format(self.id),
+            'Point({}) = {{{!r}, {!r}, {!r}, {!r}}};'.format(
+                self.id, x[0], x[1], x[2], lcar
+            )])
         return
