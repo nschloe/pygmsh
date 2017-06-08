@@ -290,10 +290,10 @@ class Geometry(object):
             entity = Dummy('Surface{{{}}}'.format(input_entity.id))
         elif hasattr(input_entity, 'surface'):
             entity = Dummy('Surface{{{}}}'.format(input_entity.surface.id))
-        elif isinstance(input_entity, LineBase):
-            entity = Dummy('Line{{{}}}'.format(input_entity.id))
         else:
-            raise RuntimeError('Illegal extrude entity.')
+            assert isinstance(input_entity, LineBase), \
+                'Illegal extrude entity.'
+            entity = Dummy('Line{{{}}}'.format(input_entity.id))
 
         # out[] = Extrude{0,1,0}{ Line{1}; };
         name = 'ex{}'.format(self._EXTRUDE_ID)
