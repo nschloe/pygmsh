@@ -91,15 +91,17 @@ def generate_mesh(
         dim=3,
         prune_vertices=True
         ):
-    handle, filename = tempfile.mkstemp(suffix='.geo')
+    handle, geo_filename = tempfile.mkstemp(suffix='.geo')
     os.write(handle, geo_object.get_code().encode())
     os.close(handle)
 
-    handle, outname = tempfile.mkstemp(suffix='.msh')
+    handle, msh_filename = tempfile.mkstemp(suffix='.msh')
 
     gmsh_executable = _get_gmsh_exe()
 
-    cmd = [gmsh_executable, '-%d' % dim, '-bin', filename, '-o', outname]
+    cmd = [
+        gmsh_executable, '-%d' % dim, '-bin', geo_filename, '-o', msh_filename
+        ]
 
     gmsh_major_version = _get_gmsh_major_version()
     if gmsh_major_version < 3 and optimize:
@@ -126,7 +128,11 @@ def generate_mesh(
             p.returncode
             )
 
-    X, cells, pt_data, cell_data, field_data = meshio.read(outname)
+    X, cells, pt_data, cell_data, field_data = meshio.read(msh_filename)
+
+    # clean up
+    os.remove(geo_filename)
+    os.remove(msh_filename)
 
     # Lloyd smoothing
     if not _is_flat(X) or 'triangle' not in cells:
