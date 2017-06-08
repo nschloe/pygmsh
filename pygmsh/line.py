@@ -13,7 +13,7 @@ class Line(LineBase):
         self.points = [p0, p1]
 
         self.code = '\n'.join([
-            '%s = newl;' % self.id,
-            'Line(%s) = {%s, %s};' % (self.id, p0.id, p1.id)
+            '{} = newl;'.format(self.id),
+            'Line({}) = {{{}, {}}};'.format(self.id, p0.id, p1.id)
             ])
         return

@@ -9,6 +9,6 @@ class SurfaceBase(object):
         if id0:
             self.id = id0
         else:
-            self.id = 's%d' % SurfaceBase._ID
+            self.id = 's{}'.format(SurfaceBase._ID)
             SurfaceBase._ID += 1
         return

@@ -10,7 +10,7 @@ class LineBase(object):
         if id0:
             self.id = id0
         else:
-            self.id = 'l%d' % LineBase._ID
+            self.id = 'l{}'.format(LineBase._ID)
             LineBase._ID += 1
         return
 

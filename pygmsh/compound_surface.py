@@ -10,8 +10,8 @@ class CompoundSurface(SurfaceBase):
         self.surfaces = surfaces
 
         self.code = '\n'.join([
-            '%s = news;' % self.id,
-            'Compound Surface(%s) = {%s};'
-            % (self.id, ','.join([s.id for s in surfaces]))
-            ])
+            '{} = news;'.format(self.id),
+            'Compound Surface({}) = {{{}}};'.format(
+                self.id, ','.join([s.id for s in surfaces])
+            )])
         return
