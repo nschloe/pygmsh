@@ -351,7 +351,13 @@ class Geometry(object):
             extruded = Dummy(extruded)
 
         lat = []
+        # lateral surfaces can be deduced only if we start from a SurfaceBase
         if isinstance(input_entity, SurfaceBase):
+            # out[0]` is the surface, out[1] the top, and everything after that
+            # the sides, cf.<http://gmsh.info/doc/texinfo/gmsh.html#Extrusions>.
+            # each lateral surface has 4 edges: the one from input_entity,
+            # the one from top, and the two lines (or splines) connecting their
+            # extreme points.
             lat = [SurfaceBase(4, '{}[{}]'.format(name, i+2)) for i in range(input_entity.num_edges())]
 
         return top, extruded, lat
