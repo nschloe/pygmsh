@@ -6,7 +6,7 @@ from .surface_base import SurfaceBase
 class CompoundSurface(SurfaceBase):
     def __init__(self, surfaces):
         super(CompoundSurface, self).__init__()
-        self.num_edges = sum(len(s) for s in surfaces)
+        self.num_edges = sum(s.num_edges for s in surfaces)
 
         self.surfaces = surfaces
 
