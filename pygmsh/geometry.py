@@ -342,7 +342,8 @@ class Geometry(object):
 
         if isinstance(input_entity, LineBase):
             top = LineBase(top)
-            extruded = SurfaceBase(extruded)
+            # A surface extruded from a single line has always 4 edges
+            extruded = SurfaceBase(4, extruded)
         elif isinstance(input_entity, SurfaceBase):
             top = SurfaceBase(input_entity.num_edges, top)
             extruded = VolumeBase(extruded)
