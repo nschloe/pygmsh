@@ -275,7 +275,7 @@ class Geometry(object):
             translation_axis=None,
             rotation_axis=None,
             point_on_axis=None,
-            angle=None
+            angle=None,
             ):
         '''Extrusion (translation + rotation) of any entity along a given
         translation_axis, around a given rotation_axis, about a given angle. If
@@ -342,15 +342,27 @@ class Geometry(object):
 
         if isinstance(input_entity, LineBase):
             top = LineBase(top)
-            extruded = SurfaceBase(extruded)
+            # A surface extruded from a single line has always 4 edges
+            extruded = SurfaceBase(extruded, 4)
         elif isinstance(input_entity, SurfaceBase):
-            top = SurfaceBase(top)
+            top = SurfaceBase(top, input_entity.num_edges)
             extruded = VolumeBase(extruded)
         else:
             top = Dummy(top)
             extruded = Dummy(extruded)
 
-        return top, extruded
+        lat = []
+        # lateral surfaces can be deduced only if we start from a SurfaceBase
+        if isinstance(input_entity, SurfaceBase):
+            # out[0]` is the surface, out[1] the top, and everything after that
+            # the sides, cf.<http://gmsh.info/doc/texinfo/gmsh.html#Extrusions>.
+            # each lateral surface has 4 edges: the one from input_entity,
+            # the one from top, and the two lines (or splines) connecting their
+            # extreme points.
+            lat = [SurfaceBase('{}[{}]'.format(name, i+2), 4) \
+              for i in range(input_entity.num_edges)]
+
+        return top, extruded, lat
 
     def add_boundary_layer(
             self,
@@ -713,7 +725,7 @@ class Geometry(object):
             for k, p in enumerate(previous):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
                 # ...
-                top, surf = self.extrude(
+                top, surf, _ = self.extrude(
                     p,
                     rotation_axis=rot_axis,
                     point_on_axis=point_on_rot_axis,
@@ -770,12 +782,13 @@ class Geometry(object):
         # Extrude() macro returns an array; the first [0] entry in the array is
         # the entity that has been extruded at the far end. This can be used
         # for the following Extrude() step.  The second [1] entry of the array
-        # is the surface that was created by the extrusion.
+        # is the surface that was created by the extrusion. The third [2-end] is
+        # a list of all the planes of the lateral surface.
         previous = c.plane_surface
         all_volumes = []
         num_steps = 3
         for _ in range(num_steps):
-            top, vol = self.extrude(
+            top, vol, _ = self.extrude(
                 previous,
                 rotation_axis=rot_axis,
                 point_on_axis=point_on_rot_axis,
@@ -855,7 +868,7 @@ class Geometry(object):
             self.add_comment('Step {}'.format(i+1))
             for k, p in enumerate(previous):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
-                top, surf = self.extrude(
+                top, surf, _ = self.extrude(
                         p,
                         rotation_axis=rot_axis,
                         point_on_axis=point_on_rot_axis,
@@ -901,7 +914,7 @@ class Geometry(object):
                 )
 
         # Now Extrude the ring surface.
-        _, vol = self.extrude(
+        _, vol, _ = self.extrude(
                 circ.plane_surface,
                 translation_axis=numpy.dot(R, [length, 0, 0])
                 )
