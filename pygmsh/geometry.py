@@ -343,9 +343,9 @@ class Geometry(object):
         if isinstance(input_entity, LineBase):
             top = LineBase(top)
             # A surface extruded from a single line has always 4 edges
-            extruded = SurfaceBase(4, extruded)
+            extruded = SurfaceBase(extruded, 4)
         elif isinstance(input_entity, SurfaceBase):
-            top = SurfaceBase(input_entity.num_edges, top)
+            top = SurfaceBase(top, input_entity.num_edges)
             extruded = VolumeBase(extruded)
         else:
             top = Dummy(top)
@@ -359,7 +359,7 @@ class Geometry(object):
             # each lateral surface has 4 edges: the one from input_entity,
             # the one from top, and the two lines (or splines) connecting their
             # extreme points.
-            lat = [SurfaceBase(4, '{}[{}]'.format(name, i+2)) \
+            lat = [SurfaceBase('{}[{}]'.format(name, i+2), 4) \
               for i in range(input_entity.num_edges)]
 
         return top, extruded, lat
