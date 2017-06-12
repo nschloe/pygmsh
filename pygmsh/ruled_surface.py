@@ -5,6 +5,7 @@ from .line_loop import LineLoop
 
 class RuledSurface(object):
     _ID = 0
+    num_edges = 0
 
     def __init__(self, line_loop):
         assert isinstance(line_loop, LineLoop)
@@ -18,4 +19,5 @@ class RuledSurface(object):
             '{} = news;'.format(self.id),
             'Ruled Surface({}) = {{{}}};'.format(self.id, self.line_loop.id)
             ])
+        self.num_edges = len(line_loop)
         return
