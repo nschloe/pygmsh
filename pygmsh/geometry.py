@@ -345,7 +345,7 @@ class Geometry(object):
             top = LineBase(top)
             extruded = SurfaceBase(extruded)
         elif isinstance(input_entity, SurfaceBase):
-            top = SurfaceBase(len(input_entity), top)
+            top = SurfaceBase(input_entity.num_edges(), top)
             extruded = VolumeBase(extruded)
         else:
             top = Dummy(top)
@@ -353,7 +353,7 @@ class Geometry(object):
 
         lat = []
         if isinstance(input_entity, SurfaceBase):
-            lat = [SurfaceBase(4, '{}[{}]'.format(name, i+2)) for i in range(len(input_entity))]
+            lat = [SurfaceBase(4, '{}[{}]'.format(name, i+2)) for i in range(input_entity.num_edges())]
 
         if get_lateral:
             return top, extruded, lat

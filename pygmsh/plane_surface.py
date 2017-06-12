@@ -27,5 +27,5 @@ class PlaneSurface(SurfaceBase):
             'Plane Surface({}) = {{{}}};'.format(
                 self.id, ','.join([ll.id for ll in line_loops])
             )])
-        self.num_edges = len(self.line_loop) + sum(len(h) for h in self.holes)
+        self._num_edges = len(self.line_loop) + sum(len(h) for h in self.holes)
         return

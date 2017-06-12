@@ -4,7 +4,7 @@
 
 class SurfaceBase(object):
     _ID = 0
-    num_edges = 0
+    _num_edges = 0
 
     def __init__(self, num_edges=0, id0=None):
         if id0:
@@ -12,8 +12,8 @@ class SurfaceBase(object):
         else:
             self.id = 's{}'.format(SurfaceBase._ID)
             SurfaceBase._ID += 1
-        self.num_edges = num_edges
+        self._num_edges = num_edges
         return
 
-    def __len__(self):
-        return self.num_edges
+    def num_edges(self):
+        return self._num_edges
