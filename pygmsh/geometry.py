@@ -358,7 +358,8 @@ class Geometry(object):
             # each lateral surface has 4 edges: the one from input_entity,
             # the one from top, and the two lines (or splines) connecting their
             # extreme points.
-            lat = [SurfaceBase(4, '{}[{}]'.format(name, i+2)) for i in range(input_entity.num_edges)]
+            lat = [SurfaceBase(4, '{}[{}]'.format(name, i+2)) \
+              for i in range(input_entity.num_edges)]
 
         return top, extruded, lat
 
