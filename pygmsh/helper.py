@@ -96,6 +96,7 @@ def generate_mesh(
     os.close(handle)
 
     handle, msh_filename = tempfile.mkstemp(suffix='.msh')
+    os.close(handle)
 
     gmsh_executable = _get_gmsh_exe()
 
