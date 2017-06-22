@@ -44,6 +44,7 @@ class Geometry(object):
         # have already been created. Variable names will then be p1, p2, etc.
         # for points, c1, c2, etc. for circles and so on.
         self._EXTRUDE_ID = 0
+        self._BOOLEAN_ID = 0
         self._ARRAY_ID = 0
         self._FIELD_ID = 0
         self._GMSH_MAJOR = _get_gmsh_major_version()
@@ -399,6 +400,54 @@ class Geometry(object):
               for i in range(input_entity.num_edges)]
 
         return top, extruded, lat
+
+    def boolean_difference(
+            self,
+            input_entity,
+            tool_entity
+            ):
+        '''Boolean difference, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
+        input_entity and tool_entity are called object and tool in gmsh
+        documentation.
+        '''
+        assert self._FACTORY_TYPE == 'OpenCASCADE', \
+            'Boolean operations are supported only with the OpenCASCADE factory.'
+        self._BOOLEAN_ID += 1
+        self.add_raw_code('// BooleanDifference{ Surface{6}; Delete; }{ Surface{12}; Delete; }')
+
+        entities = []
+        for ie in input_entity:
+            if _is_string(ie):
+                entities.append(Dummy(ie))
+            elif isinstance(ie, SurfaceBase):
+                entities.append(Dummy('{}'.format(ie.id)))
+            elif hasattr(ie, 'surface'):
+                entities.append(Dummy('{}'.format(ie.surface.id)))
+            else:
+                assert False, \
+                    'Illegal input entity for Boolean operation.'
+
+        tools = []
+        for te in tool_entity:
+            if _is_string(te):
+                tools.append(Dummy(te))
+            elif isinstance(te, SurfaceBase):
+                tools.append(Dummy('{}'.format(te.id)))
+            elif hasattr(te, 'surface'):
+                tools.append(Dummy('{}'.format(te.surface.id)))
+            else:
+                assert False, \
+                    'Illegal tool entity for Boolean operation.'
+
+        # out[] = BooleanDifference { boolean-list } { boolean-list }
+        name = 'bo{}'.format(self._BOOLEAN_ID)
+        self._GMSH_CODE.append(
+            '{}[] = BooleanDifference{{Surface {{{}}}; Delete;}} {{Surface {{{}}}; Delete;}};'
+            .format(
+                name,
+                ','.join(e.id for e in entities),
+                ','.join(e.id for e in tools)
+            ))
 
     def add_boundary_layer(
             self,

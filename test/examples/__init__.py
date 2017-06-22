@@ -2,6 +2,7 @@
 #
 __all__ = [
   'airfoil',
+  'boolean',
   'boundary_layers',
   'bsplines',
   'circle',
