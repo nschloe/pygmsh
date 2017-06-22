@@ -7,6 +7,7 @@ assign an ID for every entity created) and providing access to Python's
 features.
 '''
 import numpy
+import re
 
 from .__about__ import __version__
 
@@ -145,7 +146,11 @@ class Geometry(object):
 
     def add_ruled_surface(self, *args, **kwargs):
         p = RuledSurface(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
+        if self._FACTORY_TYPE == 'Built-in':
+            self._GMSH_CODE.append(p.code)
+        else:
+            # OpenCASCADE knows only of Surfaces without Ruled
+            self._GMSH_CODE.append(re.sub('Ruled Surface', 'Surface', p.code))
         return p
 
     def add_surface_loop(self, *args, **kwargs):
