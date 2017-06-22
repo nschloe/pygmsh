@@ -8,7 +8,7 @@ import pygmsh as pg
 def generate():
     geom = pg.Geometry()
 
-    if geom._GMSH_MAJOR == 3:
+    if geom.get_gmsh_major() == 3:
         # factories are supported only in gmsh 3
         geom.set_factory("OpenCASCADE")
         geom.add_box(0, 1, 0, 1, 0, 1, 1.0)
@@ -20,8 +20,8 @@ def generate():
 
 if __name__ == '__main__':
     import meshio
-    geom, _ = generate()
+    geometry, _ = generate()
     with open('factory.geo', 'w') as f:
-        f.write(geom.get_code())
-    out = pg.generate_mesh(geom)
+        f.write(geometry.get_code())
+    out = pg.generate_mesh(geometry)
     meshio.write('factory.vtu', *out)

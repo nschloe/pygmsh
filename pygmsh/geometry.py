@@ -6,8 +6,8 @@ at working around some of Gmsh's inconveniences (e.g., having to manually
 assign an ID for every entity created) and providing access to Python's
 features.
 '''
-import numpy
 import re
+import numpy
 
 from .__about__ import __version__
 
@@ -59,7 +59,14 @@ class Geometry(object):
         '''
         return '\n'.join(self._GMSH_CODE)
 
+    def get_gmsh_major(self):
+        '''Return the major version of the gmsh executable.
+        '''
+        return self._GMSH_MAJOR
+
     def set_factory(self, factory_type):
+        '''Set the geometry factory between Built-in and openCASCADE
+        '''
         assert self._GMSH_MAJOR == 3, \
             'Gmsh 2 does not support factories.'
 
