@@ -7,12 +7,16 @@ import pygmsh as pg
 
 def generate():
     geom = pg.Geometry()
-    geom.set_factory("OpenCASCADE")
-    geom.add_box(0, 1, 0, 1, 0, 1, 1.0)
-    geom.set_factory("Built-in")
-    geom.set_factory("OpenCASCADE")
-    return geom, 1.0
 
+    if geom._GMSH_MAJOR == 3:
+        # factories are supported only in gmsh 3
+        geom.set_factory("OpenCASCADE")
+        geom.add_box(0, 1, 0, 1, 0, 1, 1.0)
+        geom.set_factory("Built-in")
+        geom.set_factory("OpenCASCADE")
+    else:
+        geom.add_box(0, 1, 0, 1, 0, 1, 1.0)
+    return geom, 1.0
 
 if __name__ == '__main__':
     import meshio

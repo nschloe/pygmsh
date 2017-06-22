@@ -60,8 +60,12 @@ class Geometry(object):
         return '\n'.join(self._GMSH_CODE)
 
     def set_factory(self, factory_type):
+        assert self._GMSH_MAJOR == 3, \
+            'Gmsh 2 does not support factories.'
+
         assert factory_type == 'OpenCASCADE' or factory_type == 'Built-in', \
             'Factory type not recognized.'
+
         # the factory should always be set as first thing in the geo file
         if len(self._GMSH_CODE) == 1:
             # no code yet
