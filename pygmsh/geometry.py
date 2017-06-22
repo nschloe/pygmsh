@@ -45,6 +45,7 @@ class Geometry(object):
         self._EXTRUDE_ID = 0
         self._ARRAY_ID = 0
         self._FIELD_ID = 0
+        self._FACTORY_TYPE = 'Built-in'
         self._TAKEN_PHYSICALGROUP_IDS = []
         self._GMSH_CODE = [
                 '// This code was created by PyGmsh v{}.'.format(__version__)
@@ -55,6 +56,24 @@ class Geometry(object):
         '''Returns properly formatted Gmsh code.
         '''
         return '\n'.join(self._GMSH_CODE)
+
+    def set_factory(self, factory_type):
+        assert factory_type == 'OpenCASCADE' or factory_type == 'Built-in', \
+            'Factory type not recognized.'
+        # the factory should always be set as first thing in the geo file
+        if len(self._GMSH_CODE) == 1:
+            # no code yet
+            self._FACTORY_TYPE = factory_type
+            self._GMSH_CODE.append('SetFactory("{}");'.format(factory_type))
+        else:
+            if factory_type != self._FACTORY_TYPE:
+                if self._GMSH_CODE[1][:10] == 'SetFactory':
+                    # replace the current factory statement
+                    self._GMSH_CODE[1] = 'SetFactory("{}");'.format(factory_type)
+                else:
+                    # insert a new statement for the Factory
+                    self._GMSH_CODE.insert(1, 'SetFactory("{}");'.format(factory_type))
+                self._FACTORY_TYPE = factory_type
 
     # All of the add_* method below could be replaced by
     #
