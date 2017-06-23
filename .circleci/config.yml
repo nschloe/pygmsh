@@ -25,15 +25,12 @@ jobs:
       - image: ubuntu:17.04
     steps:
       - run: apt-get update
-      - run: apt-get install -y git python3-pip python3-matplotlib python3-numpy python3-scipy wget
+      - run: apt-get install -y git python3-pip python3-matplotlib python3-numpy python3-scipy wget gmsh
       - run: pip3 install -U pytest pytest-cov pylint code_extract
       - checkout
       # install gmsh from upstream
       - run: wget http://gmsh.info/bin/Linux/gmsh-3.0.3-Linux64.tgz
       - run: tar xf gmsh-3.0.3-Linux64.tgz
-      - run: pwd
-      - run: ls
-      - run: echo $HOME
       # install
       - run: LANG=C.UTF-8 pip3 install .
       # lint
@@ -41,10 +38,7 @@ jobs:
       - run: pylint test/examples/*py
       # The actual test
       - run: code_extract README.md test/readme_test.py --filter python,test
-      - run: ls ~/pygmsh/gmsh-3.0.3-Linux/bin/gmsh
-      - run: PATH=~/pygmsh/gmsh-3.0.3-Linux/bin/:$PATH gmsh --version
-      - run: export PATH=~/pygmsh/gmsh-3.0.3-Linux/bin/:$PATH && gmsh --version
-      - run: cd test/ && export PATH=~/pygmsh/gmsh-3.0.3-Linux/bin/:$PATH && MPLBACKEND=Agg PATH=~/pygmsh/gmsh-3.0.3-Linux/bin/:$PATH pytest --cov pygmsh
+      - run: cd test/ && MPLBACKEND=Agg PATH=~/pygmsh/gmsh-3.0.3-Linux/bin/:$PATH pytest --cov pygmsh
       # submit to codecov
       - run: apt-get install -y curl
       - run: bash <(curl -s https://codecov.io/bash)
