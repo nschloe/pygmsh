@@ -1,0 +1,51 @@
+version: 2
+
+jobs:
+
+  python2:
+    working_directory: ~/pygmsh
+    docker:
+      - image: ubuntu:17.04
+    steps:
+      - run: apt-get update
+      - run: apt-get install -y git gmsh python-pip python-matplotlib python-numpy python-scipy
+      - run: pip2 install -U pytest pytest-cov pylint code_extract
+      - checkout
+      - run: LANG=C.UTF-8 pip2 install .
+      # lint
+      - run: pylint pygmsh/
+      - run: pylint test/examples/*py
+      # The tests
+      - run: code_extract README.md test/readme_test.py --filter python,test
+      - run: cd test/ && MPLBACKEND=Agg pytest --cov pygmsh
+
+  python3:
+    working_directory: ~/pygmsh
+    docker:
+      - image: ubuntu:17.04
+    steps:
+      - run: apt-get update
+      - run: apt-get install -y git python3-pip python3-matplotlib python3-numpy python3-scipy wget gmsh
+      - run: pip3 install -U pytest pytest-cov pylint code_extract
+      - checkout
+      # install gmsh from upstream
+      - run: wget http://gmsh.info/bin/Linux/gmsh-3.0.3-Linux64.tgz
+      - run: tar xf gmsh-3.0.3-Linux64.tgz
+      # install
+      - run: LANG=C.UTF-8 pip3 install .
+      # lint
+      - run: pylint pygmsh/
+      - run: pylint test/examples/*py
+      # The actual test
+      - run: code_extract README.md test/readme_test.py --filter python,test
+      - run: cd test/ && MPLBACKEND=Agg PATH=~/pygmsh/gmsh-3.0.3-Linux/bin/:$PATH pytest --cov pygmsh
+      # submit to codecov
+      - run: apt-get install -y curl
+      - run: bash <(curl -s https://codecov.io/bash)
+
+workflows:
+  version: 2
+  build-and-test:
+    jobs:
+      - python2
+      - python3
