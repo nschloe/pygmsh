@@ -8,7 +8,7 @@ jobs:
       - image: ubuntu:17.04
     steps:
       - run: apt-get update
-      - run: apt-get install -y git gmsh python-pip
+      - run: apt-get install -y git gmsh python-pip python-matplotlib python-numpy python-scipy
       - run: pip2 install -U pytest pytest-cov pylint
       - checkout
       - run: LANG=C.UTF-8 pip2 install .
@@ -16,7 +16,7 @@ jobs:
       - run: pylint pygmsh/
       - run: pylint test/*py
       # The tests
-      - run: cd test/ && pytest --cov pygmsh
+      - run: cd test/ && MPLBACKEND=Agg pytest --cov pygmsh
 
   python3:
     working_directory: ~/pygmsh
@@ -24,14 +24,14 @@ jobs:
       - image: ubuntu:17.04
     steps:
       - run: apt-get update
-      - run: apt-get install -y git gmsh python3-pip
+      - run: apt-get install -y git gmsh python3-pip python3-matplotlib python3-numpy python3-scipy
       - run: pip3 install -U pytest pytest-cov pylint
       - checkout
       - run: LANG=C.UTF-8 pip3 install .
       # The actual test
       - run: pylint pygmsh/
       - run: pylint test/*py
-      - run: cd test/ && pytest --cov pygmsh
+      - run: cd test/ && MPLBACKEND=Agg pytest --cov pygmsh
       # submit to codecov
       - run: apt-get install -y curl
       - run: bash <(curl -s https://codecov.io/bash)
