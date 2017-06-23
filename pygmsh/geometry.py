@@ -452,6 +452,20 @@ class Geometry(object):
                 'Delete;' if delete else ''
             ))
 
+        # currently only the new generated objects can be retrieved
+        shapes = []
+        for i in range(len(input_entity)):
+            shape = '{}[{}]'.format(name, i)
+
+            if isinstance(input_entity[i], LineBase):
+                shapes.append(LineBase(shape))
+            elif isinstance(input_entity[i], SurfaceBase):
+                shapes.append(SurfaceBase(shape))
+            else:
+                shapes.append(Dummy(shape))
+
+        return shapes
+
     def add_boundary_layer(
             self,
             edges_list=None,
