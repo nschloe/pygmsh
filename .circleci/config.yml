@@ -38,7 +38,8 @@ jobs:
       - run: pylint test/examples/*py
       # The actual test
       - run: code_extract README.md test/readme_test.py --filter python,test
-      - run: cd test/ && MPLBACKEND=Agg PATH=~/gmsh-3.0.3-Linux/bin/:$PATH && pytest --cov pygmsh
+      - run: ls ~/gmsh-3.0.3-Linux/bin/
+      - run: cd test/ && MPLBACKEND=Agg PATH=~/gmsh-3.0.3-Linux/bin/:$PATH pytest --cov pygmsh
       # submit to codecov
       - run: apt-get install -y curl
       - run: bash <(curl -s https://codecov.io/bash)
