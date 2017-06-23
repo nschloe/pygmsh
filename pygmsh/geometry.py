@@ -414,55 +414,63 @@ class Geometry(object):
         assert self._FACTORY_TYPE == 'OpenCASCADE', \
             'Boolean operations are supported only with the OpenCASCADE factory.'
         self._BOOLEAN_ID += 1
-        self.add_raw_code('// BooleanDifference{ Surface{6}; Delete; }{ Surface{12}; Delete; }')
 
+        shape_type = None
         entities = []
         for ie in input_entity:
-            if _is_string(ie):
-                entities.append(Dummy(ie))
+            if isinstance(ie, LineBase):
+                shape_type = 'Line'
+                entities.append(Dummy('{}'.format(ie.id)))
             elif isinstance(ie, SurfaceBase):
+                shape_type = 'Surface'
                 entities.append(Dummy('{}'.format(ie.id)))
             elif hasattr(ie, 'surface'):
+                shape_type = 'Surface'
                 entities.append(Dummy('{}'.format(ie.surface.id)))
             else:
-                assert False, \
-                    'Illegal input entity for Boolean operation.'
+                assert isinstance(ie, VolumeBase), \
+                    'Illegal input entity ({}) for Boolean operation.'.format(type(ie))
+                shape_type = 'Volume'
+                entities.append(Dummy('{}'.format(ie.id)))
 
         tools = []
         for te in tool_entity:
-            if _is_string(te):
-                tools.append(Dummy(te))
+            if isinstance(te, LineBase):
+                tools.append(Dummy('{}'.format(te.id)))
             elif isinstance(te, SurfaceBase):
                 tools.append(Dummy('{}'.format(te.id)))
             elif hasattr(te, 'surface'):
                 tools.append(Dummy('{}'.format(te.surface.id)))
             else:
-                assert False, \
-                    'Illegal tool entity for Boolean operation.'
+                assert isinstance(te, VolumeBase), \
+                    'Illegal tool entity ({}) for Boolean operation.'.format(type(te))
+                tools.append(Dummy('{}'.format(te.id)))
 
         # out[] = BooleanDifference { boolean-list } { boolean-list }
         name = 'bo{}'.format(self._BOOLEAN_ID)
         self._GMSH_CODE.append(
-            '{}[] = BooleanDifference{{Surface {{{}}}; {}}} {{Surface {{{}}}; {}}};'
+            '{}[] = BooleanDifference{{{} {{{}}}; {}}} {{{} {{{}}}; {}}};'
             .format(
                 name,
+                shape_type,
                 ','.join(e.id for e in entities),
                 'Delete;' if delete else '',
+                shape_type,
                 ','.join(e.id for e in tools),
                 'Delete;' if delete else ''
             ))
 
         # currently only the new generated objects can be retrieved
         shapes = []
-        for i in range(len(input_entity)):
+        for i, entity in enumerate(input_entity):
             shape = '{}[{}]'.format(name, i)
 
-            if isinstance(input_entity[i], LineBase):
+            if isinstance(entity, LineBase):
                 shapes.append(LineBase(shape))
-            elif isinstance(input_entity[i], SurfaceBase):
+            elif isinstance(entity, SurfaceBase):
                 shapes.append(SurfaceBase(shape))
             else:
-                shapes.append(Dummy(shape))
+                shapes.append(VolumeBase(shape))
 
         return shapes
 
