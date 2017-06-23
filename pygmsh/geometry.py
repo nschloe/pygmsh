@@ -404,7 +404,8 @@ class Geometry(object):
     def boolean_difference(
             self,
             input_entity,
-            tool_entity
+            tool_entity,
+            delete=True
             ):
         '''Boolean difference, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
         input_entity and tool_entity are called object and tool in gmsh
@@ -442,11 +443,13 @@ class Geometry(object):
         # out[] = BooleanDifference { boolean-list } { boolean-list }
         name = 'bo{}'.format(self._BOOLEAN_ID)
         self._GMSH_CODE.append(
-            '{}[] = BooleanDifference{{Surface {{{}}}; Delete;}} {{Surface {{{}}}; Delete;}};'
+            '{}[] = BooleanDifference{{Surface {{{}}}; {}}} {{Surface {{{}}}; {}}};'
             .format(
                 name,
                 ','.join(e.id for e in entities),
-                ','.join(e.id for e in tools)
+                'Delete;' if delete else '',
+                ','.join(e.id for e in tools),
+                'Delete;' if delete else ''
             ))
 
     def add_boundary_layer(
