@@ -42,6 +42,8 @@ jobs:
       # The actual test
       - run: code_extract README.md test/readme_test.py --filter python,test
       - run: ls ~/pygmsh/gmsh-3.0.3-Linux/bin/gmsh
+      - run: PATH=~/pygmsh/gmsh-3.0.3-Linux/bin/:$PATH gmsh --version
+      - run: export PATH=~/pygmsh/gmsh-3.0.3-Linux/bin/:$PATH && gmsh --version
       - run: cd test/ && export PATH=~/pygmsh/gmsh-3.0.3-Linux/bin/:$PATH && MPLBACKEND=Agg PATH=~/pygmsh/gmsh-3.0.3-Linux/bin/:$PATH pytest --cov pygmsh
       # submit to codecov
       - run: apt-get install -y curl
