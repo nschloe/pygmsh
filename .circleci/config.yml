@@ -8,7 +8,7 @@ jobs:
       - image: ubuntu:17.04
     steps:
       - run: apt-get update
-      - run: apt-get install -y git gmsh
+      - run: apt-get install -y git gmsh python-pip
       - run: pip2 install -U pytest pytest-cov pylint
       - checkout
       - run: LANG=C.UTF-8 pip2 install .
@@ -24,7 +24,7 @@ jobs:
       - image: ubuntu:17.04
     steps:
       - run: apt-get update
-      - run: apt-get install -y git gmsh
+      - run: apt-get install -y git gmsh python3-pip
       - run: pip3 install -U pytest pytest-cov pylint
       - checkout
       - run: LANG=C.UTF-8 pip3 install .
