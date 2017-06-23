@@ -105,7 +105,7 @@ def generate_mesh(
         '-{}'.format(dim), '-bin', geo_filename, '-o', msh_filename
         ]
 
-    gmsh_major_version = _get_gmsh_major_version()
+    gmsh_major_version = geo_object.get_gmsh_major()
     if gmsh_major_version < 3 and optimize:
         cmd += ['-optimize']
 

@@ -6,6 +6,7 @@ at working around some of Gmsh's inconveniences (e.g., having to manually
 assign an ID for every entity created) and providing access to Python's
 features.
 '''
+import re
 import numpy
 
 from .__about__ import __version__
@@ -17,7 +18,7 @@ from .compound_surface import CompoundSurface
 from .compound_volume import CompoundVolume
 from .dummy import Dummy
 from .ellipse_arc import EllipseArc
-from .helper import _is_string
+from .helper import _is_string, _get_gmsh_major_version
 from .line import Line
 from .line_base import LineBase
 from .line_loop import LineLoop
@@ -45,6 +46,8 @@ class Geometry(object):
         self._EXTRUDE_ID = 0
         self._ARRAY_ID = 0
         self._FIELD_ID = 0
+        self._GMSH_MAJOR = _get_gmsh_major_version()
+        self._FACTORY_TYPE = 'Built-in'
         self._TAKEN_PHYSICALGROUP_IDS = []
         self._GMSH_CODE = [
                 '// This code was created by PyGmsh v{}.'.format(__version__)
@@ -55,6 +58,35 @@ class Geometry(object):
         '''Returns properly formatted Gmsh code.
         '''
         return '\n'.join(self._GMSH_CODE)
+
+    def get_gmsh_major(self):
+        '''Return the major version of the gmsh executable.
+        '''
+        return self._GMSH_MAJOR
+
+    def set_factory(self, factory_type):
+        '''Set the geometry factory between Built-in and openCASCADE
+        '''
+        assert self._GMSH_MAJOR == 3, \
+            'Gmsh 2 does not support factories.'
+
+        assert factory_type == 'OpenCASCADE' or factory_type == 'Built-in', \
+            'Factory type not recognized.'
+
+        # the factory should always be set as first thing in the geo file
+        if len(self._GMSH_CODE) == 1:
+            # no code yet
+            self._FACTORY_TYPE = factory_type
+            self._GMSH_CODE.append('SetFactory("{}");'.format(factory_type))
+        else:
+            if factory_type != self._FACTORY_TYPE:
+                if self._GMSH_CODE[1][:10] == 'SetFactory':
+                    # replace the current factory statement
+                    self._GMSH_CODE[1] = 'SetFactory("{}");'.format(factory_type)
+                else:
+                    # insert a new statement for the Factory
+                    self._GMSH_CODE.insert(1, 'SetFactory("{}");'.format(factory_type))
+                self._FACTORY_TYPE = factory_type
 
     # All of the add_* method below could be replaced by
     #
@@ -126,7 +158,11 @@ class Geometry(object):
 
     def add_ruled_surface(self, *args, **kwargs):
         p = RuledSurface(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
+        if self._FACTORY_TYPE == 'Built-in':
+            self._GMSH_CODE.append(p.code)
+        else:
+            # OpenCASCADE knows only of Surfaces without Ruled
+            self._GMSH_CODE.append(re.sub('Ruled Surface', 'Surface', p.code))
         return p
 
     def add_surface_loop(self, *args, **kwargs):
