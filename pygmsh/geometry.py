@@ -477,6 +477,40 @@ class Geometry(object):
 
         return shapes
 
+    def boolean_intersection(
+        self,
+        input_entity,
+        tool_entity,
+        delete=True
+    ):
+        '''Boolean intersection, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
+        input_entity and tool_entity are called object and tool in gmsh
+        documentation.
+        '''
+        return self._boolean_operation(
+            'BooleanIntersection',
+            input_entity,
+            tool_entity,
+            delete=delete
+            )
+
+    def boolean_union(
+        self,
+        input_entity,
+        tool_entity,
+        delete=True
+    ):
+        '''Boolean union, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
+        input_entity and tool_entity are called object and tool in gmsh
+        documentation.
+        '''
+        return self._boolean_operation(
+            'BooleanUnion',
+            input_entity,
+            tool_entity,
+            delete=delete
+            )
+
     def boolean_difference(
         self,
         input_entity,
@@ -489,6 +523,23 @@ class Geometry(object):
         '''
         return self._boolean_operation(
             'BooleanDifference',
+            input_entity,
+            tool_entity,
+            delete=delete
+            )
+
+    def boolean_fragments(
+        self,
+        input_entity,
+        tool_entity,
+        delete=True
+    ):
+        '''Boolean fragments, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
+        input_entity and tool_entity are called object and tool in gmsh
+        documentation.
+        '''
+        return self._boolean_operation(
+            'BooleanFragments',
             input_entity,
             tool_entity,
             delete=delete
