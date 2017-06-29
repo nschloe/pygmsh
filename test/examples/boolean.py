@@ -32,7 +32,7 @@ def generate():
             )
 
     geom.set_factory('OpenCASCADE')
-    boolean = geom.boolean_difference(
+    _ = geom.boolean_difference(
         [rectangle.surface],
         [circle_w.plane_surface, circle_e.plane_surface]
         )

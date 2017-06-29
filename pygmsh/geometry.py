@@ -401,6 +401,7 @@ class Geometry(object):
 
         return top, extruded, lat
 
+    # pylint: disable=too-many-branches
     def boolean_difference(
             self,
             input_entity,

@@ -11,3 +11,8 @@ disable=
     too-many-instance-attributes,
     too-many-locals,
     too-many-public-methods
+
+[FORMAT]
+
+max-module-lines=1100
+
