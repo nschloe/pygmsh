@@ -402,13 +402,14 @@ class Geometry(object):
         return top, extruded, lat
 
     # pylint: disable=too-many-branches
-    def boolean_difference(
+    def _boolean_operation(
             self,
+            operation,
             input_entity,
             tool_entity,
-            delete=True
+            delete
             ):
-        '''Boolean difference, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
+        '''Boolean operations, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
         input_entity and tool_entity are called object and tool in gmsh
         documentation.
         '''
@@ -450,9 +451,10 @@ class Geometry(object):
         # out[] = BooleanDifference { boolean-list } { boolean-list }
         name = 'bo{}'.format(self._BOOLEAN_ID)
         self._GMSH_CODE.append(
-            '{}[] = BooleanDifference{{{} {{{}}}; {}}} {{{} {{{}}}; {}}};'
+            '{}[] = {}{{{} {{{}}}; {}}} {{{} {{{}}}; {}}};'
             .format(
                 name,
+                operation,
                 shape_type,
                 ','.join(e.id for e in entities),
                 'Delete;' if delete else '',
@@ -474,6 +476,23 @@ class Geometry(object):
                 shapes.append(VolumeBase(shape))
 
         return shapes
+
+    def boolean_difference(
+        self,
+        input_entity,
+        tool_entity,
+        delete=True
+    ):
+        '''Boolean difference, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
+        input_entity and tool_entity are called object and tool in gmsh
+        documentation.
+        '''
+        return self._boolean_operation(
+            'BooleanDifference',
+            input_entity,
+            tool_entity,
+            delete=delete
+            )
 
     def add_boundary_layer(
             self,
