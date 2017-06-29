@@ -38,13 +38,6 @@ def generate():
         [circle_w.plane_surface, circle_e.plane_surface]
         )
 
-    # New points at intersections do not have a characteristic length set
-    # and this creates errors with the OpenCASCADE factory.
-    # This is most likely a gmsh bug. There is no way at the moment to
-    # retrieve the indices of the intersecting points, as the only returned
-    # value from the boolean operation is the new surface
-    geom.add_raw_code('Characteristic Length {18, 16, 14, 12} = 0.1;')
-
     rectangle2 = geom.add_rectangle(
             2.0, 4.0,
             -1.0, 1.0,
