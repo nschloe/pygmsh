@@ -6,6 +6,7 @@ import pygmsh as pg
 def generate():
     geom = pg.Geometry()
     lcar = 0.1
+
     rectangle = geom.add_rectangle(
             -1.0, 1.0,
             -1.0, 1.0,
@@ -21,18 +22,18 @@ def generate():
             [-1.0, 0.0, 0.0],
             0.5,
             lcar,
-            num_sections=4,
+            num_sections=4
             )
 
     circle_e = geom.add_circle(
             [1.0, 0.0, 0.0],
             0.5,
             lcar,
-            num_sections=4,
+            num_sections=4
             )
 
     geom.set_factory('OpenCASCADE')
-    _ = geom.boolean_difference(
+    _ = geom.boolean_intersection(
         [rectangle.surface],
         [circle_w.plane_surface, circle_e.plane_surface]
         )
@@ -44,13 +45,13 @@ def generate():
     # value from the boolean operation is the new surface
     geom.add_raw_code('Characteristic Length {18, 16, 14, 12} = 0.1;')
 
-    return geom, 3.2196387
+    return geom, 0.7803612
 
 
 if __name__ == '__main__':
     import meshio
     geometry, _ = generate()
-    with open('boolean.geo', 'w') as f:
+    with open('boolean_int.geo', 'w') as f:
         f.write(geometry.get_code())
     out = pg.generate_mesh(geometry)
-    meshio.write('boolean.vtu', *out)
+    meshio.write('boolean_int.vtu', *out)

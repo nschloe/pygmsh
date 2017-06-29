@@ -2,7 +2,9 @@
 #
 __all__ = [
   'airfoil',
-  'boolean',
+  'boolean_union',
+  'boolean_int',
+  'boolean_diff',
   'boundary_layers',
   'bsplines',
   'circle',
