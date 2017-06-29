@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
 #
 
+from .volume_base import VolumeBase
 
-class Volume(object):
-    _ID = 0
-
+class Volume(VolumeBase):
     def __init__(self, surface_loop, holes=None):
+        super(Volume, self).__init__()
+
         if holes is None:
             holes = []
 
         self.surface_loop = surface_loop
         self.holes = holes
-
-        self.id = 'vol{}'.format(Volume._ID)
-        Volume._ID += 1
 
         surface_loops = [surface_loop] + holes
 

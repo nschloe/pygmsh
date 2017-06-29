@@ -44,6 +44,7 @@ class Geometry(object):
         # have already been created. Variable names will then be p1, p2, etc.
         # for points, c1, c2, etc. for circles and so on.
         self._EXTRUDE_ID = 0
+        self._BOOLEAN_ID = 0
         self._ARRAY_ID = 0
         self._FIELD_ID = 0
         self._GMSH_MAJOR = _get_gmsh_major_version()
@@ -399,6 +400,80 @@ class Geometry(object):
               for i in range(input_entity.num_edges)]
 
         return top, extruded, lat
+
+    # pylint: disable=too-many-branches
+    def boolean_difference(
+            self,
+            input_entity,
+            tool_entity,
+            delete=True
+            ):
+        '''Boolean difference, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
+        input_entity and tool_entity are called object and tool in gmsh
+        documentation.
+        '''
+        assert self._FACTORY_TYPE == 'OpenCASCADE', \
+            'Boolean operations are supported only with the OpenCASCADE factory.'
+        self._BOOLEAN_ID += 1
+
+        shape_type = None
+        entities = []
+        for ie in input_entity:
+            if isinstance(ie, LineBase):
+                shape_type = 'Line'
+                entities.append(Dummy('{}'.format(ie.id)))
+            elif isinstance(ie, SurfaceBase):
+                shape_type = 'Surface'
+                entities.append(Dummy('{}'.format(ie.id)))
+            elif hasattr(ie, 'surface'):
+                shape_type = 'Surface'
+                entities.append(Dummy('{}'.format(ie.surface.id)))
+            else:
+                assert isinstance(ie, VolumeBase), \
+                    'Illegal input entity ({}) for Boolean operation.'.format(type(ie))
+                shape_type = 'Volume'
+                entities.append(Dummy('{}'.format(ie.id)))
+
+        tools = []
+        for te in tool_entity:
+            if isinstance(te, LineBase):
+                tools.append(Dummy('{}'.format(te.id)))
+            elif isinstance(te, SurfaceBase):
+                tools.append(Dummy('{}'.format(te.id)))
+            elif hasattr(te, 'surface'):
+                tools.append(Dummy('{}'.format(te.surface.id)))
+            else:
+                assert isinstance(te, VolumeBase), \
+                    'Illegal tool entity ({}) for Boolean operation.'.format(type(te))
+                tools.append(Dummy('{}'.format(te.id)))
+
+        # out[] = BooleanDifference { boolean-list } { boolean-list }
+        name = 'bo{}'.format(self._BOOLEAN_ID)
+        self._GMSH_CODE.append(
+            '{}[] = BooleanDifference{{{} {{{}}}; {}}} {{{} {{{}}}; {}}};'
+            .format(
+                name,
+                shape_type,
+                ','.join(e.id for e in entities),
+                'Delete;' if delete else '',
+                shape_type,
+                ','.join(e.id for e in tools),
+                'Delete;' if delete else ''
+            ))
+
+        # currently only the new generated objects can be retrieved
+        shapes = []
+        for i, entity in enumerate(input_entity):
+            shape = '{}[{}]'.format(name, i)
+
+            if isinstance(entity, LineBase):
+                shapes.append(LineBase(shape))
+            elif isinstance(entity, SurfaceBase):
+                shapes.append(SurfaceBase(shape))
+            else:
+                shapes.append(VolumeBase(shape))
+
+        return shapes
 
     def add_boundary_layer(
             self,

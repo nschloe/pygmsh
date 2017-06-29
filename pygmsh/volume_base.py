@@ -9,6 +9,6 @@ class VolumeBase(object):
         if id0:
             self.id = id0
         else:
-            self.id = 'v{}'.format(VolumeBase._ID)
+            self.id = 'vol{}'.format(VolumeBase._ID)
             VolumeBase._ID += 1
         return
