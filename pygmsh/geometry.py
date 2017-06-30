@@ -407,7 +407,7 @@ class Geometry(object):
             operation,
             input_entity,
             tool_entity,
-            delete
+            delete=True
             ):
         '''Boolean operations, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
         input_entity and tool_entity are called object and tool in gmsh
@@ -477,73 +477,33 @@ class Geometry(object):
 
         return shapes
 
-    def boolean_intersection(
-        self,
-        input_entity,
-        tool_entity,
-        delete=True
-    ):
+    def boolean_intersection(self, *args, **kwargs):
         '''Boolean intersection, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
         input_entity and tool_entity are called object and tool in gmsh
         documentation.
         '''
-        return self._boolean_operation(
-            'BooleanIntersection',
-            input_entity,
-            tool_entity,
-            delete=delete
-            )
+        return self._boolean_operation('BooleanIntersection', *args, **kwargs)
 
-    def boolean_union(
-        self,
-        input_entity,
-        tool_entity,
-        delete=True
-    ):
+    def boolean_union(self, *args, **kwargs):
         '''Boolean union, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
         input_entity and tool_entity are called object and tool in gmsh
         documentation.
         '''
-        return self._boolean_operation(
-            'BooleanUnion',
-            input_entity,
-            tool_entity,
-            delete=delete
-            )
+        return self._boolean_operation('BooleanUnion', *args, **kwargs)
 
-    def boolean_difference(
-        self,
-        input_entity,
-        tool_entity,
-        delete=True
-    ):
+    def boolean_difference(self, *args, **kwargs):
         '''Boolean difference, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
         input_entity and tool_entity are called object and tool in gmsh
         documentation.
         '''
-        return self._boolean_operation(
-            'BooleanDifference',
-            input_entity,
-            tool_entity,
-            delete=delete
-            )
+        return self._boolean_operation('BooleanDifference', *args, **kwargs)
 
-    def boolean_fragments(
-        self,
-        input_entity,
-        tool_entity,
-        delete=True
-    ):
+    def boolean_fragments(self, *args, **kwargs):
         '''Boolean fragments, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
         input_entity and tool_entity are called object and tool in gmsh
         documentation.
         '''
-        return self._boolean_operation(
-            'BooleanFragments',
-            input_entity,
-            tool_entity,
-            delete=delete
-            )
+        return self._boolean_operation('BooleanFragments', *args, **kwargs)
 
     def add_boundary_layer(
             self,
