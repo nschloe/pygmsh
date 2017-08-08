@@ -10,7 +10,8 @@ def generate():
     '''
     geom = pg.Geometry()
 
-    R = pg.rotation_matrix([1, 1, 0], np.pi/6.0)
+    sqrt2on2 = 0.5*np.sqrt(2.)
+    R = pg.rotation_matrix([sqrt2on2, sqrt2on2, 0], np.pi/6.0)
     geom.add_pipe(
             inner_radius=0.3,
             outer_radius=0.4,
@@ -33,7 +34,7 @@ def generate():
             variant='circle_extrusion'
             )
 
-    return geom, 0.5317080205627609
+    return geom, 0.43988203517453256
 
 
 if __name__ == '__main__':
