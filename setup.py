@@ -37,7 +37,7 @@ setup(
     install_requires=[
         'meshio',
         'numpy >= 1.9',
-        'pipdated',
+        'pipdate',
         'voropy',
         ],
     classifiers=[

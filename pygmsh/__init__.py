@@ -2,7 +2,6 @@
 #
 from __future__ import print_function
 
-import pipdated
 
 from .__about__ import (
         __version__,
@@ -15,9 +14,13 @@ from .geometry import Geometry
 # pylint: disable=wildcard-import
 from .helper import *
 
-
-if pipdated.needs_checking(__name__):
-    print(pipdated.check(__name__, __version__))
+try:
+    import pipdate
+except ImportError:
+    pass
+else:
+    if pipdate.needs_checking(__name__):
+        print(pipdate.check(__name__, __version__))
 
 __all__ = [
         'geometry',
