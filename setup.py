@@ -7,7 +7,7 @@ import codecs
 # https://packaging.python.org/single_source_version/
 base_dir = os.path.abspath(os.path.dirname(__file__))
 about = {}
-with open(os.path.join(base_dir, 'pygmsh', '__about__.py')) as f:
+with open(os.path.join(base_dir, 'pygmsh', '__about__.py'), 'rb') as f:
     exec(f.read(), about)
 
 
@@ -37,7 +37,7 @@ setup(
     install_requires=[
         'meshio',
         'numpy >= 1.9',
-        'pipdated',
+        'pipdate',
         'voropy',
         ],
     classifiers=[
