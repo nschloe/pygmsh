@@ -39,6 +39,6 @@ def generate(lcar=0.05):
 
 if __name__ == '__main__':
     import meshio
-    geom, _ = generate()
-    out = pg.generate_mesh(geom)
+    geom_, _ = generate()
+    out = pg.generate_mesh(geom_)
     meshio.write('screw.vtu', *out)
