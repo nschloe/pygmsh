@@ -24,7 +24,7 @@ def generate(lcar=0.05):
         holes=[circ]
         )
 
-    axis = [0, 0, 1]
+    axis = [0, 0, 1.0]
 
     geom.extrude(
         poly,
@@ -39,5 +39,6 @@ def generate(lcar=0.05):
 
 if __name__ == '__main__':
     import meshio
-    out = pg.generate_mesh(generate())
+    geom_, _ = generate()
+    out = pg.generate_mesh(geom_)
     meshio.write('screw.vtu', *out)
