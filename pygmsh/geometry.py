@@ -12,6 +12,7 @@ import numpy
 from .__about__ import __version__
 
 from .bspline import Bspline
+from .spline import Spline
 from .circle_arc import CircleArc
 from .compound_line import CompoundLine
 from .compound_surface import CompoundSurface
@@ -112,6 +113,11 @@ class Geometry(object):
         self._GMSH_CODE.append(p.code)
         return p
 
+    def add_spline(self, *args, **kwargs):
+        p = Spline(*args, **kwargs)
+        self._GMSH_CODE.append(p.code)
+        return p
+    
     def add_circle_arc(self, *args, **kwargs):
         p = CircleArc(*args, **kwargs)
         self._GMSH_CODE.append(p.code)
