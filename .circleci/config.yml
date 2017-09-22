@@ -30,6 +30,7 @@ jobs:
       - run: pip3 install -U pytest pytest-cov pylint code_extract
       - checkout
       # install gmsh from upstream
+      - run: apt install gmsh  # for the dependencies
       - run: wget http://gmsh.info/bin/Linux/gmsh-3.0.5-Linux64.tgz
       - run: tar xf gmsh-3.0.5-Linux64.tgz
       # install
