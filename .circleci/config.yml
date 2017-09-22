@@ -7,8 +7,8 @@ jobs:
 #     docker:
 #       - image: ubuntu:17.04
 #     steps:
-#       - run: apt-get update
-#       - run: apt-get install -y git gmsh python-pip python-matplotlib python-numpy python-scipy
+#       - run: apt update
+#       - run: apt install -y git gmsh python-pip python-matplotlib python-numpy python-scipy
 #       - run: pip2 install -U pytest pytest-cov pylint code_extract
 #       - checkout
 #       - run: LANG=C.UTF-8 pip2 install .
@@ -25,23 +25,30 @@ jobs:
     docker:
       - image: ubuntu:17.04
     steps:
-      - run: apt-get update
-      - run: apt-get install -y git python3-pip python3-matplotlib python3-numpy python3-scipy wget gmsh
+      - run: apt update
+      - run: apt install -y git python3-pip wget
       - run: pip3 install -U pytest pytest-cov pylint code_extract
       - checkout
       # install gmsh from upstream
-      - run: wget http://gmsh.info/bin/Linux/gmsh-3.0.4-Linux64.tgz
-      - run: tar xf gmsh-3.0.4-Linux64.tgz
+      - run: apt install -y gmsh  # for the dependencies
+      - run: wget http://gmsh.info/bin/Linux/gmsh-3.0.5-Linux64.tgz
+      - run: tar xf gmsh-3.0.5-Linux64.tgz
       # install
       - run: pip3 install .
       # lint
       - run: pylint pygmsh/
       - run: pylint test/examples/*py
+      # make sure that rst converts correctly
+      - run: apt install -y pandoc
+      - run: cat README.md | sed -e 's_<img src="\([^"]*\)" width="\([^"]*\)">_![](\1){width="\2"}_g' -e 's/```python,test/```python/g' > /tmp/README.md
+      - run: pandoc /tmp/README.md -o README.rst
+      - run: pip3 install docutils pygments
+      - run: python3 setup.py check -r -s
       # The actual test
       - run: code_extract README.md test/readme_test.py --filter python,test
-      - run: cd test/ && MPLBACKEND=Agg PATH=~/pygmsh/gmsh-3.0.3-Linux/bin/:$PATH pytest --cov pygmsh
+      - run: cd test/ && MPLBACKEND=Agg PATH=~/pygmsh/gmsh-3.0.5-Linux/bin/:$PATH pytest --cov pygmsh
       # submit to codecov
-      - run: apt-get install -y curl
+      - run: apt install -y curl
       - run: bash <(curl -s https://codecov.io/bash)
 
 # workflow builds don't support forked PRs yet, cf.
