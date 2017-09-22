@@ -40,7 +40,7 @@ jobs:
       - run: pylint test/examples/*py
       # make sure that rst converts correctly
       - run: apt install -y pandoc
-      - run: cat README.md | sed 's_<img src="\([^"]*\)" width="\([^"]*\)">_![](\1){width="\2"}_g' > /tmp/README.md
+      - run: cat README.md | sed -e 's_<img src="\([^"]*\)" width="\([^"]*\)">_![](\1){width="\2"}_g' -e 's/```python,test/```python/g' > /tmp/README.md
       - run: pandoc /tmp/README.md -o README.rst
       - run: pip3 install docutils pygments
       - run: python3 setup.py check -r -s
