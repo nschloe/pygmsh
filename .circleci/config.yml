@@ -26,7 +26,7 @@ jobs:
       - image: ubuntu:17.04
     steps:
       - run: apt-get update
-      - run: apt-get install -y git python3-pip wget gmsh
+      - run: apt-get install -y git python3-pip wget
       - run: pip3 install -U pytest pytest-cov pylint code_extract
       - checkout
       # install gmsh from upstream
