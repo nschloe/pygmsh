@@ -7,7 +7,7 @@ class RuledSurface(object):
     _ID = 0
     num_edges = 0
 
-    def __init__(self, line_loop):
+    def __init__(self, line_loop, api_level=2):
         assert isinstance(line_loop, LineLoop)
 
         self.line_loop = line_loop
@@ -15,9 +15,12 @@ class RuledSurface(object):
         self.id = 'rs{}'.format(RuledSurface._ID)
         RuledSurface._ID += 1
 
+        # `Ruled Surface` was deprecated in Gmsh 3 in favor of `Surface`.
+        name = 'Surface' if api_level > 2 else 'Ruled Surface'
+
         self.code = '\n'.join([
             '{} = news;'.format(self.id),
-            'Ruled Surface({}) = {{{}}};'.format(self.id, self.line_loop.id)
+            '{}({}) = {{{}}};'.format(name, self.id, self.line_loop.id)
             ])
         self.num_edges = len(line_loop)
         return
