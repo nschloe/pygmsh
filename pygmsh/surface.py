@@ -3,7 +3,7 @@
 from .line_loop import LineLoop
 
 
-class RuledSurface(object):
+class Surface(object):
     _ID = 0
     num_edges = 0
 
@@ -12,8 +12,8 @@ class RuledSurface(object):
 
         self.line_loop = line_loop
 
-        self.id = 'rs{}'.format(RuledSurface._ID)
-        RuledSurface._ID += 1
+        self.id = 'rs{}'.format(Surface._ID)
+        Surface._ID += 1
 
         # `Ruled Surface` was deprecated in Gmsh 3 in favor of `Surface`.
         name = 'Surface' if api_level > 2 else 'Ruled Surface'

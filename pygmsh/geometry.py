@@ -32,7 +32,7 @@ from .line_base import LineBase
 from .line_loop import LineLoop
 from .plane_surface import PlaneSurface
 from .point import Point
-from .ruled_surface import RuledSurface
+from .surface import Surface
 from .surface_base import SurfaceBase
 from .surface_loop import SurfaceLoop
 from .volume import Volume
@@ -141,8 +141,8 @@ class Geometry(object):
         self._GMSH_CODE.append(p.code)
         return p
 
-    def add_ruled_surface(self, *args, **kwargs):
-        s = RuledSurface(*args, api_level=self._GMSH_MAJOR, **kwargs)
+    def add_surface(self, *args, **kwargs):
+        s = Surface(*args, api_level=self._GMSH_MAJOR, **kwargs)
         self._GMSH_CODE.append(s.code)
         return s
 
@@ -664,7 +664,7 @@ class Geometry(object):
             self.add_line_loop([-c[1], -c[6], -c[11]]),
             ]
         # Create a surface for each line loop.
-        s = [self.add_ruled_surface(l) for l in ll]
+        s = [self.add_surface(l) for l in ll]
         # Combine the surfaces to avoid seams
         new_surfs = [
                 self.add_compound_surface(s[:4]),
@@ -750,7 +750,7 @@ class Geometry(object):
               self.add_line_loop([e[8], e[10], -e[11], -e[9]]),
               ]
         # Create a surface for each line loop.
-        s = [self.add_ruled_surface(l) for l in ll]
+        s = [self.add_surface(l) for l in ll]
         # Create the surface loop.
         surface_loop = self.add_surface_loop(s)
 
