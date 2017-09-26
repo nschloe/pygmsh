@@ -26,7 +26,7 @@ from .compound_surface import CompoundSurface
 from .compound_volume import CompoundVolume
 from .dummy import Dummy
 from .ellipse_arc import EllipseArc
-from .helper import _is_string, _get_gmsh_major_version
+from .helper import _is_string, get_gmsh_major_version
 from .line import Line
 from .line_base import LineBase
 from .line_loop import LineLoop
@@ -45,7 +45,7 @@ class Geometry(object):
         self._BOOLEAN_ID = 0
         self._ARRAY_ID = 0
         self._FIELD_ID = 0
-        self._GMSH_MAJOR = _get_gmsh_major_version()
+        self._GMSH_MAJOR = get_gmsh_major_version()
         self._TAKEN_PHYSICALGROUP_IDS = []
         self._GMSH_CODE = [
                 '// This code was created by PyGmsh v{}.'.format(__version__)

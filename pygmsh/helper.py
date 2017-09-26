@@ -75,7 +75,7 @@ def _get_gmsh_exe():
     return gmsh_executable
 
 
-def _get_gmsh_major_version():
+def get_gmsh_major_version():
     gmsh_exe = _get_gmsh_exe()
     out = subprocess.check_output(
             [gmsh_exe, '--version'],
