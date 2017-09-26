@@ -1,43 +1,38 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-import pygmsh as pg
+import pygmsh
+import pytest
+
+from helpers import compute_volume
 
 
-def generate():
-    lcar = 0.1
-
-    if pg.get_gmsh_major_version() == 2:
-        geom = pg.Geometry()
-        rectangle = geom.add_rectangle(
-                -1.0, 1.0,
-                -1.0, 1.0,
-                0.0,
-                lcar
-                )
-        return geom, 4.0
-
-    # boolean operations are only supported with OpenCASCADE
-    geom = pg.Geometry(factory_type='OpenCASCADE')
+@pytest.mark.skipif(
+    pygmsh.get_gmsh_major_version() < 3,
+    reason='requires Gmsh >= 3'
+    )
+def test():
+    geom = pygmsh.opencascade.Geometry(
+        characteristic_length_min=0.1,
+        characteristic_length_max=0.1,
+        )
     rectangle = geom.add_rectangle(
-            -1.0, 1.0,
-            -1.0, 1.0,
-            0.0,
-            lcar
+            -1.0, -1.0, 0.0,
+            2.0, 2.0
             )
 
-    circle_w = geom.add_circle(
-            [-1.0, 0.0, 0.0],
-            0.5,
-            lcar,
-            num_sections=4
-            )
+    # circle_w = geom.add_circle(
+    #         [-1.0, 0.0, 0.0],
+    #         0.5,
+    #         lcar,
+    #         num_sections=4
+    #         )
 
-    circle_e = geom.add_circle(
-            [1.0, 0.0, 0.0],
-            0.5,
-            lcar,
-            num_sections=4
-            )
+    # circle_e = geom.add_circle(
+    #         [1.0, 0.0, 0.0],
+    #         0.5,
+    #         lcar,
+    #         num_sections=4
+    #         )
 
     # geom.boolean_union(
     #     [rectangle.surface],
@@ -94,13 +89,12 @@ def generate():
     #     [circle3_w.plane_surface, circle3_e.plane_surface]
     #     )
 
-    return geom, 4.780361 + 0.7803612 + 3.2196387
+    ref = 4.780361 + 0.7803612 + 3.2196387
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    # assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    return points, cells
 
 
 if __name__ == '__main__':
     import meshio
-    geometry, _ = generate()
-    with open('boolean.geo', 'w') as f:
-        f.write(geometry.get_code())
-    out = pg.generate_mesh(geometry)
-    meshio.write('boolean.vtu', *out)
+    meshio.write('boolean.vtu', *test())

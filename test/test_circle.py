@@ -10,7 +10,7 @@ from helpers import compute_volume
     'factory_type',
     [
         'Built-in',
-        # 'OpenCASCADE',
+        'OpenCASCADE',
     ]
     )
 def test(factory_type):

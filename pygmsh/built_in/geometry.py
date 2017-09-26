@@ -17,7 +17,8 @@ points, c1, c2, etc. for circles and so on.
 '''
 import numpy
 
-from .__about__ import __version__
+from ..__about__ import __version__
+from ..helpers import _is_string, get_gmsh_major_version
 
 from .bspline import Bspline
 from .circle_arc import CircleArc
@@ -26,7 +27,6 @@ from .compound_surface import CompoundSurface
 from .compound_volume import CompoundVolume
 from .dummy import Dummy
 from .ellipse_arc import EllipseArc
-from .helper import _is_string, get_gmsh_major_version
 from .line import Line
 from .line_base import LineBase
 from .line_loop import LineLoop
@@ -40,7 +40,7 @@ from .volume_base import VolumeBase
 
 
 class Geometry(object):
-    def __init__(self, factory_type=None):
+    def __init__(self):
         self._EXTRUDE_ID = 0
         self._BOOLEAN_ID = 0
         self._ARRAY_ID = 0
@@ -50,17 +50,6 @@ class Geometry(object):
         self._GMSH_CODE = [
                 '// This code was created by PyGmsh v{}.'.format(__version__)
                 ]
-
-        self._FACTORY_TYPE = 'Built-in'
-        if factory_type is not None:
-            assert self._GMSH_MAJOR > 2, 'Gmsh 2 does not support factories.'
-            legal_factory_types = ['Built-in', 'OpenCASCADE']
-            assert factory_type in legal_factory_types, \
-                'Illegal factory type; \'{}\' not in {}.'.format(
-                    factory_type, legal_factory_types
-                    )
-            self._GMSH_CODE.append('SetFactory("{}");'.format(factory_type))
-            self._FACTORY_TYPE = factory_type
         return
 
     def get_code(self):
@@ -92,7 +81,7 @@ class Geometry(object):
     # in which case the circle code never gets added to geom.
 
     def add_bspline(self, *args, **kwargs):
-        p = Bspline(*args, factory_type=self._FACTORY_TYPE, **kwargs)
+        p = Bspline(*args, **kwargs)
         self._GMSH_CODE.append(p.code)
         return p
 
@@ -383,113 +372,6 @@ class Geometry(object):
                 ]
 
         return top, extruded, lat
-
-    # pylint: disable=too-many-branches
-    def _boolean_operation(
-            self,
-            operation,
-            input_entity,
-            tool_entity,
-            delete=True
-            ):
-        '''Boolean operations, see
-        http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
-        and tool_entity are called object and tool in gmsh documentation.
-        '''
-        assert self._FACTORY_TYPE == 'OpenCASCADE', \
-            'Boolean operations are supported only ' \
-            'with the OpenCASCADE factory.'
-        self._BOOLEAN_ID += 1
-
-        shape_type = None
-        entities = []
-        for ie in input_entity:
-            if isinstance(ie, LineBase):
-                shape_type = 'Line'
-                entities.append(Dummy('{}'.format(ie.id)))
-            elif isinstance(ie, SurfaceBase):
-                shape_type = 'Surface'
-                entities.append(Dummy('{}'.format(ie.id)))
-            elif hasattr(ie, 'surface'):
-                shape_type = 'Surface'
-                entities.append(Dummy('{}'.format(ie.surface.id)))
-            else:
-                assert isinstance(ie, VolumeBase), \
-                    'Illegal input entity ({}) ' \
-                    'for Boolean operation.'.format(type(ie))
-                shape_type = 'Volume'
-                entities.append(Dummy('{}'.format(ie.id)))
-
-        tools = []
-        for te in tool_entity:
-            if isinstance(te, LineBase):
-                tools.append(Dummy('{}'.format(te.id)))
-            elif isinstance(te, SurfaceBase):
-                tools.append(Dummy('{}'.format(te.id)))
-            elif hasattr(te, 'surface'):
-                tools.append(Dummy('{}'.format(te.surface.id)))
-            else:
-                assert isinstance(te, VolumeBase), \
-                    'Illegal tool entity ({}) ' \
-                    'for Boolean operation.'.format(type(te))
-                tools.append(Dummy('{}'.format(te.id)))
-
-        # out[] = BooleanDifference { boolean-list } { boolean-list }
-        name = 'bo{}'.format(self._BOOLEAN_ID)
-        self._GMSH_CODE.append(
-            '{}[] = {}{{{} {{{}}}; {}}} {{{} {{{}}}; {}}};'
-            .format(
-                name,
-                operation,
-                shape_type,
-                ','.join(e.id for e in entities),
-                'Delete;' if delete else '',
-                shape_type,
-                ','.join(e.id for e in tools),
-                'Delete;' if delete else ''
-            ))
-
-        # currently only the new generated objects can be retrieved
-        shapes = []
-        for i, entity in enumerate(input_entity):
-            shape = '{}[{}]'.format(name, i)
-
-            if isinstance(entity, LineBase):
-                shapes.append(LineBase(shape))
-            elif isinstance(entity, SurfaceBase):
-                shapes.append(SurfaceBase(shape))
-            else:
-                shapes.append(VolumeBase(shape))
-
-        return shapes
-
-    def boolean_intersection(self, *args, **kwargs):
-        '''Boolean intersection, see
-        http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
-        and tool_entity are called object and tool in gmsh documentation.
-        '''
-        return self._boolean_operation('BooleanIntersection', *args, **kwargs)
-
-    def boolean_union(self, *args, **kwargs):
-        '''Boolean union, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
-        input_entity and tool_entity are called object and tool in gmsh
-        documentation.
-        '''
-        return self._boolean_operation('BooleanUnion', *args, **kwargs)
-
-    def boolean_difference(self, *args, **kwargs):
-        '''Boolean difference, see
-        http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
-        and tool_entity are called object and tool in gmsh documentation.
-        '''
-        return self._boolean_operation('BooleanDifference', *args, **kwargs)
-
-    def boolean_fragments(self, *args, **kwargs):
-        '''Boolean fragments, see
-        http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
-        and tool_entity are called object and tool in gmsh documentation.
-        '''
-        return self._boolean_operation('BooleanFragments', *args, **kwargs)
 
     def add_boundary_layer(
             self,

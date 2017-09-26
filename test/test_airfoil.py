@@ -117,7 +117,7 @@ def test():
     airfoil_coordinates *= coord
 
     # Instantiate geometry object
-    geom = pygmsh.Geometry()
+    geom = pygmsh.built_in.Geometry()
 
     # Create polygon for airfoil
     char_length = 1.0e-1
