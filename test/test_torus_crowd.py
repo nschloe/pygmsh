@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pygmsh as pg
+import pygmsh
 import numpy as np
 
+from helpers import compute_volume
 
-def generate():
-    geom = pg.Geometry()
+
+def test():
+    geom = pygmsh.Geometry()
 
     # internal radius of torus
     irad = 0.15
@@ -38,8 +40,8 @@ def generate():
 
     for alpha, a1, z in zip(Alpha, A1, Z_pos):
         # Rotate torus to the y-z-plane.
-        R1 = pg.rotation_matrix([0.0, 1.0, 0.0], 0.5*np.pi)
-        R2 = pg.rotation_matrix([0.0, 0.0, 1.0], alpha)
+        R1 = pygmsh.rotation_matrix([0.0, 1.0, 0.0], 0.5*np.pi)
+        R2 = pygmsh.rotation_matrix([0.0, 0.0, 1.0], alpha)
         x0 = np.array([a1, 0.0, 0.0])
         x1 = np.array([0.0, 0.0, z])
         # First rotate to y-z-plane, then move out to a1, rotate by angle
@@ -62,11 +64,12 @@ def generate():
             lcar=0.3
             )
 
-    return geom, 15.276653079300184
+    ref = 15.276653079300184
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    return points, cells
 
 
 if __name__ == '__main__':
     import meshio
-    geometry, _ = generate()
-    out = pg.generate_mesh(geometry)
-    meshio.write('torus_crowd.vtu', *out)
+    meshio.write('torus_crowd.vtu', *test())

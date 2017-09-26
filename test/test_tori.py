@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pygmsh as pg
+import pygmsh
 import numpy as np
 
+from helpers import compute_volume
 
-def generate():
+
+def test():
     '''Torus, rotated in space.
     '''
-    geom = pg.Geometry()
+    geom = pygmsh.Geometry()
 
     R = np.array([
         [1.0, 0.0, 0.0],
@@ -32,10 +34,12 @@ def generate():
             variant='extrude_circle'
             )
 
-    return geom, 0.06604540601899624
+    ref = 0.06604540601899624
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    return points, cells
 
 
 if __name__ == '__main__':
     import meshio
-    out = pg.generate_mesh(generate()[0])
-    meshio.write('torus.vtu', *out)
+    meshio.write('torus.vtu', *test())

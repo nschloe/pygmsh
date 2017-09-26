@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pygmsh as pg
+import pygmsh
 import numpy as np
 
+from helpers import compute_volume
 
-def generate():
 
-    geom = pg.Geometry()
+def test():
+    geom = pygmsh.Geometry()
 
     X0 = np.array([
         [+0.0, +0.0, 0.0],
@@ -36,10 +37,12 @@ def generate():
     # Fails on travis for some reason. TODO fix
     # geom.add_physical_volume(ball, label='cheese')
 
-    return geom, 4.07064892966291
+    ref = 4.07064892966291
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    return points, cells
 
 
 if __name__ == '__main__':
     import meshio
-    out = pg.generate_mesh(generate())
-    meshio.write('swiss_cheese.vtu', *out)
+    meshio.write('swiss_cheese.vtu', *test())

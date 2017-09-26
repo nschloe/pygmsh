@@ -4,8 +4,10 @@
 import pygmsh
 import numpy
 
+from helpers import compute_volume
 
-def generate():
+
+def test():
     # Airfoil coordinates
     airfoil_coordinates = numpy.array([
         [1.000000, 0.000000, 0.0],
@@ -146,19 +148,13 @@ def generate():
             holes=[airfoil]
             )
 
-    # Return geo-file code (and reference volume for testing)
-    return geom, 10.525891646546
+    ref = 10.525891646546
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    return points, cells
 
 
 if __name__ == '__main__':
     import meshio
-    geometry, _ = generate()
-    points, cells, point_data, cell_data, _ = \
-        pygmsh.generate_mesh(geometry, dim=2)
-    meshio.write(
-            'airfoil.vtu',
-            points,
-            cells,
-            point_data=point_data,
-            cell_data=cell_data
-            )
+    points, cells = test()
+    meshio.write('airfoil.vtu', points, cells)

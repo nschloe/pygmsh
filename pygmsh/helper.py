@@ -133,7 +133,7 @@ def generate_mesh(
     X, cells, pt_data, cell_data, field_data = meshio.read(msh_filename)
 
     # clean up
-    os.remove(geo_filename)
+    # os.remove(geo_filename)
     os.remove(msh_filename)
 
     # Lloyd smoothing

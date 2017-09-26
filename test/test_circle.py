@@ -1,10 +1,20 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-import pygmsh as pg
+import pygmsh
+import pytest
+
+from helpers import compute_volume
 
 
-def generate():
-    geom = pg.Geometry()
+@pytest.mark.parametrize(
+    'factory_type',
+    [
+        'Built-in',
+        # 'OpenCASCADE',
+    ]
+    )
+def test(factory_type):
+    geom = pygmsh.Geometry(factory_type)
     geom.add_circle(
             [0.0, 0.0, 0.0],
             1.0,
@@ -15,11 +25,13 @@ def generate():
             # choose by itself where to point the circle points.
             compound=True
             )
-    return geom, 3.1363871677682247
+
+    ref = 3.1363871677682247
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    return points, cells
 
 
 if __name__ == '__main__':
     import meshio
-    geometry, _ = generate()
-    out = pg.generate_mesh(geometry)
-    meshio.write('circle.vtk', *out)
+    meshio.write('circle.vtk', *test('Built-in'))

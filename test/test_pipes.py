@@ -1,17 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pygmsh as pg
+import pygmsh
 import numpy as np
 
+from helpers import compute_volume
 
-def generate():
+
+def test():
     '''Pipe with double-ring enclosure, rotated in space.
     '''
-    geom = pg.Geometry()
+    geom = pygmsh.Geometry()
 
     sqrt2on2 = 0.5*np.sqrt(2.)
-    R = pg.rotation_matrix([sqrt2on2, sqrt2on2, 0], np.pi/6.0)
+    R = pygmsh.rotation_matrix([sqrt2on2, sqrt2on2, 0], np.pi/6.0)
     geom.add_pipe(
             inner_radius=0.3,
             outer_radius=0.4,
@@ -34,11 +36,12 @@ def generate():
             variant='circle_extrusion'
             )
 
-    return geom, 0.43988203517453256
+    ref = 0.43988203517453256
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    return points, cells
 
 
 if __name__ == '__main__':
     import meshio
-    geometry, vol = generate()
-    out = pg.generate_mesh(geometry)
-    meshio.write('pipes.vtu', *out)
+    meshio.write('pipes.vtu', *test())

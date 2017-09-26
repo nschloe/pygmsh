@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pygmsh as pg
+import pygmsh
 import numpy as np
 
+from helpers import compute_volume
 
-def generate(lcar=0.05):
-    geom = pg.Geometry()
+
+def test(lcar=0.05):
+    geom = pygmsh.Geometry()
 
     # Draw a cross with a circular hole
     circ = geom.add_circle([0.0, 0.0, 0.0], 0.1, lcar=lcar)
@@ -34,11 +36,12 @@ def generate(lcar=0.05):
         angle=2.0 / 6.0 * np.pi
         )
 
-    return geom, 0.16951514066385628
+    ref = 0.16951514066385628
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    return points, cells
 
 
 if __name__ == '__main__':
     import meshio
-    geom_, _ = generate()
-    out = pg.generate_mesh(geom_)
-    meshio.write('screw.vtu', *out)
+    meshio.write('screw.vtu', *test())

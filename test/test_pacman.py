@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pygmsh as pg
+import pygmsh
 from numpy import pi, sin, cos
 
+from helpers import compute_volume
 
-def generate(lcar=0.3):
-    geom = pg.Geometry()
+
+def test(lcar=0.3):
+    geom = pygmsh.Geometry()
 
     r = 1.25 * 3.4
     p1 = geom.add_point([0.0, 0.0, 0.0], lcar)
@@ -39,10 +41,12 @@ def generate(lcar=0.3):
     geom.add_physical_surface(pacman)
     # geom.add_physical_surface(pacman, label=77)
 
-    return geom, 54.312974717523744
+    ref = 54.312974717523744
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    return points, cells
 
 
 if __name__ == '__main__':
     import meshio
-    out = pg.generate_mesh(generate()[0])
-    meshio.write('pacman.vtu', *out)
+    meshio.write('pacman.vtu', *test())

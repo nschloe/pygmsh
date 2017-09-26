@@ -92,7 +92,7 @@ class Geometry(object):
     # in which case the circle code never gets added to geom.
 
     def add_bspline(self, *args, **kwargs):
-        p = Bspline(*args, **kwargs)
+        p = Bspline(*args, factory_type=self._FACTORY_TYPE, **kwargs)
         self._GMSH_CODE.append(p.code)
         return p
 

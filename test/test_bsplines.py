@@ -1,10 +1,12 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-import pygmsh as pg
+import pygmsh
+
+from helpers import compute_volume
 
 
-def generate():
-    geom = pg.Geometry()
+def test():
+    geom = pygmsh.Geometry()
 
     lcar = 0.1
     p1 = geom.add_point([0.0, 0.0, 0.0], lcar)
@@ -20,10 +22,13 @@ def generate():
     ll = geom.add_line_loop([s1, s2])
     geom.add_plane_surface(ll)
 
-    return geom, 0.9156598733673261
+    ref = 0.9156598733673261
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    return points, cells
 
 
 if __name__ == '__main__':
     import meshio
-    out = pg.generate_mesh(generate()[0])
+    out = test()
     meshio.write('bsplines.vtu', *out)

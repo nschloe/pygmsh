@@ -1,11 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import pygmsh as pg
+import pygmsh
 import numpy as np
 
+from helpers import compute_volume
 
-def generate():
+
+def test():
     # Characteristic length
     lcar = 1e-1
 
@@ -24,7 +26,7 @@ def generate():
         ])
 
     # Create geometric object
-    geom = pg.Geometry()
+    geom = pygmsh.Geometry()
 
     # Create square hole
     squareHole = geom.add_polygon(
@@ -38,10 +40,12 @@ def generate():
             holes=[squareHole.line_loop]
             )
 
-    return geom, 1.0
+    ref = 16.0
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    return points, cells
 
 
 if __name__ == '__main__':
     import meshio
-    out = pg.generate_mesh(generate()[0])
-    meshio.write('hole_in_square.vtu', *out)
+    meshio.write('hole_in_square.vtu', *test())

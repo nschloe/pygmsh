@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
 #
-from importlib import import_module
 import math
 import numpy
-import pytest
 import voropy
 
 import pygmsh
-import examples
 
 
-def _get_volume(points, cells):
+def compute_volume(points, cells):
     cells = \
         cells['tetra'] if 'tetra' in cells \
         else cells['triangle']
@@ -28,12 +25,6 @@ def _get_volume(points, cells):
     return math.fsum(mesh.cell_volumes)
 
 
-@pytest.mark.parametrize('name', examples.__all__)
-def test_check_output(name):
-    test = import_module('examples.' + name)
-    geom, vol = test.generate()
+def get_volume(geom):
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)
-
-    vol2 = _get_volume(points, cells)
-    assert abs(vol - vol2) < 1.0e-2 * vol
-    return
+    return _compute_volume(points, cells)

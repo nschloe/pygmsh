@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-import pygmsh as pg
+import pygmsh
+
+from helpers import compute_volume
 
 
-def generate():
-    geom = pg.Geometry()
+def test():
+    geom = pygmsh.Geometry()
 
     lcar = 0.1
 
@@ -29,10 +31,12 @@ def generate():
         holes=[circle.line_loop, triangle.line_loop, rectangle.line_loop]
         )
 
-    return geom, 24.0
+    ref = 24.0
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    return points, cells
 
 
 if __name__ == '__main__':
     import meshio
-    out = pg.generate_mesh(generate())
-    meshio.write('subdomains.vtu', *out)
+    meshio.write('subdomains.vtu', *test())

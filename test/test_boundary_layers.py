@@ -1,10 +1,12 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-import pygmsh as pg
+import pygmsh
+
+from helpers import compute_volume
 
 
-def generate():
-    geom = pg.Geometry()
+def test():
+    geom = pygmsh.Geometry()
 
     poly = geom.add_polygon([
         [0.0, 0.0, 0.0],
@@ -36,10 +38,13 @@ def generate():
 
     geom.add_background_field([field0, field1])
 
-    return geom, 4.0
+    ref = 4.0
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    return points, cells
 
 
 if __name__ == '__main__':
     import meshio
-    out = pg.generate_mesh(generate()[0])
+    out = test()
     meshio.write('boundary_layers.vtu', *out)

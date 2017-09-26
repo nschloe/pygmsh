@@ -5,7 +5,7 @@ from .point import Point
 
 
 class Bspline(LineBase):
-    def __init__(self, control_points):
+    def __init__(self, control_points, factory_type):
         super(Bspline, self).__init__()
 
         for c in control_points:
@@ -14,9 +14,12 @@ class Bspline(LineBase):
 
         self.control_points = control_points
 
+        # OpenCASCADE: Spline creates Bsplines
+        name = 'BSpline' if factory_type == 'Built-in' else 'Spline'
+
         self.code = '\n'.join([
             '{} = newl;'.format(self.id),
-            'BSpline({}) = {{{}}};'.format(
-                self.id, ', '.join([c.id for c in self.control_points])
+            '{}({}) = {{{}}};'.format(
+                name, self.id, ', '.join([c.id for c in self.control_points])
             )])
         return
