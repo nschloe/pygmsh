@@ -372,12 +372,15 @@ class Geometry(object):
         # lateral surfaces can be deduced only if we start from a SurfaceBase
         if isinstance(input_entity, SurfaceBase):
             # out[0]` is the surface, out[1] the top, and everything after that
-            # the sides, cf.<http://gmsh.info/doc/texinfo/gmsh.html#Extrusions>.
-            # each lateral surface has 4 edges: the one from input_entity,
-            # the one from top, and the two lines (or splines) connecting their
-            # extreme points.
-            lat = [SurfaceBase('{}[{}]'.format(name, i+2), 4) \
-              for i in range(input_entity.num_edges)]
+            # the sides, cf.
+            # <http://gmsh.info/doc/texinfo/gmsh.html#Extrusions>. Each
+            # lateral surface has 4 edges: the one from input_entity, the one
+            # from top, and the two lines (or splines) connecting their extreme
+            # points.
+            lat = [
+                SurfaceBase('{}[{}]'.format(name, i+2), 4)
+                for i in range(input_entity.num_edges)
+                ]
 
         return top, extruded, lat
 
@@ -389,12 +392,13 @@ class Geometry(object):
             tool_entity,
             delete=True
             ):
-        '''Boolean operations, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
-        input_entity and tool_entity are called object and tool in gmsh
-        documentation.
+        '''Boolean operations, see
+        http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
+        and tool_entity are called object and tool in gmsh documentation.
         '''
         assert self._FACTORY_TYPE == 'OpenCASCADE', \
-            'Boolean operations are supported only with the OpenCASCADE factory.'
+            'Boolean operations are supported only ' \
+            'with the OpenCASCADE factory.'
         self._BOOLEAN_ID += 1
 
         shape_type = None
@@ -411,7 +415,8 @@ class Geometry(object):
                 entities.append(Dummy('{}'.format(ie.surface.id)))
             else:
                 assert isinstance(ie, VolumeBase), \
-                    'Illegal input entity ({}) for Boolean operation.'.format(type(ie))
+                    'Illegal input entity ({}) ' \
+                    'for Boolean operation.'.format(type(ie))
                 shape_type = 'Volume'
                 entities.append(Dummy('{}'.format(ie.id)))
 
@@ -425,7 +430,8 @@ class Geometry(object):
                 tools.append(Dummy('{}'.format(te.surface.id)))
             else:
                 assert isinstance(te, VolumeBase), \
-                    'Illegal tool entity ({}) for Boolean operation.'.format(type(te))
+                    'Illegal tool entity ({}) ' \
+                    'for Boolean operation.'.format(type(te))
                 tools.append(Dummy('{}'.format(te.id)))
 
         # out[] = BooleanDifference { boolean-list } { boolean-list }
@@ -458,9 +464,9 @@ class Geometry(object):
         return shapes
 
     def boolean_intersection(self, *args, **kwargs):
-        '''Boolean intersection, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
-        input_entity and tool_entity are called object and tool in gmsh
-        documentation.
+        '''Boolean intersection, see
+        http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
+        and tool_entity are called object and tool in gmsh documentation.
         '''
         return self._boolean_operation('BooleanIntersection', *args, **kwargs)
 
@@ -472,16 +478,16 @@ class Geometry(object):
         return self._boolean_operation('BooleanUnion', *args, **kwargs)
 
     def boolean_difference(self, *args, **kwargs):
-        '''Boolean difference, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
-        input_entity and tool_entity are called object and tool in gmsh
-        documentation.
+        '''Boolean difference, see
+        http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
+        and tool_entity are called object and tool in gmsh documentation.
         '''
         return self._boolean_operation('BooleanDifference', *args, **kwargs)
 
     def boolean_fragments(self, *args, **kwargs):
-        '''Boolean fragments, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
-        input_entity and tool_entity are called object and tool in gmsh
-        documentation.
+        '''Boolean fragments, see
+        http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
+        and tool_entity are called object and tool in gmsh documentation.
         '''
         return self._boolean_operation('BooleanFragments', *args, **kwargs)
 
@@ -533,7 +539,9 @@ class Geometry(object):
                 'Field[{}].hwall_n= {!r};'.format(name, hwall_n)
                 )
         if ratio:
-            self._GMSH_CODE.append('Field[{}].ratio= {!r};'.format(name, ratio))
+            self._GMSH_CODE.append(
+                'Field[{}].ratio= {!r};'.format(name, ratio)
+                )
         if thickness:
             self._GMSH_CODE.append(
                 'Field[{}].thickness= {!r};'.format(name, thickness)
@@ -903,8 +911,8 @@ class Geometry(object):
         # Extrude() macro returns an array; the first [0] entry in the array is
         # the entity that has been extruded at the far end. This can be used
         # for the following Extrude() step.  The second [1] entry of the array
-        # is the surface that was created by the extrusion. The third [2-end] is
-        # a list of all the planes of the lateral surface.
+        # is the surface that was created by the extrusion. The third [2-end]
+        # is a list of all the planes of the lateral surface.
         previous = c.plane_surface
         all_volumes = []
         num_steps = 3

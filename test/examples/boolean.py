@@ -4,19 +4,26 @@ import pygmsh as pg
 
 
 def generate():
-    geom = pg.Geometry()
     lcar = 0.1
 
+    if pg.get_gmsh_major_version() == 2:
+        geom = pg.Geometry()
+        rectangle = geom.add_rectangle(
+                -1.0, 1.0,
+                -1.0, 1.0,
+                0.0,
+                lcar
+                )
+        return geom, 4.0
+
+    # boolean operations are only supported with OpenCASCADE
+    geom = pg.Geometry(factory_type='OpenCASCADE')
     rectangle = geom.add_rectangle(
             -1.0, 1.0,
             -1.0, 1.0,
             0.0,
             lcar
             )
-
-    if geom.get_gmsh_major() == 2:
-        # boolean operations are not supported in gmsh 2
-        return geom, 4.0
 
     circle_w = geom.add_circle(
             [-1.0, 0.0, 0.0],
@@ -32,8 +39,7 @@ def generate():
             num_sections=4
             )
 
-    geom.set_factory('OpenCASCADE')
-    _ = geom.boolean_union(
+    geom.boolean_union(
         [rectangle.surface],
         [circle_w.plane_surface, circle_e.plane_surface]
         )
@@ -58,8 +64,7 @@ def generate():
             num_sections=4
             )
 
-    geom.set_factory('OpenCASCADE')
-    _ = geom.boolean_intersection(
+    geom.boolean_intersection(
         [rectangle2.surface],
         [circle2_w.plane_surface, circle2_e.plane_surface]
         )
@@ -84,8 +89,7 @@ def generate():
             num_sections=4
             )
 
-    geom.set_factory('OpenCASCADE')
-    _ = geom.boolean_difference(
+    geom.boolean_difference(
         [rectangle3.surface],
         [circle3_w.plane_surface, circle3_e.plane_surface]
         )
