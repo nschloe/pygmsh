@@ -5,6 +5,7 @@ from ..helpers import get_gmsh_major_version, _is_string
 
 from .ball import Ball
 from .box import Box
+from .cylinder import Cylinder
 from .disk import Disk
 from .dummy import Dummy
 from .line_base import LineBase
@@ -67,6 +68,11 @@ class Geometry(object):
 
     def add_box(self, *args, **kwargs):
         p = Box(*args, **kwargs)
+        self._GMSH_CODE.append(p.code)
+        return p
+
+    def add_cylinder(self, *args, **kwargs):
+        p = Cylinder(*args, **kwargs)
         self._GMSH_CODE.append(p.code)
         return p
 
