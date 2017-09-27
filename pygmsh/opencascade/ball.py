@@ -42,7 +42,7 @@ class Ball(VolumeBase):
         args = ', '.join(['{}'.format(arg) for arg in args])
 
         self.code = '\n'.join([
-            '{} = news;'.format(self.id),
+            '{} = newv;'.format(self.id),
             'Sphere({}) = {{{}}};'.format(self.id, args)
             ])
         return
