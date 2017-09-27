@@ -2,7 +2,6 @@
 #
 from __future__ import print_function
 
-
 from .__about__ import (
         __version__,
         __author__,
@@ -10,9 +9,10 @@ from .__about__ import (
         __website__,
         )
 
-from .geometry import Geometry
+from . import built_in
+from . import opencascade
 # pylint: disable=wildcard-import
-from .helper import *
+from .helpers import *
 
 try:
     import pipdate
@@ -21,8 +21,3 @@ except ImportError:
 else:
     if pipdate.needs_checking(__name__):
         print(pipdate.check(__name__, __version__))
-
-__all__ = [
-        'geometry',
-        'helper'
-        ]
