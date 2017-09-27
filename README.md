@@ -71,10 +71,10 @@ Example:
 ```python,test
 import pygmsh
 
-  geom = pygmsh.opencascade.Geometry(
-    characteristic_length_min=0.1,
-    characteristic_length_max=0.1,
-    )
+geom = pygmsh.opencascade.Geometry(
+  characteristic_length_min=0.1,
+  characteristic_length_max=0.1,
+  )
 
 rectangle = geom.add_rectangle(-1.0, -1.0, 0.0, 2.0, 2.0)
 disk1 = geom.add_disk(-1.2, 0.0, 0.0, 0.5)
