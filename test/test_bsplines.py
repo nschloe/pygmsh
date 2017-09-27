@@ -6,7 +6,7 @@ from helpers import compute_volume
 
 
 def test():
-    geom = pygmsh.Geometry()
+    geom = pygmsh.built_in.Geometry()
 
     lcar = 0.1
     p1 = geom.add_point([0.0, 0.0, 0.0], lcar)

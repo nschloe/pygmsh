@@ -8,7 +8,7 @@ from helpers import compute_volume
 
 
 def test():
-    geom = pygmsh.Geometry()
+    geom = pygmsh.built_in.Geometry()
     geom.add_box(0, 1, 0, 1, 0, 1, 1.0)
 
     ref = 1.0

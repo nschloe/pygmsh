@@ -7,7 +7,7 @@ from helpers import compute_volume
 
 
 def test():
-    geom = pygmsh.Geometry()
+    geom = pygmsh.built_in.Geometry()
 
     lcar = 0.1
 

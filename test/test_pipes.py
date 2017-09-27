@@ -10,7 +10,7 @@ from helpers import compute_volume
 def test():
     '''Pipe with double-ring enclosure, rotated in space.
     '''
-    geom = pygmsh.Geometry()
+    geom = pygmsh.built_in.Geometry()
 
     sqrt2on2 = 0.5*np.sqrt(2.)
     R = pygmsh.rotation_matrix([sqrt2on2, sqrt2on2, 0], np.pi/6.0)

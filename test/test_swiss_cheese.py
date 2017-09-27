@@ -8,7 +8,7 @@ from helpers import compute_volume
 
 
 def test():
-    geom = pygmsh.Geometry()
+    geom = pygmsh.built_in.Geometry()
 
     X0 = np.array([
         [+0.0, +0.0, 0.0],

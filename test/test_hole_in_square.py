@@ -26,7 +26,7 @@ def test():
         ])
 
     # Create geometric object
-    geom = pygmsh.Geometry()
+    geom = pygmsh.built_in.Geometry()
 
     # Create square hole
     squareHole = geom.add_polygon(

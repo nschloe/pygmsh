@@ -9,7 +9,7 @@ from helpers import compute_volume
 
 
 def test():
-    geom = pygmsh.Geometry()
+    geom = pygmsh.built_in.Geometry()
 
     circle = geom.add_circle(
             x0=[0.5, 0.5, 0.0],

@@ -8,7 +8,7 @@ from helpers import compute_volume
 
 
 def test():
-    geom = pygmsh.Geometry()
+    geom = pygmsh.built_in.Geometry()
 
     # internal radius of torus
     irad = 0.15

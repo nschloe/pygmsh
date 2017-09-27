@@ -6,7 +6,7 @@ from helpers import compute_volume
 
 
 def test():
-    geom = pygmsh.Geometry()
+    geom = pygmsh.built_in.Geometry()
 
     geom.add_rectangle(
             0.0, 1.0,

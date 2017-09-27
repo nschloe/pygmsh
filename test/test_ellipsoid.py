@@ -9,7 +9,7 @@ from helpers import compute_volume
 
 
 def test():
-    geom = pygmsh.Geometry()
+    geom = pygmsh.built_in.Geometry()
     geom.add_ellipsoid(
         [0.0, 0.0, 0.0],
         [1.0, 0.5, 0.75],

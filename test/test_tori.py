@@ -10,7 +10,7 @@ from helpers import compute_volume
 def test():
     '''Torus, rotated in space.
     '''
-    geom = pygmsh.Geometry()
+    geom = pygmsh.built_in.Geometry()
 
     R = np.array([
         [1.0, 0.0, 0.0],

@@ -6,15 +6,9 @@ import pytest
 from helpers import compute_volume
 
 
-@pytest.mark.parametrize(
-    'factory_type',
-    [
-        'Built-in',
-        'OpenCASCADE',
-    ]
-    )
-def test(factory_type):
-    geom = pygmsh.Geometry(factory_type)
+def test():
+    geom = pygmsh.built_in.Geometry()
+
     geom.add_circle(
             [0.0, 0.0, 0.0],
             1.0,
@@ -34,4 +28,4 @@ def test(factory_type):
 
 if __name__ == '__main__':
     import meshio
-    meshio.write('circle.vtk', *test('Built-in'))
+    meshio.write('circle.vtk', *test())

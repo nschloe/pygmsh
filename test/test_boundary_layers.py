@@ -6,7 +6,7 @@ from helpers import compute_volume
 
 
 def test():
-    geom = pygmsh.Geometry()
+    geom = pygmsh.built_in.Geometry()
 
     poly = geom.add_polygon([
         [0.0, 0.0, 0.0],
