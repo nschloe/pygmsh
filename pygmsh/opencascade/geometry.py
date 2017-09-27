@@ -115,7 +115,7 @@ class Geometry(object):
             SurfaceBase: 'Surface',
             VolumeBase: 'Volume',
             }
-        for ldt in legal_dim_types.keys():
+        for ldt in legal_dim_types:
             if isinstance(input_entities[0], ldt):
                 dim_type = ldt
                 break

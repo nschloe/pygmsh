@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 import pygmsh
-import pytest
 
 from helpers import compute_volume
 

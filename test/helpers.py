@@ -23,8 +23,3 @@ def compute_volume(points, cells):
         assert cells.shape[1] == 3
         mesh = voropy.mesh_tri.MeshTri(points, cells)
     return math.fsum(mesh.cell_volumes)
-
-
-def get_volume(geom):
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
-    return _compute_volume(points, cells)

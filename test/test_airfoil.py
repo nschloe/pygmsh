@@ -156,5 +156,4 @@ def test():
 
 if __name__ == '__main__':
     import meshio
-    points, cells = test()
-    meshio.write('airfoil.vtu', points, cells)
+    meshio.write('airfoil.vtu', *test())
