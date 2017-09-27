@@ -11,6 +11,7 @@ from .dummy import Dummy
 from .line_base import LineBase
 from .rectangle import Rectangle
 from .surface_base import SurfaceBase
+from .torus import Torus
 from .volume_base import VolumeBase
 
 
@@ -73,6 +74,11 @@ class Geometry(object):
 
     def add_cylinder(self, *args, **kwargs):
         p = Cylinder(*args, **kwargs)
+        self._GMSH_CODE.append(p.code)
+        return p
+
+    def add_torus(self, *args, **kwargs):
+        p = Torus(*args, **kwargs)
         self._GMSH_CODE.append(p.code)
         return p
 
@@ -218,4 +224,3 @@ class Geometry(object):
             extruded = Dummy(extruded)
 
         return top, extruded
-
