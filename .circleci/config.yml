@@ -37,7 +37,6 @@ jobs:
       - run: pip3 install .
       # lint
       - run: pylint pygmsh/
-      - run: pylint test/examples/*py
       # make sure that rst converts correctly
       - run: apt install -y pandoc
       - run: cat README.md | sed -e 's_<img src="\([^"]*\)" width="\([^"]*\)">_![](\1){width="\2"}_g' -e 's/```python,test/```python/g' > /tmp/README.md

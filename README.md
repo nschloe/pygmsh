@@ -58,7 +58,8 @@ meshio.write('test.vtu', points, cells, cell_data=cell_data)
 The output file can be visualized with various tools, e.g.,
 [ParaView](http://www.paraview.org/).
 
-You will find the above mesh in the directory `test/examples/` along with other
+You will find the above mesh in the directory
+[`test/`](https://github.com/nschloe/pygmsh/tree/master/test/) along with other
 small examples.
 
 ### Installation
@@ -78,7 +79,7 @@ import pygmsh as pg
 ```
 and make use of all the goodies the module provides. The
 [documentation](http://pygmsh.readthedocs.org/) and the examples under
-[`test/examples/`](https://github.com/nschloe/pygmsh/tree/master/test/examples)
+[`test/`](https://github.com/nschloe/pygmsh/tree/master/test/)
 might inspire you.
 
 
