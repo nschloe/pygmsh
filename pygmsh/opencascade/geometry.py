@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 #
 from ..__about__ import __version__
-from ..helpers import get_gmsh_major_version
+from ..helpers import get_gmsh_major_version, _is_string
 
 from .disk import Disk
-from .rectangle import Rectangle
+from .dummy import Dummy
 from .line_base import LineBase
+from .rectangle import Rectangle
 from .surface_base import SurfaceBase
 from .volume_base import VolumeBase
 
@@ -17,6 +18,7 @@ class Geometry(object):
             characteristic_length_max=None
             ):
         self._BOOLEAN_ID = 0
+        self._EXTRUDE_ID = 0
         self._GMSH_MAJOR = get_gmsh_major_version()
         self._GMSH_CODE = [
             '// This code was created by PyGmsh v{}.'.format(__version__),
@@ -105,18 +107,6 @@ class Geometry(object):
                 'Delete;' if delete else ''
                 ))
 
-        # # currently only the newly generated objects can be retrieved
-        # shapes = []
-        # for i, entity in enumerate(input_entity):
-        #     shape = '{}[{}]'.format(name, i)
-
-        #     if isinstance(entity, LineBase):
-        #         shapes.append(LineBase(shape))
-        #     elif isinstance(entity, SurfaceBase):
-        #         shapes.append(SurfaceBase(shape))
-        #     else:
-        #         shapes.append(VolumeBase(shape))
-
         return dim_type(name)
 
     def boolean_intersection(self, entities, delete=True):
@@ -157,10 +147,7 @@ class Geometry(object):
     def extrude(
             self,
             input_entity,
-            translation_axis=None,
-            rotation_axis=None,
-            point_on_axis=None,
-            angle=None,
+            translation_axis
             ):
         '''Extrusion (translation + rotation) of any entity along a given
         translation_axis, around a given rotation_axis, about a given angle. If
@@ -182,38 +169,14 @@ class Geometry(object):
 
         # out[] = Extrude{0,1,0}{ Line{1}; };
         name = 'ex{}'.format(self._EXTRUDE_ID)
-        if translation_axis is not None and rotation_axis is not None:
-            self._GMSH_CODE.append(
-                '{}[] = Extrude{{{{{}}}, {{{}}}, {{{}}}, {}}}{{{};}};'
-                .format(
-                    name,
-                    ','.join(repr(x) for x in translation_axis),
-                    ','.join(repr(x) for x in rotation_axis),
-                    ','.join(repr(x) for x in point_on_axis),
-                    angle,
-                    entity.id
-                ))
 
-        elif translation_axis is not None:
-            # Only translation
-            self._GMSH_CODE.append(
-                '{}[] = Extrude{{{}}}{{{};}};'.format(
-                    name,
-                    ','.join(repr(x) for x in translation_axis),
-                    entity.id
-                ))
-        else:
-            assert rotation_axis is not None, \
-                'Specify at least translation or rotation.'
-            # Only rotation
-            self._GMSH_CODE.append(
-                '{}[] = Extrude{{{{{}}}, {{{}}}, {}}}{{{};}};'.format(
-                    name,
-                    ','.join(repr(x) for x in rotation_axis),
-                    ','.join(repr(x) for x in point_on_axis),
-                    angle,
-                    entity.id
-                ))
+        # Only translation
+        self._GMSH_CODE.append(
+            '{}[] = Extrude{{{}}}{{{};}};'.format(
+                name,
+                ','.join(repr(x) for x in translation_axis),
+                entity.id
+            ))
 
         # From <http://www.manpagez.com/info/gmsh/gmsh-2.4.0/gmsh_66.php>:
         #
@@ -228,26 +191,12 @@ class Geometry(object):
         if isinstance(input_entity, LineBase):
             top = LineBase(top)
             # A surface extruded from a single line has always 4 edges
-            extruded = SurfaceBase(extruded, 4)
+            extruded = SurfaceBase(extruded)
         elif isinstance(input_entity, SurfaceBase):
-            top = SurfaceBase(top, input_entity.num_edges)
+            top = SurfaceBase(top)
             extruded = VolumeBase(extruded)
         else:
             top = Dummy(top)
             extruded = Dummy(extruded)
 
-        lat = []
-        # lateral surfaces can be deduced only if we start from a SurfaceBase
-        if isinstance(input_entity, SurfaceBase):
-            # out[0]` is the surface, out[1] the top, and everything after that
-            # the sides, cf.
-            # <http://gmsh.info/doc/texinfo/gmsh.html#Extrusions>. Each
-            # lateral surface has 4 edges: the one from input_entity, the one
-            # from top, and the two lines (or splines) connecting their extreme
-            # points.
-            lat = [
-                SurfaceBase('{}[{}]'.format(name, i+2), 4)
-                for i in range(input_entity.num_edges)
-                ]
-
-        return top, extruded, lat
+        return top, extruded
