@@ -107,7 +107,7 @@ class Geometry(object):
                 'Delete;' if delete else ''
                 ))
 
-        return dim_type(name)
+        return dim_type(id0=name, is_list=True)
 
     def boolean_intersection(self, entities, delete=True):
         '''Boolean intersection, see
