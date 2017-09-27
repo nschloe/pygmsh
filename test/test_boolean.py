@@ -15,29 +15,11 @@ def test():
         characteristic_length_min=0.1,
         characteristic_length_max=0.1,
         )
-    rectangle = geom.add_rectangle(
-            -1.0, -1.0, 0.0,
-            2.0, 2.0
-            )
+    rectangle = geom.add_rectangle(-1.0, -1.0, 0.0, 2.0, 2.0)
+    disk_w = geom.add_disk(-1.0, 0.0, 0.0, 0.5)
+    disk_e = geom.add_disk(+1.0, 0.0, 0.0, 0.5)
 
-    # circle_w = geom.add_circle(
-    #         [-1.0, 0.0, 0.0],
-    #         0.5,
-    #         lcar,
-    #         num_sections=4
-    #         )
-
-    # circle_e = geom.add_circle(
-    #         [1.0, 0.0, 0.0],
-    #         0.5,
-    #         lcar,
-    #         num_sections=4
-    #         )
-
-    # geom.boolean_union(
-    #     [rectangle.surface],
-    #     [circle_w.plane_surface, circle_e.plane_surface]
-    #     )
+    geom.boolean_union([rectangle, disk_w, disk_e])
 
     # rectangle2 = geom.add_rectangle(
     #         2.0, 4.0,

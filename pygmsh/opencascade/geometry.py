@@ -3,7 +3,11 @@
 from ..__about__ import __version__
 from ..helpers import get_gmsh_major_version
 
+from .disk import Disk
 from .rectangle import Rectangle
+from .line_base import LineBase
+from .surface_base import SurfaceBase
+from .volume_base import VolumeBase
 
 
 class Geometry(object):
@@ -12,6 +16,7 @@ class Geometry(object):
             characteristic_length_min=None,
             characteristic_length_max=None
             ):
+        self._BOOLEAN_ID = 0
         self._GMSH_MAJOR = get_gmsh_major_version()
         self._GMSH_CODE = [
             '// This code was created by PyGmsh v{}.'.format(__version__),
@@ -46,109 +51,139 @@ class Geometry(object):
         self._GMSH_CODE.append(p.code)
         return p
 
-    # # pylint: disable=too-many-branches
-    # def _boolean_operation(
-    #         self,
-    #         operation,
-    #         input_entity,
-    #         tool_entity,
-    #         delete=True
-    #         ):
-    #     '''Boolean operations, see
-    #     http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
-    #     and tool_entity are called object and tool in gmsh documentation.
-    #     '''
-    #     assert self._FACTORY_TYPE == 'OpenCASCADE', \
-    #         'Boolean operations are supported only ' \
-    #         'with the OpenCASCADE factory.'
-    #     self._BOOLEAN_ID += 1
+    def add_disk(self, *args, **kwargs):
+        p = Disk(*args, **kwargs)
+        self._GMSH_CODE.append(p.code)
+        return p
 
-    #     shape_type = None
-    #     entities = []
-    #     for ie in input_entity:
-    #         if isinstance(ie, LineBase):
-    #             shape_type = 'Line'
-    #             entities.append(Dummy('{}'.format(ie.id)))
-    #         elif isinstance(ie, SurfaceBase):
-    #             shape_type = 'Surface'
-    #             entities.append(Dummy('{}'.format(ie.id)))
-    #         elif hasattr(ie, 'surface'):
-    #             shape_type = 'Surface'
-    #             entities.append(Dummy('{}'.format(ie.surface.id)))
-    #         else:
-    #             assert isinstance(ie, VolumeBase), \
-    #                 'Illegal input entity ({}) ' \
-    #                 'for Boolean operation.'.format(type(ie))
-    #             shape_type = 'Volume'
-    #             entities.append(Dummy('{}'.format(ie.id)))
+    # pylint: disable=too-many-branches
+    def _boolean_operation(
+            self,
+            operation,
+            input_entities,
+            tool_entities,
+            delete=True
+            ):
+        '''Boolean operations, see
+        http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
+        and tool_entity are called object and tool in gmsh documentation.
+        '''
+        self._BOOLEAN_ID += 1
 
-    #     tools = []
-    #     for te in tool_entity:
-    #         if isinstance(te, LineBase):
-    #             tools.append(Dummy('{}'.format(te.id)))
-    #         elif isinstance(te, SurfaceBase):
-    #             tools.append(Dummy('{}'.format(te.id)))
-    #         elif hasattr(te, 'surface'):
-    #             tools.append(Dummy('{}'.format(te.surface.id)))
-    #         else:
-    #             assert isinstance(te, VolumeBase), \
-    #                 'Illegal tool entity ({}) ' \
-    #                 'for Boolean operation.'.format(type(te))
-    #             tools.append(Dummy('{}'.format(te.id)))
+        # assert that all entities are of the same dimensionality
+        dim_type = None
+        legal_dim_types = {
+            LineBase: 'Line',
+            SurfaceBase: 'Surface',
+            VolumeBase: 'Volume',
+            }
+        for ldt in legal_dim_types.keys():
+            if isinstance(input_entities[0], ldt):
+                dim_type = ldt
+                break
+        assert dim_type is not None, \
+            'Illegal input type \'{}\' for Boolean operation.'.format(
+                type(input_entities[0])
+                )
+        for e in input_entities[1:] + tool_entities:
+            assert isinstance(e, dim_type), \
+                'Incompatible input type \'{}\' for Boolean operation.'.format(
+                    type(e)
+                    )
 
-    #     # out[] = BooleanDifference { boolean-list } { boolean-list }
-    #     name = 'bo{}'.format(self._BOOLEAN_ID)
-    #     self._GMSH_CODE.append(
-    #         '{}[] = {}{{{} {{{}}}; {}}} {{{} {{{}}}; {}}};'
-    #         .format(
-    #             name,
-    #             operation,
-    #             shape_type,
-    #             ','.join(e.id for e in entities),
-    #             'Delete;' if delete else '',
-    #             shape_type,
-    #             ','.join(e.id for e in tools),
-    #             'Delete;' if delete else ''
-    #         ))
+        # shape_type = None
+        # entities = []
+        # for ie in input_entity:
+        #     if isinstance(ie, LineBase):
+        #         shape_type = 'Line'
+        #         entities.append(Dummy('{}'.format(ie.id)))
+        #     elif isinstance(ie, SurfaceBase):
+        #         shape_type = 'Surface'
+        #         entities.append(Dummy('{}'.format(ie.id)))
+        #     elif hasattr(ie, 'surface'):
+        #         shape_type = 'Surface'
+        #         entities.append(Dummy('{}'.format(ie.surface.id)))
+        #     else:
+        #         assert isinstance(ie, VolumeBase), \
+        #             'Illegal input entity ({}) ' \
+        #             'for Boolean operation.'.format(type(ie))
+        #         shape_type = 'Volume'
+        #         entities.append(Dummy('{}'.format(ie.id)))
 
-    #     # currently only the new generated objects can be retrieved
-    #     shapes = []
-    #     for i, entity in enumerate(input_entity):
-    #         shape = '{}[{}]'.format(name, i)
+        # tools = []
+        # for te in tool_entity:
+        #     if isinstance(te, LineBase):
+        #         tools.append(Dummy('{}'.format(te.id)))
+        #     elif isinstance(te, SurfaceBase):
+        #         tools.append(Dummy('{}'.format(te.id)))
+        #     elif hasattr(te, 'surface'):
+        #         tools.append(Dummy('{}'.format(te.surface.id)))
+        #     else:
+        #         assert isinstance(te, VolumeBase), \
+        #             'Illegal tool entity ({}) ' \
+        #             'for Boolean operation.'.format(type(te))
+        #         tools.append(Dummy('{}'.format(te.id)))
 
-    #         if isinstance(entity, LineBase):
-    #             shapes.append(LineBase(shape))
-    #         elif isinstance(entity, SurfaceBase):
-    #             shapes.append(SurfaceBase(shape))
-    #         else:
-    #             shapes.append(VolumeBase(shape))
+        # out[] = BooleanDifference { boolean-list } { boolean-list }
+        name = 'bo{}'.format(self._BOOLEAN_ID)
+        self._GMSH_CODE.append(
+            '{}[] = {}{{{} {{{}}}; {}}} {{{} {{{}}}; {}}};'
+            .format(
+                name,
+                operation,
+                legal_dim_types[dim_type],
+                ','.join(e.id for e in input_entities),
+                'Delete;' if delete else '',
+                legal_dim_types[dim_type],
+                ','.join(e.id for e in tool_entities),
+                'Delete;' if delete else ''
+                ))
 
-    #     return shapes
+        # # currently only the newly generated objects can be retrieved
+        # shapes = []
+        # for i, entity in enumerate(input_entity):
+        #     shape = '{}[{}]'.format(name, i)
 
-    # def boolean_intersection(self, *args, **kwargs):
-    #     '''Boolean intersection, see
-    #     http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
-    #     and tool_entity are called object and tool in gmsh documentation.
-    #     '''
-    #     return self._boolean_operation('BooleanIntersection', *args, **kwargs)
+        #     if isinstance(entity, LineBase):
+        #         shapes.append(LineBase(shape))
+        #     elif isinstance(entity, SurfaceBase):
+        #         shapes.append(SurfaceBase(shape))
+        #     else:
+        #         shapes.append(VolumeBase(shape))
 
-    # def boolean_union(self, *args, **kwargs):
-    #     '''Boolean union, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
-    #     input_entity and tool_entity are called object and tool in gmsh
-    #     documentation.
-    #     '''
-    #     return self._boolean_operation('BooleanUnion', *args, **kwargs)
+        return  # shapes
 
-    # def boolean_difference(self, *args, **kwargs):
-    #     '''Boolean difference, see
-    #     http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
-    #     and tool_entity are called object and tool in gmsh documentation.
-    #     '''
-    #     return self._boolean_operation('BooleanDifference', *args, **kwargs)
+    def boolean_intersection(self, entities, delete=True):
+        '''Boolean intersection, see
+        http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
+        and tool_entity are called object and tool in gmsh documentation.
+        '''
+        assert len(entities) > 1
+        return self._boolean_operation(
+                'BooleanIntersection',
+                [entities[0]], entities[1:], delete=delete
+                )
 
-    # def boolean_fragments(self, *args, **kwargs):
-    #     '''Boolean fragments, see
-    #     http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
-    #     and tool_entity are called object and tool in gmsh documentation.
-    #     '''
-    #     return self._boolean_operation('BooleanFragments', *args, **kwargs)
+    def boolean_union(self, entities, delete=True):
+        '''Boolean union, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
+        input_entity and tool_entity are called object and tool in gmsh
+        documentation.
+        '''
+        return self._boolean_operation(
+                'BooleanUnion',
+                [entities[0]], entities[1:], delete=delete
+                )
+
+    def boolean_difference(self, *args, **kwargs):
+        '''Boolean difference, see
+        http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
+        and tool_entity are called object and tool in gmsh documentation.
+        '''
+        return self._boolean_operation('BooleanDifference', *args, **kwargs)
+
+    def boolean_fragments(self, *args, **kwargs):
+        '''Boolean fragments, see
+        http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
+        and tool_entity are called object and tool in gmsh documentation.
+        '''
+        return self._boolean_operation('BooleanFragments', *args, **kwargs)
