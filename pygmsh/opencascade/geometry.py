@@ -3,6 +3,7 @@
 from ..__about__ import __version__
 from ..helpers import get_gmsh_major_version, _is_string
 
+from .ball import Ball
 from .disk import Disk
 from .dummy import Dummy
 from .line_base import LineBase
@@ -55,6 +56,11 @@ class Geometry(object):
 
     def add_disk(self, *args, **kwargs):
         p = Disk(*args, **kwargs)
+        self._GMSH_CODE.append(p.code)
+        return p
+
+    def add_ball(self, *args, **kwargs):
+        p = Ball(*args, **kwargs)
         self._GMSH_CODE.append(p.code)
         return p
 
@@ -200,3 +206,4 @@ class Geometry(object):
             extruded = Dummy(extruded)
 
         return top, extruded
+
