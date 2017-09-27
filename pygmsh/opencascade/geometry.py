@@ -91,40 +91,6 @@ class Geometry(object):
                     type(e)
                     )
 
-        # shape_type = None
-        # entities = []
-        # for ie in input_entity:
-        #     if isinstance(ie, LineBase):
-        #         shape_type = 'Line'
-        #         entities.append(Dummy('{}'.format(ie.id)))
-        #     elif isinstance(ie, SurfaceBase):
-        #         shape_type = 'Surface'
-        #         entities.append(Dummy('{}'.format(ie.id)))
-        #     elif hasattr(ie, 'surface'):
-        #         shape_type = 'Surface'
-        #         entities.append(Dummy('{}'.format(ie.surface.id)))
-        #     else:
-        #         assert isinstance(ie, VolumeBase), \
-        #             'Illegal input entity ({}) ' \
-        #             'for Boolean operation.'.format(type(ie))
-        #         shape_type = 'Volume'
-        #         entities.append(Dummy('{}'.format(ie.id)))
-
-        # tools = []
-        # for te in tool_entity:
-        #     if isinstance(te, LineBase):
-        #         tools.append(Dummy('{}'.format(te.id)))
-        #     elif isinstance(te, SurfaceBase):
-        #         tools.append(Dummy('{}'.format(te.id)))
-        #     elif hasattr(te, 'surface'):
-        #         tools.append(Dummy('{}'.format(te.surface.id)))
-        #     else:
-        #         assert isinstance(te, VolumeBase), \
-        #             'Illegal tool entity ({}) ' \
-        #             'for Boolean operation.'.format(type(te))
-        #         tools.append(Dummy('{}'.format(te.id)))
-
-        # out[] = BooleanDifference { boolean-list } { boolean-list }
         name = 'bo{}'.format(self._BOOLEAN_ID)
         self._GMSH_CODE.append(
             '{}[] = {}{{{} {{{}}}; {}}} {{{} {{{}}}; {}}};'
