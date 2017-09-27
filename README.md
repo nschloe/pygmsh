@@ -20,7 +20,7 @@ To create the above mesh, simply do
 import pygmsh as pg
 import numpy as np
 
-geom = pg.Geometry()
+geom = pg.built_in.Geometry()
 
 # Draw a cross.
 poly = geom.add_polygon([
