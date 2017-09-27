@@ -28,9 +28,9 @@ def test():
 
     geom.extrude(flat, [0, 0, 1])
 
-    ref = 4.0
+    ref = 2.436016718
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)
-    # assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
     return points, cells
 
 
