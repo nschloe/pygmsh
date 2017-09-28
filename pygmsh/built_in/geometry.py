@@ -48,7 +48,7 @@ class Geometry(object):
         self._GMSH_MAJOR = get_gmsh_major_version()
         self._TAKEN_PHYSICALGROUP_IDS = []
         self._GMSH_CODE = [
-                '// This code was created by PyGmsh v{}.'.format(__version__)
+                '// This code was created by pygmsh v{}.'.format(__version__)
                 ]
         return
 

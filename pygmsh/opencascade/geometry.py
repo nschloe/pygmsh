@@ -27,7 +27,7 @@ class Geometry(object):
         self._EXTRUDE_ID = 0
         self._GMSH_MAJOR = get_gmsh_major_version()
         self._GMSH_CODE = [
-            '// This code was created by PyGmsh v{}.'.format(__version__),
+            '// This code was created by pygmsh v{}.'.format(__version__),
             'SetFactory("OpenCASCADE");',
             ]
 
