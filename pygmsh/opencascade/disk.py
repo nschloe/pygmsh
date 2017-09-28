@@ -8,6 +8,8 @@ class Disk(SurfaceBase):
         super(Disk, self).__init__()
 
         assert len(x0) == 3
+        if radius1 is not None:
+            assert radius0 >= radius1
 
         self.x0 = x0
         self.radius0 = radius0

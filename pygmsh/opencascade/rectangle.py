@@ -12,6 +12,7 @@ class Rectangle(SurfaceBase):
         self.x0 = x0
         self.a = a
         self.b = b
+        self.corner_radius = corner_radius
         self.char_length = char_length
 
         args = list(x0) + [a, b]
