@@ -16,7 +16,7 @@ def test_union():
         characteristic_length_max=0.1,
         )
 
-    rectangle = geom.add_rectangle(-1.0, -1.0, 0.0, 2.0, 2.0)
+    rectangle = geom.add_rectangle([-1.0, -1.0, 0.0], 2.0, 2.0)
     disk_w = geom.add_disk([-1.0, 0.0, 0.0], 0.5)
     disk_e = geom.add_disk([+1.0, 0.0, 0.0], 0.5)
     geom.boolean_union([rectangle, disk_w, disk_e])
@@ -37,9 +37,9 @@ def test_intersection():
         characteristic_length_max=0.1,
         )
 
-    rectangle = geom.add_rectangle(-1.0, -1.0, 0.0, 2.0, 2.0)
-    disk_w = geom.add_disk(-1.0, 0.0, 0.0, 0.5)
-    disk_e = geom.add_disk(+1.0, 0.0, 0.0, 0.5)
+    rectangle = geom.add_rectangle([-1.0, -1.0, 0.0], 2.0, 2.0)
+    disk_w = geom.add_disk([-1.0, 0.0, 0.0], 0.5)
+    disk_e = geom.add_disk([+1.0, 0.0, 0.0], 0.5)
     geom.boolean_intersection([rectangle, disk_w, disk_e])
 
     ref = 0.7803612
@@ -58,7 +58,7 @@ def test_difference():
         characteristic_length_max=0.1,
         )
 
-    rectangle = geom.add_rectangle(-1.0, -1.0, 0.0, 2.0, 2.0)
+    rectangle = geom.add_rectangle([-1.0, -1.0, 0.0], 2.0, 2.0)
     disk_w = geom.add_disk([-1.0, 0.0, 0.0], 0.5)
     disk_e = geom.add_disk([+1.0, 0.0, 0.0], 0.5)
     geom.boolean_difference([rectangle], [disk_w, disk_e])
@@ -79,7 +79,7 @@ def test_all():
         characteristic_length_max=0.1,
         )
 
-    rectangle = geom.add_rectangle(-1.0, -1.0, 0.0, 2.0, 2.0)
+    rectangle = geom.add_rectangle([-1.0, -1.0, 0.0], 2.0, 2.0)
     disk1 = geom.add_disk([-1.0, 0.0, 0.0], 0.5)
     disk2 = geom.add_disk([+1.0, 0.0, 0.0], 0.5)
     union = geom.boolean_union([rectangle, disk1, disk2])
