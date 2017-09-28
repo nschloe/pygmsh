@@ -12,12 +12,13 @@ from helpers import compute_volume
     reason='requires Gmsh >= 3'
     )
 def test():
-    geom = pygmsh.opencascade.Geometry(
-        characteristic_length_min=0.1,
-        characteristic_length_max=0.1,
-        )
+    geom = pygmsh.opencascade.Geometry()
 
-    geom.add_ball([0.0, 0.0, 0.0], 1.0, x0=-0.9, x1=+0.9, alpha=0.5*pi)
+    geom.add_ball(
+        [0.0, 0.0, 0.0], 1.0, x0=-0.9, x1=+0.9,
+        alpha=0.5*pi,
+        char_length=0.1
+        )
 
     ref = 0.976088698545
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)

@@ -4,7 +4,10 @@ from .volume_base import VolumeBase
 
 
 class Ball(VolumeBase):
-    def __init__(self, center, radius, x0=None, x1=None, alpha=None):
+    def __init__(
+            self, center, radius, x0=None, x1=None, alpha=None,
+            char_length=None
+            ):
         '''Generate a solid ball.
 
         Parameters
@@ -26,11 +29,15 @@ class Ball(VolumeBase):
         alpha: float (optional)
            If specified and `alpha < 2*pi`, the points between `alpha` and
            `2*pi` w.r.t. to the x-y plane are not part of the object.
+
+        char_length: float (optional)
+           If specified, sets the `Characteristic Length` property.
         '''
         super(Ball, self).__init__()
 
         self.center = center
         self.radius = radius
+        self.char_length = char_length
 
         args = [center[0], center[1], center[2], radius]
         if x0 is not None:
@@ -41,8 +48,20 @@ class Ball(VolumeBase):
                     args.append(alpha)
         args = ', '.join(['{}'.format(arg) for arg in args])
 
-        self.code = '\n'.join([
+        code = [
             '{} = newv;'.format(self.id),
             'Sphere({}) = {{{}}};'.format(self.id, args)
-            ])
+            ]
+
+        if self.char_length:
+            code.extend([
+                'pts_{}[] = PointsOf{{Volume{{{}}};}};'.format(
+                    self.id, self.id
+                    ),
+                'Characteristic Length{{pts_{}[]}} = {};'.format(
+                    self.id, char_length
+                    ),
+                ])
+
+        self.code = '\n'.join(code)
         return

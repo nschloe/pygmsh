@@ -11,12 +11,9 @@ from helpers import compute_volume
     reason='requires Gmsh >= 3'
     )
 def test():
-    geom = pygmsh.opencascade.Geometry(
-        characteristic_length_min=0.1,
-        characteristic_length_max=0.1,
-        )
+    geom = pygmsh.opencascade.Geometry()
 
-    geom.add_box([0.0, 0.0, 0.0], [1, 2, 3])
+    geom.add_box([0.0, 0.0, 0.0], [1, 2, 3], char_length=0.1)
 
     ref = 6
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)
