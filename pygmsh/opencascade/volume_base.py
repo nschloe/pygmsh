@@ -16,3 +16,16 @@ class VolumeBase(object):
         if is_list:
             self.id += '[]'
         return
+
+    def char_length_code(self, char_length):
+        if char_length is None:
+            return []
+
+        return [
+            'pts_{}[] = PointsOf{{Volume{{{}}};}};'.format(
+                self.id, self.id
+                ),
+            'Characteristic Length{{pts_{}[]}} = {};'.format(
+                self.id, char_length
+                ),
+            ]

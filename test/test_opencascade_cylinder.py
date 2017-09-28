@@ -12,12 +12,12 @@ from helpers import compute_volume
     reason='requires Gmsh >= 3'
     )
 def test():
-    geom = pygmsh.opencascade.Geometry(
-        characteristic_length_min=0.1,
-        characteristic_length_max=0.1,
-        )
+    geom = pygmsh.opencascade.Geometry()
 
-    geom.add_cylinder([0.0, 0.0, 0.0], [0.0, 0.0, 1.0], 0.5, 0.25*pi)
+    geom.add_cylinder(
+        [0.0, 0.0, 0.0], [0.0, 0.0, 1.0], 0.5, 0.25*pi,
+        char_length=0.1
+        )
 
     ref = 0.097625512963
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)
