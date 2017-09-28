@@ -17,8 +17,8 @@ def test_union():
         )
 
     rectangle = geom.add_rectangle(-1.0, -1.0, 0.0, 2.0, 2.0)
-    disk_w = geom.add_disk(-1.0, 0.0, 0.0, 0.5)
-    disk_e = geom.add_disk(+1.0, 0.0, 0.0, 0.5)
+    disk_w = geom.add_disk([-1.0, 0.0, 0.0], 0.5)
+    disk_e = geom.add_disk([+1.0, 0.0, 0.0], 0.5)
     geom.boolean_union([rectangle, disk_w, disk_e])
 
     ref = 4.780361
@@ -59,8 +59,8 @@ def test_difference():
         )
 
     rectangle = geom.add_rectangle(-1.0, -1.0, 0.0, 2.0, 2.0)
-    disk_w = geom.add_disk(-1.0, 0.0, 0.0, 0.5)
-    disk_e = geom.add_disk(+1.0, 0.0, 0.0, 0.5)
+    disk_w = geom.add_disk([-1.0, 0.0, 0.0], 0.5)
+    disk_e = geom.add_disk([+1.0, 0.0, 0.0], 0.5)
     geom.boolean_difference([rectangle], [disk_w, disk_e])
 
     ref = 3.2196387
@@ -80,12 +80,12 @@ def test_all():
         )
 
     rectangle = geom.add_rectangle(-1.0, -1.0, 0.0, 2.0, 2.0)
-    disk1 = geom.add_disk(-1.0, 0.0, 0.0, 0.5)
-    disk2 = geom.add_disk(+1.0, 0.0, 0.0, 0.5)
+    disk1 = geom.add_disk([-1.0, 0.0, 0.0], 0.5)
+    disk2 = geom.add_disk([+1.0, 0.0, 0.0], 0.5)
     union = geom.boolean_union([rectangle, disk1, disk2])
 
-    disk3 = geom.add_disk(0.0, -1.0, 0.0, 0.5)
-    disk4 = geom.add_disk(0.0, +1.0, 0.0, 0.5)
+    disk3 = geom.add_disk([0.0, -1.0, 0.0], 0.5)
+    disk4 = geom.add_disk([0.0, +1.0, 0.0], 0.5)
     geom.boolean_difference([union], [disk3, disk4])
 
     ref = 4.0

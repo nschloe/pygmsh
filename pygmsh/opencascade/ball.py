@@ -39,7 +39,7 @@ class Ball(VolumeBase):
         self.radius = radius
         self.char_length = char_length
 
-        args = [center[0], center[1], center[2], radius]
+        args = list(center) + [radius]
         if x0 is not None:
             args.append(x0)
             if x1 is not None:
