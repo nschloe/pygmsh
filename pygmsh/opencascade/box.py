@@ -17,20 +17,9 @@ class Box(VolumeBase):
         args = list(x0) + list(extents)
         args = ', '.join(['{}'.format(arg) for arg in args])
 
-        code = [
+        self.code = '\n'.join([
             '{} = newv;'.format(self.id),
             'Box({}) = {{{}}};'.format(self.id, args)
-            ]
-
-        if self.char_length:
-            code.extend([
-                'pts_{}[] = PointsOf{{Volume{{{}}};}};'.format(
-                    self.id, self.id
-                    ),
-                'Characteristic Length{{pts_{}[]}} = {};'.format(
-                    self.id, char_length
-                    ),
-                ])
-
-        self.code = '\n'.join(code)
+            ] + self.char_length_code(char_length)
+            )
         return
