@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 from ..__about__ import __version__
-from ..helpers import get_gmsh_major_version, _is_string
+from ..helpers import get_gmsh_major_version
 
 from .ball import Ball
 from .box import Box
@@ -9,7 +9,6 @@ from .cone import Cone
 from .cylinder import Cylinder
 from .disk import Disk
 from .dummy import Dummy
-from .line_base import LineBase
 from .rectangle import Rectangle
 from .surface_base import SurfaceBase
 from .torus import Torus
@@ -111,7 +110,7 @@ class Geometry(object):
         # assert that all entities are of the same dimensionality
         dim_type = None
         legal_dim_types = {
-            LineBase: 'Line',
+            # LineBase: 'Line',
             SurfaceBase: 'Surface',
             VolumeBase: 'Volume',
             }
@@ -192,16 +191,8 @@ class Geometry(object):
         '''
         self._EXTRUDE_ID += 1
 
-        if _is_string(input_entity):
-            entity = Dummy(input_entity)
-        elif isinstance(input_entity, SurfaceBase):
-            entity = Dummy('Surface{{{}}}'.format(input_entity.id))
-        elif hasattr(input_entity, 'surface'):
-            entity = Dummy('Surface{{{}}}'.format(input_entity.surface.id))
-        else:
-            assert isinstance(input_entity, LineBase), \
-                'Illegal extrude entity.'
-            entity = Dummy('Line{{{}}}'.format(input_entity.id))
+        assert isinstance(input_entity, SurfaceBase)
+        entity = Dummy('Surface{{{}}}'.format(input_entity.id))
 
         # out[] = Extrude{0,1,0}{ Line{1}; };
         name = 'ex{}'.format(self._EXTRUDE_ID)
@@ -224,15 +215,7 @@ class Geometry(object):
         top = '{}[0]'.format(name)
         extruded = '{}[1]'.format(name)
 
-        if isinstance(input_entity, LineBase):
-            top = LineBase(top)
-            # A surface extruded from a single line has always 4 edges
-            extruded = SurfaceBase(extruded)
-        elif isinstance(input_entity, SurfaceBase):
-            top = SurfaceBase(top)
-            extruded = VolumeBase(extruded)
-        else:
-            top = Dummy(top)
-            extruded = Dummy(extruded)
+        top = SurfaceBase(top)
+        extruded = VolumeBase(extruded)
 
         return top, extruded
