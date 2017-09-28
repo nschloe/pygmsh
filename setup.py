@@ -37,9 +37,11 @@ setup(
     install_requires=[
         'meshio',
         'numpy >= 1.9',
-        'pipdate',
         'voropy',
         ],
+    extras_require={
+        'update': ['pipdate'],
+        },
     classifiers=[
         about['__status__'],
         about['__license__'],

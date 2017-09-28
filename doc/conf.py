@@ -18,7 +18,7 @@ import sys
 
 ON_RTD = os.environ.get('READTHEDOCS', None) == 'True'
 
-MOCK_MODULES = ['meshio', 'pipdate', 'voropy']
+MOCK_MODULES = ['meshio', 'voropy']
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.Mock()
 
