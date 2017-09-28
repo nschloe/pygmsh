@@ -1,4 +1,4 @@
-# PyGmsh
+# pygmsh
 
 [![Build Status](https://travis-ci.org/nschloe/pygmsh.svg)](https://travis-ci.org/nschloe/pygmsh)
 [![codecov](https://codecov.io/gh/nschloe/pygmsh/branch/master/graph/badge.svg)](https://codecov.io/gh/nschloe/pygmsh)
@@ -9,7 +9,7 @@
 [Gmsh](http://geuz.org/gmsh/) is a powerful mesh generation tool with a
 scripting language that is notoriously hard to write.
 
-The goal of PyGmsh is to combine the power of Gmsh with the versatility of
+The goal of pygmsh is to combine the power of Gmsh with the versatility of
 Python and to provide useful abstractions from the Gmsh scripting language
 so you can create complex geometries more easily.
 
@@ -94,7 +94,7 @@ points, cells, point_data, cell_data, field_data = pygmsh.generate_mesh(geom)
 
 ### Installation
 
-PyGmsh is [available from the Python Package
+pygmsh is [available from the Python Package
 Index](https://pypi.python.org/pypi/pygmsh/), so simply type
 ```
 pip install -U pygmsh
@@ -115,7 +115,7 @@ might inspire you.
 
 ### Testing
 
-To run the PyGmsh unit tests, check out this repository and type
+To run the pygmsh unit tests, check out this repository and type
 ```
 pytest
 ```
@@ -133,4 +133,4 @@ To create a new release
 
 ### License
 
-PyGmsh is published under the [MIT license](https://en.wikipedia.org/wiki/MIT_License).
+pygmsh is published under the [MIT license](https://en.wikipedia.org/wiki/MIT_License).
