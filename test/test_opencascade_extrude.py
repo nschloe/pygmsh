@@ -11,12 +11,9 @@ from helpers import compute_volume
     reason='requires Gmsh >= 3'
     )
 def test():
-    geom = pygmsh.opencascade.Geometry(
-        characteristic_length_min=0.1,
-        characteristic_length_max=0.1,
-        )
+    geom = pygmsh.opencascade.Geometry()
 
-    rectangle = geom.add_rectangle([-1.0, -1.0, 0.0], 2.0, 2.0)
+    rectangle = geom.add_rectangle([-1.0, -1.0, 0.0], 2.0, 2.0, char_length=0.1)
     disk1 = geom.add_disk([-1.2, 0.0, 0.0], 0.5)
     disk2 = geom.add_disk([+1.2, 0.0, 0.0], 0.5)
     union = geom.boolean_union([rectangle, disk1, disk2])
