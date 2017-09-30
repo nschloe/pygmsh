@@ -127,13 +127,13 @@ def generate_mesh(
             print(line.decode('utf-8'), end='')
 
     p.communicate()
-    assert p.returncode == 0,\
+    assert p.returncode == 0, \
         'Gmsh exited with error (return code {}).'.format(p.returncode)
 
     X, cells, pt_data, cell_data, field_data = meshio.read(msh_filename)
 
     # clean up
-    # os.remove(geo_filename)
+    os.remove(geo_filename)
     os.remove(msh_filename)
 
     # Lloyd smoothing
@@ -144,18 +144,20 @@ def generate_mesh(
                 '(only works for flat triangular meshes).'
                 )
         return X, cells, pt_data, cell_data, field_data
-    if verbose:
-        print('Lloyd smoothing...')
-    # find submeshes
-    a = cell_data['triangle']['geometrical']
-    # http://stackoverflow.com/q/42740483/353337
-    submesh_bools = {v: v == a for v in numpy.unique(a)}
 
-    X, cells['triangle'] = voropy.smoothing.lloyd_submesh(
-            X, cells['triangle'], submesh_bools,
-            tol=0.0, max_steps=num_lloyd_steps,
-            verbose=False
-            )
+    if num_lloyd_steps > 0:
+        if verbose:
+            print('Lloyd smoothing...')
+        # find submeshes
+        a = cell_data['triangle']['geometrical']
+        # http://stackoverflow.com/q/42740483/353337
+        submesh_bools = {v: v == a for v in numpy.unique(a)}
+
+        X, cells['triangle'] = voropy.smoothing.lloyd_submesh(
+                X, cells['triangle'], submesh_bools,
+                tol=0.0, max_steps=num_lloyd_steps,
+                verbose=False
+                )
 
     if prune_vertices:
         # Make sure to include only those vertices which belong to a triangle.

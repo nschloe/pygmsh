@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/nschloe/pygmsh.svg)](https://travis-ci.org/nschloe/pygmsh)
 [![codecov](https://codecov.io/gh/nschloe/pygmsh/branch/master/graph/badge.svg)](https://codecov.io/gh/nschloe/pygmsh)
-[![Documentation Status](https://readthedocs.org/projects/pygmsh/badge/?version=latest)](http://pygmsh.readthedocs.org/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/pygmsh/badge/?version=latest)](https://pygmsh.readthedocs.org/en/latest/?badge=latest)
 [![PyPi Version](https://img.shields.io/pypi/v/pygmsh.svg)](https://pypi.python.org/pypi/pygmsh)
 [![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?style=social&label=Stars&maxAge=2592000)](https://github.com/nschloe/pygmsh)
 
-[Gmsh](http://geuz.org/gmsh/) is a powerful mesh generation tool with a
+[Gmsh](https://gmsh.info//) is a powerful mesh generation tool with a
 scripting language that is notoriously hard to write.
 
 The goal of pygmsh is to combine the power of Gmsh with the versatility of
@@ -56,7 +56,7 @@ import meshio
 meshio.write('test.vtu', points, cells, cell_data=cell_data)
 ```
 The output file can be visualized with various tools, e.g.,
-[ParaView](http://www.paraview.org/).
+[ParaView](https://www.paraview.org/).
 
 You will find the above mesh in the directory
 [`test/`](https://github.com/nschloe/pygmsh/tree/master/test/) along with other
@@ -108,7 +108,7 @@ Just
 import pygmsh as pg
 ```
 and make use of all the goodies the module provides. The
-[documentation](http://pygmsh.readthedocs.org/) and the examples under
+[documentation](https://pygmsh.readthedocs.org/) and the examples under
 [`test/`](https://github.com/nschloe/pygmsh/tree/master/test/)
 might inspire you.
 
