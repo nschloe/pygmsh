@@ -127,13 +127,13 @@ def generate_mesh(
             print(line.decode('utf-8'), end='')
 
     p.communicate()
-    assert p.returncode == 0,\
+    assert p.returncode == 0, \
         'Gmsh exited with error (return code {}).'.format(p.returncode)
 
     X, cells, pt_data, cell_data, field_data = meshio.read(msh_filename)
 
     # clean up
-    # os.remove(geo_filename)
+    os.remove(geo_filename)
     os.remove(msh_filename)
 
     # Lloyd smoothing
