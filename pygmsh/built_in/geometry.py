@@ -464,7 +464,7 @@ class Geometry(object):
                 self._GMSH_CODE.append(string)
         return
 
-    def add_rectangle(self, xmin, xmax, ymin, ymax, z, lcar, holes=None):
+    def add_rectangle(self, xmin, xmax, ymin, ymax, z, lcar, holes=None, make_surface=True):
         return self.add_polygon([
                 [xmin, ymin, z],
                 [xmax, ymin, z],
@@ -472,7 +472,8 @@ class Geometry(object):
                 [xmin, ymax, z]
                 ],
                 lcar,
-                holes=holes
+                holes=holes,
+                make_surface=make_surface
                 )
 
     def add_polygon(self, X, lcar, holes=None, make_surface=True):
