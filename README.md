@@ -122,7 +122,7 @@ pytest
 
 ### Building Documentation
 
-Docs are build using [Sphinx](http://www.sphinx-doc.org/en/stable/).
+Docs are built using [Sphinx](http://www.sphinx-doc.org/en/stable/).
 
 To build run
 ```
