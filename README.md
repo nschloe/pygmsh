@@ -120,6 +120,15 @@ To run the pygmsh unit tests, check out this repository and type
 pytest
 ```
 
+### Building Documentation
+
+Docs are built using [Sphinx](http://www.sphinx-doc.org/en/stable/).
+
+To build run
+```
+sphinx-build -b html doc doc/_build
+```
+
 ### Distribution
 
 To create a new release
