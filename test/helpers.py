@@ -4,8 +4,6 @@ import math
 import numpy
 import voropy
 
-import pygmsh
-
 
 def compute_volume(points, cells):
     cells = \
