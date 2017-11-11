@@ -13,19 +13,19 @@ Contents:
 
    self
 
-:mod:`pygmsh.geometry`
-======================
+:mod:`pygmsh.built_in.geometry`
+===============================
 
-.. automodule:: pygmsh.geometry
+.. automodule:: pygmsh.built_in.geometry
     :members:
     :undoc-members:
     :show-inheritance:
 
 
-:mod:`pygmsh.helper`
+:mod:`pygmsh.helpers`
 =====================
 
-.. automodule:: pygmsh.helper
+.. automodule:: pygmsh.helpers
     :members:
     :undoc-members:
     :show-inheritance:
