@@ -29,10 +29,11 @@ jobs:
       - run: apt install -y git python3-pip curl
       - run: pip3 install -U pytest pytest-cov pylint code_extract
       - checkout
-      # install gmsh
+      # install gmsh from ppa
+      - run: apt-get install -y software-properties-common
       - run: LANG=C.UTF-8 apt-add-repository -y ppa:nschloe/gmsh-backports
       - run: apt update
-      - run: apt install -y gmsh  # for the dependencies
+      - run: apt install -y gmsh
       # install
       - run: pip3 install .
       # lint
