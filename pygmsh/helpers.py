@@ -75,8 +75,7 @@ def _get_gmsh_exe():
     return gmsh_executable
 
 
-def get_gmsh_major_version():
-    gmsh_exe = _get_gmsh_exe()
+def get_gmsh_major_version(gmsh_exe=_get_gmsh_exe()):
     out = subprocess.check_output(
             [gmsh_exe, '--version'],
             stderr=subprocess.STDOUT
@@ -92,7 +91,8 @@ def generate_mesh(
         num_lloyd_steps=1000,
         verbose=True,
         dim=3,
-        prune_vertices=True
+        prune_vertices=True,
+        gmsh_path=None
         ):
     handle, geo_filename = tempfile.mkstemp(suffix='.geo')
     os.write(handle, geo_object.get_code().encode())
@@ -101,14 +101,14 @@ def generate_mesh(
     handle, msh_filename = tempfile.mkstemp(suffix='.msh')
     os.close(handle)
 
-    gmsh_executable = _get_gmsh_exe()
+    gmsh_executable = gmsh_path if gmsh_path is not None else _get_gmsh_exe()
 
     cmd = [
         gmsh_executable,
         '-{}'.format(dim), '-bin', geo_filename, '-o', msh_filename
         ]
 
-    gmsh_major_version = geo_object.get_gmsh_major()
+    gmsh_major_version = get_gmsh_major_version(gmsh_executable)
     if gmsh_major_version < 3 and optimize:
         cmd += ['-optimize']
 
