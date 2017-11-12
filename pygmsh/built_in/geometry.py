@@ -18,7 +18,7 @@ points, c1, c2, etc. for circles and so on.
 import numpy
 
 from ..__about__ import __version__
-from ..helpers import _is_string, get_gmsh_major_version
+from ..helpers import _is_string
 
 from .bspline import Bspline
 from .circle_arc import CircleArc
@@ -40,12 +40,12 @@ from .volume_base import VolumeBase
 
 
 class Geometry(object):
-    def __init__(self):
+    def __init__(self, gmsh_major_version=3):
         self._EXTRUDE_ID = 0
         self._BOOLEAN_ID = 0
         self._ARRAY_ID = 0
         self._FIELD_ID = 0
-        self._GMSH_MAJOR = get_gmsh_major_version()
+        self._GMSH_MAJOR = gmsh_major_version
         self._TAKEN_PHYSICALGROUP_IDS = []
         self._GMSH_CODE = [
                 '// This code was created by pygmsh v{}.'.format(__version__)
@@ -56,11 +56,6 @@ class Geometry(object):
         '''Returns properly formatted Gmsh code.
         '''
         return '\n'.join(self._GMSH_CODE)
-
-    def get_gmsh_major(self):
-        '''Return the major version of the gmsh executable.
-        '''
-        return self._GMSH_MAJOR
 
     # All of the add_* method below could be replaced by
     #

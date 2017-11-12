@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 #
 from ..__about__ import __version__
-from ..helpers import get_gmsh_major_version
 
 from .ball import Ball
 from .box import Box
@@ -24,7 +23,6 @@ class Geometry(object):
             ):
         self._BOOLEAN_ID = 0
         self._EXTRUDE_ID = 0
-        self._GMSH_MAJOR = get_gmsh_major_version()
         self._GMSH_CODE = [
             '// This code was created by pygmsh v{}.'.format(__version__),
             'SetFactory("OpenCASCADE");',
@@ -47,11 +45,6 @@ class Geometry(object):
         '''Returns properly formatted Gmsh code.
         '''
         return '\n'.join(self._GMSH_CODE)
-
-    def get_gmsh_major(self):
-        '''Return the major version of the gmsh executable.
-        '''
-        return self._GMSH_MAJOR
 
     def add_rectangle(self, *args, **kwargs):
         p = Rectangle(*args, **kwargs)

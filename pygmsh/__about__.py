@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 
-__version__ = '4.0.3'
+__version__ = '4.0.4'
 __author__ = u'Nico Schlömer'
 __author_email__ = 'nico.schloemer@gmail.com'
 __website__ = 'https://github.com/nschloe/pygmsh'
