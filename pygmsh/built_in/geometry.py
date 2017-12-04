@@ -270,6 +270,7 @@ class Geometry(object):
             line_loop, plane_surface
             )
 
+    # pylint: disable=too-many-branches
     def extrude(
             self,
             input_entity,
