@@ -1,3 +1,0 @@
-commands:
-python bend.py bend.csv
-gmsh -3 -clscale 0.5 bend.geo -o bend.msh
