@@ -315,7 +315,7 @@ class Geometry(object):
 
         elif translation_axis is not None:
             # Only translation
-            if layers is not None:
+            if layers:
                 self._GMSH_CODE.append(
                     '{}[] = Extrude{{{}}}{{{}; Layers{{{}}}; {}}};'.format(
                         name,
