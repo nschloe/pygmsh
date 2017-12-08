@@ -30,17 +30,25 @@ def test():
     rect3 = geom.add_rectangle([10.0, 30.0, 0.0], 10.0, 1.0)
     rect4 = geom.add_rectangle([20.0, 9.0, 0.0], 10.0, 1.0)
 
-    rect5 = geom.add_rectangle([9.0, 10.0, 0.0], 1.0, 10.0)
-    rect6 = geom.add_rectangle([30.0, 20.0, 0.0], 1.0, 10.0)
-    rect7 = geom.add_rectangle([9.0, 19.5, 0.0], 22.0, 1.0)
+    r1 = geom.add_rectangle([9.0, 0.0, 0.0], 21.0, 20.5, corner_radius=10.0)
+    r2 = geom.add_rectangle([10.0, 00.0, 0.0], 20.0, 19.5, corner_radius=9.0)
+    diff1 = geom.boolean_difference([r1], [r2])
+    r22 = geom.add_rectangle([9.0, 10.0, 0.0], 11.0, 11.0)
+    inter1 = geom.boolean_intersection([diff1, r22])
+
+    r3 = geom.add_rectangle([10.0, 19.5, 0.0], 21.0, 21.0, corner_radius=10.0)
+    r4 = geom.add_rectangle([10.0, 20.5, 0.0], 20.0, 20.0, corner_radius=9.0)
+    diff2 = geom.boolean_difference([r3], [r4])
+    r33 = geom.add_rectangle([20.0, 19.0, 0.0], 11.0, 11.0)
+    inter2 = geom.boolean_intersection([diff2, r33])
 
     geom.boolean_difference(
             [rect1, rect2],
-            [disk1, disk2, rect3, rect4, rect5, rect6, rect7]
+            [disk1, disk2, rect3, rect4, inter1, inter2]
             )
 
     points, cells, _, _, _ = pygmsh.generate_mesh(geom, num_lloyd_steps=0)
-    ref = 1074.28954128
+    ref = 1082.4470502181903
     assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
     return points, cells
 
