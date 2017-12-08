@@ -41,7 +41,5 @@ def test(lcar=0.05):
 
 if __name__ == '__main__':
 
-    from os.path import basename
     import meshio
-    meshio.write(basename(__file__).split('.')[0].split('_')[1] + '.msh',
-                 *test())
+    meshio.write('layers.msh', *test())
