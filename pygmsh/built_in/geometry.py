@@ -278,8 +278,8 @@ class Geometry(object):
             rotation_axis=None,
             point_on_axis=None,
             angle=None,
-            layers=None,
-            recombine=None
+            layers=False,
+            recombine=False
             ):
         '''Extrusion (translation + rotation) of any entity along a given
         translation_axis, around a given rotation_axis, about a given angle. If
