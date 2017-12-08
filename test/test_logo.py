@@ -53,22 +53,8 @@ def test():
     return points, cells
 
 
-def plot(points, cells):
-    import matplotlib.pyplot as plt
-    pts = points[:, :2]
-    for e in cells['triangle']:
-        for idx in [[0, 1], [1, 2], [2, 0]]:
-            X = pts[e[idx]]
-            plt.plot(X[:, 0], X[:, 1], '-k')
-    plt.gca().set_aspect('equal', 'datalim')
-    plt.axis('off')
-
-    # plt.show()
-    plt.savefig('logo.png', transparent=True)
-    return
-
-
 if __name__ == '__main__':
-    plot(*test())
+    from helpers import plot
+    plot('logo.png', *test())
     # import meshio
     # meshio.write('logo.vtu', *test())
