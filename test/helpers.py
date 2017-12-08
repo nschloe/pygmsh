@@ -21,3 +21,18 @@ def compute_volume(points, cells):
         assert cells.shape[1] == 3
         mesh = voropy.mesh_tri.MeshTri(points, cells)
     return math.fsum(mesh.cell_volumes)
+
+
+def plot(filename, points, cells):
+    import matplotlib.pyplot as plt
+    pts = points[:, :2]
+    for e in cells['triangle']:
+        for idx in [[0, 1], [1, 2], [2, 0]]:
+            X = pts[e[idx]]
+            plt.plot(X[:, 0], X[:, 1], '-k')
+    plt.gca().set_aspect('equal', 'datalim')
+    plt.axis('off')
+
+    # plt.show()
+    plt.savefig(filename, transparent=True)
+    return
