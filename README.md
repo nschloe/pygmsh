@@ -6,12 +6,18 @@
 [![PyPi Version](https://img.shields.io/pypi/v/pygmsh.svg)](https://pypi.python.org/pypi/pygmsh)
 [![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?style=social&label=Stars&maxAge=2592000)](https://github.com/nschloe/pygmsh)
 
+<p align="center">
+  <img width="20%" src="https://nschloe.github.io/pygmsh/logo.png">
+</p>
+
 [Gmsh](https://gmsh.info//) is a powerful mesh generation tool with a
 scripting language that is notoriously hard to write.
 
 The goal of pygmsh is to combine the power of Gmsh with the versatility of
 Python and to provide useful abstractions from the Gmsh scripting language
 so you can create complex geometries more easily.
+
+#### Built-in
 
 ![](https://nschloe.github.io/pygmsh/screw.png)
 
@@ -64,6 +70,8 @@ small examples.
 
 #### OpenCASCADE
 
+![](https://nschloe.github.io/pygmsh/puzzle.png)
+
 As of version 3.0, Gmsh supports OpenCASCADE, allowing for a CAD-style geometry
 specification.
 
@@ -89,8 +97,6 @@ geom.extrude(flat, [0, 0, 0.3])
 
 points, cells, point_data, cell_data, field_data = pygmsh.generate_mesh(geom)
 ```
-
-![](https://nschloe.github.io/pygmsh/puzzle.png)
 
 ### Installation
 
