@@ -30,14 +30,14 @@ def test():
     rect3 = geom.add_rectangle([10.0, 30.0, 0.0], 10.0, 1.0)
     rect4 = geom.add_rectangle([20.0, 9.0, 0.0], 10.0, 1.0)
 
-    r1 = geom.add_rectangle([9.0, 0.0, 0.0], 21.0, 20.5, corner_radius=10.0)
-    r2 = geom.add_rectangle([10.0, 00.0, 0.0], 20.0, 19.5, corner_radius=9.0)
+    r1 = geom.add_rectangle([9.0, 0.0, 0.0], 21.0, 20.5, corner_radius=8.0)
+    r2 = geom.add_rectangle([10.0, 00.0, 0.0], 20.0, 19.5, corner_radius=7.0)
     diff1 = geom.boolean_difference([r1], [r2])
     r22 = geom.add_rectangle([9.0, 10.0, 0.0], 11.0, 11.0)
     inter1 = geom.boolean_intersection([diff1, r22])
 
-    r3 = geom.add_rectangle([10.0, 19.5, 0.0], 21.0, 21.0, corner_radius=10.0)
-    r4 = geom.add_rectangle([10.0, 20.5, 0.0], 20.0, 20.0, corner_radius=9.0)
+    r3 = geom.add_rectangle([10.0, 19.5, 0.0], 21.0, 21.0, corner_radius=8.0)
+    r4 = geom.add_rectangle([10.0, 20.5, 0.0], 20.0, 20.0, corner_radius=7.0)
     diff2 = geom.boolean_difference([r3], [r4])
     r33 = geom.add_rectangle([20.0, 19.0, 0.0], 11.0, 11.0)
     inter2 = geom.boolean_intersection([diff2, r33])
@@ -53,6 +53,22 @@ def test():
     return points, cells
 
 
+def plot(points, cells):
+    import matplotlib.pyplot as plt
+    pts = points[:, :2]
+    for e in cells['triangle']:
+        for idx in [[0, 1], [1, 2], [2, 0]]:
+            X = pts[e[idx]]
+            plt.plot(X[:, 0], X[:, 1], '-k')
+    plt.gca().set_aspect('equal', 'datalim')
+    plt.axis('off')
+
+    # plt.show()
+    plt.savefig('logo.png', transparent=True)
+    return
+
+
 if __name__ == '__main__':
-    import meshio
-    meshio.write('logo.vtu', *test())
+    plot(*test())
+    # import meshio
+    # meshio.write('logo.vtu', *test())
