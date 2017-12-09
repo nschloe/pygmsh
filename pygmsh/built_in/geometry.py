@@ -270,6 +270,7 @@ class Geometry(object):
             line_loop, plane_surface
             )
 
+    # pylint: disable=too-many-branches
     def extrude(
             self,
             input_entity,
@@ -277,6 +278,8 @@ class Geometry(object):
             rotation_axis=None,
             point_on_axis=None,
             angle=None,
+            layers=False,
+            recombine=False
             ):
         '''Extrusion (translation + rotation) of any entity along a given
         translation_axis, around a given rotation_axis, about a given angle. If
@@ -312,12 +315,22 @@ class Geometry(object):
 
         elif translation_axis is not None:
             # Only translation
-            self._GMSH_CODE.append(
-                '{}[] = Extrude{{{}}}{{{};}};'.format(
-                    name,
-                    ','.join(repr(x) for x in translation_axis),
-                    entity.id
-                ))
+            if layers:
+                self._GMSH_CODE.append(
+                    '{}[] = Extrude{{{}}}{{{}; Layers{{{}}}; {}}};'.format(
+                        name,
+                        ','.join(repr(x) for x in translation_axis),
+                        entity.id,
+                        layers,
+                        'Recombine;' if recombine else ''
+                    ))
+            else:
+                self._GMSH_CODE.append(
+                    '{}[] = Extrude{{{}}}{{{};}};'.format(
+                        name,
+                        ','.join(repr(x) for x in translation_axis),
+                        entity.id
+                    ))
         else:
             assert rotation_axis is not None, \
                 'Specify at least translation or rotation.'
