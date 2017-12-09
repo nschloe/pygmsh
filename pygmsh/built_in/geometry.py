@@ -278,7 +278,7 @@ class Geometry(object):
             rotation_axis=None,
             point_on_axis=None,
             angle=None,
-            layers=False,
+            num_layers=None,
             recombine=False
             ):
         '''Extrusion (translation + rotation) of any entity along a given
@@ -315,21 +315,21 @@ class Geometry(object):
 
         elif translation_axis is not None:
             # Only translation
-            if layers:
-                self._GMSH_CODE.append(
-                    '{}[] = Extrude{{{}}}{{{}; Layers{{{}}}; {}}};'.format(
-                        name,
-                        ','.join(repr(x) for x in translation_axis),
-                        entity.id,
-                        layers,
-                        'Recombine;' if recombine else ''
-                    ))
-            else:
+            if num_layers is None:
                 self._GMSH_CODE.append(
                     '{}[] = Extrude{{{}}}{{{};}};'.format(
                         name,
                         ','.join(repr(x) for x in translation_axis),
                         entity.id
+                    ))
+            else:
+                self._GMSH_CODE.append(
+                    '{}[] = Extrude{{{}}}{{{}; Layers{{{}}}; {}}};'.format(
+                        name,
+                        ','.join(repr(x) for x in translation_axis),
+                        entity.id,
+                        num_layers,
+                        'Recombine;' if recombine else ''
                     ))
         else:
             assert rotation_axis is not None, \
@@ -472,7 +472,10 @@ class Geometry(object):
                 self._GMSH_CODE.append(string)
         return
 
-    def add_rectangle(self, xmin, xmax, ymin, ymax, z, lcar, holes=None, make_surface=True):
+    def add_rectangle(
+            self, xmin, xmax, ymin, ymax, z, lcar,
+            holes=None, make_surface=True
+            ):
         return self.add_polygon([
                 [xmin, ymin, z],
                 [xmax, ymin, z],
