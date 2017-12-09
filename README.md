@@ -1,6 +1,6 @@
 # pygmsh
 
-[![Build Status](https://travis-ci.org/nschloe/pygmsh.svg)](https://travis-ci.org/nschloe/pygmsh)
+[![CircleCI](https://img.shields.io/circleci/project/github/nschloe/pygmsh/master.svg)](https://circleci.com/gh/nschloe/pygmsh)
 [![codecov](https://codecov.io/gh/nschloe/pygmsh/branch/master/graph/badge.svg)](https://codecov.io/gh/nschloe/pygmsh)
 [![Documentation Status](https://readthedocs.org/projects/pygmsh/badge/?version=latest)](https://pygmsh.readthedocs.org/en/latest/?badge=latest)
 [![PyPi Version](https://img.shields.io/pypi/v/pygmsh.svg)](https://pypi.python.org/pypi/pygmsh)
@@ -10,7 +10,7 @@
   <img width="20%" src="https://nschloe.github.io/pygmsh/logo.png">
 </p>
 
-[Gmsh](https://gmsh.info//) is a powerful mesh generation tool with a
+[Gmsh](https://gmsh.info/) is a powerful mesh generation tool with a
 scripting language that is notoriously hard to write.
 
 The goal of pygmsh is to combine the power of Gmsh with the versatility of

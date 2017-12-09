@@ -30,7 +30,7 @@ def test(lcar=0.05):
     geom.extrude(
         poly,
         translation_axis=axis,
-        layers=1
+        num_layers=1
         )
 
     ref = 0.16951514066385628
@@ -40,6 +40,5 @@ def test(lcar=0.05):
 
 
 if __name__ == '__main__':
-
     import meshio
     meshio.write('layers.msh', *test())

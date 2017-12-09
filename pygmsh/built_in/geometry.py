@@ -278,7 +278,7 @@ class Geometry(object):
             rotation_axis=None,
             point_on_axis=None,
             angle=None,
-            layers=False,
+            num_layers=None,
             recombine=False
             ):
         '''Extrusion (translation + rotation) of any entity along a given
@@ -315,21 +315,21 @@ class Geometry(object):
 
         elif translation_axis is not None:
             # Only translation
-            if layers:
-                self._GMSH_CODE.append(
-                    '{}[] = Extrude{{{}}}{{{}; Layers{{{}}}; {}}};'.format(
-                        name,
-                        ','.join(repr(x) for x in translation_axis),
-                        entity.id,
-                        layers,
-                        'Recombine;' if recombine else ''
-                    ))
-            else:
+            if num_layers is None:
                 self._GMSH_CODE.append(
                     '{}[] = Extrude{{{}}}{{{};}};'.format(
                         name,
                         ','.join(repr(x) for x in translation_axis),
                         entity.id
+                    ))
+            else:
+                self._GMSH_CODE.append(
+                    '{}[] = Extrude{{{}}}{{{}; Layers{{{}}}; {}}};'.format(
+                        name,
+                        ','.join(repr(x) for x in translation_axis),
+                        entity.id,
+                        num_layers,
+                        'Recombine;' if recombine else ''
                     ))
         else:
             assert rotation_axis is not None, \
@@ -344,7 +344,7 @@ class Geometry(object):
                     entity.id
                 ))
 
-        # From <http://www.manpagez.com/info/gmsh/gmsh-2.4.0/gmsh_66.php>:
+        # From <https://www.manpagez.com/info/gmsh/gmsh-2.4.0/gmsh_66.php>:
         #
         # > In this last extrusion command we retrieved the volume number
         # > programatically by saving the output of the command into a
@@ -370,7 +370,7 @@ class Geometry(object):
         if isinstance(input_entity, SurfaceBase):
             # out[0]` is the surface, out[1] the top, and everything after that
             # the sides, cf.
-            # <http://gmsh.info/doc/texinfo/gmsh.html#Extrusions>. Each
+            # <https://gmsh.info/doc/texinfo/gmsh.html#Extrusions>. Each
             # lateral surface has 4 edges: the one from input_entity, the one
             # from top, and the two lines (or splines) connecting their extreme
             # points.
@@ -393,7 +393,7 @@ class Geometry(object):
             thickness=None
             ):
         # Don't use [] as default argument, cf.
-        # <http://stackoverflow.com/a/113198/353337>
+        # <https://stackoverflow.com/a/113198/353337>
         if edges_list is None:
             edges_list = []
         if faces_list is None:
@@ -472,7 +472,10 @@ class Geometry(object):
                 self._GMSH_CODE.append(string)
         return
 
-    def add_rectangle(self, xmin, xmax, ymin, ymax, z, lcar, holes=None, make_surface=True):
+    def add_rectangle(
+            self, xmin, xmax, ymin, ymax, z, lcar,
+            holes=None, make_surface=True
+            ):
         return self.add_polygon([
                 [xmin, ymin, z],
                 [xmax, ymin, z],

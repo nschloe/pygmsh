@@ -95,7 +95,7 @@ class Geometry(object):
             delete=True
             ):
         '''Boolean operations, see
-        http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
+        https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
         '''
         self._BOOLEAN_ID += 1
@@ -139,7 +139,7 @@ class Geometry(object):
 
     def boolean_intersection(self, entities, delete=True):
         '''Boolean intersection, see
-        http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
+        https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
         '''
         assert len(entities) > 1
@@ -149,7 +149,7 @@ class Geometry(object):
                 )
 
     def boolean_union(self, entities, delete=True):
-        '''Boolean union, see http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
+        '''Boolean union, see https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
         input_entity and tool_entity are called object and tool in gmsh
         documentation.
         '''
@@ -160,14 +160,14 @@ class Geometry(object):
 
     def boolean_difference(self, *args, **kwargs):
         '''Boolean difference, see
-        http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
+        https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
         '''
         return self._boolean_operation('BooleanDifference', *args, **kwargs)
 
     def boolean_fragments(self, *args, **kwargs):
         '''Boolean fragments, see
-        http://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
+        https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
         '''
         return self._boolean_operation('BooleanFragments', *args, **kwargs)
@@ -198,7 +198,7 @@ class Geometry(object):
                 entity.id
             ))
 
-        # From <http://www.manpagez.com/info/gmsh/gmsh-2.4.0/gmsh_66.php>:
+        # From <https://www.manpagez.com/info/gmsh/gmsh-2.4.0/gmsh_66.php>:
         #
         # > In this last extrusion command we retrieved the volume number
         # > programatically by saving the output of the command into a

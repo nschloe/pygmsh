@@ -115,7 +115,7 @@ def generate_mesh(
     if num_quad_lloyd_steps > 0:
         cmd += ['-optimize_lloyd', str(num_quad_lloyd_steps)]
 
-    # http://stackoverflow.com/a/803421/353337
+    # https://stackoverflow.com/a/803421/353337
     p = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
         )
@@ -150,7 +150,7 @@ def generate_mesh(
             print('Lloyd smoothing...')
         # find submeshes
         a = cell_data['triangle']['geometrical']
-        # http://stackoverflow.com/q/42740483/353337
+        # https://stackoverflow.com/q/42740483/353337
         submesh_bools = {v: v == a for v in numpy.unique(a)}
 
         X, cells['triangle'] = voropy.smoothing.lloyd_submesh(
