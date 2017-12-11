@@ -103,7 +103,7 @@ def generate_mesh(
             geo_filename = f.name
 
     with open(geo_filename, 'w') as f:
-        f.write(geo_object.get_code().encode())
+        f.write(geo_object.get_code())
 
     with tempfile.NamedTemporaryFile(suffix='.msh') as handle:
         msh_filename = handle.name
@@ -170,7 +170,6 @@ def generate_mesh(
         X = X[uvertices]
         for key in pt_data:
             pt_data[key] = pt_data[key][uvertices]
-
 
     # clean up
     os.remove(msh_filename)
