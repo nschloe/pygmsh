@@ -84,6 +84,7 @@ def get_gmsh_major_version(gmsh_exe=_get_gmsh_exe()):
     return int(ex[0])
 
 
+# pylint: disable=too-many-branches
 def generate_mesh(
         geo_object,
         optimize=True,
@@ -96,7 +97,6 @@ def generate_mesh(
         # for debugging purposes:
         geo_filename=None
         ):
-
     preserve_geo = geo_filename is not None
     if geo_filename is None:
         with tempfile.NamedTemporaryFile(suffix='.geo') as f:
