@@ -92,14 +92,21 @@ def generate_mesh(
         verbose=True,
         dim=3,
         prune_vertices=True,
-        gmsh_path=None
+        gmsh_path=None,
+        # for debugging purposes:
+        geo_filename=None
         ):
-    handle, geo_filename = tempfile.mkstemp(suffix='.geo')
-    os.write(handle, geo_object.get_code().encode())
-    os.close(handle)
 
-    handle, msh_filename = tempfile.mkstemp(suffix='.msh')
-    os.close(handle)
+    preserve_geo = geo_filename is not None
+    if geo_filename is None:
+        with tempfile.NamedTemporaryFile(suffix='.geo') as f:
+            geo_filename = f.name
+
+    with open(geo_filename, 'w') as f:
+        f.write(geo_object.get_code().encode())
+
+    with tempfile.NamedTemporaryFile(suffix='.msh') as handle:
+        msh_filename = handle.name
 
     gmsh_executable = gmsh_path if gmsh_path is not None else _get_gmsh_exe()
 
@@ -131,10 +138,6 @@ def generate_mesh(
         'Gmsh exited with error (return code {}).'.format(p.returncode)
 
     X, cells, pt_data, cell_data, field_data = meshio.read(msh_filename)
-
-    # clean up
-    os.remove(geo_filename)
-    os.remove(msh_filename)
 
     # Lloyd smoothing
     if not _is_flat(X) or 'triangle' not in cells:
@@ -168,4 +171,11 @@ def generate_mesh(
         for key in pt_data:
             pt_data[key] = pt_data[key][uvertices]
 
+
+    # clean up
+    os.remove(msh_filename)
+    if preserve_geo:
+        print('\ngeo file: {}'.format(geo_filename))
+    else:
+        os.remove(geo_filename)
     return X, cells, pt_data, cell_data, field_data
