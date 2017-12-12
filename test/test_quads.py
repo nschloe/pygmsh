@@ -17,11 +17,10 @@ def test():
     
     geom.add_raw_code('Recombine Surface {%s};' % rectangle.surface.id)
 
-    with open('quads.geo', 'w') as fgeo:
-        fgeo.write(geom.get_code())
-
     ref = 1.0
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom, dim=2)
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom,
+                                                  dim=2,
+                                                  geo_filename='quads.geo')
     assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
     return points, cells
 
