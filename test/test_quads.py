@@ -18,10 +18,7 @@ def test():
     geom.add_raw_code('Recombine Surface {%s};' % rectangle.surface.id)
 
     ref = 1.0
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom,
-                                                  dim=2,
-                                                  num_quad_lloyd_steps=0,
-                                                  geo_filename='quads.geo')
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom, dim=2)
     try:
         assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
     except KeyError as err:
