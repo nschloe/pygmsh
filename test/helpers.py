@@ -5,22 +5,41 @@ import numpy
 import voropy
 
 
-def compute_volume(points, cells):
-    cells = \
-        cells['tetra'] if 'tetra' in cells \
-        else cells['triangle']
-
+def prune_nodes(points, cells):
     # Only points/cells that actually used
     uvertices, uidx = numpy.unique(cells, return_inverse=True)
     cells = uidx.reshape(cells.shape)
     points = points[uvertices]
+    return points, cells
 
-    if cells.shape[1] == 4:
-        mesh = voropy.mesh_tetra.MeshTetra(points, cells)
+
+def compute_volume(points, cells):
+    # is 3D
+    is_3d = 'tetra' in cells
+
+    # TODO multiple element types (e.g., triangles + quads)
+
+    if is_3d:
+        # tetra
+        mesh = voropy.mesh_tetra.MeshTetra(
+                *prune_nodes(points, cells['tetra'])
+                )
+        vol = math.fsum(mesh.cell_volumes)
     else:
-        assert cells.shape[1] == 3
-        mesh = voropy.mesh_tri.MeshTri(points, cells)
-    return math.fsum(mesh.cell_volumes)
+        # triangles
+        mesh = voropy.mesh_tri.MeshTri(*prune_nodes(points, cells['triangle']))
+        vol_tri = math.fsum(mesh.cell_volumes)
+        # quad: treat as two triangles
+        quads = cells['quad'].T
+        split_cells = numpy.column_stack([
+            [quads[0], quads[1], quads[2]],
+            [quads[0], quads[2], quads[3]],
+            ]).T
+        mesh = voropy.mesh_tri.MeshTri(*prune_nodes(points, split_cells))
+        vol_quad = math.fsum(mesh.cell_volumes)
+        vol = vol_tri + vol_quad
+
+    return vol
 
 
 def plot(filename, points, cells):
