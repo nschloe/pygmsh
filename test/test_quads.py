@@ -21,7 +21,7 @@ def test():
         fgeo.write(geom.get_code())
 
     ref = 1.0
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom, dim=2)
     assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
     return points, cells
 
