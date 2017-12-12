@@ -19,14 +19,8 @@ def test():
 
     ref = 1.0
     points, cells, _, _, _ = pygmsh.generate_mesh(geom, dim=2)
-    try:
-        assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
-    except KeyError as err:
-        if ('triangle',) == err.args:
-            print('compute_volume looked for triangle')
-            print('...but cells has {}'.format(cells.keys()))
-        else:
-            raise
+
+    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
             
     return points, cells
 if __name__ == '__main__':
