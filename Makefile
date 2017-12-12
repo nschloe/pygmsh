@@ -1,10 +1,5 @@
 VERSION=$(shell python -c "import pygmsh; print(pygmsh.__version__)")
 
-# Make sure we're on the master branch
-ifneq "$(shell git rev-parse --abbrev-ref HEAD)" "master"
-$(error Not on master branch)
-endif
-
 default:
 	@echo "\"make publish\"?"
 
@@ -21,6 +16,10 @@ upload: setup.py README.rst
 	twine upload dist/*
 
 tag:
+	# Make sure we're on the master branch
+	ifneq "$(shell git rev-parse --abbrev-ref HEAD)" "master"
+	$(error Not on master branch)
+	endif
 	@echo "Tagging v$(VERSION)..."
 	git tag v$(VERSION)
 	git push --tags
