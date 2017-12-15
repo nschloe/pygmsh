@@ -4,8 +4,6 @@
 import pygmsh
 import numpy as np
 
-from helpers import compute_volume
-
 
 def test():
     # Characteristic length
@@ -43,6 +41,7 @@ def test():
     points, cells, _, _, _ = pygmsh.generate_mesh(geom, geom_order=2)
     # TODO support for volumes of triangle6
     # ref = 16.0
+    # from helpers import compute_volume
     # assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
     return points, cells
 
