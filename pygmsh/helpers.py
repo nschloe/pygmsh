@@ -119,7 +119,8 @@ def generate_mesh(
     if gmsh_major_version < 3 and optimize:
         cmd += ['-optimize']
 
-    if num_quad_lloyd_steps > 0:
+    if num_quad_lloyd_steps > 0 and ('Recombine Surface'
+                                     not in geo_object.get_code()):
         cmd += ['-optimize_lloyd', str(num_quad_lloyd_steps)]
 
     # https://stackoverflow.com/a/803421/353337
