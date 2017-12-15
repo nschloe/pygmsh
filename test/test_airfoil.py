@@ -142,11 +142,12 @@ def test():
         [xmax, ymax, 0.0],
         [xmin, ymax, 0.0],
         ])
-    geom.add_polygon(
+    polygon = geom.add_polygon(
             domainCoordinates,
             char_length,
             holes=[airfoil]
             )
+    geom.add_raw_code('Recombine Surface {%s};' % polygon.surface.id)
 
     ref = 10.525891646546
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)
