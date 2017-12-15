@@ -94,6 +94,7 @@ def generate_mesh(
         dim=3,
         prune_vertices=True,
         gmsh_path=None,
+        geom_order=1,
         # for debugging purposes:
         geo_filename=None
         ):
@@ -122,6 +123,10 @@ def generate_mesh(
     if num_quad_lloyd_steps > 0 and ('Recombine Surface'
                                      not in geo_object.get_code()):
         cmd += ['-optimize_lloyd', str(num_quad_lloyd_steps)]
+
+    assert geom_order > 0
+    if geom_order > 1:
+        cmd += ['-order', str(geom_order)]
 
     # https://stackoverflow.com/a/803421/353337
     p = subprocess.Popen(
