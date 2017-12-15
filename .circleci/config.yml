@@ -26,7 +26,7 @@ jobs:
       - image: ubuntu:17.10
     steps:
       - run: apt update
-      - run: apt install -y git python3-pip curl
+      - run: apt install -y git python3-pip
       - run: pip3 install -U pytest pytest-cov pylint code_extract
       - checkout
       # install gmsh from ppa
@@ -41,10 +41,8 @@ jobs:
       - run: pylint test/*.py
       # make sure that rst converts correctly
       - run: apt install -y pandoc
-      - run: cat README.md | sed -e 's_<img src="\([^"]*\)" width="\([^"]*\)">_![](\1){width="\2"}_g' -e 's/```python,test/```python/g' > /tmp/README.md
-      - run: pandoc /tmp/README.md -o README.rst
       - run: pip3 install docutils pygments
-      - run: python3 setup.py check -r -s
+      - run: make README.rst
       # The actual test
       - run: code_extract README.md test/readme_test.py --filter python,test
       - run: cd test/ && MPLBACKEND=Agg pytest --cov pygmsh
