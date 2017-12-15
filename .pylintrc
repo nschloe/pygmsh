@@ -10,7 +10,8 @@ disable=
     too-many-arguments,
     too-many-instance-attributes,
     too-many-locals,
-    too-many-public-methods
+    too-many-public-methods,
+    unused-variable,
 
 [FORMAT]
 

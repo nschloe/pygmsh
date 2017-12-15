@@ -22,6 +22,7 @@ def compute_volume(points, cells):
         vol = math.fsum(mesh.cell_volumes)
     else:
         vol = 0.0
+        assert 'triangle' in cells or 'quad' in cells
         if 'triangle' in cells:
             # triangles
             mesh = voropy.mesh_tri.MeshTri(
