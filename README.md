@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/nschloe/pygmsh/branch/master/graph/badge.svg)](https://codecov.io/gh/nschloe/pygmsh)
 [![Documentation Status](https://readthedocs.org/projects/pygmsh/badge/?version=latest)](https://pygmsh.readthedocs.org/en/latest/?badge=latest)
 [![PyPi Version](https://img.shields.io/pypi/v/pygmsh.svg)](https://pypi.python.org/pypi/pygmsh)
-[![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?style=social&label=Stars&maxAge=2592000)](https://github.com/nschloe/pygmsh)
+[![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?style=social&label=Stars)](https://github.com/nschloe/pygmsh)
 
 <p align="center">
   <img src="https://nschloe.github.io/pygmsh/logo.png" width="20%">
