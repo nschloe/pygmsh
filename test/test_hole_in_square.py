@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
-import pygmsh
+#
 import numpy as np
+import pygmsh
 
 
 def test():
