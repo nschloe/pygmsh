@@ -301,36 +301,35 @@ class Geometry(object):
 
         # out[] = Extrude{0,1,0}{ Line{1}; };
         name = 'ex{}'.format(self._EXTRUDE_ID)
-        if translation_axis is not None and rotation_axis is not None:
-            self._GMSH_CODE.append(
-                '{}[] = Extrude{{{{{}}}, {{{}}}, {{{}}}, {}}}{{{};}};'
-                .format(
-                    name,
-                    ','.join(repr(x) for x in translation_axis),
-                    ','.join(repr(x) for x in rotation_axis),
-                    ','.join(repr(x) for x in point_on_axis),
-                    angle,
-                    entity.id
-                ))
-
-        elif translation_axis is not None:
-            # Only translation
-            if num_layers is None:
-                self._GMSH_CODE.append(
+        if translation_axis is not None:
+            if rotation_axis is not None:
+                extrusion_string = \
+                    '{}[] = Extrude{{{{{}}}, {{{}}}, {{{}}}, {}}}{{{};'.format(
+                        name,
+                        ','.join(repr(x) for x in translation_axis),
+                        ','.join(repr(x) for x in rotation_axis),
+                        ','.join(repr(x) for x in point_on_axis),
+                        angle,
+                        entity.id
+                    )
+            else:
+                # Only translation
+                extrusion_string = \
                     '{}[] = Extrude{{{}}}{{{};}};'.format(
                         name,
                         ','.join(repr(x) for x in translation_axis),
                         entity.id
-                    ))
-            else:
-                self._GMSH_CODE.append(
-                    '{}[] = Extrude{{{}}}{{{}; Layers{{{}}}; {}}};'.format(
-                        name,
-                        ','.join(repr(x) for x in translation_axis),
-                        entity.id,
+                    )
+
+            if num_layers is not None:
+                extrusion_string += \
+                    ' Layers{{{}}}; {}'.format(
                         num_layers,
                         'Recombine;' if recombine else ''
-                    ))
+                    )
+            # close command
+            extrusion_string += '};'
+            self._GMSH_CODE.append(extrusion_string)
         else:
             assert rotation_axis is not None, \
                 'Specify at least translation or rotation.'
