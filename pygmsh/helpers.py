@@ -6,8 +6,9 @@ import os
 import subprocess
 import tempfile
 
-import meshio
 import numpy
+
+import meshio
 import voropy
 
 

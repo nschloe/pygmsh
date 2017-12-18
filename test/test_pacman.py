@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pygmsh
 from numpy import pi, sin, cos
+import pygmsh
 
 from helpers import compute_volume
 
