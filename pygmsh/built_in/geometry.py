@@ -315,7 +315,7 @@ class Geometry(object):
             else:
                 # Only translation
                 extrusion_string = \
-                    '{}[] = Extrude{{{}}}{{{};}};'.format(
+                    '{}[] = Extrude {{{}}} {{{};'.format(
                         name,
                         ','.join(repr(x) for x in translation_axis),
                         entity.id
