@@ -158,10 +158,12 @@ def generate_mesh(
     if num_lloyd_steps > 0:
         if verbose:
             print('Lloyd smoothing...')
-        # find submeshes
-        a = cell_data['triangle']['geometrical']
+
+        # Wait for meshio to return submeshes again. Till then just smoothen
+        # the mesh as a whole.
+        # a = cell_data['triangle']['geometrical']
         # https://stackoverflow.com/q/42740483/353337
-        submesh_bools = {v: v == a for v in numpy.unique(a)}
+        submesh_bools = {0: numpy.ones(len(cells['triangle']), dtype=bool)}
 
         X, cells['triangle'] = voropy.smoothing.lloyd_submesh(
                 X, cells['triangle'], submesh_bools,
