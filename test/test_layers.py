@@ -10,7 +10,11 @@ def test(lcar=0.05):
     geom = pygmsh.built_in.Geometry()
 
     # Draw a cross with a circular hole
-    circ = geom.add_circle([0.0, 0.0, 0.0], 0.1, lcar=lcar)
+    circ = geom.add_circle(
+        [0.0, 0.0, 0.0], 0.1,
+        lcar=lcar,
+        make_surface=False
+        )
     poly = geom.add_polygon([
         [+0.0, +0.5, 0.0],
         [-0.1, +0.1, 0.0],
