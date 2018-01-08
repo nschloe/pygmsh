@@ -81,11 +81,6 @@ class Geometry(object):
         self._GMSH_CODE.append(p.code)
         return p
 
-    def add_spline(self, *args, **kwargs):
-        p = Spline(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
-
     def add_circle_arc(self, *args, **kwargs):
         p = CircleArc(*args, **kwargs)
         self._GMSH_CODE.append(p.code)
@@ -128,6 +123,11 @@ class Geometry(object):
 
     def add_point(self, *args, **kwargs):
         p = Point(*args, **kwargs)
+        self._GMSH_CODE.append(p.code)
+        return p
+
+    def add_spline(self, *args, **kwargs):
+        p = Spline(*args, **kwargs)
         self._GMSH_CODE.append(p.code)
         return p
 
