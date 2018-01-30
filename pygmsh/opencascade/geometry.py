@@ -22,6 +22,8 @@ class Geometry(bl.Geometry):
             characteristic_length_min=None,
             characteristic_length_max=None
             ):
+        super().__init__()
+
         self._BOOLEAN_ID = 0
         self._EXTRUDE_ID = 0
         self._GMSH_CODE = [
@@ -40,7 +42,6 @@ class Geometry(bl.Geometry):
                 'Mesh.CharacteristicLengthMax = {};'.format(
                     characteristic_length_max
                     ))
-        super().__init__()
         return
 
     def get_code(self):
@@ -231,3 +232,35 @@ class Geometry(bl.Geometry):
         extruded = VolumeBase(extruded)
 
         return top, extruded
+
+    def add_physical_boundary_of_volume(self, volume, index=None, label=None):
+        """Function denotes the physical label to the boundary of a volume."""
+
+        given_id = volume.id
+        if '[]' in given_id or '()' in given_id:
+            name, brackets = given_id[:-2], given_id[-2:]
+            # In the following line, we transform name[] to name[#name[]-1]
+            # in order to assign only the resulting volume to the given label
+            resulting_name = name + brackets[0] + '#' + given_id + '-1' + brackets[1]
+
+            if index is not None:
+
+                label = self._new_physical_group(label)
+                self._BOOLEAN_ID += 1 # id of the boundary surface
+
+                name = 'sur{}'.format(self._BOOLEAN_ID)
+                self._GMSH_CODE.append('{}() = '.format(name,label) + \
+                                       'Boundary{{ Volume{{{}}}; }};'.format(resulting_name))
+                self._GMSH_CODE.append('Physical Surface({}) '.format(label)  + \
+                                       '= {}({});'.format(name, index))
+
+                return
+        else:
+            # if the given identity is not an array, 
+            # we just assign the given name with the given label
+            resulting_name = given_id
+
+        label = self._new_physical_group(label)
+        self._GMSH_CODE.append('Physical Surface({}) '.format(label)  + \
+                               '= Boundary{{ Volume{{{}}}; }};'.format(resulting_name))
+
