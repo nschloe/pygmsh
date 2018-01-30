@@ -86,13 +86,30 @@ class Geometry(object):
         self._GMSH_CODE.append(p.code)
         return p
 
+    def volumes_inside(self, ex_vol, in_vols):
+        """ Function uses the boolean operations in order to make given internal volumes to 
+            belong to external one.
+
+            This function exists in order to make possible the assignment to the physical volumes
+            and boundary surfaces.
+        """
+
+        new_volume = self.boolean_fragments([ex_vol], in_vols, delete1=True, delete2=False)
+
+        # change the id of the initial volume, 
+        # i.e. change its pointer to the new boolean structure 
+        ex_vol.id = new_volume.id
+
+        return new_volume
+
     # pylint: disable=too-many-branches
     def _boolean_operation(
             self,
             operation,
             input_entities,
             tool_entities,
-            delete=True
+            delete1=True,
+            delete2=True
             ):
         '''Boolean operations, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
@@ -129,15 +146,15 @@ class Geometry(object):
                 operation,
                 legal_dim_types[dim_type],
                 ','.join(e.id for e in input_entities),
-                'Delete;' if delete else '',
+                'Delete;' if delete1 else '',
                 legal_dim_types[dim_type],
                 ','.join(e.id for e in tool_entities),
-                'Delete;' if delete else ''
+                'Delete;' if delete2 else ''
                 ))
 
         return dim_type(id0=name, is_list=True)
 
-    def boolean_intersection(self, entities, delete=True):
+    def boolean_intersection(self, entities, delete1=True, delete2=True):
         '''Boolean intersection, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
@@ -145,17 +162,17 @@ class Geometry(object):
         assert len(entities) > 1
         return self._boolean_operation(
                 'BooleanIntersection',
-                [entities[0]], entities[1:], delete=delete
+                [entities[0]], entities[1:], delete1=delete1, delete2=delete2
                 )
 
-    def boolean_union(self, entities, delete=True):
+    def boolean_union(self, entities, delete1=True, delete2=True):
         '''Boolean union, see https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
         input_entity and tool_entity are called object and tool in gmsh
         documentation.
         '''
         return self._boolean_operation(
                 'BooleanUnion',
-                [entities[0]], entities[1:], delete=delete
+                [entities[0]], entities[1:], delete1=delete1, delete2=delete2
                 )
 
     def boolean_difference(self, *args, **kwargs):
