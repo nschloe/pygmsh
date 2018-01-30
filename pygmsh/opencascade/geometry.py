@@ -13,9 +13,10 @@ from .surface_base import SurfaceBase
 from .torus import Torus
 from .wedge import Wedge
 from .volume_base import VolumeBase
+from ..built_in import geometry as bl
 
 
-class Geometry(object):
+class Geometry(bl.Geometry):
     def __init__(
             self,
             characteristic_length_min=None,
@@ -39,6 +40,7 @@ class Geometry(object):
                 'Mesh.CharacteristicLengthMax = {};'.format(
                     characteristic_length_max
                     ))
+        super().__init__()
         return
 
     def get_code(self):
