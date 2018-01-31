@@ -167,12 +167,27 @@ class Geometry(object):
         return '"{}"'.format(label)
 
     def _add_physical(self, tpe, entities, label=None):
+
         label = self._new_physical_group(label)
         if not isinstance(entities, list):
             entities = [entities]
+
+        resulting_names = []
+        for entity in entities:
+            given_id = entity.id
+            if '[]' in given_id or '()' in given_id:
+                name, brackets = given_id[:-2], given_id[-2:]
+                # In the following line, we transform name[] to name[#name[]-1]
+                # in order to assign only the resulting volume to the given label
+                resulting_names.append(name + brackets[0] + '#' + given_id + '-1' + brackets[1])
+            else:
+                # if the given identity is not an array, 
+                # we just assign the given name with the given label
+                resulting_names.append(given_id)
+
         self._GMSH_CODE.append(
             'Physical {}({}) = {{{}}};'.format(
-                tpe, label, ', '.join([e.id for e in entities])
+                tpe, label, ', '.join([name for name in resulting_names])
             ))
         return
 
