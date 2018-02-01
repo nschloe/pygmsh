@@ -68,7 +68,9 @@ def _is_flat(X, tol=1.0e-15):
 
 
 def _get_gmsh_exe():
-    macos_gmsh_location = '/Applications/Gmsh.app/Contents/MacOS/gmsh'
+    #macos_gmsh_location = '/Applications/Gmsh.app/Contents/MacOS/gmsh'
+    # TODO: fix the hardcoded binary call
+    macos_gmsh_location = 'gmsh'
     if os.path.isfile(macos_gmsh_location):
         gmsh_executable = macos_gmsh_location
     else:
@@ -128,7 +130,7 @@ def generate_mesh(
     assert geom_order > 0
     if geom_order > 1:
         cmd += ['-order', str(geom_order)]
-
+    print(' '.join(cmd))
     # https://stackoverflow.com/a/803421/353337
     p = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
@@ -139,7 +141,6 @@ def generate_mesh(
             if not line:
                 break
             print(line.decode('utf-8'), end='')
-
     p.communicate()
     assert p.returncode == 0, \
         'Gmsh exited with error (return code {}).'.format(p.returncode)
