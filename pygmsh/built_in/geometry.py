@@ -32,6 +32,7 @@ from .line_base import LineBase
 from .line_loop import LineLoop
 from .plane_surface import PlaneSurface
 from .point import Point
+from .spline import Spline
 from .surface import Surface
 from .surface_base import SurfaceBase
 from .surface_loop import SurfaceLoop
@@ -122,6 +123,11 @@ class Geometry(object):
 
     def add_point(self, *args, **kwargs):
         p = Point(*args, **kwargs)
+        self._GMSH_CODE.append(p.code)
+        return p
+
+    def add_spline(self, *args, **kwargs):
+        p = Spline(*args, **kwargs)
         self._GMSH_CODE.append(p.code)
         return p
 
