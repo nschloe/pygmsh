@@ -947,3 +947,13 @@ class Geometry(object):
                 translation_axis=numpy.dot(R, [length, 0, 0])
                 )
         return vol
+
+    def translate(self, geometry, vector):
+        if 'v' in geometry.id:
+            self._GMSH_CODE.append('Translate {{{}}} {{ Volume{{{}}}; }}'.format(', '.join([str(co) for co in vector]), geometry.id))
+        elif 's' in geometry.id:
+            self._GMSH_CODE.append('Translate {{{}}} {{ Surface{{{}}}; }}'.format(', '.join([str(co) for co in vector]), geometry.id))
+        elif 'l' in geometry.id:
+            self._GMSH_CODE.append('Translate {{{}}} {{ Line{{{}}}; }}'.format(', '.join([str(co) for co in vector]), geometry.id))
+        else:
+            raise ValueError
