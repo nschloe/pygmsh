@@ -181,7 +181,7 @@ class Geometry(object):
                 # in order to assign only the resulting volume to the given label
                 resulting_names.append(name + brackets[0] + '#' + given_id + '-1' + brackets[1])
             else:
-                # if the given identity is not an array, 
+                # if the given identity is not an array,
                 # we just assign the given name with the given label
                 resulting_names.append(given_id)
 
@@ -962,3 +962,13 @@ class Geometry(object):
                 translation_axis=numpy.dot(R, [length, 0, 0])
                 )
         return vol
+
+    def translate(self, geometry, vector):
+        if 'v' in geometry.id:
+            self._GMSH_CODE.append('Translate {{{}}} {{ Volume{{{}}}; }}'.format(', '.join([str(co) for co in vector]), geometry.id))
+        elif 's' in geometry.id:
+            self._GMSH_CODE.append('Translate {{{}}} {{ Surface{{{}}}; }}'.format(', '.join([str(co) for co in vector]), geometry.id))
+        elif 'l' in geometry.id:
+            self._GMSH_CODE.append('Translate {{{}}} {{ Line{{{}}}; }}'.format(', '.join([str(co) for co in vector]), geometry.id))
+        else:
+            raise ValueError
