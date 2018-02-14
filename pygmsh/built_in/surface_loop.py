@@ -4,6 +4,7 @@
 
 class SurfaceLoop(object):
     _ID = 0
+    dimension = 2
 
     def __init__(self, surfaces):
         self.surfaces = surfaces

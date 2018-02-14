@@ -2,6 +2,7 @@
 #
 import math
 import numpy
+import scipy.linalg as LA
 import voropy
 
 
@@ -20,9 +21,8 @@ def compute_volume(points, cells):
                 *prune_nodes(points, cells['tetra'])
                 )
         vol = math.fsum(mesh.cell_volumes)
-    else:
+    elif 'triangle' in cells or 'quad' in cells:
         vol = 0.0
-        assert 'triangle' in cells or 'quad' in cells
         if 'triangle' in cells:
             # triangles
             mesh = voropy.mesh_tri.MeshTri(
@@ -38,6 +38,10 @@ def compute_volume(points, cells):
                 ]).T
             mesh = voropy.mesh_tri.MeshTri(*prune_nodes(points, split_cells))
             vol += math.fsum(mesh.cell_volumes)
+    else:
+        assert 'line' in cells
+        segs = numpy.diff(points[cells['line']], axis=1).squeeze()
+        vol = numpy.sum(LA.norm(segs, axis=1))
 
     return vol
 

@@ -13,14 +13,17 @@ from .surface_base import SurfaceBase
 from .torus import Torus
 from .wedge import Wedge
 from .volume_base import VolumeBase
+from ..built_in import geometry as bl
 
 
-class Geometry(object):
+class Geometry(bl.Geometry):
     def __init__(
             self,
             characteristic_length_min=None,
             characteristic_length_max=None
             ):
+        super().__init__()
+
         self._BOOLEAN_ID = 0
         self._EXTRUDE_ID = 0
         self._GMSH_CODE = [
@@ -86,13 +89,30 @@ class Geometry(object):
         self._GMSH_CODE.append(p.code)
         return p
 
+    def volumes_inside(self, ex_vol, in_vols):
+        """ Function uses the boolean operations in order to make given internal volumes to
+            belong to external one.
+
+            This function exists in order to make possible the assignment to the physical volumes
+            and boundary surfaces.
+        """
+
+        new_volume = self.boolean_fragments([ex_vol], in_vols, delete1=True, delete2=False)
+
+        # change the id of the initial volume,
+        # i.e. change its pointer to the new boolean structure
+        ex_vol.id = new_volume.id
+
+        return new_volume
+
     # pylint: disable=too-many-branches
     def _boolean_operation(
             self,
             operation,
             input_entities,
             tool_entities,
-            delete=True
+            delete1=True,
+            delete2=True
             ):
         '''Boolean operations, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
@@ -101,22 +121,22 @@ class Geometry(object):
         self._BOOLEAN_ID += 1
 
         # assert that all entities are of the same dimensionality
-        dim_type = None
+        dim = None
         legal_dim_types = {
-            # LineBase: 'Line',
-            SurfaceBase: 'Surface',
-            VolumeBase: 'Volume',
+            1: 'Line',
+            2: 'Surface',
+            3: 'Volume',
             }
         for ldt in legal_dim_types:
-            if isinstance(input_entities[0], ldt):
-                dim_type = ldt
+            if input_entities[0].dimension == ldt:
+                dim = ldt
                 break
-        assert dim_type is not None, \
+        assert dim is not None, \
             'Illegal input type \'{}\' for Boolean operation.'.format(
                 type(input_entities[0])
                 )
         for e in input_entities[1:] + tool_entities:
-            assert isinstance(e, dim_type), \
+            assert e.dimension == dim, \
                 'Incompatible input type \'{}\' for Boolean operation.'.format(
                     type(e)
                     )
@@ -127,17 +147,17 @@ class Geometry(object):
             .format(
                 name,
                 operation,
-                legal_dim_types[dim_type],
+                legal_dim_types[dim],
                 ','.join(e.id for e in input_entities),
-                'Delete;' if delete else '',
-                legal_dim_types[dim_type],
+                'Delete;' if delete1 else '',
+                legal_dim_types[dim],
                 ','.join(e.id for e in tool_entities),
-                'Delete;' if delete else ''
+                'Delete;' if delete2 else ''
                 ))
+        mapping = {'Line': None, 'Surface': SurfaceBase, 'Volume': VolumeBase}
+        return mapping[legal_dim_types[dim]](id0=name, is_list=True)
 
-        return dim_type(id0=name, is_list=True)
-
-    def boolean_intersection(self, entities, delete=True):
+    def boolean_intersection(self, entities, delete1=True, delete2=True):
         '''Boolean intersection, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
@@ -145,17 +165,17 @@ class Geometry(object):
         assert len(entities) > 1
         return self._boolean_operation(
                 'BooleanIntersection',
-                [entities[0]], entities[1:], delete=delete
+                [entities[0]], entities[1:], delete1=delete1, delete2=delete2
                 )
 
-    def boolean_union(self, entities, delete=True):
+    def boolean_union(self, entities, delete1=True, delete2=True):
         '''Boolean union, see https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
         input_entity and tool_entity are called object and tool in gmsh
         documentation.
         '''
         return self._boolean_operation(
                 'BooleanUnion',
-                [entities[0]], entities[1:], delete=delete
+                [entities[0]], entities[1:], delete1=delete1, delete2=delete2
                 )
 
     def boolean_difference(self, *args, **kwargs):
@@ -212,3 +232,35 @@ class Geometry(object):
         extruded = VolumeBase(extruded)
 
         return top, extruded
+
+    def add_physical_boundary_of_volume(self, volume, index=None, label=None):
+        """Function denotes the physical label to the boundary of a volume."""
+
+        given_id = volume.id
+        if '[]' in given_id or '()' in given_id:
+            name, brackets = given_id[:-2], given_id[-2:]
+            # In the following line, we transform name[] to name[#name[]-1]
+            # in order to assign only the resulting volume to the given label
+            resulting_name = name + brackets[0] + '#' + given_id + '-1' + brackets[1]
+
+            if index is not None:
+
+                label = self._new_physical_group(label)
+                self._BOOLEAN_ID += 1 # id of the boundary surface
+
+                name = 'sur{}'.format(self._BOOLEAN_ID)
+                self._GMSH_CODE.append('{}() = '.format(name,label) + \
+                                       'Boundary{{ Volume{{{}}}; }};'.format(resulting_name))
+                self._GMSH_CODE.append('Physical Surface({}) '.format(label)  + \
+                                       '= {}({});'.format(name, index))
+
+                return
+        else:
+            # if the given identity is not an array,
+            # we just assign the given name with the given label
+            resulting_name = given_id
+
+        label = self._new_physical_group(label)
+        self._GMSH_CODE.append('Physical Surface({}) '.format(label)  + \
+                               '= Boundary{{ Volume{{{}}}; }};'.format(resulting_name))
+
