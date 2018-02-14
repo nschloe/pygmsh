@@ -6,6 +6,7 @@ from .line_loop import LineLoop
 class Surface(object):
     _ID = 0
     num_edges = 0
+    dimension = 2
 
     def __init__(self, line_loop, api_level=2):
         assert isinstance(line_loop, LineLoop)
