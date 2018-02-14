@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 #
-import os
-from setuptools import setup, find_packages
 import codecs
+import os
+
+from setuptools import setup, find_packages
 
 # https://packaging.python.org/single_source_version/
 base_dir = os.path.abspath(os.path.dirname(__file__))
 about = {}
 with open(os.path.join(base_dir, 'pygmsh', '__about__.py'), 'rb') as f:
+    # pylint: disable=exec-used
     exec(f.read(), about)
 
 
