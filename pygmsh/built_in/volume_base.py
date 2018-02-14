@@ -4,6 +4,7 @@
 
 class VolumeBase(object):
     _ID = 0
+    dimension = 3
 
     def __init__(self, id0=None):
         if id0:
