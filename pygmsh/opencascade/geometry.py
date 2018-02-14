@@ -90,7 +90,7 @@ class Geometry(bl.Geometry):
         return p
 
     def volumes_inside(self, ex_vol, in_vols):
-        """ Function uses the boolean operations in order to make given internal volumes to 
+        """ Function uses the boolean operations in order to make given internal volumes to
             belong to external one.
 
             This function exists in order to make possible the assignment to the physical volumes
@@ -99,8 +99,8 @@ class Geometry(bl.Geometry):
 
         new_volume = self.boolean_fragments([ex_vol], in_vols, delete1=True, delete2=False)
 
-        # change the id of the initial volume, 
-        # i.e. change its pointer to the new boolean structure 
+        # change the id of the initial volume,
+        # i.e. change its pointer to the new boolean structure
         ex_vol.id = new_volume.id
 
         return new_volume
@@ -121,22 +121,22 @@ class Geometry(bl.Geometry):
         self._BOOLEAN_ID += 1
 
         # assert that all entities are of the same dimensionality
-        dim_type = None
+        dim = None
         legal_dim_types = {
-            # LineBase: 'Line',
-            SurfaceBase: 'Surface',
-            VolumeBase: 'Volume',
+            1: 'Line',
+            2: 'Surface',
+            3: 'Volume',
             }
         for ldt in legal_dim_types:
-            if isinstance(input_entities[0], ldt):
-                dim_type = ldt
+            if input_entities[0].dimension == ldt:
+                dim = ldt
                 break
-        assert dim_type is not None, \
+        assert dim is not None, \
             'Illegal input type \'{}\' for Boolean operation.'.format(
                 type(input_entities[0])
                 )
         for e in input_entities[1:] + tool_entities:
-            assert isinstance(e, dim_type), \
+            assert e.dimension == dim, \
                 'Incompatible input type \'{}\' for Boolean operation.'.format(
                     type(e)
                     )
@@ -147,15 +147,15 @@ class Geometry(bl.Geometry):
             .format(
                 name,
                 operation,
-                legal_dim_types[dim_type],
+                legal_dim_types[dim],
                 ','.join(e.id for e in input_entities),
                 'Delete;' if delete1 else '',
-                legal_dim_types[dim_type],
+                legal_dim_types[dim],
                 ','.join(e.id for e in tool_entities),
                 'Delete;' if delete2 else ''
                 ))
-
-        return dim_type(id0=name, is_list=True)
+        mapping = {'Line': None, 'Surface': SurfaceBase, 'Volume': VolumeBase}
+        return mapping[legal_dim_types[dim]](id0=name, is_list=True)
 
     def boolean_intersection(self, entities, delete1=True, delete2=True):
         '''Boolean intersection, see
@@ -256,7 +256,7 @@ class Geometry(bl.Geometry):
 
                 return
         else:
-            # if the given identity is not an array, 
+            # if the given identity is not an array,
             # we just assign the given name with the given label
             resulting_name = given_id
 
