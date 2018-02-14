@@ -5,6 +5,7 @@ import copy
 
 class LineBase(object):
     _ID = 0
+    dimension = 1
 
     def __init__(self, id0=None):
         if id0:

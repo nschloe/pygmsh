@@ -5,6 +5,7 @@
 class SurfaceBase(object):
     _ID = 0
     num_edges = 0
+    dimension = 2
 
     def __init__(self, id0=None, num_edges=0):
         isinstance(id0, str)
