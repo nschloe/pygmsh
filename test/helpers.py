@@ -2,7 +2,6 @@
 #
 import math
 import numpy
-import scipy.linalg as LA
 import voropy
 
 
@@ -41,7 +40,7 @@ def compute_volume(points, cells):
     else:
         assert 'line' in cells
         segs = numpy.diff(points[cells['line']], axis=1).squeeze()
-        vol = numpy.sum(LA.norm(segs, axis=1))
+        vol = numpy.sum(numpy.sqrt(numpy.einsum('...j, ...j', segs, segs)))
 
     return vol
 
