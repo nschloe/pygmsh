@@ -92,7 +92,8 @@ class Geometry(object):
             operation,
             input_entities,
             tool_entities,
-            delete=True
+            delete_first=True,
+            delete_other=True
             ):
         '''Boolean operations, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
@@ -129,15 +130,15 @@ class Geometry(object):
                 operation,
                 legal_dim_types[dim_type],
                 ','.join(e.id for e in input_entities),
-                'Delete;' if delete else '',
+                'Delete;' if delete_first else '',
                 legal_dim_types[dim_type],
                 ','.join(e.id for e in tool_entities),
-                'Delete;' if delete else ''
+                'Delete;' if delete_other else ''
                 ))
 
         return dim_type(id0=name, is_list=True)
 
-    def boolean_intersection(self, entities, delete=True):
+    def boolean_intersection(self, entities, delete_first=True, delete_other=True):
         '''Boolean intersection, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
@@ -145,17 +146,17 @@ class Geometry(object):
         assert len(entities) > 1
         return self._boolean_operation(
                 'BooleanIntersection',
-                [entities[0]], entities[1:], delete=delete
+                [entities[0]], entities[1:], delete_first=delete_first, delete_other=delete_other
                 )
 
-    def boolean_union(self, entities, delete=True):
+    def boolean_union(self, entities, delete_first=True, delete_other=True):
         '''Boolean union, see https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
         input_entity and tool_entity are called object and tool in gmsh
         documentation.
         '''
         return self._boolean_operation(
                 'BooleanUnion',
-                [entities[0]], entities[1:], delete=delete
+                [entities[0]], entities[1:], delete_first=delete_first, delete_other=delete_other
                 )
 
     def boolean_difference(self, *args, **kwargs):
