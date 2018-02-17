@@ -22,6 +22,7 @@ class Geometry(bl.Geometry):
             characteristic_length_min=None,
             characteristic_length_max=None
             ):
+        super().__init__()
         self._BOOLEAN_ID = 0
         self._EXTRUDE_ID = 0
         self._GMSH_CODE = [
@@ -40,7 +41,6 @@ class Geometry(bl.Geometry):
                 'Mesh.CharacteristicLengthMax = {};'.format(
                     characteristic_length_max
                     ))
-        super().__init__()
         return
 
     def get_code(self):
