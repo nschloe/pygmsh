@@ -124,6 +124,7 @@ class Geometry(object):
 
         name = 'bo{}'.format(self._BOOLEAN_ID)
         self._GMSH_CODE.append(
+            # I wonder what this line does in Lisp.
             '{}[] = {}{{{} {{{}}}; {}}} {{{} {{{}}}; {}}};'
             .format(
                 name,
@@ -138,7 +139,9 @@ class Geometry(object):
 
         return dim_type(id0=name, is_list=True)
 
-    def boolean_intersection(self, entities, delete_first=True, delete_other=True):
+    def boolean_intersection(
+            self, entities, delete_first=True, delete_other=True
+            ):
         '''Boolean intersection, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
@@ -146,17 +149,19 @@ class Geometry(object):
         assert len(entities) > 1
         return self._boolean_operation(
                 'BooleanIntersection',
-                [entities[0]], entities[1:], delete_first=delete_first, delete_other=delete_other
+                [entities[0]], entities[1:],
+                delete_first=delete_first, delete_other=delete_other
                 )
 
     def boolean_union(self, entities, delete_first=True, delete_other=True):
-        '''Boolean union, see https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations
-        input_entity and tool_entity are called object and tool in gmsh
-        documentation.
+        '''Boolean union, see
+        https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
+        and tool_entity are called object and tool in gmsh documentation.
         '''
         return self._boolean_operation(
                 'BooleanUnion',
-                [entities[0]], entities[1:], delete_first=delete_first, delete_other=delete_other
+                [entities[0]], entities[1:],
+                delete_first=delete_first, delete_other=delete_other
                 )
 
     def boolean_difference(self, *args, **kwargs):
