@@ -4,6 +4,7 @@
 
 class SurfaceBase(object):
     _ID = 0
+    dimension = 2
 
     def __init__(self, is_list=False, id0=None):
         isinstance(id0, str)

@@ -13,14 +13,16 @@ from .surface_base import SurfaceBase
 from .torus import Torus
 from .wedge import Wedge
 from .volume_base import VolumeBase
+from ..built_in import geometry as bl
 
 
-class Geometry(object):
+class Geometry(bl.Geometry):
     def __init__(
             self,
             characteristic_length_min=None,
             characteristic_length_max=None
             ):
+        super().__init__()
         self._BOOLEAN_ID = 0
         self._EXTRUDE_ID = 0
         self._GMSH_CODE = [
@@ -102,22 +104,22 @@ class Geometry(object):
         self._BOOLEAN_ID += 1
 
         # assert that all entities are of the same dimensionality
-        dim_type = None
+        dim = None
         legal_dim_types = {
-            # LineBase: 'Line',
-            SurfaceBase: 'Surface',
-            VolumeBase: 'Volume',
+            1: 'Line',
+            2: 'Surface',
+            3: 'Volume',
             }
         for ldt in legal_dim_types:
-            if isinstance(input_entities[0], ldt):
-                dim_type = ldt
+            if input_entities[0].dimension == ldt:
+                dim = ldt
                 break
-        assert dim_type is not None, \
+        assert dim is not None, \
             'Illegal input type \'{}\' for Boolean operation.'.format(
                 type(input_entities[0])
                 )
         for e in input_entities[1:] + tool_entities:
-            assert isinstance(e, dim_type), \
+            assert e.dimension == dim, \
                 'Incompatible input type \'{}\' for Boolean operation.'.format(
                     type(e)
                     )
@@ -129,15 +131,15 @@ class Geometry(object):
             .format(
                 name,
                 operation,
-                legal_dim_types[dim_type],
+                legal_dim_types[dim],
                 ','.join(e.id for e in input_entities),
                 'Delete;' if delete_first else '',
-                legal_dim_types[dim_type],
+                legal_dim_types[dim],
                 ','.join(e.id for e in tool_entities),
                 'Delete;' if delete_other else ''
                 ))
-
-        return dim_type(id0=name, is_list=True)
+        mapping = {'Line': None, 'Surface': SurfaceBase, 'Volume': VolumeBase}
+        return mapping[legal_dim_types[dim]](id0=name, is_list=True)
 
     def boolean_intersection(
             self, entities, delete_first=True, delete_other=True
