@@ -948,12 +948,16 @@ class Geometry(object):
                 )
         return vol
 
-    def translate(self, geometry, vector):
-        if 'v' in geometry.id:
-            self._GMSH_CODE.append('Translate {{{}}} {{ Volume{{{}}}; }}'.format(', '.join([str(co) for co in vector]), geometry.id))
-        elif 's' in geometry.id:
-            self._GMSH_CODE.append('Translate {{{}}} {{ Surface{{{}}}; }}'.format(', '.join([str(co) for co in vector]), geometry.id))
-        elif 'l' in geometry.id:
-            self._GMSH_CODE.append('Translate {{{}}} {{ Line{{{}}}; }}'.format(', '.join([str(co) for co in vector]), geometry.id))
+    def translate(self, input_entity, vector):
+
+        if isinstance(input_entity, VolumeBase):
+            self._GMSH_CODE.append('Translate {{{}}} {{ Volume{{{}}}; }}'.
+                                   format(', '.join([str(co) for co in vector]), input_entity.id))
+        elif isinstance(input_entity, SurfaceBase):
+            self._GMSH_CODE.append('Translate {{{}}} {{ Surface{{{}}}; }}'.
+                                   format(', '.join([str(co) for co in vector]), input_entity.id))
+        elif isinstance(input_entity, LineBase):
+            self._GMSH_CODE.append('Translate {{{}}} {{ Line{{{}}}; }}'.
+                                   format(', '.join([str(co) for co in vector]), input_entity.id))
         else:
             raise ValueError
