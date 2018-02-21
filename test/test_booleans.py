@@ -56,15 +56,15 @@ def built_in_opencascade_geos():
     geo_object2, line_loop2 = circle_loop(geo_object2)
     surf1 = geo_object2.add_plane_surface(square2)
     surf2 = geo_object2.add_plane_surface(line_loop2)
-
     geo_object2.boolean_difference([surf1], [surf2])
+
     return geo_object, geo_object2
 
 
 def built_in_opencascade_geos_fragments():
     """Cconstruct surface using boolean fragments."""
 
-    geo_object = pygmsh.opencascade.Geometry(0.05, 0.05)
+    geo_object = pygmsh.opencascade.Geometry(0.04, 0.04)
     geo_object, square = square_loop(geo_object)
     geo_object, line_loop = circle_loop(geo_object)
     surf1 = geo_object.add_plane_surface(square)
@@ -86,12 +86,76 @@ def test_square_circle_hole():
 
 
 def test_square_circle_slice():
-    """Test planar suface square with circular hole."""
+    """Test planar suface square with circular hole.
+
+    Also test for surface area of fragments.
+    """
     geo_object = built_in_opencascade_geos_fragments()
-    points, cells, _, _, _ = pygmsh.generate_mesh(geo_object)
+    points, cells, _, cell_data, _ = pygmsh.generate_mesh(geo_object)
     assert np.abs((compute_volume(points, cells) - 1) / 1) < 1e-3
+    surf = 1 - 0.1 ** 2 * np.pi
+
+    outer_mask = np.where(cell_data['triangle']['geometrical'] == 13)[0]
+    outer_cells = {}
+    outer_cells['triangle'] = cells['triangle'][outer_mask]
+
+    inner_mask = np.where(cell_data['triangle']['geometrical'] == 12)[0]
+    inner_cells = {}
+    inner_cells['triangle'] = cells['triangle'][inner_mask]
+    assert np.abs((compute_volume(points, outer_cells) - surf) / surf) < 1e-2
+
+
+def test_fragments_diff_union():
+    """Test planar surface with holes.
+
+    Construct it with boolean operations and verify that it is the same.
+    """
+    # construct surface using boolean
+    geo_object = pygmsh.opencascade.Geometry(0.04, 0.04)
+    geo_object, square = square_loop(geo_object)
+    geo_object, line_loop = circle_loop(geo_object)
+    surf1 = geo_object.add_plane_surface(square)
+    surf2 = geo_object.add_plane_surface(line_loop)
+
+    geo_object.add_physical_surface([surf1], label=1)
+    geo_object.add_physical_surface([surf2], label=2)
+    surf_diff = geo_object.boolean_difference([surf1], [surf2], delete_other=False)
+    geo_object.boolean_union([surf_diff, surf2])
+    points, cells, _, cell_data, _ = pygmsh.generate_mesh(geo_object)
+    assert np.abs((compute_volume(points, cells) - 1) / 1) < 1e-3
+    surf = 1 - 0.1 ** 2 * np.pi
+
+    outer_mask = np.where(cell_data['triangle']['physical'] == 1)[0]
+    outer_cells = {}
+    outer_cells['triangle'] = cells['triangle'][outer_mask]
+
+    inner_mask = np.where(cell_data['triangle']['physical'] == 2)[0]
+    inner_cells = {}
+    inner_cells['triangle'] = cells['triangle'][inner_mask]
+    assert np.abs((compute_volume(points, outer_cells) - surf) / surf) < 1e-2
+
+
+def test_diff_physical_assignment():
+    """ construct surface using boolean.
+
+    Ensure that after a difference operation the initial volume physical label
+    is kept for the operated geometry.
+    """
+    geo_object2 = pygmsh.opencascade.Geometry(0.05, 0.05)
+    geo_object2, square2 = square_loop(geo_object2)
+    geo_object2, line_loop2 = circle_loop(geo_object2)
+    surf1 = geo_object2.add_plane_surface(square2)
+    surf2 = geo_object2.add_plane_surface(line_loop2)
+    geo_object2.add_physical_surface([surf1], label=1)
+    geo_object2.boolean_difference([surf1], [surf2])
+    points, cells, _, cell_data, _ = pygmsh.generate_mesh(geo_object2)
+    assert np.allclose(cell_data['triangle']['physical'], np.ones(cells['triangle'].shape[0]))
+    surf = 1 - 0.1 ** 2 * np.pi
+    assert np.abs((compute_volume(points, cells) - surf) / surf) < 1e-3
 
 
 if __name__ == '__main__':
     test_square_circle_hole()
     test_square_circle_slice()
+    test_fragments_diff_union()
+    test_diff_physical_assignment()
