@@ -10,6 +10,7 @@ class Spline(LineBase):
 
         for c in points:
             assert isinstance(c, Point)
+        assert len(control_points) > 1
 
         self.points = points
 
