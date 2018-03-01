@@ -7,7 +7,7 @@ jobs:
       - image: ubuntu:18.04
     steps:
       - run: apt update
-      - run: apt install -y git python3-pip
+      - run: apt install -y git python3-pip gmsh
       - run: pip3 install -U pytest pytest-cov pylint excode
       - checkout
       # # install gmsh from ppa
