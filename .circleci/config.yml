@@ -23,22 +23,21 @@ jobs:
   build:
     working_directory: ~/pygmsh
     docker:
-      - image: ubuntu:17.10
+      - image: ubuntu:18.04
     steps:
       - run: apt update
       - run: apt install -y git python3-pip
       - run: pip3 install -U pytest pytest-cov pylint excode
       - checkout
-      # install gmsh from ppa
-      - run: apt-get install -y software-properties-common
-      - run: LANG=C.UTF-8 apt-add-repository -y ppa:nschloe/gmsh-backports
-      - run: apt update
-      - run: apt install -y gmsh
+      # # install gmsh from ppa
+      # - run: apt-get install -y software-properties-common
+      # - run: LANG=C.UTF-8 apt-add-repository -y ppa:nschloe/gmsh-backports
+      # - run: apt update
+      # - run: apt install -y gmsh
       # install
       - run: pip3 install .
       # lint
-      - run: pylint pygmsh/
-      - run: pylint test/*.py
+      - run: pylint setup.py pygmsh/ pylint test/*.py
       # make sure that rst converts correctly
       - run: apt install -y pandoc
       - run: pip3 install docutils pygments
