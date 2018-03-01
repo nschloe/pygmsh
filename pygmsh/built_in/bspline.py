@@ -10,7 +10,7 @@ class Bspline(LineBase):
 
         for c in control_points:
             assert isinstance(c, Point)
-        assert len(control_points) > 3
+        assert len(control_points) > 1
 
         self.control_points = control_points
 
