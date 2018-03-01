@@ -1,25 +1,6 @@
 version: 2
 
 jobs:
-
-#   python2:
-#     working_directory: ~/pygmsh
-#     docker:
-#       - image: ubuntu:17.04
-#     steps:
-#       - run: apt update
-#       - run: apt install -y git gmsh python-pip python-matplotlib python-numpy python-scipy
-#       - run: pip2 install -U pytest pytest-cov pylint excode
-#       - checkout
-#       - run: LANG=C.UTF-8 pip2 install .
-#       # lint
-#       - run: pylint pygmsh/
-#       - run: pylint test/examples/*py
-#       # The tests
-#       - run: excode README.md test/readme_test.py --filter python,test
-#       - run: cd test/ && MPLBACKEND=Agg pytest --cov pygmsh
-
-#  python3:
   build:
     working_directory: ~/pygmsh
     docker:
@@ -37,7 +18,7 @@ jobs:
       # install
       - run: pip3 install .
       # lint
-      - run: pylint setup.py pygmsh/ pylint test/*.py
+      - run: pylint setup.py pygmsh/ test/*.py
       # make sure that rst converts correctly
       - run: apt install -y pandoc
       - run: pip3 install docutils pygments
@@ -48,12 +29,3 @@ jobs:
       # submit to codecov
       - run: apt install -y curl
       - run: bash <(curl -s https://codecov.io/bash)
-
-# workflow builds don't support forked PRs yet, cf.
-# <https://circleci.com/docs/2.0/faq/#can-i-build-fork-prs-using-workflows>.
-# workflows:
-#   version: 2
-#   build-and-test:
-#     jobs:
-#       - python2
-#       - python3
