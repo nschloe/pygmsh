@@ -89,7 +89,6 @@ def get_gmsh_major_version(gmsh_exe=_get_gmsh_exe()):
 def generate_mesh(
         geo_object,
         optimize=True,
-        num_quad_lloyd_steps=10,
         num_lloyd_steps=1000,
         verbose=True,
         dim=3,
@@ -120,10 +119,6 @@ def generate_mesh(
     gmsh_major_version = get_gmsh_major_version(gmsh_executable)
     if gmsh_major_version < 3 and optimize:
         cmd += ['-optimize']
-
-    if num_quad_lloyd_steps > 0 and ('Recombine Surface'
-                                     not in geo_object.get_code()):
-        cmd += ['-optimize_lloyd', str(num_quad_lloyd_steps)]
 
     assert geom_order > 0
     if geom_order > 1:
