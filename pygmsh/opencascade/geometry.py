@@ -2,6 +2,8 @@
 #
 from ..__about__ import __version__
 
+from .. import built_in
+
 from .ball import Ball
 from .box import Box
 from .cone import Cone
@@ -192,7 +194,7 @@ class Geometry(bl.Geometry):
         '''
         self._EXTRUDE_ID += 1
 
-        assert isinstance(input_entity, SurfaceBase)
+        assert isinstance(input_entity, built_in.surface_base.SurfaceBase)
         entity = Dummy('Surface{{{}}}'.format(input_entity.id))
 
         # out[] = Extrude{0,1,0}{ Line{1}; };

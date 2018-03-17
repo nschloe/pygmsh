@@ -9,11 +9,11 @@ def test():
     geom = pygmsh.built_in.Geometry()
 
     rectangle = geom.add_rectangle(
-            0.0, 1.0,
-            0.0, 1.0,
-            0.0,
-            0.1
-            )
+        0.0, 1.0,
+        0.0, 1.0,
+        0.0,
+        0.1
+        )
 
     geom.add_raw_code('Recombine Surface {%s};' % rectangle.surface.id)
 

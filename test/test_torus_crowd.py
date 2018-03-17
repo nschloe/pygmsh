@@ -16,18 +16,18 @@ def test():
     orad = 0.27
 
     Z_pos = (irad+orad) * np.concatenate([
-            +np.ones(8),
-            -np.ones(8),
-            +np.ones(8),
-            -np.ones(8)
-            ])
+        +np.ones(8),
+        -np.ones(8),
+        +np.ones(8),
+        -np.ones(8)
+        ])
 
     Alpha = np.concatenate([
-            np.arange(8) * np.pi/4.0,
-            np.arange(8) * np.pi/4.0 + np.pi/16.0,
-            np.arange(8) * np.pi/4.0,
-            np.arange(8) * np.pi/4.0 + np.pi/16.0
-            ])
+        np.arange(8) * np.pi/4.0,
+        np.arange(8) * np.pi/4.0 + np.pi/16.0,
+        np.arange(8) * np.pi/4.0,
+        np.arange(8) * np.pi/4.0 + np.pi/16.0
+        ])
 
     # pylint: disable=no-member
     A1 = (irad+orad) / np.tan(np.pi/8.0) * \
@@ -50,19 +50,19 @@ def test():
         #    xnew = R2*(R1*x+x0) + x1
         #
         geom.add_torus(
-                irad=irad,
-                orad=orad,
-                lcar=0.1,
-                R=np.dot(R2, R1),
-                x0=np.dot(R2, x0) + x1
-                )
+            irad=irad,
+            orad=orad,
+            lcar=0.1,
+            R=np.dot(R2, R1),
+            x0=np.dot(R2, x0) + x1
+            )
 
     geom.add_box(
-            -1.0, 1.0,
-            -1.0, 1.0,
-            -1.0, 1.0,
-            lcar=0.3
-            )
+        -1.0, 1.0,
+        -1.0, 1.0,
+        -1.0, 1.0,
+        lcar=0.3
+        )
 
     ref = 15.276653079300184
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)

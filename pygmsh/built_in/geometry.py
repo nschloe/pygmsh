@@ -49,8 +49,8 @@ class Geometry(object):
         self._GMSH_MAJOR = gmsh_major_version
         self._TAKEN_PHYSICALGROUP_IDS = []
         self._GMSH_CODE = [
-                '// This code was created by pygmsh v{}.'.format(__version__)
-                ]
+            '// This code was created by pygmsh v{}.'.format(__version__)
+            ]
         return
 
     def get_code(self):
@@ -482,15 +482,15 @@ class Geometry(object):
             holes=None, make_surface=True
             ):
         return self.add_polygon([
-                [xmin, ymin, z],
-                [xmax, ymin, z],
-                [xmax, ymax, z],
-                [xmin, ymax, z]
-                ],
-                lcar,
-                holes=holes,
-                make_surface=make_surface
-                )
+            [xmin, ymin, z],
+            [xmax, ymin, z],
+            [xmax, ymax, z],
+            [xmin, ymax, z]
+            ],
+            lcar,
+            holes=holes,
+            make_surface=make_surface
+            )
 
     def add_polygon(self, X, lcar, holes=None, make_surface=True):
         if holes is None:
@@ -933,17 +933,17 @@ class Geometry(object):
             [0.0, 1.0, 0.0]
             ])
         c_inner = self.add_circle(
-                x0, inner_radius, lcar, R=numpy.dot(R, Rc),
-                make_surface=False
-                )
+            x0, inner_radius, lcar, R=numpy.dot(R, Rc),
+            make_surface=False
+            )
         circ = self.add_circle(
-                x0, outer_radius, lcar, R=numpy.dot(R, Rc),
-                holes=[c_inner.line_loop]
-                )
+            x0, outer_radius, lcar, R=numpy.dot(R, Rc),
+            holes=[c_inner.line_loop]
+            )
 
         # Now Extrude the ring surface.
         _, vol, _ = self.extrude(
-                circ.plane_surface,
-                translation_axis=numpy.dot(R, [length, 0, 0])
-                )
+            circ.plane_surface,
+            translation_axis=numpy.dot(R, [length, 0, 0])
+            )
         return vol
