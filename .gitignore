@@ -13,3 +13,4 @@ pygmsh.egg-info/
 doc/_build/
 *.pos
 *.prof
+.pytest_cache/
