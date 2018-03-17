@@ -19,7 +19,7 @@ def read(fname):
             os.path.join(os.path.dirname(__file__), fname),
             encoding='utf-8'
             ).read()
-    except FileNotFoundError:
+    except IOError:
         content = ''
     return content
 
