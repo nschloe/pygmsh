@@ -17,16 +17,16 @@ def compute_volume(points, cells):
     if 'tetra' in cells:
         # 3D: only tetras supported
         mesh = voropy.mesh_tetra.MeshTetra(
-                *prune_nodes(points, cells['tetra'])
-                )
+            *prune_nodes(points, cells['tetra'])
+            )
         vol = math.fsum(mesh.cell_volumes)
     elif 'triangle' in cells or 'quad' in cells:
         vol = 0.0
         if 'triangle' in cells:
             # triangles
             mesh = voropy.mesh_tri.MeshTri(
-                    *prune_nodes(points, cells['triangle'])
-                    )
+                *prune_nodes(points, cells['triangle'])
+                )
             vol += math.fsum(mesh.cell_volumes)
         if 'quad' in cells:
             # quad: treat as two triangles

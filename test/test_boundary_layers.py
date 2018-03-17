@@ -8,12 +8,13 @@ from helpers import compute_volume
 def test():
     geom = pygmsh.built_in.Geometry()
 
-    poly = geom.add_polygon([
-        [0.0, 0.0, 0.0],
-        [2.0, 0.0, 0.0],
-        [3.0, 1.0, 0.0],
-        [1.0, 2.0, 0.0],
-        [0.0, 1.0, 0.0],
+    poly = geom.add_polygon(
+        [
+            [0.0, 0.0, 0.0],
+            [2.0, 0.0, 0.0],
+            [3.0, 1.0, 0.0],
+            [1.0, 2.0, 0.0],
+            [0.0, 1.0, 0.0],
         ],
         lcar=0.1
         )

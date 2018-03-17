@@ -15,12 +15,12 @@ def test():
     sqrt2on2 = 0.5*np.sqrt(2.)
     R = pygmsh.rotation_matrix([sqrt2on2, sqrt2on2, 0], np.pi/6.0)
     geom.add_pipe(
-            inner_radius=0.3,
-            outer_radius=0.4,
-            length=1.0,
-            R=R,
-            lcar=0.04
-            )
+        inner_radius=0.3,
+        outer_radius=0.4,
+        length=1.0,
+        R=R,
+        lcar=0.04
+        )
 
     R = np.array([
         [0.0, 0.0, 1.0],
@@ -28,13 +28,13 @@ def test():
         [1.0, 0.0, 0.0]
         ])
     geom.add_pipe(
-            inner_radius=0.3,
-            outer_radius=0.4,
-            length=1.0,
-            lcar=0.04,
-            R=R,
-            variant='circle_extrusion'
-            )
+        inner_radius=0.3,
+        outer_radius=0.4,
+        length=1.0,
+        lcar=0.04,
+        R=R,
+        variant='circle_extrusion'
+        )
 
     ref = 0.43988203517453256
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)

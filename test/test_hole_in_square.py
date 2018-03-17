@@ -28,15 +28,15 @@ def test():
 
     # Create square hole
     squareHole = geom.add_polygon(
-            squareHoleCoordinates, lcar,
-            make_surface=False
-            )
+        squareHoleCoordinates, lcar,
+        make_surface=False
+        )
 
     # Create square domain with square hole
     geom.add_rectangle(
-            xmin, xmax, ymin, ymax, 0.0, lcar,
-            holes=[squareHole.line_loop]
-            )
+        xmin, xmax, ymin, ymax, 0.0, lcar,
+        holes=[squareHole.line_loop]
+        )
 
     points, cells, _, _, _ = pygmsh.generate_mesh(geom, geom_order=2)
     # TODO support for volumes of triangle6

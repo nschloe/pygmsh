@@ -122,10 +122,10 @@ def test():
     # Create polygon for airfoil
     char_length = 1.0e-1
     airfoil = geom.add_polygon(
-            airfoil_coordinates,
-            char_length,
-            make_surface=False
-            )
+        airfoil_coordinates,
+        char_length,
+        make_surface=False
+        )
 
     # Create surface for numerical domain with an airfoil-shaped hole
     left_dist = 1.0
@@ -143,10 +143,10 @@ def test():
         [xmin, ymax, 0.0],
         ])
     polygon = geom.add_polygon(
-            domainCoordinates,
-            char_length,
-            holes=[airfoil]
-            )
+        domainCoordinates,
+        char_length,
+        holes=[airfoil]
+        )
     geom.add_raw_code('Recombine Surface {%s};' % polygon.surface.id)
 
     ref = 10.525891646546

@@ -9,11 +9,11 @@ def test():
     geom = pygmsh.built_in.Geometry()
 
     geom.add_rectangle(
-            0.0, 1.0,
-            0.0, 1.0,
-            0.0,
-            0.1
-            )
+        0.0, 1.0,
+        0.0, 1.0,
+        0.0,
+        0.1
+        )
 
     ref = 1.0
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)
