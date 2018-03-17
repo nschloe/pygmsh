@@ -19,7 +19,7 @@ def test():
     cr = 1
 
     f = 0.5*w
-    y = [-f,-f+cr, +f-cr, +f]
+    y = [-f, -f+cr, +f-cr, +f]
     z = [0.0, h-cr, h]
     f = 0.5 * cr
     x = [-f, f]

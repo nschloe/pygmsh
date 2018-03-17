@@ -7,6 +7,8 @@ class SurfaceBase(built_in.surface_base.SurfaceBase):
     dimension = 2
 
     def __init__(self, is_list=False, id0=None):
+        super(SurfaceBase, self).__init__()
+
         isinstance(id0, str)
         self.is_list = is_list
         if id0:
