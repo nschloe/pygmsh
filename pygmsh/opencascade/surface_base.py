@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
+from .. import built_in
 
-
-class SurfaceBase(object):
+class SurfaceBase(built_in.surface_base.SurfaceBase):
     _ID = 0
     dimension = 2
 
