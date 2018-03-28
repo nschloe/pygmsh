@@ -20,10 +20,6 @@ jobs:
       - run: pip3 install -r test_requirements.txt
       # lint
       - run: pylint setup.py pygmsh/ test/*.py
-      # make sure that rst converts correctly
-      - run: apt install -y pandoc
-      - run: pip3 install docutils pygments
-      - run: make README.rst
       # The actual test
       - run: excode README.md test/readme_test.py --filter python,test
       - run: cd test/ && MPLBACKEND=Agg pytest --cov pygmsh
