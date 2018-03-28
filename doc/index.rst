@@ -22,6 +22,15 @@ Contents:
     :show-inheritance:
 
 
+:mod:`pygmsh.opencascade.geometry`
+===============================
+
+.. automodule:: pygmsh.opencascade.geometry
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 :mod:`pygmsh.helpers`
 =====================
 
