@@ -219,6 +219,6 @@ class Geometry(bl.Geometry):
         extruded = '{}[1]'.format(name)
 
         top = SurfaceBase(top)
-        extruded = VolumeBase(extruded)
+        extruded = VolumeBase(is_list=False, id0=extruded)
 
         return top, extruded
