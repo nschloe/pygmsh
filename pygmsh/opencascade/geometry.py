@@ -127,19 +127,45 @@ class Geometry(bl.Geometry):
                     )
 
         name = 'bo{}'.format(self._BOOLEAN_ID)
+
+        input_delete = 'Delete;' if delete_first else ''
+
+        tool_delete = 'Delete;' if delete_other else ''
+
+        legal_dim_type = legal_dim_types[dim]
+
+        if input_entities:
+          formatted_input_entities = ';'.join(["%s{%s}" % (legal_dim_type, e.id) for e in input_entities]) + ';'
+        else:
+          formatted_input_entities = ''
+
+        if tool_entities:
+          formatted_tool_entities = ';'.join(["%s{%s}" % (legal_dim_type, e.id) for e in tool_entities]) + ';'
+        else:
+          formatted_tool_entities = ''
+
         self._GMSH_CODE.append(
             # I wonder what this line does in Lisp.
-            '{}[] = {}{{{} {{{}}}; {}}} {{{} {{{}}}; {}}};'
-            .format(
-                name,
-                operation,
-                legal_dim_types[dim],
-                ','.join(e.id for e in input_entities),
-                'Delete;' if delete_first else '',
-                legal_dim_types[dim],
-                ','.join(e.id for e in tool_entities),
-                'Delete;' if delete_other else ''
-                ))
+            #'{}[] = {}{{{} {{{}}}; {}}} {{{} {{{}}}; {}}};'
+            #.format(
+            #    name,
+            #    operation,
+            #    legal_dim_types[dim],
+            #    ';'.join(e.id for e in input_entities),
+            #    'Delete;' if delete_first else '',
+            #    legal_dim_types[dim],
+            #    ';'.join(e.id for e in tool_entities),
+            #    'Delete;' if delete_other else ''
+            #    ))
+            '%(name)s[] = %(operation)s{ %(input_entities)s %(input_delete)s } { %(tool_entities)s %(tool_delete)s};' % {
+              'name' : name,
+              'operation' : operation,
+              'input_entities' : formatted_input_entities,
+              'input_delete'   : input_delete,
+              'tool_entities' : formatted_tool_entities,
+              'tool_delete'   : tool_delete,
+            }
+          )
         mapping = {'Line': None, 'Surface': SurfaceBase, 'Volume': VolumeBase}
         return mapping[legal_dim_types[dim]](id0=name, is_list=True)
 
