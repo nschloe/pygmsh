@@ -27,6 +27,10 @@ setup(
     long_description=read('README.md'),
     long_description_content_type='text/markdown',
     url=about['__website__'],
+    project_urls={
+      'Documentation': 'https://pygmsh.readthedocs.org/en/latest',
+      'Issues': 'https://github.com/nschloe/pygmsh/issues',
+      },
     license=about['__license__'],
     platforms='any',
     install_requires=[
