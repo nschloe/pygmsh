@@ -4,7 +4,7 @@
 [![codecov](https://img.shields.io/codecov/c/github/nschloe/pygmsh.svg)](https://codecov.io/gh/nschloe/pygmsh)
 [![Codacy grade](https://img.shields.io/codacy/grade/03aca50105054d18bf1f5ca3add9f2ee.svg)](https://app.codacy.com/app/nschloe/pygmsh/dashboard)
 [![Documentation Status](https://readthedocs.org/projects/pygmsh/badge/?version=latest)](https://pygmsh.readthedocs.org/en/latest/?badge=latest)
-[![PyPi Version](https://img.shields.io/pypi/v/pygmsh.svg)](https://pypi.python.org/pypi/pygmsh)
+[![PyPi Version](https://img.shields.io/pypi/v/pygmsh.svg)](https://pypi.org/project/pygmsh)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1173105.svg)](https://doi.org/10.5281/zenodo.1173105)
 [![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?logo=github&style=social&label=Stars)](https://github.com/nschloe/pygmsh)
 
@@ -57,7 +57,7 @@ geom.extrude(
 points, cells, point_data, cell_data, field_data = pygmsh.generate_mesh(geom)
 ```
 to retrieve all points and cells of the mesh for the specified geometry.
-To store the mesh, you can use [meshio](https://pypi.python.org/pypi/meshio);
+To store the mesh, you can use [meshio](https://pypi.org/project/meshio);
 for example
 ```python
 import meshio
@@ -103,7 +103,7 @@ points, cells, point_data, cell_data, field_data = pygmsh.generate_mesh(geom)
 ### Installation
 
 pygmsh is [available from the Python Package
-Index](https://pypi.python.org/pypi/pygmsh/), so simply type
+Index](https://pypi.org/project/pygmsh/), so simply type
 ```
 pip install -U pygmsh
 ```
