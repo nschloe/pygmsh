@@ -17,6 +17,7 @@ jobs:
       # - run: apt install -y gmsh
       # install
       - run: pip3 install .
+      - run: pip3 install -r test_requirements.txt
       # lint
       - run: pylint setup.py pygmsh/ test/*.py
       # make sure that rst converts correctly
