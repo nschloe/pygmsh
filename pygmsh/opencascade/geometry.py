@@ -135,14 +135,16 @@ class Geometry(bl.Geometry):
         legal_dim_type = legal_dim_types[dim]
 
         if input_entities:
-          formatted_input_entities = ';'.join(["%s{%s}" % (legal_dim_type, e.id) for e in input_entities]) + ';'
+            formatted_input_entities = ';'.join(["%s{%s}" %
+                (legal_dim_type, e.id) for e in input_entities]) + ';'
         else:
-          formatted_input_entities = ''
+            formatted_input_entities = ''
 
         if tool_entities:
-          formatted_tool_entities = ';'.join(["%s{%s}" % (legal_dim_type, e.id) for e in tool_entities]) + ';'
+            formatted_tool_entities = ';'.join(["%s{%s}" %
+                (legal_dim_type, e.id) for e in tool_entities]) + ';'
         else:
-          formatted_tool_entities = ''
+            formatted_tool_entities = ''
 
         self._GMSH_CODE.append(
             # I wonder what this line does in Lisp.
@@ -157,13 +159,13 @@ class Geometry(bl.Geometry):
             #    ';'.join(e.id for e in tool_entities),
             #    'Delete;' if delete_other else ''
             #    ))
-            '%(name)s[] = %(operation)s{ %(input_entities)s %(input_delete)s } { %(tool_entities)s %(tool_delete)s};' % {
+            '%(name)s[] = %(op)s{ %(ientities)s %(idelete)s } { %(tentities)s %(tdelete)s};' % {
               'name' : name,
-              'operation' : operation,
-              'input_entities' : formatted_input_entities,
-              'input_delete'   : input_delete,
-              'tool_entities' : formatted_tool_entities,
-              'tool_delete'   : tool_delete,
+              'op' : operation,
+              'ientities' : formatted_input_entities,
+              'idelete'   : input_delete,
+              'tentities' : formatted_tool_entities,
+              'tdelete'   : tool_delete,
             }
           )
         mapping = {'Line': None, 'Surface': SurfaceBase, 'Volume': VolumeBase}
