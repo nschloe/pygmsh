@@ -41,6 +41,8 @@ def translation3d():
 
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)
     surf = 4 / 3 * np.pi
+    assert isinstance(ball, pygmsh.opencascade.volume_base.VolumeBase)
+    assert isinstance(ball, pygmsh.built_in.volume_base.VolumeBase)
     assert np.abs((compute_volume(points, cells) - surf) / surf) < 1e-3
 
 
