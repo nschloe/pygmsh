@@ -3,12 +3,6 @@ VERSION=$(shell python3 -c "import pygmsh; print(pygmsh.__version__)")
 default:
 	@echo "\"make publish\"?"
 
-README.rst: README.md
-	cat README.md | sed -e 's_<img src="\([^"]*\)" width="\([^"]*\)">_![](\1){width="\2"}_g' -e 's_<p[^>]*>__g' -e 's_</p>__g' > /tmp/README.md
-	pandoc /tmp/README.md -o README.rst
-	sed -i 's/python,test/python/g' README.rst
-	python3 setup.py check -r -s || exit 1
-
 tag:
 	# Make sure we're on the master branch
 	@if [ "$(shell git rev-parse --abbrev-ref HEAD)" != "master" ]; then exit 1; fi
@@ -16,14 +10,18 @@ tag:
 	git tag v$(VERSION)
 	git push --tags
 
-upload: setup.py README.rst
+upload: setup.py
 	@if [ "$(shell git rev-parse --abbrev-ref HEAD)" != "master" ]; then exit 1; fi
 	rm -f dist/*
+	python3 setup.py sdist
 	python3 setup.py bdist_wheel --universal
 	gpg --detach-sign -a dist/*
-	twine upload dist/*
+	# https://dustingram.com/articles/2018/03/16/markdown-descriptions-on-pypi
+	twine upload dist/*.tar.gz
+	twine upload dist/*.whl
 
 publish: tag upload
 
 clean:
-	rm -f README.rst
+	@find . | grep -E "(__pycache__|\.pyc|\.pyo$\)" | xargs rm -rf
+	@rm -rf pygmsh.egg-info/ build/ dist/

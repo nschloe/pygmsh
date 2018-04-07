@@ -11,11 +11,12 @@ def test(lcar=0.05):
     geom = pygmsh.built_in.Geometry()
 
     # Draw a square
-    poly = geom.add_polygon([
-        [+0.5, +0.0, 0.0],
-        [+0.0, +0.5, 0.0],
-        [-0.5, +0.0, 0.0],
-        [+0.0, -0.5, 0.0],
+    poly = geom.add_polygon(
+        [
+            [+0.5, +0.0, 0.0],
+            [+0.0, +0.5, 0.0],
+            [-0.5, +0.0, 0.0],
+            [+0.0, -0.5, 0.0],
         ],
         lcar=lcar,
         )

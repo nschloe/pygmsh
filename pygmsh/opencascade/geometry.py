@@ -2,6 +2,8 @@
 #
 from ..__about__ import __version__
 
+from .. import built_in
+
 from .ball import Ball
 from .box import Box
 from .cone import Cone
@@ -125,19 +127,47 @@ class Geometry(bl.Geometry):
                     )
 
         name = 'bo{}'.format(self._BOOLEAN_ID)
+
+        input_delete = 'Delete;' if delete_first else ''
+
+        tool_delete = 'Delete;' if delete_other else ''
+
+        legal_dim_type = legal_dim_types[dim]
+
+        if input_entities:
+            formatted_input_entities = ';'.join(["%s{%s}" %
+                (legal_dim_type, e.id) for e in input_entities]) + ';'
+        else:
+            formatted_input_entities = ''
+
+        if tool_entities:
+            formatted_tool_entities = ';'.join(["%s{%s}" %
+                (legal_dim_type, e.id) for e in tool_entities]) + ';'
+        else:
+            formatted_tool_entities = ''
+
         self._GMSH_CODE.append(
             # I wonder what this line does in Lisp.
-            '{}[] = {}{{{} {{{}}}; {}}} {{{} {{{}}}; {}}};'
-            .format(
-                name,
-                operation,
-                legal_dim_types[dim],
-                ','.join(e.id for e in input_entities),
-                'Delete;' if delete_first else '',
-                legal_dim_types[dim],
-                ','.join(e.id for e in tool_entities),
-                'Delete;' if delete_other else ''
-                ))
+            #'{}[] = {}{{{} {{{}}}; {}}} {{{} {{{}}}; {}}};'
+            #.format(
+            #    name,
+            #    operation,
+            #    legal_dim_types[dim],
+            #    ';'.join(e.id for e in input_entities),
+            #    'Delete;' if delete_first else '',
+            #    legal_dim_types[dim],
+            #    ';'.join(e.id for e in tool_entities),
+            #    'Delete;' if delete_other else ''
+            #    ))
+            '%(name)s[] = %(op)s{ %(ientities)s %(idelete)s } { %(tentities)s %(tdelete)s};' % {
+              'name' : name,
+              'op' : operation,
+              'ientities' : formatted_input_entities,
+              'idelete'   : input_delete,
+              'tentities' : formatted_tool_entities,
+              'tdelete'   : tool_delete,
+            }
+          )
         mapping = {'Line': None, 'Surface': SurfaceBase, 'Volume': VolumeBase}
         return mapping[legal_dim_types[dim]](id0=name, is_list=True)
 
@@ -192,7 +222,7 @@ class Geometry(bl.Geometry):
         '''
         self._EXTRUDE_ID += 1
 
-        assert isinstance(input_entity, SurfaceBase)
+        assert isinstance(input_entity, built_in.surface_base.SurfaceBase)
         entity = Dummy('Surface{{{}}}'.format(input_entity.id))
 
         # out[] = Extrude{0,1,0}{ Line{1}; };
@@ -217,6 +247,6 @@ class Geometry(bl.Geometry):
         extruded = '{}[1]'.format(name)
 
         top = SurfaceBase(top)
-        extruded = VolumeBase(extruded)
+        extruded = VolumeBase(is_list=False, id0=extruded)
 
         return top, extruded

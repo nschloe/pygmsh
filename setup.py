@@ -14,14 +14,7 @@ with open(os.path.join(base_dir, 'pygmsh', '__about__.py'), 'rb') as f:
 
 
 def read(fname):
-    try:
-        content = codecs.open(
-            os.path.join(os.path.dirname(__file__), fname),
-            encoding='utf-8'
-            ).read()
-    except FileNotFoundError:
-        content = ''
-    return content
+    return codecs.open(os.path.join(base_dir, fname), encoding='utf-8').read()
 
 
 setup(
@@ -31,9 +24,13 @@ setup(
     author_email=about['__author_email__'],
     packages=find_packages(),
     description='Python frontend for Gmsh',
-    long_description=read('README.rst'),
+    long_description=read('README.md'),
+    long_description_content_type='text/markdown',
     url=about['__website__'],
-    download_url='https://pypi.python.org/pypi/pygmsh',
+    project_urls={
+      'Documentation': 'https://pygmsh.readthedocs.org/en/latest',
+      'Issues': 'https://github.com/nschloe/pygmsh/issues',
+      },
     license=about['__license__'],
     platforms='any',
     install_requires=[
@@ -42,6 +39,7 @@ setup(
         'voropy',
         ],
     extras_require={
+        'all': ['pipdate'],
         'update': ['pipdate'],
         },
     classifiers=[

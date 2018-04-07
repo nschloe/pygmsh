@@ -44,9 +44,9 @@ def test():
     inter2 = geom.boolean_intersection([diff2, r33])
 
     geom.boolean_difference(
-            [rect1, rect2],
-            [disk1, disk2, rect3, rect4, inter1, inter2]
-            )
+        [rect1, rect2],
+        [disk1, disk2, rect3, rect4, inter1, inter2]
+        )
 
     points, cells, _, _, _ = pygmsh.generate_mesh(geom, num_lloyd_steps=0)
     ref = 1082.4470502181903
