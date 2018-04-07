@@ -949,15 +949,12 @@ class Geometry(object):
         return vol
 
     def translate(self, input_entity, vector):
+        """Translates input_entity itself by vector.
 
-        if isinstance(input_entity, VolumeBase):
-            self._GMSH_CODE.append('Translate {{{}}} {{ Volume{{{}}}; }}'.
-                                   format(', '.join([str(co) for co in vector]), input_entity.id))
-        elif isinstance(input_entity, SurfaceBase):
-            self._GMSH_CODE.append('Translate {{{}}} {{ Surface{{{}}}; }}'.
-                                   format(', '.join([str(co) for co in vector]), input_entity.id))
-        elif isinstance(input_entity, LineBase):
-            self._GMSH_CODE.append('Translate {{{}}} {{ Line{{{}}}; }}'.
-                                   format(', '.join([str(co) for co in vector]), input_entity.id))
-        else:
-            raise ValueError
+        Changes the input object.
+        """
+        d = {1: 'Line', 2: 'Surface', 3: 'Volume'}
+        self._GMSH_CODE.append('Translate {{{}}} {{ {}{{{}}}; }}'.
+                               format(', '.join([str(co) for co in vector]),
+                                      d[input_entity.dimension],
+                                      input_entity.id))
