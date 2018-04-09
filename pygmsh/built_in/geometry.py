@@ -947,3 +947,14 @@ class Geometry(object):
             translation_axis=numpy.dot(R, [length, 0, 0])
             )
         return vol
+
+    def translate(self, input_entity, vector):
+        """Translates input_entity itself by vector.
+
+        Changes the input object.
+        """
+        d = {1: 'Line', 2: 'Surface', 3: 'Volume'}
+        self._GMSH_CODE.append('Translate {{{}}} {{ {}{{{}}}; }}'.
+                               format(', '.join([str(co) for co in vector]),
+                                      d[input_entity.dimension],
+                                      input_entity.id))
