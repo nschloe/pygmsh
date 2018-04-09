@@ -531,7 +531,9 @@ class Geometry(object):
 
         class Polygon(object):
             def __init__(self, line_loop, surface, lcar):
+                self.id = surface.id if make_surface else None
                 self.line_loop = line_loop
+                self.num_edges = len(line_loop.lines)
                 self.surface = surface
                 self.lcar = lcar
                 return
