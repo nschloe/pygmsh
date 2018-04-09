@@ -192,6 +192,29 @@ class Geometry(object):
         self._add_physical('Volume', volumes, label=label)
         return
 
+    def add_transfinite_lines(self, lines, size):
+        self._GMSH_CODE.append(
+            'Transfinite Line {{{0}}} = {1};'.format(', '.join([l.id for l in lines]), size
+            ))
+
+    def add_transfinite_surface(self, surface, size=None):
+        # a transfinite surface can only have 4 sides
+        assert surface.num_edges == 4
+        if size is not None:
+            if hasattr(surface, 'line_loop'):
+                self.add_transfinite_lines(
+                    [surface.line_loop.lines[0], surface.line_loop.lines[2]],
+                    size[0])
+                self.add_transfinite_lines(
+                    [surface.line_loop.lines[1], surface.line_loop.lines[3]],
+                    size[1])
+            else:
+                # we can create transfinite lines only if we have a line loop
+                assert 0
+        self._GMSH_CODE.append(
+            'Transfinite Surface {{{}}};'.format(surface.id)
+            )
+
     def add_circle(
             self,
             x0, radius, lcar,
