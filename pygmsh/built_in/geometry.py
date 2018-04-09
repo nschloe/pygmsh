@@ -201,16 +201,14 @@ class Geometry(object):
         # a transfinite surface can only have 4 sides
         assert surface.num_edges == 4
         if size is not None:
-            if hasattr(surface, 'line_loop'):
-                self.add_transfinite_lines(
-                    [surface.line_loop.lines[0], surface.line_loop.lines[2]],
-                    size[0])
-                self.add_transfinite_lines(
-                    [surface.line_loop.lines[1], surface.line_loop.lines[3]],
-                    size[1])
-            else:
-                # we can create transfinite lines only if we have a line loop
-                assert 0
+            assert isinstance(surface, (PlaneSurface, Surface, self.Polygon)), \
+                'we can create transfinite lines only if we have a line loop'
+            self.add_transfinite_lines(
+                [surface.line_loop.lines[0], surface.line_loop.lines[2]],
+                size[0])
+            self.add_transfinite_lines(
+                [surface.line_loop.lines[1], surface.line_loop.lines[3]],
+                size[1])
         self._GMSH_CODE.append(
             'Transfinite Surface {{{}}};'.format(surface.id)
             )
@@ -515,6 +513,16 @@ class Geometry(object):
             make_surface=make_surface
             )
 
+    class Polygon(object):
+        def __init__(self, line_loop, surface, lcar):
+            if hasattr(surface, 'id'):
+                self.id = surface.id
+            self.line_loop = line_loop
+            self.num_edges = len(line_loop.lines)
+            self.surface = surface
+            self.lcar = lcar
+            return
+
     def add_polygon(self, X, lcar, holes=None, make_surface=True):
         if holes is None:
             holes = []
@@ -529,16 +537,7 @@ class Geometry(object):
         ll = self.add_line_loop((lines))
         surface = self.add_plane_surface(ll, holes) if make_surface else None
 
-        class Polygon(object):
-            def __init__(self, line_loop, surface, lcar):
-                self.id = surface.id if make_surface else None
-                self.line_loop = line_loop
-                self.num_edges = len(line_loop.lines)
-                self.surface = surface
-                self.lcar = lcar
-                return
-
-        return Polygon(ll, surface, lcar)
+        return self.Polygon(ll, surface, lcar)
 
     def add_ellipsoid(
             self,
