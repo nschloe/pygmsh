@@ -14,7 +14,7 @@ def test(lcar=1.):
         lcar
         )
 
-    geom.add_transfinite_surface(poly.surface, size=[11, 9])
+    geom.set_transfinite_surface(poly.surface, size=[11, 9])
 
     points, cells, _, _, _ = pygmsh.generate_mesh(
         geom,
