@@ -198,8 +198,11 @@ class Geometry(object):
             ))
 
     def add_transfinite_surface(self, surface, size=None):
-        # a transfinite surface can only have 4 sides
-        assert surface.num_edges == 4
+        assert surface.num_edges == 4, \
+            'a transfinite surface can only have 4 sides'
+        # size is not mandatory because in general a user can create it's own
+        # transfinite lines and then just tell gmsh that the surface is
+        # transfinite too
         if size is not None:
             assert isinstance(surface, (PlaneSurface, Surface, self.Polygon)), \
                 'we can create transfinite lines only if we have a line loop'
@@ -515,10 +518,7 @@ class Geometry(object):
 
     class Polygon(object):
         def __init__(self, line_loop, surface, lcar):
-            if hasattr(surface, 'id'):
-                self.id = surface.id
             self.line_loop = line_loop
-            self.num_edges = len(line_loop.lines)
             self.surface = surface
             self.lcar = lcar
             return

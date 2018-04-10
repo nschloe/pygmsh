@@ -6,7 +6,7 @@ import pygmsh
 
 def test(lcar=1.):
     geom = pygmsh.built_in.Geometry()
-    surface = geom.add_polygon([
+    poly = geom.add_polygon([
         [0., 0., 0.],
         [1., 0., 0.],
         [1., 1., 0.],
@@ -14,7 +14,7 @@ def test(lcar=1.):
         lcar
         )
 
-    geom.add_transfinite_surface(surface, size=[11, 9])
+    geom.add_transfinite_surface(poly.surface, size=[11, 9])
 
     points, cells, _, _, _ = pygmsh.generate_mesh(
         geom,
