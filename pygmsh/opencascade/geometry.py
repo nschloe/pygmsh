@@ -24,7 +24,7 @@ class Geometry(bl.Geometry):
             characteristic_length_min=None,
             characteristic_length_max=None
             ):
-        super().__init__()
+        super(Geometry, self).__init__()
         self._BOOLEAN_ID = 0
         self._EXTRUDE_ID = 0
         self._GMSH_CODE = [
