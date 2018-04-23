@@ -5,7 +5,7 @@
 class Point(object):
     _POINT_ID = 0
 
-    def __init__(self, x, lcar):
+    def __init__(self, x, lcar=None):
         self.x = x
         self.lcar = lcar
 
@@ -13,9 +13,16 @@ class Point(object):
         Point._POINT_ID += 1
 
         # Points are always 3D in gmsh
-        self.code = '\n'.join([
-            '{} = newp;'.format(self.id),
-            'Point({}) = {{{!r}, {!r}, {!r}, {!r}}};'.format(
-                self.id, x[0], x[1], x[2], lcar
-            )])
+        if lcar is not None:
+            self.code = '\n'.join([
+                '{} = newp;'.format(self.id),
+                'Point({}) = {{{!r}, {!r}, {!r}, {!r}}};'.format(
+                    self.id, x[0], x[1], x[2], lcar
+                )])
+        else:
+            self.code = '\n'.join([
+                '{} = newp;'.format(self.id),
+                'Point({}) = {{{!r}, {!r}, {!r}}};'.format(
+                    self.id, x[0], x[1], x[2]
+                )])
         return
