@@ -255,9 +255,10 @@ class Geometry(object):
                 ])
 
         # Apply the transformation.
-        # TODO assert that the transformation preserves circles
         if R is not None:
-            X = [numpy.dot(R, x) + x0 for x in X]
+            # Assert that the transformation preserves circles
+            assert numpy.allclose(abs(numpy.linalg.eigvals(R)), 1.)
+            X = X @ R.T
 
         X += x0
 
