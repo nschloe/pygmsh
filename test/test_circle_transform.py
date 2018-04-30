@@ -1,10 +1,11 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
+
+from numpy import array, pi, sin, cos
 import pygmsh
 
 from helpers import compute_volume
 
-from numpy import array, pi, sin, cos
 
 
 def test():
