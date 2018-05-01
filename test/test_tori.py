@@ -7,36 +7,30 @@ import pygmsh
 from helpers import compute_volume
 
 
-def test():
+def test(irad=0.05,
+         orad=0.6):
     '''Torus, rotated in space.
     '''
     geom = pygmsh.built_in.Geometry()
 
-    R = np.array([
-        [1.0, 0.0, 0.0],
-        [0.0, 0.0, 1.0],
-        [0.0, 1.0, 0.0]
-        ])
+    R = pygmsh.rotation_matrix([1., 0., 0.], np.pi / 2)
     geom.add_torus(
-        irad=0.05, orad=0.6, lcar=0.03,
+        irad=irad, orad=orad, lcar=0.03,
         x0=[0.0, 0.0, -1.0],
         R=R
         )
 
-    R = np.array([
-        [0.0, 0.0, 1.0],
-        [0.0, 1.0, 0.0],
-        [1.0, 0.0, 0.0]
-        ])
+    R = pygmsh.rotation_matrix([0., 1., 0.], np.pi / 2)
     geom.add_torus(
-        irad=0.05, orad=0.6, lcar=0.03,
+        irad=irad, orad=orad, lcar=0.03,
         x0=[0.0, 0.0, 1.0],
         variant='extrude_circle'
         )
 
-    ref = 0.06604540601899624
+    ref = 2 * 2 * np.pi **2 * orad * irad ** 2
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    assset np.isclose(compute_volume(points, cells), ref,
+                      rtol=5e-2)
     return points, cells
 
 
