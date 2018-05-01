@@ -27,9 +27,9 @@ def test(irad=0.05,
         variant='extrude_circle'
         )
 
-    ref = 2 * 2 * np.pi **2 * orad * irad ** 2
+    ref = 2 * 2 * np.pi ** 2 * orad * irad ** 2
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)
-    assset np.isclose(compute_volume(points, cells), ref,
+    assert np.isclose(compute_volume(points, cells), ref,
                       rtol=5e-2)
     return points, cells
 
