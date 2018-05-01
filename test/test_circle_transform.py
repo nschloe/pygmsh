@@ -11,9 +11,8 @@ from helpers import compute_volume
 def test(radius=1.):
     geom = pygmsh.built_in.Geometry()
 
-    theta = np.pi / np.array([2., 3., 5])
-    R = [pygmsh.rotation_matrix(np.eye(1, 3, d)[0], np.pi / 2)
-         for d in range(3)]
+    R = [pygmsh.rotation_matrix(np.eye(1, 3, d)[0], theta)
+         for d, theta in enumerate(np.pi / np.array([2., 3., 5]))]
 
     geom.add_circle(
         [7., 11., 13.],
