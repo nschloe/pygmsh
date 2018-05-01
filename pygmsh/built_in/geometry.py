@@ -254,10 +254,11 @@ class Geometry(object):
                 for k in range(num_sections)
                 ])
 
-        # Apply the transformation.
         if R is not None:
-            # Assert that the transformation preserves circles
-            assert numpy.allclose(abs(numpy.linalg.eigvals(R)), 1.)
+            assert numpy.allclose(abs(numpy.linalg.eigvals(R)),
+                                  numpy.ones(X.shape[1])), \
+                   "The transformation matrix doesn't preserve circles;" \
+                   " at least one eigenvalue lies off the unit circle."
             X = X @ R.T
 
         X += x0
