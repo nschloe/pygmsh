@@ -1,39 +1,32 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from numpy import array, pi, sin, cos
+import numpy as np
 import pygmsh
 
 from helpers import compute_volume
 
 
 
-def test():
+def test(radius=1.):
     geom = pygmsh.built_in.Geometry()
 
-    theta = pi / array([2., 3., 5])
-    R = [array([[1, 0, 0],
-                [0, cos(theta[0]), -sin(theta[0])],
-                [0, sin(theta[0]), cos(theta[0])]]),
-         array([[cos(theta[1]), 0, sin(theta[1])],
-                [0, 1, 0],
-                [-sin(theta[1]), 0, cos(theta[1])]]),
-         array([[cos(theta[2]), -sin(theta[2]), 0],
-                [sin(theta[2]), cos(theta[2]), 0],
-                [0, 0, 1]])]
+    theta = np.pi / np.array([2., 3., 5])
+    R = [pygmsh.rotation_matrix(np.eye(1, 3, d)[0], np.pi / 2)
+         for d in range(3)]
 
     geom.add_circle(
         [7., 11., 13.],
-        1.,
+        radius,
         .1,
         R[0] @ R[1] @ R[2])
 
-    ref = 3.1363871677682247
+    ref = np.pi * radius ** 2
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    assert np.isclose(compute_volume(points, cells), ref, rtol=1e-2)
     return points, cells
 
 
 if __name__ == '__main__':
     import meshio
-    meshio.write('circle.vtk', *test())
+    meshio.write('circle_transformed.vtk', *test())
