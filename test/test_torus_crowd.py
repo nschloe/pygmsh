@@ -64,9 +64,9 @@ def test():
         lcar=0.3
         )
 
-    ref = 15.276653079300184
+    ref = len(A1) * 2 * np.pi ** 2 * orad * irad ** 2 + 2.0 ** 3
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    assert np.isclose(compute_volume(points, cells), ref, rtol=2e-2)
     return points, cells
 
 
