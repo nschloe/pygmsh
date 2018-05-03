@@ -48,7 +48,7 @@ def test():
         [disk1, disk2, rect3, rect4, inter1, inter2]
         )
 
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom, num_lloyd_steps=0)
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
     ref = 1082.4470502181903
     assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
     return points, cells
