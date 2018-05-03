@@ -39,8 +39,8 @@ setup(
         'voropy',
         ],
     extras_require={
-        'all': ['pipdate'],
-        'update': ['pipdate'],
+        'all': ['pipdate >=0.3.0, <0.4.0'],
+        'update': ['pipdate >=0.3.0, <0.4.0'],
         },
     classifiers=[
         about['__status__'],
