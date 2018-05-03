@@ -9,7 +9,6 @@ import tempfile
 import numpy
 
 import meshio
-import voropy
 
 
 def rotation_matrix(u, theta):
