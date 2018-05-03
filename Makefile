@@ -22,3 +22,6 @@ publish: tag upload
 clean:
 	@find . | grep -E "(__pycache__|\.pyc|\.pyo$\)" | xargs rm -rf
 	@rm -rf pygmsh.egg-info/ build/ dist/
+
+lint:
+	pylint setup.py pygmsh/ test/*.py
