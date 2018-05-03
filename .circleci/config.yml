@@ -2,7 +2,7 @@ version: 2
 
 jobs:
   build:
-    working_directory: ~/pygmsh
+    working_directory: ~/work
     docker:
       - image: ubuntu:18.04
     steps:

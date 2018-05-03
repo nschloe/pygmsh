@@ -35,7 +35,6 @@ setup(
     install_requires=[
         'meshio',
         'numpy >= 1.9',
-        'voropy',
         ],
     extras_require={
         'all': ['pipdate >=0.2.0, <0.3.0'],

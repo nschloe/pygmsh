@@ -18,8 +18,8 @@ def test(lcar=1.):
 
     points, cells, _, _, _ = pygmsh.generate_mesh(
         geom,
-        num_lloyd_steps=0, # optimization destroys the structured mesh
-        geo_filename='transfinite.geo')
+        geo_filename='transfinite.geo'
+        )
     assert len(cells['triangle']) == 10*8*2
     return points, cells
 

@@ -9,7 +9,6 @@ import tempfile
 import numpy
 
 import meshio
-import voropy
 
 
 def rotation_matrix(u, theta):
@@ -89,7 +88,6 @@ def get_gmsh_major_version(gmsh_exe=_get_gmsh_exe()):
 def generate_mesh(
         geo_object,
         optimize=True,
-        num_lloyd_steps=1000,
         verbose=True,
         dim=3,
         prune_vertices=True,
@@ -149,22 +147,6 @@ def generate_mesh(
                 '(only works for flat triangular meshes).'
                 )
         return X, cells, pt_data, cell_data, field_data
-
-    if num_lloyd_steps > 0:
-        if verbose:
-            print('Lloyd smoothing...')
-
-        # Wait for meshio to return submeshes again. Till then just smoothen
-        # the mesh as a whole.
-        # a = cell_data['triangle']['geometrical']
-        # https://stackoverflow.com/q/42740483/353337
-        submesh_bools = {0: numpy.ones(len(cells['triangle']), dtype=bool)}
-
-        X, cells['triangle'] = voropy.smoothing.lloyd_submesh(
-                X, cells['triangle'], submesh_bools,
-                tol=0.0, max_steps=num_lloyd_steps,
-                verbose=False
-                )
 
     if prune_vertices:
         # Make sure to include only those vertices which belong to a triangle.
