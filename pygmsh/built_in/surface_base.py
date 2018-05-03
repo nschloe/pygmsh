@@ -8,8 +8,8 @@ class SurfaceBase(object):
     dimension = 2
 
     def __init__(self, id0=None, num_edges=0):
-        isinstance(id0, str)
         if id0:
+            assert isinstance(id0, str)
             self.id = id0
         else:
             self.id = 's{}'.format(SurfaceBase._ID)
