@@ -38,7 +38,9 @@ def test():
         holes=[squareHole.line_loop]
         )
 
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom, geom_order=2)
+    points, cells, _, _, _ = pygmsh.generate_mesh(
+        geom, extra_gmsh_arguments=['-order', '2']
+        )
     # TODO support for volumes of triangle6
     # ref = 16.0
     # from helpers import compute_volume
