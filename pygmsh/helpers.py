@@ -68,11 +68,10 @@ def _is_flat(X, tol=1.0e-15):
 
 def _get_gmsh_exe():
     macos_gmsh_location = '/Applications/Gmsh.app/Contents/MacOS/gmsh'
-    if os.path.isfile(macos_gmsh_location):
-        gmsh_executable = macos_gmsh_location
-    else:
-        gmsh_executable = 'gmsh'
-    return gmsh_executable
+    return (
+        macos_gmsh_location if os.path.isfile(macos_gmsh_location)
+        else 'gmsh'
+        )
 
 
 def get_gmsh_major_version(gmsh_exe=_get_gmsh_exe()):
@@ -87,15 +86,17 @@ def get_gmsh_major_version(gmsh_exe=_get_gmsh_exe()):
 # pylint: disable=too-many-branches
 def generate_mesh(
         geo_object,
-        optimize=True,
         verbose=True,
         dim=3,
         prune_vertices=True,
         gmsh_path=None,
-        geom_order=1,
+        extra_gmsh_arguments=None,
         # for debugging purposes:
-        geo_filename=None
+        geo_filename=None,
         ):
+    if extra_gmsh_arguments is None:
+        extra_gmsh_arguments = []
+
     preserve_geo = geo_filename is not None
     if geo_filename is None:
         with tempfile.NamedTemporaryFile(suffix='.geo') as f:
@@ -109,22 +110,14 @@ def generate_mesh(
 
     gmsh_executable = gmsh_path if gmsh_path is not None else _get_gmsh_exe()
 
-    cmd = [
-        gmsh_executable,
+    args = [
         '-{}'.format(dim), '-bin', geo_filename, '-o', msh_filename
-        ]
-
-    gmsh_major_version = get_gmsh_major_version(gmsh_executable)
-    if gmsh_major_version < 3 and optimize:
-        cmd += ['-optimize']
-
-    assert geom_order > 0
-    if geom_order > 1:
-        cmd += ['-order', str(geom_order)]
+        ] + extra_gmsh_arguments
 
     # https://stackoverflow.com/a/803421/353337
     p = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        [gmsh_executable] + args,
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT
         )
     if verbose:
         while True:
@@ -136,6 +129,7 @@ def generate_mesh(
     p.communicate()
     assert p.returncode == 0, \
         'Gmsh exited with error (return code {}).'.format(p.returncode)
+
 
     X, cells, pt_data, cell_data, field_data = meshio.read(msh_filename)
 
