@@ -23,7 +23,7 @@ Contents:
 
 
 :mod:`pygmsh.opencascade.geometry`
-===============================
+==================================
 
 .. automodule:: pygmsh.opencascade.geometry
     :members:
