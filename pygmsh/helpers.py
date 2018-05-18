@@ -105,13 +105,18 @@ def generate_mesh(
     with open(geo_filename, 'w') as f:
         f.write(geo_object.get_code())
 
-    with tempfile.NamedTemporaryFile(suffix='.msh') as handle:
+    with tempfile.NamedTemporaryFile(suffix='.vtk') as handle:
         msh_filename = handle.name
 
     gmsh_executable = gmsh_path if gmsh_path is not None else _get_gmsh_exe()
 
     args = [
-        '-{}'.format(dim), '-bin', geo_filename, '-o', msh_filename
+        '-{}'.format(dim), geo_filename,
+        # Don't use the native msh format. It's not very well suited for
+        # efficient reading as every cell has to be read individually.
+        '-format', 'vtk',
+        '-bin',
+        '-o', msh_filename,
         ] + extra_gmsh_arguments
 
     # https://stackoverflow.com/a/803421/353337
@@ -130,17 +135,7 @@ def generate_mesh(
     assert p.returncode == 0, \
         'Gmsh exited with error (return code {}).'.format(p.returncode)
 
-
     X, cells, pt_data, cell_data, field_data = meshio.read(msh_filename)
-
-    # Lloyd smoothing
-    if not _is_flat(X) or 'triangle' not in cells:
-        if verbose:
-            print(
-                'Not performing Lloyd smoothing '
-                '(only works for flat triangular meshes).'
-                )
-        return X, cells, pt_data, cell_data, field_data
 
     if prune_vertices:
         # Make sure to include only those vertices which belong to a triangle.
