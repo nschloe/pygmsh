@@ -137,7 +137,8 @@ def generate_mesh(
 
     X, cells, pt_data, cell_data, field_data = meshio.read(msh_filename)
 
-    if prune_vertices:
+    if prune_vertices and 'triangle' in cells:
+        # TODO prune for none-triangular meshes
         # Make sure to include only those vertices which belong to a triangle.
         uvertices, uidx = numpy.unique(cells['triangle'], return_inverse=True)
         cells = {'triangle': uidx.reshape(cells['triangle'].shape)}
