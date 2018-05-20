@@ -93,6 +93,7 @@ def generate_mesh(
         extra_gmsh_arguments=None,
         # for debugging purposes:
         geo_filename=None,
+        fast_conversion=False,
         ):
     if extra_gmsh_arguments is None:
         extra_gmsh_arguments = []
@@ -105,7 +106,18 @@ def generate_mesh(
     with open(geo_filename, 'w') as f:
         f.write(geo_object.get_code())
 
-    with tempfile.NamedTemporaryFile(suffix='.vtk') as handle:
+    # Gmsh's native file format `msh` it not well suited for fast i/o. This can
+    # greatly reduce the performance of pygmsh. As a workaround, use the VTK
+    # format. Unfortunately, gmsh doesn't support physical and geoemtrical tags
+    # for VTK yet. <https://gitlab.onelab.info/gmsh/gmsh/issues/389>
+    if fast_conversion:
+        filetype = 'vtk'
+        suffix = '.vtk'
+    else:
+        filetype = 'msh'
+        suffix = '.msh'
+
+    with tempfile.NamedTemporaryFile(suffix=suffix) as handle:
         msh_filename = handle.name
 
     gmsh_executable = gmsh_path if gmsh_path is not None else _get_gmsh_exe()
@@ -114,7 +126,7 @@ def generate_mesh(
         '-{}'.format(dim), geo_filename,
         # Don't use the native msh format. It's not very well suited for
         # efficient reading as every cell has to be read individually.
-        '-format', 'vtk',
+        '-format', filetype,
         '-bin',
         '-o', msh_filename,
         ] + extra_gmsh_arguments
