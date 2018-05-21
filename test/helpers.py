@@ -16,6 +16,9 @@ def get_simplex_volumes(pts, cells):
     '''Signed volume of a simplex in nD. Note that signing only makes sense for
     n-simplices in R^n.
     '''
+    assert numpy.all(numpy.abs(pts[:, 2]) < 1.0e-14)
+    pts = pts[:, :2]
+
     n = pts.shape[1]
     assert cells.shape[1] == n+1
 
