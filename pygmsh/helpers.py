@@ -149,12 +149,36 @@ def generate_mesh(
 
     X, cells, pt_data, cell_data, field_data = meshio.read(msh_filename)
 
-    if prune_vertices and 'triangle' in cells:
-        # TODO prune for none-triangular meshes
-        # Make sure to include only those vertices which belong to a triangle.
-        uvertices, uidx = numpy.unique(cells['triangle'], return_inverse=True)
-        cells = {'triangle': uidx.reshape(cells['triangle'].shape)}
-        cell_data = {'triangle': cell_data['triangle']}
+    if prune_vertices:
+        # Only keep the cells of highest topological dimension; discard faces
+        # and such.
+        two_d_cells = set(['triangle', 'quad'])
+        three_d_cells = set([
+            'tetra', 'hexahedron', 'wedge', 'pyramid', 'penta_prism',
+            'hexa_prism'
+            ])
+        if any(k in cells for k in three_d_cells):
+            keep_keys = three_d_cells.intersection(cells.keys())
+        elif any(k in cells for k in two_d_cells):
+            keep_keys = two_d_cells.intersection(cells.keys())
+        else:
+            keep_keys = cells.keys()
+
+        # Make sure to include only those vertices which belong to a cell.
+        ncells = numpy.concatenate([
+            numpy.concatenate(cells[key]) for key in keep_keys
+            ])
+        uvertices, uidx = numpy.unique(ncells, return_inverse=True)
+
+        k = 0
+        new_cells = {}
+        for key in keep_keys:
+            n = numpy.prod(cells[key].shape)
+            new_cells[key] = uidx[k:k+n].reshape(cells[key].shape)
+            k += n
+        cells = new_cells
+
+        cell_data = {key: cell_data[key] for key in keep_keys}
         X = X[uvertices]
         for key in pt_data:
             pt_data[key] = pt_data[key][uvertices]

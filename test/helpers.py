@@ -2,7 +2,6 @@
 #
 import math
 import numpy
-import voropy
 
 
 def prune_nodes(points, cells):
@@ -13,21 +12,30 @@ def prune_nodes(points, cells):
     return points, cells
 
 
+def get_simplex_volumes(pts, cells):
+    '''Signed volume of a simplex in nD. Note that signing only makes sense for
+    n-simplices in R^n.
+    '''
+    n = pts.shape[1]
+    assert cells.shape[1] == n+1
+
+    p = pts[cells]
+    p = numpy.concatenate([p, numpy.ones(list(p.shape[:2]) + [1])], axis=-1)
+    return numpy.abs(numpy.linalg.det(p) / math.factorial(n))
+
+
 def compute_volume(points, cells):
     if 'tetra' in cells:
-        # 3D: only tetras supported
-        mesh = voropy.mesh_tetra.MeshTetra(
-            *prune_nodes(points, cells['tetra'])
+        vol = math.fsum(
+            get_simplex_volumes(*prune_nodes(points, cells['tetra']))
             )
-        vol = math.fsum(mesh.cell_volumes)
     elif 'triangle' in cells or 'quad' in cells:
         vol = 0.0
         if 'triangle' in cells:
             # triangles
-            mesh = voropy.mesh_tri.MeshTri(
-                *prune_nodes(points, cells['triangle'])
-                )
-            vol += math.fsum(mesh.cell_volumes)
+            vol += math.fsum(get_simplex_volumes(
+                *prune_nodes(points, cells['tetra'])
+                ))
         if 'quad' in cells:
             # quad: treat as two triangles
             quads = cells['quad'].T
@@ -35,8 +43,9 @@ def compute_volume(points, cells):
                 [quads[0], quads[1], quads[2]],
                 [quads[0], quads[2], quads[3]],
                 ]).T
-            mesh = voropy.mesh_tri.MeshTri(*prune_nodes(points, split_cells))
-            vol += math.fsum(mesh.cell_volumes)
+            vol += math.fsum(get_simplex_volumes(
+                *prune_nodes(points, split_cells)
+                ))
     else:
         assert 'line' in cells
         segs = numpy.diff(points[cells['line']], axis=1).squeeze()
