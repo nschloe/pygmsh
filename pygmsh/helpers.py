@@ -89,6 +89,7 @@ def generate_mesh(
         verbose=True,
         dim=3,
         prune_vertices=True,
+        remove_faces=False,
         gmsh_path=None,
         extra_gmsh_arguments=None,
         # for debugging purposes:
@@ -149,7 +150,7 @@ def generate_mesh(
 
     X, cells, pt_data, cell_data, field_data = meshio.read(msh_filename)
 
-    if prune_vertices:
+    if remove_faces:
         # Only keep the cells of highest topological dimension; discard faces
         # and such.
         two_d_cells = set(['triangle', 'quad'])
@@ -164,21 +165,22 @@ def generate_mesh(
         else:
             keep_keys = cells.keys()
 
+        cells = {key: cells[key] for key in keep_keys}
+        cell_data = {key: cell_data[key] for key in keep_keys}
+
+    if prune_vertices:
         # Make sure to include only those vertices which belong to a cell.
         ncells = numpy.concatenate([
-            numpy.concatenate(cells[key]) for key in keep_keys
+            numpy.concatenate(c) for c in cells.values()
             ])
         uvertices, uidx = numpy.unique(ncells, return_inverse=True)
 
         k = 0
-        new_cells = {}
-        for key in keep_keys:
+        for key in cells.keys():
             n = numpy.prod(cells[key].shape)
-            new_cells[key] = uidx[k:k+n].reshape(cells[key].shape)
+            cells[key] = uidx[k:k+n].reshape(cells[key].shape)
             k += n
-        cells = new_cells
 
-        cell_data = {key: cell_data[key] for key in keep_keys}
         X = X[uvertices]
         for key in pt_data:
             pt_data[key] = pt_data[key][uvertices]

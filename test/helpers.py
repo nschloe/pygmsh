@@ -11,14 +11,32 @@ def prune_nodes(points, cells):
     points = points[uvertices]
     return points, cells
 
+def get_triangle_volumes(pts, cells):
+    # Works in any dimension; taken from voropy
+    local_idx = numpy.array([[1, 2], [2, 0], [0, 1]]).T
+    idx_hierarchy = cells.T[local_idx]
+
+    half_edge_coords = (
+        pts[idx_hierarchy[1]] -
+        pts[idx_hierarchy[0]]
+        )
+    ei_dot_ej = numpy.einsum(
+        'ijk, ijk->ij',
+        half_edge_coords[[1, 2, 0]],
+        half_edge_coords[[2, 0, 1]]
+        )
+
+    vols = 0.5 * numpy.sqrt(
+        + ei_dot_ej[2] * ei_dot_ej[0]
+        + ei_dot_ej[0] * ei_dot_ej[1]
+        + ei_dot_ej[1] * ei_dot_ej[2]
+        )
+    return vols
 
 def get_simplex_volumes(pts, cells):
     '''Signed volume of a simplex in nD. Note that signing only makes sense for
     n-simplices in R^n.
     '''
-    assert numpy.all(numpy.abs(pts[:, 2]) < 1.0e-14)
-    pts = pts[:, :2]
-
     n = pts.shape[1]
     assert cells.shape[1] == n+1
 
@@ -36,8 +54,8 @@ def compute_volume(points, cells):
         vol = 0.0
         if 'triangle' in cells:
             # triangles
-            vol += math.fsum(get_simplex_volumes(
-                *prune_nodes(points, cells['tetra'])
+            vol += math.fsum(get_triangle_volumes(
+                *prune_nodes(points, cells['triangle'])
                 ))
         if 'quad' in cells:
             # quad: treat as two triangles
@@ -46,7 +64,7 @@ def compute_volume(points, cells):
                 [quads[0], quads[1], quads[2]],
                 [quads[0], quads[2], quads[3]],
                 ]).T
-            vol += math.fsum(get_simplex_volumes(
+            vol += math.fsum(get_triangle_volumes(
                 *prune_nodes(points, split_cells)
                 ))
     else:
