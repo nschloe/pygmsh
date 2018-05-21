@@ -9,41 +9,8 @@ Welcome to pygmsh's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 3
+    :caption: Table of Contents
 
-   self
-
-:mod:`pygmsh.built_in.geometry`
-===============================
-
-.. automodule:: pygmsh.built_in.geometry
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-:mod:`pygmsh.opencascade.geometry`
-==================================
-
-.. automodule:: pygmsh.opencascade.geometry
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-:mod:`pygmsh.helpers`
-=====================
-
-.. automodule:: pygmsh.helpers
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+    geometry
+    functions

@@ -3,6 +3,16 @@
 
 
 class CompoundVolume(object):
+    """
+    Generates Compound Volume GMSH function.
+
+    Parameters
+    ----------
+    volumes : array-like[N]
+        Volumes to add to compound volume.
+    """
+
+
     _ID = 0
 
     def __init__(self, volumes):

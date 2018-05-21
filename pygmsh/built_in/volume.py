@@ -4,6 +4,17 @@
 from .volume_base import VolumeBase
 
 class Volume(VolumeBase):
+    """
+    Generates a Volume GMSH function.
+
+    Parameters
+    ----------
+    surface_loop : list
+        List containing SurfaceLoop objects.
+    holes : list
+        List containing SurfaceLoop objects that represents polygon holes.
+    """
+
     def __init__(self, surface_loop, holes=None):
         super(Volume, self).__init__()
 
