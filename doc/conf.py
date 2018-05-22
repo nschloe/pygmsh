@@ -12,30 +12,18 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-# import mock
+import mock
 import os
 import sys
 import sphinx_rtd_theme
 
-# ON_RTD = os.environ.get('READTHEDOCS', None) == 'True'
-
-# import distutils.command.build
-# from distutils.dist import Distribution
-
-# # If extensions (or modules to document with autodoc) are in another directory,
-# # add these directories to sys.path here. If the directory is relative to the
-# # documentation root, use os.path.abspath to make it absolute, like shown here.
-# b = distutils.command.build.build(Distribution())
-# b.initialize_options()
-# b.finalize_options()
-# sys.path.insert(0, os.path.abspath('..' + os.sep + b.build_platlib))
+ON_RTD = os.environ.get('READTHEDOCS', None) == 'True'
 
 sys.path.insert(0, os.path.abspath('../'))
-# intersphinx_mapping = {'python': ('https://docs.python.org/3.6', None)}
 
-# MOCK_MODULES = ['meshio']
-# for mod_name in MOCK_MODULES:
-#     sys.modules[mod_name] = mock.Mock()
+MOCK_MODULES = ['meshio']
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = mock.Mock()
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the

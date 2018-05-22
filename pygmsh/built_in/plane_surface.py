@@ -15,11 +15,6 @@ class PlaneSurface(SurfaceBase):
         for the surface construction.
     holes : list
         List of LineLoops that represents polygon holes.
-
-    Attributes
-    ----------
-    num_edges : integer
-        Number of polygons edges of the generated plane.
     """
 
     def __init__(self, line_loop, holes=None):

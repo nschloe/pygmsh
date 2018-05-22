@@ -15,11 +15,6 @@ class Surface(object):
     api_level : integer
         If larger than 2 a Surface will be constructed, otherwise
         a Ruled Surface will be constructed instead.
-
-    Attributes
-    ----------
-    num_edges : integer
-        Number of edges of the constructed Surface object.
     """
 
     _ID = 0
