@@ -4,6 +4,7 @@
 *.e
 *.vtk
 *.vtu
+.DS_Store
 .cache/
 MANIFEST
 README.rst
