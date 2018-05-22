@@ -4,6 +4,15 @@ from .line_base import LineBase
 
 
 class CompoundLine(LineBase):
+    """
+    Generates the Compound Line GMSH function.
+
+    Parameters
+    ----------
+    lines : array-like[N]
+        Lines to add to compound line.
+    """
+
     def __init__(self, lines):
         super(CompoundLine, self).__init__()
 

@@ -5,6 +5,18 @@ from .line_loop import LineLoop
 
 
 class PlaneSurface(SurfaceBase):
+    """
+    Generates the Plane Surface GMSH function.
+
+    Parameters
+    ----------
+    line_loop : Object
+        Each unique Line in the LineLoop will be used 
+        for the surface construction.
+    holes : list
+        List of LineLoops that represents polygon holes.
+    """
+
     def __init__(self, line_loop, holes=None):
         super(PlaneSurface, self).__init__()
 

@@ -4,6 +4,19 @@ from .line_loop import LineLoop
 
 
 class Surface(object):
+    """
+    Generates a Surface or Rules Surfaces.
+
+    Parameters
+    ----------
+    line_loop : Object
+        LineLoop object that contains all the Line objects for the 
+        loop contruction.
+    api_level : integer
+        If larger than 2 a Surface will be constructed, otherwise
+        a Ruled Surface will be constructed instead.
+    """
+
     _ID = 0
     num_edges = 0
     dimension = 2

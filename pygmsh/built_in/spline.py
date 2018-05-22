@@ -5,6 +5,15 @@ from .point import Point
 
 
 class Spline(LineBase):
+    """
+    Generates the Spline GMSH function.
+
+    Parameters
+    ----------
+    points : list
+        List containing Point objects
+    """
+
     def __init__(self, points):
         super(Spline, self).__init__()
 

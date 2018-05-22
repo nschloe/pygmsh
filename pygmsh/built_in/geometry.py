@@ -1,20 +1,5 @@
 # -*- coding: utf-8 -*-
 #
-'''
-This class provides a Python interface for the Gmsh scripting language. It aims
-at working around some of Gmsh's inconveniences (e.g., having to manually
-assign an ID for every entity created) and providing access to Python's
-features.
-
-In Gmsh, the user must manually provide a unique ID for every point, curve,
-volume created. This can get messy when a lot of entities are created and it
-isn't clear which IDs are already in use. Some Gmsh commands even create new
-entities and silently reserve IDs in that way. This module tries to work around
-this by providing routines in the style of add_point(x) which _return_ the ID.
-To make variable names in Gmsh unique, keep track of how many points, circles,
-etc. have already been created. Variable names will then be p1, p2, etc. for
-points, c1, c2, etc. for circles and so on.
-'''
 import numpy
 
 from ..__about__ import __version__
@@ -41,6 +26,9 @@ from .volume_base import VolumeBase
 
 
 class Geometry(object):
+    """
+    """
+
     def __init__(self, gmsh_major_version=3):
         self._EXTRUDE_ID = 0
         self._BOOLEAN_ID = 0
@@ -48,35 +36,21 @@ class Geometry(object):
         self._FIELD_ID = 0
         self._GMSH_MAJOR = gmsh_major_version
         self._TAKEN_PHYSICALGROUP_IDS = []
-        self._GMSH_CODE = [
-            '// This code was created by pygmsh v{}.'.format(__version__)
-            ]
+        self._GMSH_CODE = ['// This code was created by pygmsh v{}.'.format(__version__)]
+
         return
 
     def get_code(self):
-        '''Returns properly formatted Gmsh code.
-        '''
+        """
+        Returns properly formatted Gmsh code.
+        """
         return '\n'.join(self._GMSH_CODE)
 
-    # All of the add_* method below could be replaced by
-    #
-    #   def add(self, entity):
-    #       self._GMSH_CODE.append(entity.code)
-    #       return entity
-    #
-    # to be used like
-    #
-    #    geom.add(pg.Circle(...))
-    #
-    # However, this would break backwards compatibility and perhaps encourage
-    # users to do
-    #
-    #    c = pg.Circle(...)
-    #    # ... use c
-    #
-    # in which case the circle code never gets added to geom.
-
     def add_bspline(self, *args, **kwargs):
+        """
+        Creates a Bspline object and addded the code to `_GMSH_CODE`.
+        """
+
         p = Bspline(*args, **kwargs)
         self._GMSH_CODE.append(p.code)
         return p
@@ -476,6 +450,10 @@ class Geometry(object):
         return name
 
     def add_background_field(self, fields, aggregation_type='Min'):
+        """
+        Adds bachground field.
+        """
+
         self._FIELD_ID += 1
         name = 'field{}'.format(self._FIELD_ID)
         self._GMSH_CODE.append('{} = newf;'.format(name))
@@ -521,6 +499,18 @@ class Geometry(object):
             )
 
     class Polygon(object):
+        """Creates a polygon object for the GMSH library.
+
+        Parameters
+        ----------
+        line_loop : list of Line objects
+            Line objects that creates the polygon edges.
+        surface : PlaneSurface object 
+            Creates a plane surface of the polygon.
+        lcar : int
+            Characteristic length of the mesh size in the polygon.
+        """
+
         def __init__(self, line_loop, surface, lcar):
             self.line_loop = line_loop
             self.surface = surface

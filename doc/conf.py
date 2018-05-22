@@ -12,11 +12,18 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import mock
 import os
 import sys
+import sphinx_rtd_theme
+
+if sys.version_info[0] >= 3:
+    import unittest.mock as mock
+else:
+    import mock
 
 ON_RTD = os.environ.get('READTHEDOCS', None) == 'True'
+
+sys.path.insert(0, os.path.abspath('../'))
 
 MOCK_MODULES = ['meshio']
 for mod_name in MOCK_MODULES:
@@ -38,7 +45,21 @@ for mod_name in MOCK_MODULES:
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
+    'sphinx.ext.napoleon'
 ]
+
+# Napoleon settings
+napoleon_google_docstring = False
+napoleon_numpy_docstring = True
+napoleon_include_init_with_doc = False
+napoleon_include_private_with_doc = False
+napoleon_include_special_with_doc = False
+napoleon_use_admonition_for_examples = False
+napoleon_use_admonition_for_notes = False
+napoleon_use_admonition_for_references = False
+napoleon_use_ivar = True
+napoleon_use_param = True
+napoleon_use_rtype = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -122,14 +143,16 @@ todo_include_todos = False
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
-if not ON_RTD:
-    try:
-        import sphinx_rtd_theme
-        html_theme = "sphinx_rtd_theme"
-        html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-    except ImportError:
-        pass
+html_theme = "sphinx_rtd_theme"
+
+# html_theme = 'default'
+# if not ON_RTD:
+#     try:
+#         import sphinx_rtd_theme
+#         html_theme = "sphinx_rtd_theme"
+#         html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+#     except ImportError:
+#         pass
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -138,6 +161,7 @@ if not ON_RTD:
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
