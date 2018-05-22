@@ -27,8 +27,11 @@ def test(lcar=1.):
     # surface area for quads
 
     ref = sum(l * w for l, w in permutations(lbw, 2))  # surface area
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom, prune_vertices=False)
+    # TODO compute hex volumes
+    assert abs(
+        compute_volume(points, {'quad': cells['quad']}) - ref
+        ) < 1.0e-2 * ref
     return points, cells
 
 
