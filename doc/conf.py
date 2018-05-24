@@ -12,9 +12,13 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import mock
 import os
 import sys
+
+if sys.version_info[0] >= 3:
+    import unittest.mock as mock
+else:
+    import mock
 
 ON_RTD = os.environ.get('READTHEDOCS', None) == 'True'
 
