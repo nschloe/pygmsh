@@ -6,12 +6,12 @@ from .point import Point
 
 class Bspline(LineBase):
     """
-    Generates the BSpline GMSH function.
+    Creates a BSpline.
 
     Parameters
     ----------
     control_points : array-like[N][3]
-        Coordinates of control points needed to construct b-spline.
+        Contains the identification numbers of the control points.
     """
 
     def __init__(self, control_points):

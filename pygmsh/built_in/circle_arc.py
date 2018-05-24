@@ -6,7 +6,7 @@ from .point import Point
 
 class CircleArc(LineBase):
     """
-    Generates the Circle GMSH function.
+    Creates a circle arc.
 
     Parameters
     ----------

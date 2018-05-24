@@ -6,7 +6,7 @@ from .point import Point
 
 class Line(LineBase):
     """
-    Generates the Line GMSH function.
+    Creates a straight line segment.
 
     Parameters
     ----------

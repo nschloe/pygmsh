@@ -6,7 +6,7 @@ from .point import Point
 
 class Spline(LineBase):
     """
-    Generates the Spline GMSH function.
+    With the built-in geometry kernel this constructs a Catmull-Rom spline.
 
     Parameters
     ----------

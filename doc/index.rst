@@ -13,4 +13,3 @@ Contents:
     :caption: Table of Contents
 
     geometry
-    functions
