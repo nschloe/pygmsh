@@ -3,6 +3,16 @@
 
 
 class SurfaceBase(object):
+    """
+    Increments the Line ID everytime a new object 
+    is created that inherits from LineBase.
+
+    Parameters
+    ----------
+    id0 : str
+        If no unique ID is given, the object global is incremented. 
+    """
+
     _ID = 0
     num_edges = 0
     dimension = 2

@@ -4,6 +4,15 @@ from .surface_base import SurfaceBase
 
 
 class CompoundSurface(SurfaceBase):
+    """
+    Generates the Compouns Surface GMSH function.
+
+    Parameters
+    ----------
+    surfaces : array-like[N]
+        Surfaces to add to compound surface.
+    """
+
     def __init__(self, surfaces):
         super(CompoundSurface, self).__init__()
         self.num_edges = sum(s.num_edges for s in surfaces)
