@@ -5,6 +5,15 @@ from .point import Point
 
 
 class Bspline(LineBase):
+    """
+    Creates a BSpline.
+
+    Parameters
+    ----------
+    control_points : array-like[N][3]
+        Contains the identification numbers of the control points.
+    """
+
     def __init__(self, control_points):
         super(Bspline, self).__init__()
 

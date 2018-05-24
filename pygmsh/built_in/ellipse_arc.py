@@ -5,6 +5,21 @@ from .point import Point
 
 
 class EllipseArc(LineBase):
+    """
+    Creates an ellipse arc.
+
+    Parameters
+    ----------
+    start : array-like[3]
+        Coordinates of start point needed to construct circle arc.
+    center : array-like[3]
+        Coordinates of center point needed to construct circle arc.
+    point_on_major_axis : array-like[3]
+        Point on the center axis of ellipse.
+    end : array-like[3]
+        Coordinates of end point needed to construct circle arc.
+    """
+
     def __init__(self, start, center, point_on_major_axis, end):
         super(EllipseArc, self).__init__()
 

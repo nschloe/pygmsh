@@ -4,6 +4,11 @@ from .. import built_in
 
 
 class VolumeBase(built_in.volume_base.VolumeBase):
+    """
+    Increments the Volume ID everytime a new volume object
+    is created. Inherits from built_in VolumeBase.
+    """
+
     _ID = 0
     dimension = 3
 
