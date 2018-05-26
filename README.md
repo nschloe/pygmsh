@@ -19,6 +19,9 @@ The goal of pygmsh is to combine the power of Gmsh with the versatility of
 Python and to provide useful abstractions from the Gmsh scripting language
 so you can create complex geometries more easily.
 
+See [here](https://pygmsh.readthedocs.io/en/latest/index.html) for the full
+documentation.
+
 #### Built-in
 
 ![](https://nschloe.github.io/pygmsh/screw.png)
