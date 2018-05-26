@@ -5,7 +5,7 @@ from .. import built_in
 
 class SurfaceBase(built_in.surface_base.SurfaceBase):
     """
-    Increments the Surface ID everytime a new surface object
+    Increments the Surface ID every time a new surface object
     is created. Inherits from built_in SurfaceBase.
     """
 

@@ -109,7 +109,7 @@ def generate_mesh(
 
     # Gmsh's native file format `msh` it not well suited for fast i/o. This can
     # greatly reduce the performance of pygmsh. As a workaround, use the VTK
-    # format. Unfortunately, gmsh doesn't support physical and geoemtrical tags
+    # format. Unfortunately, gmsh doesn't support physical and geometrical tags
     # for VTK yet. <https://gitlab.onelab.info/gmsh/gmsh/issues/389>
     if fast_conversion:
         filetype = 'vtk'

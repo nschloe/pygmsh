@@ -11,7 +11,7 @@ class Surface(object):
     ----------
     line_loop : Object
         LineLoop object that contains all the Line objects for the
-        loop contruction.
+        loop construction.
     api_level : integer
         If larger than 2 a Surface will be constructed, otherwise
         a Ruled Surface will be constructed instead.
