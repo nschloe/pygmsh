@@ -10,7 +10,7 @@ class Surface(object):
     Parameters
     ----------
     line_loop : Object
-        LineLoop object that contains all the Line objects for the 
+        LineLoop object that contains all the Line objects for the
         loop contruction.
     api_level : integer
         If larger than 2 a Surface will be constructed, otherwise
@@ -18,11 +18,11 @@ class Surface(object):
 
     Notes
     -----
-    With the built-in kernel, the first line loop should be composed of 
-    either three or four elementary lines. 
-    
-    With the built-in kernel, the optional In Sphere argument forces the 
-    surface to be a spherical patch (the extra parameter gives the 
+    With the built-in kernel, the first line loop should be composed of
+    either three or four elementary lines.
+
+    With the built-in kernel, the optional In Sphere argument forces the
+    surface to be a spherical patch (the extra parameter gives the
     identification number of the center of the sphere).
     """
 

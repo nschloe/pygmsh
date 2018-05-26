@@ -4,13 +4,13 @@
 
 class VolumeBase(object):
     """
-    Increments the Line ID everytime a new object 
+    Increments the Line ID everytime a new object
     is created that inherits from LineBase.
 
     Parameters
     ----------
     id0 : str
-        If no unique ID is given, the object global is incremented. 
+        If no unique ID is given, the object global is incremented.
     """
 
     _ID = 0

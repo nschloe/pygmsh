@@ -6,15 +6,16 @@ from .surface_base import SurfaceBase
 class CompoundSurface(SurfaceBase):
     """
     Generates the Compouns Surface GMSH function.
-    Creates a compound surface from several elementary surfaces. 
-    When meshed, a compound surface will be reparametrized as 
-    a single surface, whose mesh can thus cross internal boundaries. 
+    Creates a compound surface from several elementary surfaces.
+    When meshed, a compound surface will be reparametrized as
+    a single surface, whose mesh can thus cross internal boundaries.
     Compound surfaces are mostly useful for remeshing discrete models.
 
     Parameters
     ----------
     surfaces : array-like[N]
-        Contains the identification number of the elementary surfaces that should be reparametrized as a single surface.
+        Contains the identification number of the elementary surfaces
+        that should be reparametrized as a single surface.
     """
 
     def __init__(self, surfaces):
