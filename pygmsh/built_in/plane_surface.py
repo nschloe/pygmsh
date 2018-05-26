@@ -5,6 +5,31 @@ from .line_loop import LineLoop
 
 
 class PlaneSurface(SurfaceBase):
+    """
+    Creates a plane surface.
+
+    Parameters
+    ----------
+    line_loop : Object
+        Each unique line in the line loop will be used
+        for the surface construction.
+    holes : list
+        List of line loops that represents polygon holes.
+
+    Notes
+    -----
+    The first line loop defines the exterior boundary of the surface;
+    all other line loops define holes in the surface.
+
+    A line loop defining a hole should not have any lines in
+    common with the exterior line loop (in which case it is not
+    a hole, and the two surfaces should be defined separately).
+
+    Likewise, a line loop defining a hole should not have any lines
+    in common with another line loop defining a hole in the same
+    surface (in which case the two line loops should be combined).
+    """
+
     def __init__(self, line_loop, holes=None):
         super(PlaneSurface, self).__init__()
 

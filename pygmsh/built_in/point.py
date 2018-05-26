@@ -3,6 +3,16 @@
 
 
 class Point(object):
+    """
+    Creates an elementary point.
+
+    x : array-like[3]
+        Give the three X, Y and Z coordinates of the
+        point in the three-dimensional Euclidean space.
+    lcar : float
+        The prescribed mesh element size at this point.
+    """
+
     _POINT_ID = 0
 
     def __init__(self, x, lcar=None):

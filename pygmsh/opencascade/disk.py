@@ -4,6 +4,21 @@ from .surface_base import SurfaceBase
 
 
 class Disk(SurfaceBase):
+    """
+    Creates a disk.
+
+    Parameters
+    ----------
+    x0 : array-like[3]
+        The 3 coordinates of the center of the disk face.
+    radius0 : float
+        Radius value of the disk.
+    radius1 : float
+        Radius along Y, leading to an ellipse.
+    char_length : float
+        Characteristic length of the mesh elements of this polygon.
+    """
+
     def __init__(self, x0, radius0, radius1=None, char_length=None):
         super(Disk, self).__init__()
 

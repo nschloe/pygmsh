@@ -4,6 +4,21 @@ from .surface_base import SurfaceBase
 
 
 class Rectangle(SurfaceBase):
+    """
+    Creates a rectangle.
+
+    x0 : array-like[3]
+         The 3 first expressions define the lower-left corner.
+    a : float
+        Rectangle width.
+    b : float
+        Rectangle height.
+    corner_radius : float
+        Defines a radius to round the rectangle corners.
+    char_length : float
+        Characteristic length of the mesh elements of this polygon.
+    """
+
     def __init__(self, x0, a, b, corner_radius=None, char_length=None):
         super(Rectangle, self).__init__()
 

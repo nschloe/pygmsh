@@ -4,6 +4,23 @@ from .volume_base import VolumeBase
 
 
 class Cylinder(VolumeBase):
+    """
+    Creates a cylinder.
+
+    Parameters
+    ----------
+    x0 : array-like[3]
+        The 3 coordinates of the center of the first circular face.
+    axis : array-like[3]
+        The 3 components of the vector defining its axis.
+    radius : float
+        Radius value of the cylinder.
+    angle : float
+        Angular opening of the cylinder.
+    char_length : float
+        Characteristic length of the mesh elements of this polygon.
+    """
+
     def __init__(self, x0, axis, radius, angle=None, char_length=None):
         super(Cylinder, self).__init__()
 

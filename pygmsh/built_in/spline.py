@@ -5,6 +5,15 @@ from .point import Point
 
 
 class Spline(LineBase):
+    """
+    With the built-in geometry kernel this constructs a Catmull-Rom spline.
+
+    Parameters
+    ----------
+    points : list
+        List containing Point objects
+    """
+
     def __init__(self, points):
         super(Spline, self).__init__()
 

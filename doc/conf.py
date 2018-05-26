@@ -12,9 +12,15 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import mock
 import os
 import sys
+
+try:
+    import unittest.mock as mock
+except ImportError:
+    import mock
+
+sys.path.insert(0, os.path.abspath('../'))
 
 ON_RTD = os.environ.get('READTHEDOCS', None) == 'True'
 
@@ -38,7 +44,21 @@ for mod_name in MOCK_MODULES:
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
+    'sphinx.ext.napoleon'
 ]
+
+# Napoleon settings
+napoleon_google_docstring = False
+napoleon_numpy_docstring = True
+napoleon_include_init_with_doc = False
+napoleon_include_private_with_doc = False
+napoleon_include_special_with_doc = False
+napoleon_use_admonition_for_examples = False
+napoleon_use_admonition_for_notes = False
+napoleon_use_admonition_for_references = False
+napoleon_use_ivar = True
+napoleon_use_param = True
+napoleon_use_rtype = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

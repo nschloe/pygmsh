@@ -2,7 +2,13 @@
 #
 from .. import built_in
 
+
 class SurfaceBase(built_in.surface_base.SurfaceBase):
+    """
+    Increments the Surface ID everytime a new surface object
+    is created. Inherits from built_in SurfaceBase.
+    """
+
     _ID = 0
     dimension = 2
 
