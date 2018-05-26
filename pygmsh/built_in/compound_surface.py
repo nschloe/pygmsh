@@ -5,7 +5,7 @@ from .surface_base import SurfaceBase
 
 class CompoundSurface(SurfaceBase):
     """
-    Generates the Compouns Surface GMSH function.
+    Generates the Compound Surface Gmsh function.
     Creates a compound surface from several elementary surfaces.
     When meshed, a compound surface will be reparametrized as
     a single surface, whose mesh can thus cross internal boundaries.

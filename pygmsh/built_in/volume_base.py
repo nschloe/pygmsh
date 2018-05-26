@@ -4,7 +4,7 @@
 
 class VolumeBase(object):
     """
-    Increments the Line ID everytime a new object
+    Increments the Line ID every time a new object
     is created that inherits from LineBase.
 
     Parameters
