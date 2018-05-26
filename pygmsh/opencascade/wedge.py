@@ -10,7 +10,7 @@ class Wedge(VolumeBase):
     x0 : array-like[3]
         The 3 coordinates of the right-angle point.
     extends : array-like[3]
-        List of the 3 extends of the box edges. 
+        List of the 3 extends of the box edges.
     top_extend : float
         Defines the top X extent.
     char_length : float

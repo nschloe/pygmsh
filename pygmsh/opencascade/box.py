@@ -12,7 +12,7 @@ class Box(VolumeBase):
     x0 : array-like[3]
         List containg the x, y, z values of the begin point.
     extends : array-like[3]
-        List of the 3 extends of the box edges. 
+        List of the 3 extends of the box edges.
     char_length : float
         Characteristic length of the mesh elements of this polygon.
     """

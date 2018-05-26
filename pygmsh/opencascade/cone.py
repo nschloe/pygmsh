@@ -11,9 +11,9 @@ class Cone(VolumeBase):
         The 3 coordinates of the center of the first circular face.
     axis : array-like[3]
         The 3 components of the vector defining its axis.
-    radius0 : float 
+    radius0 : float
         Radius of the first circle.
-    radius1 : float 
+    radius1 : float
         Radius of the second circle.
     alpha : float
         Angular opening of the the Cone.

@@ -11,9 +11,9 @@ class Disk(SurfaceBase):
     ----------
     x0 : array-like[3]
         The 3 coordinates of the center of the disk face.
-    radius0 : float 
+    radius0 : float
         Radius value of the disk.
-    radius1 : float 
+    radius1 : float
         Radius along Y, leading to an ellipse.
     char_length : float
         Characteristic length of the mesh elements of this polygon.

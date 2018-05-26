@@ -13,9 +13,9 @@ class Cylinder(VolumeBase):
         The 3 coordinates of the center of the first circular face.
     axis : array-like[3]
         The 3 components of the vector defining its axis.
-    radius : float 
+    radius : float
         Radius value of the cylinder.
-    angle : float 
+    angle : float
         Angular opening of the cylinder.
     char_length : float
         Characteristic length of the mesh elements of this polygon.
