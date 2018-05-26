@@ -15,9 +15,9 @@
 import os
 import sys
 
-if sys.version_info[0] >= 3:
+try:
     import unittest.mock as mock
-else:
+except ImportError:
     import mock
 
 sys.path.insert(0, os.path.abspath('../'))
