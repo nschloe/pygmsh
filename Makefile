@@ -24,4 +24,5 @@ clean:
 	@rm -rf pygmsh.egg-info/ build/ dist/
 
 lint:
-	pylint setup.py pygmsh/ test/*.py
+	flake8 setup.py pygmsh/ test/*.py
+	black --check setup.py pygmsh/ test/*.py

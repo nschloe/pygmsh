@@ -18,8 +18,9 @@ jobs:
       # install
       - run: pip3 install .
       - run: pip3 install -r test_requirements.txt
-      # lint
-      - run: pylint setup.py pygmsh/ test/*.py
+      # format and lint
+      - run: LC_ALL=C.UTF-8 black --check setup.py pygmsh/ test/*.py
+      - run: flake8 setup.py pygmsh/ test/*.py
       # The actual test
       - run: excode README.md test/readme_test.py --filter python,test
       - run: cd test/ && MPLBACKEND=Agg pytest --cov pygmsh
