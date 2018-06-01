@@ -1,9 +1,9 @@
 openCASCADE Engine
 ==================
 
-Using the openCASCADE kernel instead of the built-in geometry kernel. 
-Models can be built using constructive solid geometry. This allows
-2D and 3D polygon boolean operations.
+Using the openCASCADE kernel instead of the built-in geometry kernel.  Models
+can be built using constructive solid geometry, allowing for 2D and 3D polygon
+boolean operations.
 
 .. automodule:: pygmsh.built_in
 
@@ -83,10 +83,3 @@ Wedge
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-
-
-
-
-
