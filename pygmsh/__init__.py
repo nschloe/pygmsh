@@ -6,12 +6,13 @@ from .__about__ import __version__, __author__, __author_email__, __website__
 
 from . import built_in
 from . import opencascade
-from .helpers import generate_mesh
+from .helpers import generate_mesh, get_gmsh_major_version
 
 __all__ = [
     "built_in",
     "opencascade",
     "generate_mesh",
+    "get_gmsh_major_version",
     "__version__",
     "__author__",
     "__author_email__",
