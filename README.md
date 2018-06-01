@@ -3,6 +3,7 @@
 [![CircleCI](https://img.shields.io/circleci/project/github/nschloe/pygmsh/master.svg)](https://circleci.com/gh/nschloe/pygmsh)
 [![codecov](https://img.shields.io/codecov/c/github/nschloe/pygmsh.svg)](https://codecov.io/gh/nschloe/pygmsh)
 [![Codacy grade](https://img.shields.io/codacy/grade/03aca50105054d18bf1f5ca3add9f2ee.svg)](https://app.codacy.com/app/nschloe/pygmsh/dashboard)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 [![Documentation Status](https://readthedocs.org/projects/pygmsh/badge/?version=latest)](https://pygmsh.readthedocs.org/en/latest/?badge=latest)
 [![PyPi Version](https://img.shields.io/pypi/v/pygmsh.svg)](https://pypi.org/project/pygmsh)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1173105.svg)](https://doi.org/10.5281/zenodo.1173105)
