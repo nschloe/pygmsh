@@ -10,19 +10,16 @@ from helpers import compute_volume
 def test():
     geom = pygmsh.built_in.Geometry()
 
-    X0 = np.array([
-        [+0.0, +0.0, 0.0],
-        [+0.5, +0.3, 0.1],
-        [-0.5, +0.3, 0.1],
-        [+0.5, -0.3, 0.1]
-        ])
+    X0 = np.array(
+        [[+0.0, +0.0, 0.0], [+0.5, +0.3, 0.1], [-0.5, +0.3, 0.1], [+0.5, -0.3, 0.1]]
+    )
 
     R = np.array([0.1, 0.2, 0.1, 0.14])
 
     holes = [
-        geom.add_ball(x0, r, with_volume=False, lcar=0.2*r).surface_loop
+        geom.add_ball(x0, r, with_volume=False, lcar=0.2 * r).surface_loop
         for x0, r in zip(X0, R)
-        ]
+    ]
 
     # geom.add_box(
     #         -1, 1,
@@ -43,6 +40,7 @@ def test():
     return points, cells
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import meshio
-    meshio.write('swiss_cheese.vtu', *test())
+
+    meshio.write("swiss_cheese.vtu", *test())

@@ -28,11 +28,10 @@ class Wedge(VolumeBase):
         args = list(x0) + list(extents)
         if top_extent is not None:
             args.append(top_extent)
-        args = ', '.join(['{}'.format(arg) for arg in args])
+        args = ", ".join(["{}".format(arg) for arg in args])
 
-        self.code = '\n'.join([
-            '{} = newv;'.format(self.id),
-            'Wedge({}) = {{{}}};'.format(self.id, args)
-            ] + self.char_length_code(char_length)
-            )
+        self.code = "\n".join(
+            ["{} = newv;".format(self.id), "Wedge({}) = {{{}}};".format(self.id, args)]
+            + self.char_length_code(char_length)
+        )
         return

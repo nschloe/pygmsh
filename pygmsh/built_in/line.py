@@ -28,8 +28,10 @@ class Line(LineBase):
         assert isinstance(p1, Point)
         self.points = [p0, p1]
 
-        self.code = '\n'.join([
-            '{} = newl;'.format(self.id),
-            'Line({}) = {{{}, {}}};'.format(self.id, p0.id, p1.id)
-            ])
+        self.code = "\n".join(
+            [
+                "{} = newl;".format(self.id),
+                "Line({}) = {{{}, {}}};".format(self.id, p0.id, p1.id),
+            ]
+        )
         return

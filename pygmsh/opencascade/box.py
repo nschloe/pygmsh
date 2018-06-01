@@ -28,11 +28,10 @@ class Box(VolumeBase):
         self.char_length = char_length
 
         args = list(x0) + list(extents)
-        args = ', '.join(['{}'.format(arg) for arg in args])
+        args = ", ".join(["{}".format(arg) for arg in args])
 
-        self.code = '\n'.join([
-            '{} = newv;'.format(self.id),
-            'Box({}) = {{{}}};'.format(self.id, args)
-            ] + self.char_length_code(char_length)
-            )
+        self.code = "\n".join(
+            ["{} = newv;".format(self.id), "Box({}) = {{{}}};".format(self.id, args)]
+            + self.char_length_code(char_length)
+        )
         return

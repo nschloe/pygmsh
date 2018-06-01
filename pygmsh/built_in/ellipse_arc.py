@@ -33,9 +33,12 @@ class EllipseArc(LineBase):
         self.point_on_major_axis = point_on_major_axis
         self.end = end
 
-        self.code = '\n'.join([
-            '{} = newl;'.format(self.id),
-            'Ellipse({}) = {{{}, {}, {}, {}}};'.format(
-                self.id, start.id, center.id, point_on_major_axis.id, end.id
-            )])
+        self.code = "\n".join(
+            [
+                "{} = newl;".format(self.id),
+                "Ellipse({}) = {{{}, {}, {}, {}}};".format(
+                    self.id, start.id, center.id, point_on_major_axis.id, end.id
+                ),
+            ]
+        )
         return

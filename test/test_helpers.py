@@ -14,5 +14,5 @@ def test():
     assert np.abs(compute_volume(points, cells) - ref) < 1e-2 * ref
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test()

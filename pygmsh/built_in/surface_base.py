@@ -22,7 +22,7 @@ class SurfaceBase(object):
             assert isinstance(id0, str)
             self.id = id0
         else:
-            self.id = 's{}'.format(SurfaceBase._ID)
+            self.id = "s{}".format(SurfaceBase._ID)
             SurfaceBase._ID += 1
         self.num_edges = num_edges
         return

@@ -1,8 +1,8 @@
 Built-in Engine
 ===============
 
-The default GMSH kernel with basic geometry construction functions. 
-For advanced geomtries it is recommended to use the openCASCADE kernel.
+The default Gmsh kernel with basic geometry construction functions.
+For advanced geometries it is recommended to use the openCASCADE kernel.
 
 .. automodule:: pygmsh.built_in
 
@@ -131,9 +131,3 @@ Volume
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-
-
-
-

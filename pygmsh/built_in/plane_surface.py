@@ -41,16 +41,16 @@ class PlaneSurface(SurfaceBase):
 
         # The input holes are either line loops or entities that contain line
         # loops (like polygons).
-        self.holes = [
-            h if isinstance(h, LineLoop) else h.line_loop
-            for h in holes
-            ]
+        self.holes = [h if isinstance(h, LineLoop) else h.line_loop for h in holes]
 
         line_loops = [self.line_loop] + self.holes
-        self.code = '\n'.join([
-            '{} = news;'.format(self.id),
-            'Plane Surface({}) = {{{}}};'.format(
-                self.id, ','.join([ll.id for ll in line_loops])
-            )])
+        self.code = "\n".join(
+            [
+                "{} = news;".format(self.id),
+                "Plane Surface({}) = {{{}}};".format(
+                    self.id, ",".join([ll.id for ll in line_loops])
+                ),
+            ]
+        )
         self.num_edges = len(self.line_loop) + sum(len(h) for h in self.holes)
         return

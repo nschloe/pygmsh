@@ -7,9 +7,8 @@ from helpers import compute_volume
 
 def test():
     geom = pygmsh.opencascade.Geometry(
-        characteristic_length_min=0.1,
-        characteristic_length_max=0.1,
-        )
+        characteristic_length_min=0.1, characteristic_length_max=0.1
+    )
 
     p0 = geom.add_point([-0.5, -0.5, 0], 0.01)
     p1 = geom.add_point([+0.5, -0.5, 0], 0.01)
@@ -30,7 +29,8 @@ def test():
     return points, cells
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import meshio
+
     out = test()
-    meshio.write('mix.vtu', *out)
+    meshio.write("mix.vtu", *out)

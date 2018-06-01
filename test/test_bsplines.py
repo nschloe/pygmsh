@@ -28,7 +28,8 @@ def test():
     return points, cells
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import meshio
+
     out = test()
-    meshio.write('bsplines.vtu', *out)
+    meshio.write("bsplines.vtu", *out)

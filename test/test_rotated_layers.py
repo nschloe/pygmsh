@@ -12,14 +12,9 @@ def test(lcar=0.05):
 
     # Draw a square
     poly = geom.add_polygon(
-        [
-            [+0.5, +0.0, 0.0],
-            [+0.0, +0.5, 0.0],
-            [-0.5, +0.0, 0.0],
-            [+0.0, -0.5, 0.0],
-        ],
+        [[+0.5, +0.0, 0.0], [+0.0, +0.5, 0.0], [-0.5, +0.0, 0.0], [+0.0, -0.5, 0.0]],
         lcar=lcar,
-        )
+    )
 
     axis = [0, 0, 1.0]
 
@@ -28,10 +23,10 @@ def test(lcar=0.05):
         translation_axis=axis,
         rotation_axis=axis,
         point_on_axis=[0.0, 0.0, 0.0],
-        angle=0.5*pi,
+        angle=0.5 * pi,
         num_layers=5,
-        recombine=True
-        )
+        recombine=True,
+    )
 
     ref = 3.98156496566
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)
@@ -39,6 +34,7 @@ def test(lcar=0.05):
     return points, cells
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import meshio
-    meshio.write('rotated_layers.vtu', *test())
+
+    meshio.write("rotated_layers.vtu", *test())

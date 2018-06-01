@@ -8,7 +8,7 @@ jobs:
     steps:
       - run: apt update
       - run: apt install -y git python3-pip gmsh
-      - run: pip3 install -U pytest pytest-cov pylint excode
+      - run: pip3 install -U pytest pytest-cov flake8 black excode
       - checkout
       # # install gmsh from ppa
       # - run: apt-get install -y software-properties-common
@@ -18,8 +18,9 @@ jobs:
       # install
       - run: pip3 install .
       - run: pip3 install -r test_requirements.txt
-      # lint
-      - run: pylint setup.py pygmsh/ test/*.py
+      # format and lint
+      - run: LC_ALL=C.UTF-8 black --check setup.py pygmsh/ test/*.py
+      - run: flake8 setup.py pygmsh/ test/*.py
       # The actual test
       - run: excode README.md test/readme_test.py --filter python,test
       - run: cd test/ && MPLBACKEND=Agg pytest --cov pygmsh

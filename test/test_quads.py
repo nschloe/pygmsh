@@ -8,14 +8,9 @@ from helpers import compute_volume
 def test():
     geom = pygmsh.built_in.Geometry()
 
-    rectangle = geom.add_rectangle(
-        0.0, 1.0,
-        0.0, 1.0,
-        0.0,
-        0.1
-        )
+    rectangle = geom.add_rectangle(0.0, 1.0, 0.0, 1.0, 0.0, 0.1)
 
-    geom.add_raw_code('Recombine Surface {%s};' % rectangle.surface.id)
+    geom.add_raw_code("Recombine Surface {%s};" % rectangle.surface.id)
 
     ref = 1.0
     points, cells, _, _, _ = pygmsh.generate_mesh(geom, dim=2)
@@ -25,6 +20,7 @@ def test():
     return points, cells
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import meshio
-    meshio.write('quads.vtu', *test())
+
+    meshio.write("quads.vtu", *test())

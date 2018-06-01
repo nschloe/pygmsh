@@ -16,8 +16,8 @@ def test():
         # If compound==False, the section borders have to be points of the
         # discretization. If using a compound circle, they don't; gmsh can
         # choose by itself where to point the circle points.
-        compound=True
-        )
+        compound=True,
+    )
 
     ref = 3.1363871677682247
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)
@@ -25,6 +25,7 @@ def test():
     return points, cells
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import meshio
-    meshio.write('circle.vtk', *test())
+
+    meshio.write("circle.vtk", *test())
