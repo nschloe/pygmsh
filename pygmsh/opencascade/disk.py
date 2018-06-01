@@ -35,11 +35,10 @@ class Disk(SurfaceBase):
         if radius1 is not None:
             args.append(radius1)
 
-        args = ', '.join(['{}'.format(arg) for arg in args])
+        args = ", ".join(["{}".format(arg) for arg in args])
 
-        self.code = '\n'.join([
-            '{} = news;'.format(self.id),
-            'Disk({}) = {{{}}};'.format(self.id, args)
-            ] + self.char_length_code(char_length)
-            )
+        self.code = "\n".join(
+            ["{} = news;".format(self.id), "Disk({}) = {{{}}};".format(self.id, args)]
+            + self.char_length_code(char_length)
+        )
         return

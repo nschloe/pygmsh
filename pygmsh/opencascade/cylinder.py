@@ -36,22 +36,22 @@ class Cylinder(VolumeBase):
         args = list(x0) + list(axis) + [radius]
         if angle is not None:
             args.append(angle)
-        args = ', '.join(['{}'.format(arg) for arg in args])
+        args = ", ".join(["{}".format(arg) for arg in args])
 
         code = [
-            '{} = newv;'.format(self.id),
-            'Cylinder({}) = {{{}}};'.format(self.id, args)
-            ]
+            "{} = newv;".format(self.id),
+            "Cylinder({}) = {{{}}};".format(self.id, args),
+        ]
 
         if self.char_length:
-            code.extend([
-                'pts_{}[] = PointsOf{{Volume{{{}}};}};'.format(
-                    self.id, self.id
+            code.extend(
+                [
+                    "pts_{}[] = PointsOf{{Volume{{{}}};}};".format(self.id, self.id),
+                    "Characteristic Length{{pts_{}[]}} = {};".format(
+                        self.id, char_length
                     ),
-                'Characteristic Length{{pts_{}[]}} = {};'.format(
-                    self.id, char_length
-                    ),
-                ])
+                ]
+            )
 
-        self.code = '\n'.join(code)
+        self.code = "\n".join(code)
         return

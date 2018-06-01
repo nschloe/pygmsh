@@ -29,9 +29,12 @@ class CircleArc(LineBase):
         self.center = center
         self.end = end
 
-        self.code = '\n'.join([
-            '{} = newl;'.format(self.id),
-            'Circle({}) = {{{}, {}, {}}};'.format(
-                self.id, start.id, center.id, end.id
-            )])
+        self.code = "\n".join(
+            [
+                "{} = newl;".format(self.id),
+                "Circle({}) = {{{}, {}, {}}};".format(
+                    self.id, start.id, center.id, end.id
+                ),
+            ]
+        )
         return

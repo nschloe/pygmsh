@@ -21,11 +21,11 @@ class LineBase(object):
         if id0:
             self.id = id0
         else:
-            self.id = 'l{}'.format(LineBase._ID)
+            self.id = "l{}".format(LineBase._ID)
             LineBase._ID += 1
         return
 
     def __neg__(self):
         neg_self = copy.deepcopy(self)
-        neg_self.id = '-' + neg_self.id
+        neg_self.id = "-" + neg_self.id
         return neg_self

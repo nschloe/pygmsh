@@ -23,9 +23,12 @@ class Bspline(LineBase):
 
         self.control_points = control_points
 
-        self.code = '\n'.join([
-            '{} = newl;'.format(self.id),
-            'BSpline({}) = {{{}}};'.format(
-                self.id, ', '.join([c.id for c in self.control_points])
-            )])
+        self.code = "\n".join(
+            [
+                "{} = newl;".format(self.id),
+                "BSpline({}) = {{{}}};".format(
+                    self.id, ", ".join([c.id for c in self.control_points])
+                ),
+            ]
+        )
         return

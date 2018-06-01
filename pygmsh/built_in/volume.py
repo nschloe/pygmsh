@@ -41,9 +41,12 @@ class Volume(VolumeBase):
 
         surface_loops = [surface_loop] + holes
 
-        self.code = '\n'.join([
-            '{} = newv;'.format(self.id),
-            'Volume({}) = {{{}}};'.format(
-                self.id, ', '.join([s.id for s in surface_loops])
-            )])
+        self.code = "\n".join(
+            [
+                "{} = newv;".format(self.id),
+                "Volume({}) = {{{}}};".format(
+                    self.id, ", ".join([s.id for s in surface_loops])
+                ),
+            ]
+        )
         return

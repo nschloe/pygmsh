@@ -21,11 +21,11 @@ def test(lcar=0.05):
             [+0.0, -0.5, 0.0],
             [+0.1, -0.1, 0.0],
             [+0.5, +0.0, 0.0],
-            [+0.1, +0.1, 0.0]
+            [+0.1, +0.1, 0.0],
         ],
         lcar=lcar,
-        holes=[circ]
-        )
+        holes=[circ],
+    )
 
     axis = [0, 0, 1.0]
 
@@ -34,8 +34,8 @@ def test(lcar=0.05):
         translation_axis=axis,
         rotation_axis=axis,
         point_on_axis=[0, 0, 0],
-        angle=2.0 / 6.0 * np.pi
-        )
+        angle=2.0 / 6.0 * np.pi,
+    )
 
     ref = 0.16951514066385628
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)
@@ -43,6 +43,7 @@ def test(lcar=0.05):
     return points, cells
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import meshio
-    meshio.write('screw.vtu', *test())
+
+    meshio.write("screw.vtu", *test())

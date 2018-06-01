@@ -23,9 +23,12 @@ class Spline(LineBase):
 
         self.points = points
 
-        self.code = '\n'.join([
-            '{} = newl;'.format(self.id),
-            'Spline({}) = {{{}}};'.format(
-                self.id, ', '.join([c.id for c in self.points])
-            )])
+        self.code = "\n".join(
+            [
+                "{} = newl;".format(self.id),
+                "Spline({}) = {{{}}};".format(
+                    self.id, ", ".join([c.id for c in self.points])
+                ),
+            ]
+        )
         return

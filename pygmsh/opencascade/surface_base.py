@@ -17,7 +17,7 @@ class SurfaceBase(built_in.surface_base.SurfaceBase):
 
         self.is_list = is_list
         if is_list:
-            self.id += '[]'
+            self.id += "[]"
         return
 
     def char_length_code(self, char_length):
@@ -25,10 +25,6 @@ class SurfaceBase(built_in.surface_base.SurfaceBase):
             return []
 
         return [
-            'pts_{}[] = PointsOf{{Surface{{{}}};}};'.format(
-                self.id, self.id
-                ),
-            'Characteristic Length{{pts_{}[]}} = {};'.format(
-                self.id, char_length
-                ),
-            ]
+            "pts_{}[] = PointsOf{{Surface{{{}}};}};".format(self.id, self.id),
+            "Characteristic Length{{pts_{}[]}} = {};".format(self.id, char_length),
+        ]

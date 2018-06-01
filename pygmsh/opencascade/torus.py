@@ -33,11 +33,10 @@ class Torus(VolumeBase):
         args = list(center) + [radius0] + [radius1]
         if alpha is not None:
             args.append(alpha)
-        args = ', '.join(['{}'.format(arg) for arg in args])
+        args = ", ".join(["{}".format(arg) for arg in args])
 
-        self.code = '\n'.join([
-            '{} = newv;'.format(self.id),
-            'Torus({}) = {{{}}};'.format(self.id, args)
-            ] + self.char_length_code(char_length)
-            )
+        self.code = "\n".join(
+            ["{} = newv;".format(self.id), "Torus({}) = {{{}}};".format(self.id, args)]
+            + self.char_length_code(char_length)
+        )
         return

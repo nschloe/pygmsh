@@ -7,20 +7,19 @@ from helpers import compute_volume
 
 def test():
     geom = pygmsh.opencascade.Geometry(
-        characteristic_length_min=1.0,
-        characteristic_length_max=1.0,
-        )
+        characteristic_length_min=1.0, characteristic_length_max=1.0
+    )
 
     lcar = 1
     h = 25
     w = 10
-    l = 100
-    x_fin = -0.5*l
+    length = 100
+    # x_fin = -0.5 * length
     cr = 1
 
-    f = 0.5*w
-    y = [-f, -f+cr, +f-cr, +f]
-    z = [0.0, h-cr, h]
+    f = 0.5 * w
+    y = [-f, -f + cr, +f - cr, +f]
+    z = [0.0, h - cr, h]
     f = 0.5 * cr
     x = [-f, f]
     points = []
@@ -44,7 +43,7 @@ def test():
 
     line_loop = geom.add_line_loop(lines)
     surface = geom.add_plane_surface(line_loop)
-    vol = geom.extrude(surface, translation_axis=[l, 0, 0])
+    geom.extrude(surface, translation_axis=[length, 0, 0])
 
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)
 
@@ -53,6 +52,7 @@ def test():
     return points, cells
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import meshio
-    meshio.write('opencascade_extrude2.vtu', *test())
+
+    meshio.write("opencascade_extrude2.vtu", *test())
