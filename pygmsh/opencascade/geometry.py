@@ -84,7 +84,6 @@ class Geometry(bl.Geometry):
         self._GMSH_CODE.append(p.code)
         return p
 
-    # pylint: disable=too-many-branches
     def _boolean_operation(
         self,
         operation,
