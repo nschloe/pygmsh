@@ -28,7 +28,6 @@ def test():
         ]
     )
 
-    # pylint: disable=no-member
     A1 = (
         (irad + orad)
         / np.tan(np.pi / 8.0)

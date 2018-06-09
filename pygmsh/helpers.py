@@ -74,7 +74,6 @@ def get_gmsh_major_version(gmsh_exe=_get_gmsh_exe()):
     return int(ex[0])
 
 
-# pylint: disable=too-many-branches, too-many-statements
 def generate_mesh(
     geo_object,
     verbose=True,

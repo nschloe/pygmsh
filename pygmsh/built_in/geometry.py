@@ -247,8 +247,8 @@ class Geometry(object):
         if R is not None:
             assert numpy.allclose(
                 abs(numpy.linalg.eigvals(R)), numpy.ones(X.shape[1])
-            ), "The transformation matrix doesn't preserve circles;" " at least one eigenvalue lies off the unit circle."
-            X = X @ R.T
+            ), "The transformation matrix doesn't preserve circles; at least one eigenvalue lies off the unit circle."
+            X = numpy.dot(X, R.T)
 
         X += x0
 
@@ -297,7 +297,6 @@ class Geometry(object):
             x0, radius, lcar, R, compound, num_sections, holes, line_loop, plane_surface
         )
 
-    # pylint: disable=too-many-branches
     def extrude(
         self,
         input_entity,
