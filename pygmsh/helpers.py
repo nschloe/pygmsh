@@ -153,7 +153,7 @@ def generate_mesh(
                 mesh.point_data,
                 mesh.cell_data,
                 mesh.field_data)
-                
+
     if num_lloyd_steps > 0:
         if verbose:
             print('Lloyd smoothing...')
@@ -162,7 +162,8 @@ def generate_mesh(
         # the mesh as a whole.
         # a = mesh.cell_data['triangle']['geometrical']
         # https://stackoverflow.com/q/42740483/353337
-        submesh_bools = {0: numpy.ones(len(mesh.cells['triangle']), dtype=bool)}
+        submesh_bools = {0: numpy.ones(len(mesh.cells['triangle']),
+                                       dtype=bool)}
 
         mesh.points, mesh.cells['triangle'] = voropy.smoothing.lloyd_submesh(
                 mesh.points, mesh.cells['triangle'], submesh_bools,
