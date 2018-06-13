@@ -139,41 +139,46 @@ def generate_mesh(
     assert p.returncode == 0, \
         'Gmsh exited with error (return code {}).'.format(p.returncode)
 
-    X, cells, pt_data, cell_data, field_data = meshio.read(msh_filename)
+    mesh = meshio.read(msh_filename)
 
     # Lloyd smoothing
-    if not _is_flat(X) or 'triangle' not in cells:
+    if not _is_flat(mesh.points) or 'triangle' not in mesh.cells:
         if verbose:
             print(
                 'Not performing Lloyd smoothing '
                 '(only works for flat triangular meshes).'
                 )
-        return X, cells, pt_data, cell_data, field_data
-
+        return (mesh.points,
+                mesh.cells,
+                mesh.point_data,
+                mesh.cell_data,
+                mesh.field_data)
+                
     if num_lloyd_steps > 0:
         if verbose:
             print('Lloyd smoothing...')
 
         # Wait for meshio to return submeshes again. Till then just smoothen
         # the mesh as a whole.
-        # a = cell_data['triangle']['geometrical']
+        # a = mesh.cell_data['triangle']['geometrical']
         # https://stackoverflow.com/q/42740483/353337
-        submesh_bools = {0: numpy.ones(len(cells['triangle']), dtype=bool)}
+        submesh_bools = {0: numpy.ones(len(mesh.cells['triangle']), dtype=bool)}
 
-        X, cells['triangle'] = voropy.smoothing.lloyd_submesh(
-                X, cells['triangle'], submesh_bools,
+        mesh.points, mesh.cells['triangle'] = voropy.smoothing.lloyd_submesh(
+                mesh.points, mesh.cells['triangle'], submesh_bools,
                 tol=0.0, max_steps=num_lloyd_steps,
                 verbose=False
                 )
 
     if prune_vertices:
         # Make sure to include only those vertices which belong to a triangle.
-        uvertices, uidx = numpy.unique(cells['triangle'], return_inverse=True)
-        cells = {'triangle': uidx.reshape(cells['triangle'].shape)}
-        cell_data = {'triangle': cell_data['triangle']}
-        X = X[uvertices]
-        for key in pt_data:
-            pt_data[key] = pt_data[key][uvertices]
+        uvertices, uidx = numpy.unique(mesh.cells['triangle'],
+                                       return_inverse=True)
+        mesh.cells = {'triangle': uidx.reshape(mesh.cells['triangle'].shape)}
+        mesh.cell_data = {'triangle': mesh.cell_data['triangle']}
+        mesh.points = mesh.points[uvertices]
+        for key in mesh.point_data:
+            mesh.point_data[key] = mesh.point_data[key][uvertices]
 
     # clean up
     os.remove(msh_filename)
@@ -181,4 +186,8 @@ def generate_mesh(
         print('\ngeo file: {}'.format(geo_filename))
     else:
         os.remove(geo_filename)
-    return X, cells, pt_data, cell_data, field_data
+    return (mesh.points,
+            mesh.cells,
+            mesh.point_data,
+            mesh.cell_data,
+            mesh.field_data)
