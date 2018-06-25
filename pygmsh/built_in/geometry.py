@@ -212,7 +212,9 @@ class Geometry(object):
                 [surface.line_loop.lines[1], surface.line_loop.lines[3]], size[1]
             )
         if flag is not None:
-            self._GMSH_CODE.append("Transfinite Surface {{{}}} {};".format(surface.id, flag))
+            self._GMSH_CODE.append(
+                "Transfinite Surface {{{}}} {};".format(surface.id, flag)
+            )
         else:
             self._GMSH_CODE.append("Transfinite Surface {{{}}};".format(surface.id))
         return
