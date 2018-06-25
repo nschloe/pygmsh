@@ -141,7 +141,7 @@ def generate_mesh(
         p.returncode
     )
 
-    X, cells, pt_data, cell_data, field_data = meshio.read(msh_filename)
+    mesh = meshio.read(msh_filename)
 
     if remove_faces:
         # Only keep the cells of highest topological dimension; discard faces
@@ -150,30 +150,30 @@ def generate_mesh(
         three_d_cells = set(
             ["tetra", "hexahedron", "wedge", "pyramid", "penta_prism", "hexa_prism"]
         )
-        if any(k in cells for k in three_d_cells):
-            keep_keys = three_d_cells.intersection(cells.keys())
-        elif any(k in cells for k in two_d_cells):
-            keep_keys = two_d_cells.intersection(cells.keys())
+        if any(k in mesh.cells for k in three_d_cells):
+            keep_keys = three_d_cells.intersection(mesh.cells.keys())
+        elif any(k in mesh.cells for k in two_d_cells):
+            keep_keys = two_d_cells.intersection(mesh.cells.keys())
         else:
-            keep_keys = cells.keys()
+            keep_keys = mesh.cells.keys()
 
-        cells = {key: cells[key] for key in keep_keys}
-        cell_data = {key: cell_data[key] for key in keep_keys}
+        mesh.cells = {key: mesh.cells[key] for key in keep_keys}
+        mesh.cell_data = {key: mesh.cell_data[key] for key in keep_keys}
 
     if prune_vertices:
         # Make sure to include only those vertices which belong to a cell.
-        ncells = numpy.concatenate([numpy.concatenate(c) for c in cells.values()])
+        ncells = numpy.concatenate([numpy.concatenate(c) for c in mesh.cells.values()])
         uvertices, uidx = numpy.unique(ncells, return_inverse=True)
 
         k = 0
-        for key in cells.keys():
-            n = numpy.prod(cells[key].shape)
-            cells[key] = uidx[k : k + n].reshape(cells[key].shape)
+        for key in mesh.cells.keys():
+            n = numpy.prod(mesh.cells[key].shape)
+            mesh.cells[key] = uidx[k : k + n].reshape(mesh.cells[key].shape)
             k += n
 
-        X = X[uvertices]
-        for key in pt_data:
-            pt_data[key] = pt_data[key][uvertices]
+        mesh.points = mesh.points[uvertices]
+        for key in mesh.point_data:
+            mesh.point_data[key] = mesh.point_data[key][uvertices]
 
     # clean up
     os.remove(msh_filename)
@@ -181,4 +181,5 @@ def generate_mesh(
         print("\ngeo file: {}".format(geo_filename))
     else:
         os.remove(geo_filename)
-    return X, cells, pt_data, cell_data, field_data
+
+    return mesh.points, mesh.cells, mesh.point_data, mesh.cell_data, mesh.field_data
