@@ -186,7 +186,7 @@ class Geometry(object):
             ", ".join([l.id for l in lines]), size
         )
         if optional_argument is not None:
-            code += ' ' + optional_argument
+            code += " " + optional_argument
         self._GMSH_CODE.append(code + ";")
         return
 
@@ -207,7 +207,7 @@ class Geometry(object):
             )
         code = "Transfinite Surface {{{}}}".format(surface.id)
         if optional_argument is not None:
-            code += ' ' + optional_argument
+            code += " " + optional_argument
         self._GMSH_CODE.append(code + ";")
         return
 
