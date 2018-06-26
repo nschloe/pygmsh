@@ -181,16 +181,21 @@ class Geometry(object):
         self._add_physical("Volume", volumes, label=label)
         return
 
-    def set_transfinite_lines(self, lines, size, optional_argument=None):
+    def set_transfinite_lines(self, lines, size, progression=None, bump=None):
         code = "Transfinite Line {{{0}}} = {1}".format(
             ", ".join([l.id for l in lines]), size
         )
-        if optional_argument is not None:
-            code += " " + optional_argument
+        assert (
+            progression is not None and bump is not None
+        ), "only one optional argument possible: progression or bump"
+        if progression is not None:
+            code += " Using Progression " + progression
+        elif bump is not None:
+            code += " Using Bump " + bump
         self._GMSH_CODE.append(code + ";")
         return
 
-    def set_transfinite_surface(self, surface, size=None, optional_argument=None):
+    def set_transfinite_surface(self, surface, size=None, orientation=None):
         assert surface.num_edges == 4, "a transfinite surface can only have 4 sides"
         # size is not mandatory because in general a user can create it's own
         # transfinite lines and then just tell gmsh that the surface is
@@ -206,8 +211,8 @@ class Geometry(object):
                 [surface.line_loop.lines[1], surface.line_loop.lines[3]], size[1]
             )
         code = "Transfinite Surface {{{}}}".format(surface.id)
-        if optional_argument is not None:
-            code += " " + optional_argument
+        if orientation is not None:
+            code += " " % orientation
         self._GMSH_CODE.append(code + ";")
         return
 
