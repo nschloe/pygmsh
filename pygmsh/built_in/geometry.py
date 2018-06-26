@@ -188,9 +188,9 @@ class Geometry(object):
         if progression is not None and bump is not None:
             raise ValueError("only one optional argument possible", progression, bump)
         elif progression is not None:
-            code += " Using Progression " + progression
+            code += " Using Progression " + str(progression)
         elif bump is not None:
-            code += " Using Bump " + bump
+            code += " Using Bump " + str(bump)
         self._GMSH_CODE.append(code + ";")
         return
 
@@ -211,7 +211,7 @@ class Geometry(object):
             )
         code = "Transfinite Surface {{{}}}".format(surface.id)
         if orientation is not None:
-            code += " " % orientation
+            code += " " + orientation
         self._GMSH_CODE.append(code + ";")
         return
 
