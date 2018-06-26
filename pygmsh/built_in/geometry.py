@@ -185,10 +185,9 @@ class Geometry(object):
         code = "Transfinite Line {{{0}}} = {1}".format(
             ", ".join([l.id for l in lines]), size
         )
-        assert (
-            progression is not None and bump is not None
-        ), "only one optional argument possible: progression or bump"
-        if progression is not None:
+        if progression is not None and bump is not None:
+            raise ValueError("only one optional argument possible", progression, bump)
+        elif progression is not None:
             code += " Using Progression " + progression
         elif bump is not None:
             code += " Using Bump " + bump
