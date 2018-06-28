@@ -25,4 +25,4 @@ def test(radius=1.):
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("circle_transformed.vtk", *test())
+    meshio.write_points_cells("circle_transformed.vtk", *test())

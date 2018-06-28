@@ -19,4 +19,4 @@ def test():
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("cube.vtu", *test())
+    meshio.write_points_cells("cube.vtu", *test())

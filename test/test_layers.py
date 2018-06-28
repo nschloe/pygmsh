@@ -38,4 +38,4 @@ def test(lcar=0.05):
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("layers.vtu", *test())
+    meshio.write_points_cells("layers.vtu", *test())

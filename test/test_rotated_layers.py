@@ -36,4 +36,4 @@ def test(lcar=0.05):
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("rotated_layers.vtu", *test())
+    meshio.write_points_cells("rotated_layers.vtu", *test())

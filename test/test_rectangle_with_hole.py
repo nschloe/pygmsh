@@ -25,4 +25,4 @@ def test():
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("rectangle_with_hole.vtu", *test())
+    meshio.write_points_cells("rectangle_with_hole.vtu", *test())

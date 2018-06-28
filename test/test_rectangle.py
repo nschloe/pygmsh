@@ -18,4 +18,4 @@ def test():
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("rectangle.vtu", *test())
+    meshio.write_points_cells("rectangle.vtu", *test())

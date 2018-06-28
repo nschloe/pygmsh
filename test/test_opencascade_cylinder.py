@@ -22,4 +22,4 @@ def test():
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("opencascade_cylinder.vtu", *test())
+    meshio.write_points_cells("opencascade_cylinder.vtu", *test())

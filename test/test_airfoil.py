@@ -149,4 +149,4 @@ def test():
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("airfoil.vtu", *test())
+    meshio.write_points_cells("airfoil.vtu", *test())

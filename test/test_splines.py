@@ -31,4 +31,4 @@ if __name__ == "__main__":
     import meshio
 
     out = test()
-    meshio.write("splines.vtu", *out)
+    meshio.write_points_cells("splines.vtu", *out)

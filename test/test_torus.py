@@ -23,4 +23,4 @@ def test(irad=0.05, orad=0.6):
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("torus.vtu", *test())
+    meshio.write_points_cells("torus.vtu", *test())

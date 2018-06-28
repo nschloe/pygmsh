@@ -47,4 +47,4 @@ if __name__ == "__main__":
 
     plot("logo.png", *test())
     # import meshio
-    # meshio.write('logo.vtu', *test())
+    # meshio.write_points_cells('logo.vtu', *test())

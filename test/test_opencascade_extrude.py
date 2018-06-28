@@ -32,4 +32,4 @@ def test():
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("opencascade_extrude.vtu", *test())
+    meshio.write_points_cells("opencascade_extrude.vtu", *test())

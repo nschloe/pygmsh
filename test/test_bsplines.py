@@ -31,4 +31,4 @@ if __name__ == "__main__":
     import meshio
 
     out = test()
-    meshio.write("bsplines.vtu", *out)
+    meshio.write_points_cells("bsplines.vtu", *out)
