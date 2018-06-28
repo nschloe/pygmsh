@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from itertools import permutations
@@ -34,4 +33,4 @@ def test(lcar=1.):
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("hex.vtu", *test())
+    meshio.write_points_cells("hex.vtu", *test())

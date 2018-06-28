@@ -1,4 +1,3 @@
-#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 import pygmsh
 
@@ -55,4 +54,4 @@ def test():
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("opencascade_extrude2.vtu", *test())
+    meshio.write_points_cells("opencascade_extrude2.vtu", *test())

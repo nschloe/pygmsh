@@ -40,4 +40,4 @@ def test():
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("hole_in_square.vtu", *test())
+    meshio.write_points_cells("hole_in_square.vtu", *test())

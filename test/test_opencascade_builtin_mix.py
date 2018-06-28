@@ -1,4 +1,3 @@
-#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 import pygmsh
 
@@ -33,4 +32,4 @@ if __name__ == "__main__":
     import meshio
 
     out = test()
-    meshio.write("mix.vtu", *out)
+    meshio.write_points_cells("mix.vtu", *out)

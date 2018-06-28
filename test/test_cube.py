@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Creates a mesh on a cube.
 """
@@ -20,4 +19,4 @@ def test():
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("cube.vtu", *test())
+    meshio.write_points_cells("cube.vtu", *test())

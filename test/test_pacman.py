@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from numpy import pi, sin, cos
@@ -50,4 +49,4 @@ def test(lcar=0.3):
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("pacman.vtu", *test())
+    meshio.write_points_cells("pacman.vtu", *test())

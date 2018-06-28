@@ -219,7 +219,7 @@ class Geometry(object):
         self,
         x0,
         radius,
-        lcar,
+        lcar=None,
         R=None,
         compound=False,
         num_sections=3,
@@ -261,7 +261,7 @@ class Geometry(object):
         X += x0
 
         # Add Gmsh Points.
-        p = [self.add_point(x, lcar) for x in X]
+        p = [self.add_point(x, lcar=lcar) for x in X]
 
         # Define the circle arcs.
         arcs = [self.add_circle_arc(p[k], p[0], p[k + 1]) for k in range(1, len(p) - 1)]
@@ -282,13 +282,13 @@ class Geometry(object):
                 self,
                 x0,
                 radius,
-                lcar,
                 R,
                 compound,
                 num_sections,
                 holes,
                 line_loop,
                 plane_surface,
+                lcar=None,
             ):
                 self.x0 = x0
                 self.radius = radius
@@ -302,7 +302,15 @@ class Geometry(object):
                 return
 
         return Circle(
-            x0, radius, lcar, R, compound, num_sections, holes, line_loop, plane_surface
+            x0,
+            radius,
+            R,
+            compound,
+            num_sections,
+            holes,
+            line_loop,
+            plane_surface,
+            lcar=lcar,
         )
 
     def extrude(
@@ -490,39 +498,39 @@ class Geometry(object):
         return
 
     def add_rectangle(
-        self, xmin, xmax, ymin, ymax, z, lcar, holes=None, make_surface=True
+        self, xmin, xmax, ymin, ymax, z, lcar=None, holes=None, make_surface=True
     ):
         return self.add_polygon(
             [[xmin, ymin, z], [xmax, ymin, z], [xmax, ymax, z], [xmin, ymax, z]],
-            lcar,
+            lcar=lcar,
             holes=holes,
             make_surface=make_surface,
         )
 
     class Polygon(object):
-        def __init__(self, line_loop, surface, lcar):
+        def __init__(self, line_loop, surface, lcar=None):
             self.line_loop = line_loop
             self.surface = surface
             self.lcar = lcar
             return
 
-    def add_polygon(self, X, lcar, holes=None, make_surface=True):
+    def add_polygon(self, X, lcar=None, holes=None, make_surface=True):
         if holes is None:
             holes = []
         else:
             assert make_surface
 
         # Create points.
-        p = [self.add_point(x, lcar) for x in X]
+        p = [self.add_point(x, lcar=lcar) for x in X]
         # Create lines
         lines = [self.add_line(p[k], p[k + 1]) for k in range(len(p) - 1)]
         lines.append(self.add_line(p[-1], p[0]))
         ll = self.add_line_loop((lines))
         surface = self.add_plane_surface(ll, holes) if make_surface else None
 
-        return self.Polygon(ll, surface, lcar)
+        return self.Polygon(ll, surface, lcar=lcar)
 
-    def add_ellipsoid(self, x0, radii, lcar, with_volume=True, holes=None):
+    def add_ellipsoid(self, x0, radii, lcar=None, with_volume=True, holes=None):
         """Creates an ellipsoid with radii around a given midpoint
         :math:`x_0`.
         """
@@ -533,15 +541,14 @@ class Geometry(object):
             assert with_volume
 
         # Add points.
-        a = lcar
         p = [
             self.add_point(x0, lcar=lcar),
-            self.add_point([x0[0] + radii[0], x0[1], x0[2]], lcar=a),
-            self.add_point([x0[0], x0[1] + radii[1], x0[2]], lcar=a),
-            self.add_point([x0[0], x0[1], x0[2] + radii[2]], lcar=a),
-            self.add_point([x0[0] - radii[0], x0[1], x0[2]], lcar=a),
-            self.add_point([x0[0], x0[1] - radii[1], x0[2]], lcar=a),
-            self.add_point([x0[0], x0[1], x0[2] - radii[2]], lcar=a),
+            self.add_point([x0[0] + radii[0], x0[1], x0[2]], lcar=lcar),
+            self.add_point([x0[0], x0[1] + radii[1], x0[2]], lcar=lcar),
+            self.add_point([x0[0], x0[1], x0[2] + radii[2]], lcar=lcar),
+            self.add_point([x0[0] - radii[0], x0[1], x0[2]], lcar=lcar),
+            self.add_point([x0[0], x0[1] - radii[1], x0[2]], lcar=lcar),
+            self.add_point([x0[0], x0[1], x0[2] - radii[2]], lcar=lcar),
         ]
         # Add skeleton.
         # Alternative for circles:
@@ -588,7 +595,7 @@ class Geometry(object):
         volume = self.add_volume(surface_loop, holes) if with_volume else None
 
         class Ellipsoid(object):
-            def __init__(self, x0, radii, lcar, surface_loop, volume):
+            def __init__(self, x0, radii, surface_loop, volume, lcar=None):
                 self.x0 = x0
                 self.lcar = lcar
                 self.radii = radii
@@ -596,14 +603,12 @@ class Geometry(object):
                 self.volume = volume
                 return
 
-        return Ellipsoid(x0, radii, lcar, surface_loop, volume)
+        return Ellipsoid(x0, radii, surface_loop, volume, lcar=lcar)
 
-    def add_ball(self, x0, radius, lcar, with_volume=True, holes=None):
-        return self.add_ellipsoid(
-            x0, [radius, radius, radius], lcar, with_volume, holes
-        )
+    def add_ball(self, x0, radius, **kwargs):
+        return self.add_ellipsoid(x0, [radius, radius, radius], **kwargs)
 
-    def add_box(self, x0, x1, y0, y1, z0, z1, lcar, with_volume=True, holes=None):
+    def add_box(self, x0, x1, y0, y1, z0, z1, lcar=None, with_volume=True, holes=None):
 
         if holes is None:
             holes = []
@@ -655,7 +660,7 @@ class Geometry(object):
         vol = self.add_volume(surface_loop, holes) if with_volume else None
 
         class Box(object):
-            def __init__(self, x0, x1, y0, y1, z0, z1, lcar, surface_loop, volume):
+            def __init__(self, x0, x1, y0, y1, z0, z1, surface_loop, volume, lcar=None):
                 self.x0 = x0
                 self.x1 = x1
                 self.y0 = y0
@@ -667,25 +672,25 @@ class Geometry(object):
                 self.volume = volume
                 return
 
-        return Box(x0, x1, y0, y1, z0, z1, lcar, surface_loop, vol)
+        return Box(x0, x1, y0, y1, z0, z1, surface_loop, vol, lcar=lcar)
 
     def add_torus(
         self,
         irad,
         orad,
-        lcar,
+        lcar=None,
         R=numpy.eye(3),
         x0=numpy.array([0.0, 0.0, 0.0]),
         variant="extrude_lines",
     ):
 
         if variant == "extrude_lines":
-            return self._add_torus_extrude_lines(irad, orad, lcar, R=R, x0=x0)
+            return self._add_torus_extrude_lines(irad, orad, lcar=lcar, R=R, x0=x0)
         assert variant == "extrude_circle"
-        return self._add_torus_extrude_circle(irad, orad, lcar, R=R, x0=x0)
+        return self._add_torus_extrude_circle(irad, orad, lcar=lcar, R=R, x0=x0)
 
     def _add_torus_extrude_lines(
-        self, irad, orad, lcar, R=numpy.eye(3), x0=numpy.array([0.0, 0.0, 0.0])
+        self, irad, orad, lcar=None, R=numpy.eye(3), x0=numpy.array([0.0, 0.0, 0.0])
     ):
         """Create Gmsh code for the torus in the x-y plane under the coordinate
         transformation
@@ -702,7 +707,7 @@ class Geometry(object):
         x0t = numpy.dot(R, numpy.array([0.0, orad, 0.0]))
         # Get circles in y-z plane
         Rc = numpy.array([[0.0, 0.0, 1.0], [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]])
-        c = self.add_circle(x0 + x0t, irad, lcar, R=numpy.dot(R, Rc))
+        c = self.add_circle(x0 + x0t, irad, lcar=lcar, R=numpy.dot(R, Rc))
 
         rot_axis = [0.0, 0.0, 1.0]
         rot_axis = numpy.dot(R, rot_axis)
@@ -744,7 +749,7 @@ class Geometry(object):
         return vol
 
     def _add_torus_extrude_circle(
-        self, irad, orad, lcar, R=numpy.eye(3), x0=numpy.array([0.0, 0.0, 0.0])
+        self, irad, orad, lcar=None, R=numpy.eye(3), x0=numpy.array([0.0, 0.0, 0.0])
     ):
         """Create Gmsh code for the torus under the coordinate transformation
 
@@ -760,7 +765,7 @@ class Geometry(object):
         # Add circle
         x0t = numpy.dot(R, numpy.array([0.0, orad, 0.0]))
         Rc = numpy.array([[0.0, 0.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
-        c = self.add_circle(x0 + x0t, irad, lcar, R=numpy.dot(R, Rc))
+        c = self.add_circle(x0 + x0t, irad, lcar=lcar, R=numpy.dot(R, Rc))
 
         rot_axis = [0.0, 0.0, 1.0]
         rot_axis = numpy.dot(R, rot_axis)
@@ -798,7 +803,7 @@ class Geometry(object):
         length,
         R=numpy.eye(3),
         x0=numpy.array([0.0, 0.0, 0.0]),
-        lcar=0.1,
+        lcar=None,
         variant="rectangle_rotation",
     ):
         if variant == "rectangle_rotation":
@@ -817,7 +822,7 @@ class Geometry(object):
         length,
         R=numpy.eye(3),
         x0=numpy.array([0.0, 0.0, 0.0]),
-        lcar=0.1,
+        lcar=None,
     ):
         """Hollow cylinder.
         Define a rectangle, extrude it by rotation.
@@ -834,7 +839,7 @@ class Geometry(object):
         # Apply transformation.
         X = [numpy.dot(R, x) + x0 for x in X]
         # Create points set.
-        p = [self.add_point(x, lcar) for x in X]
+        p = [self.add_point(x, lcar=lcar) for x in X]
 
         # Define edges.
         e = [
@@ -886,7 +891,7 @@ class Geometry(object):
         length,
         R=numpy.eye(3),
         x0=numpy.array([0.0, 0.0, 0.0]),
-        lcar=0.1,
+        lcar=None,
     ):
         """Hollow cylinder.
         Define a ring, extrude it by translation.
@@ -894,10 +899,10 @@ class Geometry(object):
         # Define ring which to Extrude by translation.
         Rc = numpy.array([[0.0, 0.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
         c_inner = self.add_circle(
-            x0, inner_radius, lcar, R=numpy.dot(R, Rc), make_surface=False
+            x0, inner_radius, lcar=lcar, R=numpy.dot(R, Rc), make_surface=False
         )
         circ = self.add_circle(
-            x0, outer_radius, lcar, R=numpy.dot(R, Rc), holes=[c_inner.line_loop]
+            x0, outer_radius, lcar=lcar, R=numpy.dot(R, Rc), holes=[c_inner.line_loop]
         )
 
         # Now Extrude the ring surface.

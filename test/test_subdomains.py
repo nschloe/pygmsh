@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 import pygmsh
@@ -34,4 +33,4 @@ def test():
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("subdomains.vtu", *test())
+    meshio.write_points_cells("subdomains.vtu", *test())

@@ -1,4 +1,3 @@
-#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Creates a mesh for an ellipsoid.
@@ -21,4 +20,4 @@ def test():
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("ellipsoid.vtu", *test())
+    meshio.write_points_cells("ellipsoid.vtu", *test())

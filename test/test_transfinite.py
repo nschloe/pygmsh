@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import pygmsh
@@ -20,4 +19,4 @@ def test(lcar=1.):
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("transfinite.vtu", *test())
+    meshio.write_points_cells("transfinite.vtu", *test())

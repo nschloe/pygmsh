@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import numpy as np
@@ -35,4 +34,4 @@ def test():
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("pipes.vtu", *test())
+    meshio.write_points_cells("pipes.vtu", *test())

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import numpy as np
@@ -43,4 +42,4 @@ def test():
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("swiss_cheese.vtu", *test())
+    meshio.write_points_cells("swiss_cheese.vtu", *test())

@@ -1,4 +1,3 @@
-#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 import pytest
 
@@ -22,4 +21,4 @@ def test():
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("opencascade_box.vtu", *test())
+    meshio.write_points_cells("opencascade_box.vtu", *test())

@@ -1,4 +1,3 @@
-#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 import pytest
 
@@ -82,4 +81,4 @@ def test_all():
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("boolean.vtu", *test_all())
+    meshio.write_points_cells("boolean.vtu", *test_all())
