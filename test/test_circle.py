@@ -1,4 +1,3 @@
-#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 import pygmsh
 
@@ -11,7 +10,7 @@ def test():
     geom.add_circle(
         [0.0, 0.0, 0.0],
         1.0,
-        0.1,
+        lcar=0.1,
         num_sections=4,
         # If compound==False, the section borders have to be points of the
         # discretization. If using a compound circle, they don't; gmsh can
@@ -27,5 +26,4 @@ def test():
 
 if __name__ == "__main__":
     import meshio
-
-    meshio.write("circle.vtk", *test())
+    meshio.write_points_cells("circle.vtk", *test())

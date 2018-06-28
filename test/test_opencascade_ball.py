@@ -1,4 +1,3 @@
-#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 from math import pi
 import pytest
@@ -24,5 +23,4 @@ def test():
 
 if __name__ == "__main__":
     import meshio
-
     meshio.write("opencascade_ball.vtu", *test())
