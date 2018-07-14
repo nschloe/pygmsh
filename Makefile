@@ -23,6 +23,9 @@ clean:
 	@find . | grep -E "(__pycache__|\.pyc|\.pyo$\)" | xargs rm -rf
 	@rm -rf pygmsh.egg-info/ build/ dist/
 
+black:
+	black setup.py pygmsh/ test/*.py
+
 lint:
 	flake8 setup.py pygmsh/ test/*.py
 	black --check setup.py pygmsh/ test/*.py

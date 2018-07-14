@@ -45,6 +45,7 @@ def test():
 if __name__ == "__main__":
     from helpers import plot
     import optimesh
+
     points, cells = test()
     points, cells = optimesh.lloyd(points, cells["triangle"], 1.0e-5, 10000)
     plot("logo.png", points, {"triangle": cells})
