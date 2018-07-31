@@ -50,4 +50,5 @@ if __name__ == "__main__":
     # # from helpers import plot
     # # plot("logo.png", points, {"triangle": cells})
     import meshio
-    meshio.write_points_cells('logo.svg', points, {"triangle": cells})
+
+    meshio.write_points_cells("logo.svg", points, {"triangle": cells})
