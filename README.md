@@ -2,7 +2,6 @@
 
 [![CircleCI](https://img.shields.io/circleci/project/github/nschloe/pygmsh/master.svg)](https://circleci.com/gh/nschloe/pygmsh)
 [![codecov](https://img.shields.io/codecov/c/github/nschloe/pygmsh.svg)](https://codecov.io/gh/nschloe/pygmsh)
-[![Codacy grade](https://img.shields.io/codacy/grade/03aca50105054d18bf1f5ca3add9f2ee.svg)](https://app.codacy.com/app/nschloe/pygmsh/dashboard)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 [![Documentation Status](https://readthedocs.org/projects/pygmsh/badge/?version=latest)](https://pygmsh.readthedocs.org/en/latest/?badge=latest)
 [![PyPi Version](https://img.shields.io/pypi/v/pygmsh.svg)](https://pypi.org/project/pygmsh)
@@ -10,7 +9,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?logo=github&label=Stars)](https://github.com/nschloe/pygmsh)
 
 <p align="center">
-  <img src="https://nschloe.github.io/pygmsh/logo.png" width="20%">
+  <img src="https://nschloe.github.io/pygmsh/logo.svg" width="20%">
 </p>
 
 [Gmsh](https://gmsh.info/) is a powerful mesh generation tool with a
