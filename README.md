@@ -10,7 +10,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?logo=github&label=Stars)](https://github.com/nschloe/pygmsh)
 
 <p align="center">
-  <img src="https://nschloe.github.io/pygmsh/logo.png" width="20%">
+  <img src="https://nschloe.github.io/pygmsh/logo.svg" width="20%">
 </p>
 
 [Gmsh](https://gmsh.info/) is a powerful mesh generation tool with a
