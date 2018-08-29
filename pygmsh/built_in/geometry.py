@@ -340,11 +340,13 @@ class Geometry(object):
             assert isinstance(input_entity, LineBase), "Illegal extrude entity."
             entity = Dummy("Line{{{}}}".format(input_entity.id))
 
+        extrusion_string = ""
+
         # out[] = Extrude{0,1,0}{ Line{1}; };
         name = "ex{}".format(self._EXTRUDE_ID)
         if translation_axis is not None:
             if rotation_axis is not None:
-                extrusion_string = "{}[] = Extrude{{{{{}}}, {{{}}}, {{{}}}, {}}}{{{};".format(
+                extrusion_string += "{}[] = Extrude{{{{{}}}, {{{}}}, {{{}}}, {}}}{{{};".format(
                     name,
                     ",".join(repr(x) for x in translation_axis),
                     ",".join(repr(x) for x in rotation_axis),
@@ -354,31 +356,30 @@ class Geometry(object):
                 )
             else:
                 # Only translation
-                extrusion_string = "{}[] = Extrude {{{}}} {{{};".format(
+                extrusion_string += "{}[] = Extrude {{{}}} {{{};".format(
                     name, ",".join(repr(x) for x in translation_axis), entity.id
                 )
-
-            if num_layers is not None:
-                extrusion_string += " Layers{{{}}}; {}".format(
-                    num_layers, "Recombine;" if recombine else ""
-                )
-            # close command
-            extrusion_string += "};"
-            self._GMSH_CODE.append(extrusion_string)
         else:
             assert (
                 rotation_axis is not None
             ), "Specify at least translation or rotation."
             # Only rotation
-            self._GMSH_CODE.append(
-                "{}[] = Extrude{{{{{}}}, {{{}}}, {}}}{{{};}};".format(
-                    name,
-                    ",".join(repr(x) for x in rotation_axis),
-                    ",".join(repr(x) for x in point_on_axis),
-                    angle,
-                    entity.id,
-                )
+            extrusion_string += "{}[] = Extrude{{{{{}}}, {{{}}}, {}}}{{{};".format(
+                name,
+                ",".join(repr(x) for x in rotation_axis),
+                ",".join(repr(x) for x in point_on_axis),
+                angle,
+                entity.id,
             )
+
+        if num_layers is not None:
+            extrusion_string += " Layers{{{}}}; {}".format(
+                num_layers, "Recombine;" if recombine else ""
+            )
+
+        # close command
+        extrusion_string += "};"
+        self._GMSH_CODE.append(extrusion_string)
 
         # From <https://www.manpagez.com/info/gmsh/gmsh-2.4.0/gmsh_66.php>:
         #
