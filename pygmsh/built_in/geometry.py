@@ -584,10 +584,11 @@ class Geometry(object):
         # Create a surface for each line loop.
         s = [self.add_surface(l) for l in ll]
         # Combine the surfaces to avoid seams
-        new_surfs = [self.add_compound_surface(s[:4]), self.add_compound_surface(s[4:])]
+        self.add_compound_surface(s[:4])
+        self.add_compound_surface(s[4:])
 
         # Create the surface loop.
-        surface_loop = self.add_surface_loop(new_surfs)
+        surface_loop = self.add_surface_loop(s)
         # if holes:
         #     # Create an array of surface loops; the first entry is the outer
         #     # surface loop, the following ones are holes.
