@@ -98,10 +98,12 @@ def generate_mesh(
 
     """
     if extra_gmsh_arguments is None:
-        if mesh_file_type == "mesh":
-            extra_gmsh_arguments = ["-string", "Mesh.SaveElementTagType=2;"]
-        else:
-            extra_gmsh_arguments = []
+        extra_gmsh_arguments = []
+
+    # For format "mesh", ask Gmsh to save the physical tags
+    # http://gmsh.info/doc/texinfo/gmsh.html#index-Mesh_002eSaveElementTagType
+    if mesh_file_type == "mesh":
+        extra_gmsh_arguments += ["-string", "Mesh.SaveElementTagType=2;"]
 
     preserve_geo = geo_filename is not None
     if geo_filename is None:
