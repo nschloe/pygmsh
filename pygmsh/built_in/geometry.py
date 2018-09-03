@@ -268,7 +268,7 @@ class Geometry(object):
         arcs.append(self.add_circle_arc(p[-1], p[0], p[1]))
 
         if compound:
-            arcs = [self.add_compound_line(arcs)]
+            self.add_compound_line(arcs)
 
         line_loop = self.add_line_loop(arcs)
 
