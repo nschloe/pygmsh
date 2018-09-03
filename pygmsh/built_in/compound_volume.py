@@ -23,12 +23,7 @@ class CompoundVolume(object):
         self.id = "cv{}".format(CompoundVolume._ID)
         CompoundVolume._ID += 1
 
-        self.code = "\n".join(
-            [
-                "{} = newv;".format(self.id),
-                "Compound Volume({}) = {{{}}};".format(
-                    self.id, ",".join([v.id for v in volumes])
-                ),
-            ]
-        )
+        self.code = "Compound Volume {{{}}};".format(
+                    ",".join([v.id for v in volumes])
+                )
         return

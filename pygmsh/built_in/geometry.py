@@ -794,9 +794,9 @@ class Geometry(object):
             previous = top
             all_volumes.append(vol)
 
-        vol = self.add_compound_volume(all_volumes)
+        self.add_compound_volume(all_volumes)
         self.add_comment(76 * "-" + "\n")
-        return vol
+        return all_volumes
 
     def add_pipe(
         self,
