@@ -25,6 +25,6 @@ class CompoundSurface(SurfaceBase):
         self.surfaces = surfaces
 
         self.code = "Compound Surface {{{}}};".format(
-                    ",".join([s.id for s in surfaces])
-                )
+            ",".join([s.id for s in surfaces])
+        )
         return

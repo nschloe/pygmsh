@@ -22,6 +22,6 @@ class CompoundLine(LineBase):
         self.lines = lines
 
         self.code = "Compound Line {{{}}};\n".format(
-                    ",".join([l.id for l in self.lines])
-                )
+            ",".join([l.id for l in self.lines])
+        )
         return
