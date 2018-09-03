@@ -91,10 +91,15 @@ def generate_mesh(
     and reread by `meshio`.
 
     Gmsh's native "msh" format is ill-suited to fast I/O.  This can
-    greately reduce the performance of pygmsh.  As a workaround, try
-    `mesh_filetype="vtk"` (though Gmsh doesn't write the physical tags
-    to VTK <https://gitlab.onelab.info/gmsh/gmsh/issues/389>) or
-    `"mesh"`.
+    greatly reduce the performance of pygmsh.  As alternatives, try
+    `mesh_file_type=`:
+
+    - "vtk"`, though Gmsh doesn't write the physical tags
+    to VTK <https://gitlab.onelab.info/gmsh/gmsh/issues/389> or
+
+    - `"mesh"`, though this only supports a few basic elements - "line",
+    "triangle", "quad", "tetra", "hexahedron" - and doesn't preserve
+    the `$PhysicalNames`, just the `int` tags.
 
     """
     if extra_gmsh_arguments is None:
