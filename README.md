@@ -6,7 +6,7 @@
 [![Documentation Status](https://readthedocs.org/projects/pygmsh/badge/?version=latest)](https://pygmsh.readthedocs.org/en/latest/?badge=latest)
 [![PyPi Version](https://img.shields.io/pypi/v/pygmsh.svg)](https://pypi.org/project/pygmsh)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1173105.svg)](https://doi.org/10.5281/zenodo.1173105)
-[![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?logo=github&label=Stars)](https://github.com/nschloe/pygmsh)
+[![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?logo=github&label=Stars&logoColor=white)](https://github.com/nschloe/pygmsh)
 
 <p align="center">
   <img src="https://nschloe.github.io/pygmsh/logo.svg" width="20%">
