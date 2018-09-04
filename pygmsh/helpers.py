@@ -79,6 +79,7 @@ def generate_mesh(
     verbose=True,
     dim=3,
     prune_vertices=True,
+    prune_z_0=False,
     remove_faces=False,
     gmsh_path=None,
     extra_gmsh_arguments=None,
@@ -191,5 +192,12 @@ def generate_mesh(
         print("\ngeo file: {}".format(geo_filename))
     else:
         os.remove(geo_filename)
+
+    if (
+        prune_z_0
+        and mesh.points.shape[1] == 3
+        and numpy.all(numpy.abs(mesh.points[:, 2]) < 1.0e-13)
+    ):
+        mesh.points = mesh.points[:, :2]
 
     return mesh.points, mesh.cells, mesh.point_data, mesh.cell_data, mesh.field_data
