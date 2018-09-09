@@ -98,6 +98,8 @@ def test_square_circle_slice():
     Also test for surface area of fragments.
     """
     geo_object = built_in_opencascade_geos_fragments()
+
+    # Gmsh 4 default format MSH4 doesn't have geometrical entities.
     points, cells, _, cell_data, _ = pygmsh.generate_mesh(
         geo_object, extra_gmsh_arguments=["-format", "msh2"]
     )
