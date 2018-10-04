@@ -25,6 +25,7 @@ from .circle_arc import CircleArc
 from .compound_line import CompoundLine
 from .compound_surface import CompoundSurface
 from .compound_volume import CompoundVolume
+from .define_constant import DefineConstant
 from .dummy import Dummy
 from .ellipse_arc import EllipseArc
 from .line import Line
@@ -142,6 +143,11 @@ class Geometry(object):
 
     def add_volume(self, *args, **kwargs):
         e = Volume(*args, **kwargs)
+        self._GMSH_CODE.append(e.code)
+        return e
+
+    def define_constant(self, *args, **kwargs):
+        e = DefineConstant(*args, **kwargs)
         self._GMSH_CODE.append(e.code)
         return e
 
