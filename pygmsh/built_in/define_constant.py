@@ -18,6 +18,6 @@ class DefineConstant(object):
         )
         return
 
-    # Need to overload repr so that the label will be formatted into gmsh code without and quotes
+    # Need to overload repr so that the label will be formatted into gmsh code without any quotes
     def __repr__(self):
         return self.label
