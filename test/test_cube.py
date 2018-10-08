@@ -1,7 +1,6 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''Creates a mesh on a cube.
-'''
+"""Creates a mesh on a cube.
+"""
 import pygmsh
 
 from helpers import compute_volume
@@ -17,6 +16,7 @@ def test():
     return points, cells
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import meshio
-    meshio.write('cube.vtu', *test())
+
+    meshio.write_points_cells("cube.vtu", *test())

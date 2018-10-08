@@ -1,8 +1,7 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pygmsh
 from numpy import pi, sin, cos
+import pygmsh
 
 from helpers import compute_volume
 
@@ -16,9 +15,9 @@ def test(lcar=0.3):
     p3 = geom.add_point([-r, 0.0, 0.0], lcar)
     p4 = geom.add_point([0.0, +r, 0.0], lcar)
     p5 = geom.add_point([0.0, -r, 0.0], lcar)
-    p6 = geom.add_point([r*cos(+pi/12.0), r*sin(+pi/12.0), 0.0], lcar)
-    p7 = geom.add_point([r*cos(-pi/12.0), r*sin(-pi/12.0), 0.0], lcar)
-    p8 = geom.add_point([0.5*r, 0.0, 0.0], lcar)
+    p6 = geom.add_point([r * cos(+pi / 12.0), r * sin(+pi / 12.0), 0.0], lcar)
+    p7 = geom.add_point([r * cos(-pi / 12.0), r * sin(-pi / 12.0), 0.0], lcar)
+    p8 = geom.add_point([0.5 * r, 0.0, 0.0], lcar)
 
     c0 = geom.add_circle_arc(p6, p1, p4)
     c1 = geom.add_circle_arc(p4, p1, p3)
@@ -29,8 +28,8 @@ def test(lcar=0.3):
     ll = geom.add_line_loop([c0, c1, c2, c3, l1, l2])
 
     # test adding raw code
-    geom.add_raw_code('// dummy')
-    geom.add_raw_code(['// dummy'])
+    geom.add_raw_code("// dummy")
+    geom.add_raw_code(["// dummy"])
 
     pacman = geom.add_plane_surface(ll)
 
@@ -47,6 +46,7 @@ def test(lcar=0.3):
     return points, cells
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import meshio
-    meshio.write('pacman.vtu', *test())
+
+    meshio.write_points_cells("pacman.vtu", *test())

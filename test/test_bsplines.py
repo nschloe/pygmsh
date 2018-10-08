@@ -1,4 +1,3 @@
-#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 import pygmsh
 
@@ -22,13 +21,14 @@ def test():
     ll = geom.add_line_loop([s1, s2])
     geom.add_plane_surface(ll)
 
-    ref = 0.9156598733673261
+    ref = 0.9156598733673261 if pygmsh.get_gmsh_major_version() < 4 else 0.75
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)
     assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
     return points, cells
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import meshio
+
     out = test()
-    meshio.write('bsplines.vtu', *out)
+    meshio.write_points_cells("bsplines.vtu", *out)

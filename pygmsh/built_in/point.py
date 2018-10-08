@@ -3,19 +3,42 @@
 
 
 class Point(object):
+    """
+    Creates an elementary point.
+
+    x : array-like[3]
+        Give the three X, Y and Z coordinates of the
+        point in the three-dimensional Euclidean space.
+    lcar : float
+        The prescribed mesh element size at this point.
+    """
+
     _POINT_ID = 0
 
-    def __init__(self, x, lcar):
+    def __init__(self, x, lcar=None):
         self.x = x
         self.lcar = lcar
 
-        self.id = 'p{}'.format(Point._POINT_ID)
+        self.id = "p{}".format(Point._POINT_ID)
         Point._POINT_ID += 1
 
         # Points are always 3D in gmsh
-        self.code = '\n'.join([
-            '{} = newp;'.format(self.id),
-            'Point({}) = {{{!r}, {!r}, {!r}, {!r}}};'.format(
-                self.id, x[0], x[1], x[2], lcar
-            )])
+        if lcar is not None:
+            self.code = "\n".join(
+                [
+                    "{} = newp;".format(self.id),
+                    "Point({}) = {{{!r}, {!r}, {!r}, {!r}}};".format(
+                        self.id, x[0], x[1], x[2], lcar
+                    ),
+                ]
+            )
+        else:
+            self.code = "\n".join(
+                [
+                    "{} = newp;".format(self.id),
+                    "Point({}) = {{{!r}, {!r}, {!r}}};".format(
+                        self.id, x[0], x[1], x[2]
+                    ),
+                ]
+            )
         return

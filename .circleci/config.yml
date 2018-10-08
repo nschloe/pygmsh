@@ -1,60 +1,29 @@
 version: 2
 
 jobs:
-
-#   python2:
-#     working_directory: ~/pygmsh
-#     docker:
-#       - image: ubuntu:17.04
-#     steps:
-#       - run: apt update
-#       - run: apt install -y git gmsh python-pip python-matplotlib python-numpy python-scipy
-#       - run: pip2 install -U pytest pytest-cov pylint code_extract
-#       - checkout
-#       - run: LANG=C.UTF-8 pip2 install .
-#       # lint
-#       - run: pylint pygmsh/
-#       - run: pylint test/examples/*py
-#       # The tests
-#       - run: code_extract README.md test/readme_test.py --filter python,test
-#       - run: cd test/ && MPLBACKEND=Agg pytest --cov pygmsh
-
-#  python3:
   build:
-    working_directory: ~/pygmsh
+    working_directory: ~/work
     docker:
-      - image: ubuntu:17.04
+      - image: ubuntu:18.04
     steps:
       - run: apt update
-      - run: apt install -y git python3-pip wget
-      - run: pip3 install -U pytest pytest-cov pylint code_extract
+      - run: apt install -y git python3-pip gmsh
+      - run: pip3 install -U pytest pytest-cov flake8 black excode
       - checkout
-      # install gmsh from upstream
-      - run: apt install -y gmsh  # for the dependencies
-      - run: wget http://gmsh.info/bin/Linux/gmsh-3.0.5-Linux64.tgz
-      - run: tar xf gmsh-3.0.5-Linux64.tgz
+      # # install gmsh from ppa
+      # - run: apt-get install -y software-properties-common
+      # - run: LANG=C.UTF-8 apt-add-repository -y ppa:nschloe/gmsh-backports
+      # - run: apt update
+      # - run: apt install -y gmsh
       # install
       - run: pip3 install .
-      # lint
-      - run: pylint pygmsh/
-      # make sure that rst converts correctly
-      - run: apt install -y pandoc
-      - run: cat README.md | sed -e 's_<img src="\([^"]*\)" width="\([^"]*\)">_![](\1){width="\2"}_g' -e 's/```python,test/```python/g' > /tmp/README.md
-      - run: pandoc /tmp/README.md -o README.rst
-      - run: pip3 install docutils pygments
-      - run: python3 setup.py check -r -s
+      - run: pip3 install -r test_requirements.txt
+      # format and lint
+      - run: LC_ALL=C.UTF-8 black --check setup.py pygmsh/ test/*.py
+      - run: flake8 setup.py pygmsh/ test/*.py
       # The actual test
-      - run: code_extract README.md test/readme_test.py --filter python,test
-      - run: cd test/ && MPLBACKEND=Agg PATH=~/pygmsh/gmsh-3.0.5-Linux/bin/:$PATH pytest --cov pygmsh
+      - run: excode README.md test/readme_test.py --filter python,test
+      - run: cd test/ && MPLBACKEND=Agg pytest --cov pygmsh
       # submit to codecov
       - run: apt install -y curl
       - run: bash <(curl -s https://codecov.io/bash)
-
-# workflow builds don't support forked PRs yet, cf.
-# <https://circleci.com/docs/2.0/faq/#can-i-build-fork-prs-using-workflows>.
-# workflows:
-#   version: 2
-#   build-and-test:
-#     jobs:
-#       - python2
-#       - python3

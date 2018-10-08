@@ -1,15 +1,12 @@
-#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-import pygmsh
 import pytest
+
+import pygmsh
 
 from helpers import compute_volume
 
 
-@pytest.mark.skipif(
-    pygmsh.get_gmsh_major_version() < 3,
-    reason='requires Gmsh >= 3'
-    )
+@pytest.mark.skipif(pygmsh.get_gmsh_major_version() < 3, reason="requires Gmsh >= 3")
 def test():
     geom = pygmsh.opencascade.Geometry()
 
@@ -21,6 +18,7 @@ def test():
     return points, cells
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import meshio
-    meshio.write('opencascade_box.vtu', *test())
+
+    meshio.write_points_cells("opencascade_box.vtu", *test())

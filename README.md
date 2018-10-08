@@ -1,17 +1,28 @@
 # pygmsh
 
-[![Build Status](https://travis-ci.org/nschloe/pygmsh.svg)](https://travis-ci.org/nschloe/pygmsh)
-[![codecov](https://codecov.io/gh/nschloe/pygmsh/branch/master/graph/badge.svg)](https://codecov.io/gh/nschloe/pygmsh)
+[![CircleCI](https://img.shields.io/circleci/project/github/nschloe/pygmsh/master.svg)](https://circleci.com/gh/nschloe/pygmsh)
+[![codecov](https://img.shields.io/codecov/c/github/nschloe/pygmsh.svg)](https://codecov.io/gh/nschloe/pygmsh)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 [![Documentation Status](https://readthedocs.org/projects/pygmsh/badge/?version=latest)](https://pygmsh.readthedocs.org/en/latest/?badge=latest)
-[![PyPi Version](https://img.shields.io/pypi/v/pygmsh.svg)](https://pypi.python.org/pypi/pygmsh)
-[![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?style=social&label=Stars&maxAge=2592000)](https://github.com/nschloe/pygmsh)
+[![PyPi Version](https://img.shields.io/pypi/v/pygmsh.svg)](https://pypi.org/project/pygmsh)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1173105.svg)](https://doi.org/10.5281/zenodo.1173105)
+[![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?logo=github&label=Stars&logoColor=white)](https://github.com/nschloe/pygmsh)
 
-[Gmsh](https://gmsh.info//) is a powerful mesh generation tool with a
+<p align="center">
+  <img src="https://nschloe.github.io/pygmsh/logo.svg" width="20%">
+</p>
+
+[Gmsh](https://gmsh.info/) is a powerful mesh generation tool with a
 scripting language that is notoriously hard to write.
 
 The goal of pygmsh is to combine the power of Gmsh with the versatility of
 Python and to provide useful abstractions from the Gmsh scripting language
 so you can create complex geometries more easily.
+
+See [here](https://pygmsh.readthedocs.io/en/latest/index.html) for the full
+documentation.
+
+#### Built-in
 
 ![](https://nschloe.github.io/pygmsh/screw.png)
 
@@ -24,14 +35,14 @@ geom = pygmsh.built_in.Geometry()
 
 # Draw a cross.
 poly = geom.add_polygon([
-    [0.0,   0.5, 0.0],
+    [ 0.0,  0.5, 0.0],
     [-0.1,  0.1, 0.0],
     [-0.5,  0.0, 0.0],
     [-0.1, -0.1, 0.0],
-    [0.0,  -0.5, 0.0],
-    [0.1,  -0.1, 0.0],
-    [0.5,   0.0, 0.0],
-    [0.1,   0.1, 0.0]
+    [ 0.0, -0.5, 0.0],
+    [ 0.1, -0.1, 0.0],
+    [ 0.5,  0.0, 0.0],
+    [ 0.1,  0.1, 0.0]
     ],
     lcar=0.05
     )
@@ -49,7 +60,7 @@ geom.extrude(
 points, cells, point_data, cell_data, field_data = pygmsh.generate_mesh(geom)
 ```
 to retrieve all points and cells of the mesh for the specified geometry.
-To store the mesh, you can use [meshio](https://pypi.python.org/pypi/meshio);
+To store the mesh, you can use [meshio](https://pypi.org/project/meshio);
 for example
 ```python
 import meshio
@@ -63,6 +74,8 @@ You will find the above mesh in the directory
 small examples.
 
 #### OpenCASCADE
+
+![](https://nschloe.github.io/pygmsh/puzzle.png)
 
 As of version 3.0, Gmsh supports OpenCASCADE, allowing for a CAD-style geometry
 specification.
@@ -90,12 +103,10 @@ geom.extrude(flat, [0, 0, 0.3])
 points, cells, point_data, cell_data, field_data = pygmsh.generate_mesh(geom)
 ```
 
-![](https://nschloe.github.io/pygmsh/puzzle.png)
-
 ### Installation
 
 pygmsh is [available from the Python Package
-Index](https://pypi.python.org/pypi/pygmsh/), so simply type
+Index](https://pypi.org/project/pygmsh/), so simply type
 ```
 pip install -U pygmsh
 ```
@@ -118,6 +129,15 @@ might inspire you.
 To run the pygmsh unit tests, check out this repository and type
 ```
 pytest
+```
+
+### Building Documentation
+
+Docs are built using [Sphinx](http://www.sphinx-doc.org/en/stable/).
+
+To build run
+```
+sphinx-build -b html doc doc/_build
 ```
 
 ### Distribution
