@@ -111,9 +111,7 @@ class Geometry(bl.Geometry):
         for e in input_entities[1:] + tool_entities:
             assert (
                 e.dimension == dim
-            ), "Incompatible input type '{}' for Boolean operation.".format(
-                type(e)
-            )
+            ), "Incompatible input type '{}' for Boolean operation.".format(type(e))
 
         name = "bo{}".format(self._BOOLEAN_ID)
 

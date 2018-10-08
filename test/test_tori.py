@@ -11,10 +11,10 @@ def test(irad=0.05, orad=0.6):
     """
     geom = pygmsh.built_in.Geometry()
 
-    R = pygmsh.rotation_matrix([1., 0., 0.], np.pi / 2)
+    R = pygmsh.rotation_matrix([1.0, 0.0, 0.0], np.pi / 2)
     geom.add_torus(irad=irad, orad=orad, lcar=0.03, x0=[0.0, 0.0, -1.0], R=R)
 
-    R = pygmsh.rotation_matrix([0., 1., 0.], np.pi / 2)
+    R = pygmsh.rotation_matrix([0.0, 1.0, 0.0], np.pi / 2)
     geom.add_torus(
         irad=irad, orad=orad, lcar=0.03, x0=[0.0, 0.0, 1.0], variant="extrude_circle"
     )

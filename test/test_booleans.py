@@ -33,7 +33,7 @@ def circle_loop(geo_object):
     points = [
         geo_object.add_point(point, 0.05)
         for point in [
-            np.array([0., 0.1, 0.]),
+            np.array([0.0, 0.1, 0.0]),
             np.array([-0.1, 0, 0]),
             np.array([0, -0.1, 0]),
             np.array([0.1, 0, 0]),

@@ -19,7 +19,7 @@ def rotation_matrix(u, theta):
     :param u: rotation vector
     :param theta: rotation angle
     """
-    assert numpy.isclose(numpy.inner(u, u), 1.), "the rotation axis must be unitary"
+    assert numpy.isclose(numpy.inner(u, u), 1.0), "the rotation axis must be unitary"
 
     # Cross-product matrix.
     cpm = numpy.array([[0.0, -u[2], u[1]], [u[2], 0.0, -u[0]], [-u[1], u[0], 0.0]])
