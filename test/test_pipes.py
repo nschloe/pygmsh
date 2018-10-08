@@ -11,7 +11,7 @@ def test():
     """
     geom = pygmsh.built_in.Geometry()
 
-    sqrt2on2 = 0.5 * np.sqrt(2.)
+    sqrt2on2 = 0.5 * np.sqrt(2.0)
     R = pygmsh.rotation_matrix([sqrt2on2, sqrt2on2, 0], np.pi / 6.0)
     geom.add_pipe(inner_radius=0.3, outer_radius=0.4, length=1.0, R=R, lcar=0.04)
 
