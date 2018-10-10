@@ -11,11 +11,14 @@ class DefineConstant(object):
         if name is None:
             name = "Parameters/{}".format(label)
 
-        step = "" if step is None else "Step {}".format(step)
+        defined_constant = "{}, Min {}, Max {}".format(value, min_value, max_value)
 
-        self.code = 'DefineConstant[ {} = {{ {}, Min {}, Max {}, {}, Name "{}" }} ];'.format(
-            label, value, min_value, max_value, step, name
-        )
+        if step:
+            defined_constant += ", Step {}".format(step)
+
+        defined_constant += ', Name "{}"'.format(name)
+
+        self.code = "DefineConstant[ {} = {{ {} }} ];".format(label, defined_constant)
         return
 
     # Need to overload repr so that the label will be formatted into gmsh code without any quotes
