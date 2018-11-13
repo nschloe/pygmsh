@@ -3,10 +3,10 @@
 import pygmsh
 
 
-def test(lcar=1.):
+def test(lcar=1.0):
     geom = pygmsh.built_in.Geometry()
     poly = geom.add_polygon(
-        [[0., 0., 0.], [1., 0., 0.], [1., 1., 0.], [0., 1., 0.]], lcar
+        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [0.0, 1.0, 0.0]], lcar
     )
 
     geom.set_transfinite_surface(poly.surface, size=[11, 9])

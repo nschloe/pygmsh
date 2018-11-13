@@ -19,7 +19,7 @@ def rotation_matrix(u, theta):
     :param u: rotation vector
     :param theta: rotation angle
     """
-    assert numpy.isclose(numpy.inner(u, u), 1.), "the rotation axis must be unitary"
+    assert numpy.isclose(numpy.inner(u, u), 1.0), "the rotation axis must be unitary"
 
     # Cross-product matrix.
     cpm = numpy.array([[0.0, -u[2], u[1]], [u[2], 0.0, -u[0]], [-u[1], u[0], 0.0]])
@@ -79,6 +79,7 @@ def generate_mesh(
     verbose=True,
     dim=3,
     prune_vertices=True,
+    prune_z_0=False,
     remove_faces=False,
     gmsh_path=None,
     extra_gmsh_arguments=None,
@@ -118,9 +119,7 @@ def generate_mesh(
     with open(geo_filename, "w") as f:
         f.write(geo_object.get_code())
 
-    suffix = f".{mesh_file_type}"
-
-    with tempfile.NamedTemporaryFile(suffix=suffix) as handle:
+    with tempfile.NamedTemporaryFile(suffix="." + mesh_file_type) as handle:
         msh_filename = handle.name
 
     gmsh_executable = gmsh_path if gmsh_path is not None else _get_gmsh_exe()
@@ -191,5 +190,12 @@ def generate_mesh(
         print("\ngeo file: {}".format(geo_filename))
     else:
         os.remove(geo_filename)
+
+    if (
+        prune_z_0
+        and mesh.points.shape[1] == 3
+        and numpy.all(numpy.abs(mesh.points[:, 2]) < 1.0e-13)
+    ):
+        mesh.points = mesh.points[:, :2]
 
     return mesh.points, mesh.cells, mesh.point_data, mesh.cell_data, mesh.field_data
