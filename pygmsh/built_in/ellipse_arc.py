@@ -11,13 +11,13 @@ class EllipseArc(LineBase):
     Parameters
     ----------
     start : Point
-        Coordinates of start point needed to construct circle arc.
+        Coordinates of start point needed to construct elliptic arc.
     center : Point
-        Coordinates of center point needed to construct circle arc.
+        Coordinates of center point needed to construct elliptic arc.
     point_on_major_axis : Point
         Point on the center axis of ellipse.
     end : Point
-        Coordinates of end point needed to construct circle arc.
+        Coordinates of end point needed to construct elliptic arc.
     """
 
     def __init__(self, start, center, point_on_major_axis, end):
