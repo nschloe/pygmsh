@@ -12,16 +12,14 @@ class LineLoop(object):
     id0 : str
         If no unique ID is given, the object global is incremented.
     lines : list
-        Contain the identification numbers of all the line loops
-        defining the volume.
+        Containing the lines defining the shape.
 
     Notes
     -----
     A line loop must be a closed loop, and the elementary lines
-    should be ordered and oriented (using negative identification
-    numbers to specify reverse orientation). If the orientation is
-    correct, but the ordering is wrong, Gmsh will actually
-    reorder the list internally to create a consistent loop.
+    should be ordered and oriented (negating to specify reverse orientation).
+    If the orientation is correct, but the ordering is wrong, Gmsh will
+    actually reorder the list internally to create a consistent loop.
     """
 
     _ID = 0
