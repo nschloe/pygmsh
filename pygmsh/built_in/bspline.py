@@ -10,7 +10,7 @@ class Bspline(LineBase):
 
     Parameters
     ----------
-    control_points : array-like[N][3]
+    control_points : List[Point]
         Contains the identification numbers of the control points.
     """
 

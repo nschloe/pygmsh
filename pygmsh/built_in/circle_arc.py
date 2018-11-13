@@ -10,11 +10,11 @@ class CircleArc(LineBase):
 
     Parameters
     ----------
-    start : array-like[3]
+    start : Point
         Coordinates of start point needed to construct circle-arc.
-    center : array-like[3]
+    center : Point
         Coordinates of center point needed to construct circle-arc.
-    end : array-like[3]
+    end : Point
         Coordinates of end point needed to construct circle-arc.
     """
 
