@@ -64,7 +64,7 @@ To store the mesh, you can use [meshio](https://pypi.org/project/meshio);
 for example
 ```python
 import meshio
-meshio.write('test.vtu', points, cells, cell_data=cell_data)
+meshio.write_points_cells('test.vtk', points, cells, cell_data=cell_data)
 ```
 The output file can be visualized with various tools, e.g.,
 [ParaView](https://www.paraview.org/).
