@@ -119,8 +119,15 @@ def generate_mesh(
     with open(geo_filename, "w") as f:
         f.write(geo_object.get_code())
 
-    mesh_suffix = "msh" if mesh_file_type[:3] == "msh" else mesh_file_type
-    with tempfile.NamedTemporaryFile(suffix="." + mesh_suffix) as handle:
+    # As of Gmsh 4.1.3, the mesh format options are
+    # ```
+    # auto, msh1, msh2, msh3, msh4, msh, unv, vtk, wrl, mail, stl, p3d, mesh, bdf, cgns,
+    # med, diff, ir3, inp, ply2, celum, su2, x3d, dat, neu, m, key
+    # ```
+    # Pick the correct filename suffix.
+    filename_suffix = "msh" if mesh_file_type[:3] == "msh" else mesh_file_type
+
+    with tempfile.NamedTemporaryFile(suffix="." + filename_suffix) as handle:
         msh_filename = handle.name
 
     gmsh_executable = gmsh_path if gmsh_path is not None else _get_gmsh_exe()
