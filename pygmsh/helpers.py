@@ -119,7 +119,8 @@ def generate_mesh(
     with open(geo_filename, "w") as f:
         f.write(geo_object.get_code())
 
-    with tempfile.NamedTemporaryFile(suffix="." + mesh_file_type) as handle:
+    mesh_suffix = "msh" if mesh_file_type[:3] == "msh" else mesh_file_type
+    with tempfile.NamedTemporaryFile(suffix="." + mesh_suffix) as handle:
         msh_filename = handle.name
 
     gmsh_executable = gmsh_path if gmsh_path is not None else _get_gmsh_exe()
