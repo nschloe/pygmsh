@@ -4,7 +4,7 @@
 import numpy
 
 from ..__about__ import __version__
-from ..helpers import _is_string
+from ..helpers import _is_string, get_gmsh_major_version
 
 from .bspline import Bspline
 from .circle_arc import CircleArc
@@ -28,7 +28,7 @@ from .volume_base import VolumeBase
 
 
 class Geometry(object):
-    def __init__(self, gmsh_major_version=3):
+    def __init__(self, gmsh_major_version=None):
         self._EXTRUDE_ID = 0
         self._BOOLEAN_ID = 0
         self._ARRAY_ID = 0
@@ -39,6 +39,11 @@ class Geometry(object):
             "// This code was created by pygmsh v{}.".format(__version__)
         ]
         return
+
+    def _gmsh_major(self):
+        if self._GMSH_MAJOR is None:
+            self._GMSH_MAJOR = get_gmsh_major_version()
+        return self._GMSH_MAJOR
 
     def get_code(self):
         """Returns properly formatted Gmsh code.
@@ -74,16 +79,19 @@ class Geometry(object):
         return p
 
     def add_compound_line(self, *args, **kwargs):
+        assert self._gmsh_major() == 3
         e = CompoundLine(*args, **kwargs)
         self._GMSH_CODE.append(e.code)
         return e
 
     def add_compound_surface(self, *args, **kwargs):
+        assert self._gmsh_major() == 3
         e = CompoundSurface(*args, **kwargs)
         self._GMSH_CODE.append(e.code)
         return e
 
     def add_compound_volume(self, *args, **kwargs):
+        assert self._gmsh_major() == 3
         e = CompoundVolume(*args, **kwargs)
         self._GMSH_CODE.append(e.code)
         return e
@@ -119,7 +127,7 @@ class Geometry(object):
         return p
 
     def add_surface(self, *args, **kwargs):
-        s = Surface(*args, api_level=self._GMSH_MAJOR, **kwargs)
+        s = Surface(*args, api_level=self._gmsh_major(), **kwargs)
         self._GMSH_CODE.append(s.code)
         return s
 
@@ -273,13 +281,20 @@ class Geometry(object):
         arcs = [self.add_circle_arc(p[k], p[0], p[k + 1]) for k in range(1, len(p) - 1)]
         arcs.append(self.add_circle_arc(p[-1], p[0], p[1]))
 
-        if compound:
+        if compound and self._gmsh_major() == 3:
             arcs = [self.add_compound_line(arcs)]
 
         line_loop = self.add_line_loop(arcs)
 
+        if compound and self._gmsh_major() == 4:
+            self.add_raw_code(
+                "Compound Curve{{{}}};".format(",".join([arc.id for arc in arcs]))
+            )
+
         if make_surface:
             plane_surface = self.add_plane_surface(line_loop, holes)
+            if compound and self._gmsh_major() == 4:
+                self.add_raw_code("Compound Surface{{{}}};".format(plane_surface.id))
         else:
             plane_surface = None
 
@@ -589,11 +604,22 @@ class Geometry(object):
         ]
         # Create a surface for each line loop.
         s = [self.add_surface(l) for l in ll]
+
         # Combine the surfaces to avoid seams
-        new_surfs = [self.add_compound_surface(s[:4]), self.add_compound_surface(s[4:])]
+        if self._gmsh_major() == 3:
+            s = [self.add_compound_surface(s[:4]), self.add_compound_surface(s[4:])]
+        else:
+            assert self._gmsh_major() == 4
+            # <https://gitlab.onelab.info/gmsh/gmsh/issues/507>
+            self.add_raw_code(
+                "Compound Surface{{{}}};".format(",".join([surf.id for surf in s[:4]]))
+            )
+            self.add_raw_code(
+                "Compound Surface{{{}}};".format(",".join([surf.id for surf in s[4:]]))
+            )
 
         # Create the surface loop.
-        surface_loop = self.add_surface_loop(new_surfs)
+        surface_loop = self.add_surface_loop(s)
         # if holes:
         #     # Create an array of surface loops; the first entry is the outer
         #     # surface loop, the following ones are holes.
@@ -799,9 +825,18 @@ class Geometry(object):
             previous = top
             all_volumes.append(vol)
 
-        vol = self.add_compound_volume(all_volumes)
+        if self._gmsh_major() == 3:
+            # This actually returns the volume, but the gmsh 4 version doesn't have that
+            # feature. Hence, for compatibility, also ditch it here.
+            self.add_compound_volume(all_volumes)
+        else:
+            assert self._gmsh_major() == 4
+            self.add_raw_code(
+                "Compound Volume{{{}}};".format(",".join(v.id for v in all_volumes))
+            )
+
         self.add_comment(76 * "-" + "\n")
-        return vol
+        return
 
     def add_pipe(
         self,

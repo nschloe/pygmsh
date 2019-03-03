@@ -4,17 +4,17 @@ jobs:
   build:
     working_directory: ~/work
     docker:
-      - image: ubuntu:18.04
+      - image: ubuntu:18.10
     steps:
       - run: apt update
       - run: apt install -y git python3-pip gmsh
       - run: pip3 install -U pytest pytest-cov flake8 black excode
       - checkout
       # # install gmsh from ppa
-      # - run: apt-get install -y software-properties-common
-      # - run: LANG=C.UTF-8 apt-add-repository -y ppa:nschloe/gmsh-backports
-      # - run: apt update
-      # - run: apt install -y gmsh
+      - run: apt-get install -y software-properties-common
+      - run: LANG=C.UTF-8 apt-add-repository -y ppa:nschloe/gmsh-backports
+      - run: apt update
+      - run: apt install -y gmsh
       # install
       - run: pip3 install .
       - run: pip3 install -r test_requirements.txt
