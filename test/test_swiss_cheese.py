@@ -35,7 +35,7 @@ def test():
 
     ref = 4.07064892966291
     points, cells, _, _, _ = pygmsh.generate_mesh(geom)
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
+    assert abs(compute_volume(points, cells) - ref) < 2.0e-2 * ref
     return points, cells
 
 
