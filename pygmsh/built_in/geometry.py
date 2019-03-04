@@ -534,6 +534,9 @@ class Geometry(object):
             self.line_loop = line_loop
             self.surface = surface
             self.lcar = lcar
+            if surface is not None:
+                self.id = self.surface.id
+            self.dimension = 2
             return
 
     def add_polygon(self, X, lcar=None, holes=None, make_surface=True):
@@ -549,7 +552,6 @@ class Geometry(object):
         lines.append(self.add_line(p[-1], p[0]))
         ll = self.add_line_loop((lines))
         surface = self.add_plane_surface(ll, holes) if make_surface else None
-
         return self.Polygon(ll, surface, lcar=lcar)
 
     def add_ellipsoid(self, x0, radii, lcar=None, with_volume=True, holes=None):
