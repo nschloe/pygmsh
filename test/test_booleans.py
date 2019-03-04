@@ -174,8 +174,17 @@ def test_diff_physical_assignment():
     return
 
 
+def test_polygon_diff():
+    geom = pygmsh.opencascade.Geometry()
+    poly = geom.add_polygon([[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]])
+    disk = geom.add_disk([0, 0, 0], 0.5)
+    geom.boolean_difference([poly], [disk])
+    return
+
+
 if __name__ == "__main__":
-    test_square_circle_hole()
-    test_square_circle_slice()
-    test_fragments_diff_union()
-    test_diff_physical_assignment()
+    # test_square_circle_hole()
+    # test_square_circle_slice()
+    # test_fragments_diff_union()
+    # test_diff_physical_assignment()
+    test_polygon_diff()
