@@ -353,6 +353,8 @@ class Geometry(object):
 
         if _is_string(input_entity):
             entity = Dummy(input_entity)
+        elif isinstance(input_entity, Point):
+            entity = Dummy("Point{{{}}}".format(input_entity.id))
         elif isinstance(input_entity, SurfaceBase):
             entity = Dummy("Surface{{{}}}".format(input_entity.id))
         elif hasattr(input_entity, "surface"):
@@ -419,6 +421,9 @@ class Geometry(object):
         elif isinstance(input_entity, SurfaceBase):
             top = SurfaceBase(top, input_entity.num_edges)
             extruded = VolumeBase(extruded)
+        elif isinstance(input_entity, Point):
+            top = Point(top)
+            extruded = LineBase(extruded)
         else:
             top = Dummy(top)
             extruded = Dummy(extruded)
