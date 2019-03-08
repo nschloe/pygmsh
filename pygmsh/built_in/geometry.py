@@ -19,6 +19,7 @@ from .line_base import LineBase
 from .line_loop import LineLoop
 from .plane_surface import PlaneSurface
 from .point import Point
+from .point_base import PointBase
 from .spline import Spline
 from .surface import Surface
 from .surface_base import SurfaceBase
@@ -353,6 +354,8 @@ class Geometry(object):
 
         if _is_string(input_entity):
             entity = Dummy(input_entity)
+        elif isinstance(input_entity, PointBase):
+            entity = Dummy("Point{{{}}}".format(input_entity.id))
         elif isinstance(input_entity, SurfaceBase):
             entity = Dummy("Surface{{{}}}".format(input_entity.id))
         elif hasattr(input_entity, "surface"):
@@ -419,6 +422,9 @@ class Geometry(object):
         elif isinstance(input_entity, SurfaceBase):
             top = SurfaceBase(top, input_entity.num_edges)
             extruded = VolumeBase(extruded)
+        elif isinstance(input_entity, PointBase):
+            top = PointBase(top)
+            extruded = LineBase(extruded)
         else:
             top = Dummy(top)
             extruded = Dummy(extruded)
