@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 #
+from .point_base import PointBase
 
 
-class Point(object):
+class Point(PointBase):
     """
     Creates an elementary point.
 
@@ -13,14 +14,11 @@ class Point(object):
         The prescribed mesh element size at this point.
     """
 
-    _POINT_ID = 0
-
     def __init__(self, x, lcar=None):
+        super(Point, self).__init__()
+
         self.x = x
         self.lcar = lcar
-
-        self.id = "p{}".format(Point._POINT_ID)
-        Point._POINT_ID += 1
 
         # Points are always 3D in gmsh
         if lcar is not None:
