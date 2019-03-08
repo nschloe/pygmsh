@@ -2,14 +2,11 @@
 #
 from ..__about__ import __version__
 
-from .. import built_in
-
 from .ball import Ball
 from .box import Box
 from .cone import Cone
 from .cylinder import Cylinder
 from .disk import Disk
-from .dummy import Dummy
 from .rectangle import Rectangle
 from .surface_base import SurfaceBase
 from .torus import Torus
@@ -203,39 +200,3 @@ class Geometry(bl.Geometry):
         and tool_entity are called object and tool in gmsh documentation.
         """
         return self._boolean_operation("BooleanFragments", *args, **kwargs)
-
-    def extrude(self, input_entity, translation_axis):
-        """Extrusion (translation + rotation) of any entity along a given
-        translation_axis, around a given rotation_axis, about a given angle. If
-        one of the entities is not provided, this method will produce only
-        translation or rotation.
-        """
-        self._EXTRUDE_ID += 1
-
-        assert isinstance(input_entity, built_in.surface_base.SurfaceBase)
-        entity = Dummy("Surface{{{}}}".format(input_entity.id))
-
-        # out[] = Extrude{0,1,0}{ Line{1}; };
-        name = "ex{}".format(self._EXTRUDE_ID)
-
-        # Only translation
-        self._GMSH_CODE.append(
-            "{}[] = Extrude{{{}}}{{{};}};".format(
-                name, ",".join(repr(x) for x in translation_axis), entity.id
-            )
-        )
-
-        # From <https://www.manpagez.com/info/gmsh/gmsh-2.4.0/gmsh_66.php>:
-        #
-        # > In this last extrusion command we retrieved the volume number
-        # > programatically by saving the output of the command into a
-        # > list. This list will contain the "top" of the extruded surface (in
-        # > out[0]) as well as the newly created volume (in out[1]).
-        #
-        top = "{}[0]".format(name)
-        extruded = "{}[1]".format(name)
-
-        top = SurfaceBase(top)
-        extruded = VolumeBase(is_list=False, id0=extruded)
-
-        return top, extruded
