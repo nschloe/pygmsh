@@ -974,3 +974,19 @@ class Geometry(object):
                 input_entity.id,
             )
         )
+
+    def symmetry(self, input_entity, coefficients, duplicate=True):
+        """Transforms all elementary entities symmetrically to a plane. The vector
+        should contain four expressions giving the coefficients of the plane's equation.
+        """
+        d = {1: "Line", 2: "Surface", 3: "Volume"}
+        entity = "{}{{{}}};".format(d[input_entity.dimension], input_entity.id)
+
+        if duplicate:
+            entity = "Duplicata{{{}}}".format(entity)
+
+        self._GMSH_CODE.append(
+            "Symmetry {{{}}} {{{}}}".format(
+                ", ".join([str(co) for co in coefficients]), entity
+            )
+        )

@@ -34,6 +34,7 @@ setup(
         "all": ["pipdate >=0.3.0, <0.4.0"],
         "update": ["pipdate >=0.3.0, <0.4.0"],
     },
+    keywords=["mesh", "gmsh", "mesh generation", "mathematics"],
     classifiers=[
         about["__status__"],
         about["__license__"],
