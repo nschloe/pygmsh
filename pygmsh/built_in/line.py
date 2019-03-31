@@ -20,6 +20,7 @@ class Line(LineBase):
     points : array-like[1][2]
         List containing the begin and end points of the line.
     """
+    dimension = 1
 
     def __init__(self, p0, p1):
         super(Line, self).__init__()

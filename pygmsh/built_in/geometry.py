@@ -981,6 +981,7 @@ class Geometry(object):
                 input_entity.id,
             )
         )
+        return
 
     def symmetry(self, input_entity, coefficients, duplicate=True):
         """Transforms all elementary entities symmetrically to a plane. The vector
@@ -997,3 +998,13 @@ class Geometry(object):
                 ", ".join([str(co) for co in coefficients]), entity
             )
         )
+        return
+
+    def in_surface(self, input_entity, surface):
+        d = {0: "Point", 1: "Line"}
+        entity = "{}{{{}}}".format(d[input_entity.dimension], input_entity.id)
+
+        self._GMSH_CODE.append(
+            "{} In Surface{{{}}};".format(entity, surface.id)
+        )
+        return
