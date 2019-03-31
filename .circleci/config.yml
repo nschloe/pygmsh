@@ -1,6 +1,16 @@
 version: 2
 
 jobs:
+  lint:
+    docker:
+      - image: ubuntu:18.04
+    steps:
+      - checkout
+      - run: apt update
+      - run: apt install -y python3-pip
+      - run: pip3 install -U black flake8
+      - run: LC_ALL=C.UTF-8 black --check setup.py pygmsh/ test/*.py
+      - run: flake8 setup.py pygmsh/ test/*.py
   build:
     working_directory: ~/work
     docker:
@@ -8,7 +18,7 @@ jobs:
     steps:
       - run: apt update
       - run: apt install -y git python3-pip gmsh
-      - run: pip3 install -U pytest pytest-cov flake8 black excode
+      - run: pip3 install -U pytest pytest-cov excode
       - checkout
       # # install gmsh from ppa
       - run: apt-get install -y software-properties-common
@@ -18,12 +28,16 @@ jobs:
       # install
       - run: pip3 install .
       - run: pip3 install -r test_requirements.txt
-      # format and lint
-      - run: LC_ALL=C.UTF-8 black --check setup.py pygmsh/ test/*.py
-      - run: flake8 setup.py pygmsh/ test/*.py
       # The actual test
       - run: excode README.md test/readme_test.py --filter python,test
       - run: cd test/ && MPLBACKEND=Agg pytest --cov pygmsh
       # submit to codecov
       - run: apt install -y curl
       - run: bash <(curl -s https://codecov.io/bash)
+
+workflows:
+  version: 2
+  lint_and_build:
+    jobs:
+      - lint
+      - build
