@@ -536,7 +536,9 @@ class Geometry(object):
         )
 
     class Polygon(object):
-        def __init__(self, line_loop, surface, lcar=None):
+        def __init__(self, points, lines, line_loop, surface, lcar=None):
+            self.points = points
+            self.lines = lines
             self.line_loop = line_loop
             self.surface = surface
             self.lcar = lcar
@@ -551,14 +553,19 @@ class Geometry(object):
         else:
             assert make_surface
 
+        if isinstance(lcar, list):
+            assert len(X) == len(lcar)
+        else:
+            lcar = len(X) * [lcar]
+
         # Create points.
-        p = [self.add_point(x, lcar=lcar) for x in X]
+        p = [self.add_point(x, lcar=l) for x, l in zip(X, lcar)]
         # Create lines
         lines = [self.add_line(p[k], p[k + 1]) for k in range(len(p) - 1)]
         lines.append(self.add_line(p[-1], p[0]))
         ll = self.add_line_loop((lines))
         surface = self.add_plane_surface(ll, holes) if make_surface else None
-        return self.Polygon(ll, surface, lcar=lcar)
+        return self.Polygon(p, lines, ll, surface, lcar=lcar)
 
     def add_ellipsoid(self, x0, radii, lcar=None, with_volume=True, holes=None):
         """Creates an ellipsoid with radii around a given midpoint
@@ -974,3 +981,28 @@ class Geometry(object):
                 input_entity.id,
             )
         )
+        return
+
+    def symmetry(self, input_entity, coefficients, duplicate=True):
+        """Transforms all elementary entities symmetrically to a plane. The vector
+        should contain four expressions giving the coefficients of the plane's equation.
+        """
+        d = {1: "Line", 2: "Surface", 3: "Volume"}
+        entity = "{}{{{}}};".format(d[input_entity.dimension], input_entity.id)
+
+        if duplicate:
+            entity = "Duplicata{{{}}}".format(entity)
+
+        self._GMSH_CODE.append(
+            "Symmetry {{{}}} {{{}}}".format(
+                ", ".join([str(co) for co in coefficients]), entity
+            )
+        )
+        return
+
+    def in_surface(self, input_entity, surface):
+        d = {0: "Point", 1: "Line"}
+        entity = "{}{{{}}}".format(d[input_entity.dimension], input_entity.id)
+
+        self._GMSH_CODE.append("{} In Surface{{{}}};".format(entity, surface.id))
+        return

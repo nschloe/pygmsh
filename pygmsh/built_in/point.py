@@ -14,6 +14,8 @@ class Point(PointBase):
         The prescribed mesh element size at this point.
     """
 
+    dimension = 0
+
     def __init__(self, x, lcar=None):
         super(Point, self).__init__()
 
@@ -21,22 +23,13 @@ class Point(PointBase):
         self.lcar = lcar
 
         # Points are always 3D in gmsh
-        if lcar is not None:
-            self.code = "\n".join(
-                [
-                    "{} = newp;".format(self.id),
-                    "Point({}) = {{{!r}, {!r}, {!r}, {!r}}};".format(
-                        self.id, x[0], x[1], x[2], lcar
-                    ),
-                ]
-            )
-        else:
-            self.code = "\n".join(
-                [
-                    "{} = newp;".format(self.id),
-                    "Point({}) = {{{!r}, {!r}, {!r}}};".format(
-                        self.id, x[0], x[1], x[2]
-                    ),
-                ]
-            )
+        args = (x[0], x[1], x[2]) if lcar is None else (x[0], x[1], x[2], lcar)
+        fmt = ", ".join(len(args) * ["{!r}"])
+
+        self.code = "\n".join(
+            [
+                "{} = newp;".format(self.id),
+                ("Point({}) = {{" + fmt + "}};").format(self.id, *args),
+            ]
+        )
         return
