@@ -13,6 +13,7 @@ class Point(PointBase):
     lcar : float
         The prescribed mesh element size at this point.
     """
+
     dimension = 0
 
     def __init__(self, x, lcar=None):

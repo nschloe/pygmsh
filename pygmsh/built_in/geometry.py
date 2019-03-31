@@ -1004,7 +1004,5 @@ class Geometry(object):
         d = {0: "Point", 1: "Line"}
         entity = "{}{{{}}}".format(d[input_entity.dimension], input_entity.id)
 
-        self._GMSH_CODE.append(
-            "{} In Surface{{{}}};".format(entity, surface.id)
-        )
+        self._GMSH_CODE.append("{} In Surface{{{}}};".format(entity, surface.id))
         return
