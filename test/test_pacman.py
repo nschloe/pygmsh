@@ -34,8 +34,8 @@ def test(lcar=0.3):
     pacman = geom.add_plane_surface(ll)
 
     # test setting physical groups
-    geom.add_physical(p1, label='c')
-    geom.add_physical(c0, label='arc')
+    geom.add_physical(p1, label="c")
+    geom.add_physical(c0, label="arc")
     geom.add_physical(pacman)
     geom.add_physical(pacman, label=77)
 

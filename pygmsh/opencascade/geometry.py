@@ -135,7 +135,7 @@ class Geometry(bl.Geometry):
             formatted_tool_entities = ""
 
         self._GMSH_CODE.append(
-            # I wonder what this line does in Lisp.
+            # I wonder what this line does in Lisp. ;)
             # '{}[] = {}{{{} {{{}}}; {}}} {{{} {{{}}}; {}}};'
             # .format(
             #    name,
@@ -179,13 +179,18 @@ class Geometry(bl.Geometry):
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
         """
-        return self._boolean_operation(
+        out = self._boolean_operation(
             "BooleanUnion",
             [entities[0]],
             entities[1:],
             delete_first=delete_first,
             delete_other=delete_other,
         )
+        # Cannot add Compound Surface yet; see
+        # <https://gitlab.onelab.info/gmsh/gmsh/issues/525>.
+        # if compound:
+        #     self._GMSH_CODE.append("Compound Surface {{{}}};".format(out.id))
+        return out
 
     def boolean_difference(self, *args, **kwargs):
         """Boolean difference, see
