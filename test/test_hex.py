@@ -2,6 +2,8 @@
 
 from itertools import permutations
 
+import meshio
+
 import pygmsh
 
 from helpers import compute_volume
@@ -39,6 +41,4 @@ def test(lcar=1.0):
 
 
 if __name__ == "__main__":
-    import meshio
-
     meshio.write("hex.vtu", test())
