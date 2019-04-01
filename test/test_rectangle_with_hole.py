@@ -17,12 +17,12 @@ def test():
     geom.add_rectangle(0.0, 1.0, 0.0, 1.0, 0.0, lcar=0.1, holes=[circle.line_loop])
 
     ref = 0.8086582838174551
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom, geo_filename="h.geo")
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
-    return points, cells
+    mesh = pygmsh.generate_mesh(geom, geo_filename="h.geo")
+    assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
+    return mesh
 
 
 if __name__ == "__main__":
     import meshio
 
-    meshio.write_points_cells("rectangle_with_hole.vtu", *test())
+    meshio.write("rectangle_with_hole.vtu", test())

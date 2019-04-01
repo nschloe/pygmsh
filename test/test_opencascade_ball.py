@@ -16,12 +16,12 @@ def test():
     )
 
     ref = 0.976088698545
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
-    return points, cells
+    mesh = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
+    return mesh
 
 
 if __name__ == "__main__":
     import meshio
 
-    meshio.write_points_cells("opencascade_ball.vtu", *test())
+    meshio.write("opencascade_ball.vtu", test())

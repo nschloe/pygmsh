@@ -39,13 +39,12 @@ def test():
     geom.add_background_field([field0, field1])
 
     ref = 4.0
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
-    return points, cells
+    mesh = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
+    return mesh
 
 
 if __name__ == "__main__":
     import meshio
 
-    out = test()
-    meshio.write_points_cells("boundary_layers.vtu", *out)
+    meshio.write("boundary_layers.vtu", test())

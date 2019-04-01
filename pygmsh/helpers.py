@@ -38,27 +38,6 @@ def _is_string(obj):
         return isinstance(obj, str)
 
 
-def _is_flat(X, tol=1.0e-15):
-    """Checks if all points X sit in a plane.
-    """
-    # find three points that don't sit on a line
-    found = False
-    for x2 in X:
-        orth = numpy.cross(X[1] - X[0], x2 - X[0])
-        orth_dot_orth = numpy.dot(orth, orth)
-        if orth_dot_orth > tol:
-            found = True
-            break
-    if not found:
-        # All points even sit on a line
-        return True
-    norm_orth = numpy.sqrt(orth_dot_orth)
-    norm_x_min_x0 = numpy.sqrt(numpy.einsum("ij, ij->i", X - X[0], X - X[0]))
-    return (
-        abs(numpy.dot(X - X[0], orth)) < tol * (1.0 + norm_orth * norm_x_min_x0)
-    ).all()
-
-
 def _get_gmsh_exe():
     macos_gmsh_location = "/Applications/Gmsh.app/Contents/MacOS/gmsh"
     return macos_gmsh_location if os.path.isfile(macos_gmsh_location) else "gmsh"
@@ -206,4 +185,4 @@ def generate_mesh(
     ):
         mesh.points = mesh.points[:, :2]
 
-    return mesh.points, mesh.cells, mesh.point_data, mesh.cell_data, mesh.field_data
+    return mesh

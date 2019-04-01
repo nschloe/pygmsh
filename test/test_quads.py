@@ -12,14 +12,12 @@ def test():
     geom.add_raw_code("Recombine Surface {%s};" % rectangle.surface.id)
 
     ref = 1.0
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom, dim=2)
-
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
-
-    return points, cells
+    mesh = pygmsh.generate_mesh(geom, dim=2)
+    assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
+    return mesh
 
 
 if __name__ == "__main__":
     import meshio
 
-    meshio.write_points_cells("quads.vtu", *test())
+    meshio.write("quads.vtu", test())

@@ -22,13 +22,12 @@ def test():
     geom.add_plane_surface(ll)
 
     ref = 1.0809439490373247
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
-    return points, cells
+    mesh = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
+    return mesh
 
 
 if __name__ == "__main__":
     import meshio
 
-    out = test()
-    meshio.write_points_cells("splines.vtu", *out)
+    meshio.write("splines.vtu", test())

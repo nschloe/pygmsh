@@ -53,12 +53,12 @@ def test():
     geom.add_box(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0, lcar=0.3)
 
     ref = len(A1) * 2 * np.pi ** 2 * orad * irad ** 2 + 2.0 ** 3
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
-    assert np.isclose(compute_volume(points, cells), ref, rtol=2e-2)
-    return points, cells
+    mesh = pygmsh.generate_mesh(geom)
+    assert np.isclose(compute_volume(mesh), ref, rtol=2e-2)
+    return mesh
 
 
 if __name__ == "__main__":
     import meshio
 
-    meshio.write_points_cells("torus_crowd.vtu", *test())
+    meshio.write("torus_crowd.vtu", test())

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 #
+import warnings
 
 import numpy
 
@@ -161,7 +162,9 @@ class Geometry(object):
             label = max_id + 1
 
         if isinstance(label, int):
-            assert label not in self._TAKEN_PHYSICALGROUP_IDS
+            assert (
+                label not in self._TAKEN_PHYSICALGROUP_IDS
+            ), "Physical group label {} already taken.".format(label)
             self._TAKEN_PHYSICALGROUP_IDS += [label]
             return str(label)
 
@@ -169,10 +172,22 @@ class Geometry(object):
         self._TAKEN_PHYSICALGROUP_IDS += [max_id + 1]
         return '"{}"'.format(label)
 
-    def _add_physical(self, tpe, entities, label=None):
-        label = self._new_physical_group(label)
+    def add_physical(self, entities, label=None):
         if not isinstance(entities, list):
             entities = [entities]
+
+        d = {0: "Point", 1: "Line", 2: "Surface", 3: "Volume"}
+        tpe = d[entities[0].dimension]
+
+        for e in entities:
+            assert isinstance(
+                e, (Point, Line, Surface, Volume, PlaneSurface, CircleArc)
+            ), "Can add physical groups only for Points, Lines, Surfaces, Volumes, not {}.".format(
+                type(e)
+            )
+            assert d[e.dimension] == tpe
+
+        label = self._new_physical_group(label)
         self._GMSH_CODE.append(
             "Physical {}({}) = {{{}}};".format(
                 tpe, label, ", ".join([e.id for e in entities])
@@ -181,19 +196,27 @@ class Geometry(object):
         return
 
     def add_physical_point(self, points, label=None):
-        self._add_physical("Point", points, label=label)
+        warnings.warn("add_physical_point() is deprecated. use add_physical() instead.")
+        self.add_physical(points, label=label)
         return
 
     def add_physical_line(self, lines, label=None):
-        self._add_physical("Line", lines, label=label)
+        warnings.warn("add_physical_line() is deprecated. use add_physical() instead.")
+        self.add_physical(lines, label=label)
         return
 
     def add_physical_surface(self, surfaces, label=None):
-        self._add_physical("Surface", surfaces, label=label)
+        warnings.warn(
+            "add_physical_surface() is deprecated. use add_physical() instead."
+        )
+        self.add_physical(surfaces, label=label)
         return
 
     def add_physical_volume(self, volumes, label=None):
-        self._add_physical("Volume", volumes, label=label)
+        warnings.warn(
+            "add_physical_volume() is deprecated. use add_physical() instead."
+        )
+        self.add_physical(volumes, label=label)
         return
 
     def set_transfinite_lines(self, lines, size, progression=None, bump=None):
@@ -282,15 +305,15 @@ class Geometry(object):
         arcs = [self.add_circle_arc(p[k], p[0], p[k + 1]) for k in range(1, len(p) - 1)]
         arcs.append(self.add_circle_arc(p[-1], p[0], p[1]))
 
-        if compound and self._gmsh_major() == 3:
-            arcs = [self.add_compound_line(arcs)]
+        if compound:
+            if self._gmsh_major() == 3:
+                arcs = [self.add_compound_line(arcs)]
+            elif self._gmsh_major() == 4:
+                self.add_raw_code(
+                    "Compound Curve{{{}}};".format(",".join([arc.id for arc in arcs]))
+                )
 
         line_loop = self.add_line_loop(arcs)
-
-        if compound and self._gmsh_major() == 4:
-            self.add_raw_code(
-                "Compound Curve{{{}}};".format(",".join([arc.id for arc in arcs]))
-            )
 
         if make_surface:
             plane_surface = self.add_plane_surface(line_loop, holes)
@@ -643,6 +666,8 @@ class Geometry(object):
         volume = self.add_volume(surface_loop, holes) if with_volume else None
 
         class Ellipsoid(object):
+            dimension = 3
+
             def __init__(self, x0, radii, surface_loop, volume, lcar=None):
                 self.x0 = x0
                 self.lcar = lcar

@@ -28,12 +28,12 @@ def test(lcar=0.05):
     )
 
     ref = 3.98156496566
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
-    return points, cells
+    mesh = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
+    return mesh
 
 
 if __name__ == "__main__":
     import meshio
 
-    meshio.write_points_cells("rotated_layers.vtu", *test())
+    meshio.write("rotated_layers.vtu", test())

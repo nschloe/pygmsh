@@ -24,12 +24,12 @@ def test():
     geom.in_surface(poly.points[6], poly.surface)
 
     ref = 0.505
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom, prune_z_0=True)
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
-    return points, cells
+    mesh = pygmsh.generate_mesh(geom, prune_z_0=True)
+    assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
+    return mesh
 
 
 if __name__ == "__main__":
     import meshio
 
-    meshio.write_points_cells("test.vtk", *test())
+    meshio.write("test.vtk", test())

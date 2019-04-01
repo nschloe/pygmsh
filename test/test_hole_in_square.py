@@ -27,17 +27,15 @@ def test():
     # Create square domain with square hole
     geom.add_rectangle(xmin, xmax, ymin, ymax, 0.0, lcar, holes=[squareHole.line_loop])
 
-    points, cells, _, _, _ = pygmsh.generate_mesh(
-        geom, extra_gmsh_arguments=["-order", "2"]
-    )
+    mesh = pygmsh.generate_mesh(geom, extra_gmsh_arguments=["-order", "2"])
     # TODO support for volumes of triangle6
     # ref = 16.0
     # from helpers import compute_volume
     # assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
-    return points, cells
+    return mesh
 
 
 if __name__ == "__main__":
     import meshio
 
-    meshio.write_points_cells("hole_in_square.vtu", *test())
+    meshio.write("hole_in_square.vtu", test())
