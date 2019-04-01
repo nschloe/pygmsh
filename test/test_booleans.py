@@ -134,8 +134,8 @@ def test_fragments_diff_union():
     surf1 = geo_object.add_plane_surface(square)
     surf2 = geo_object.add_plane_surface(line_loop)
 
-    geo_object.add_physical_surface([surf1], label=1)
-    geo_object.add_physical_surface([surf2], label=2)
+    geo_object.add_physical([surf1], label=1)
+    geo_object.add_physical([surf2], label=2)
     surf_diff = geo_object.boolean_difference([surf1], [surf2], delete_other=False)
     geo_object.boolean_union([surf_diff, surf2])
     points, cells, _, cell_data, _ = pygmsh.generate_mesh(geo_object)
@@ -163,7 +163,7 @@ def test_diff_physical_assignment():
     geo_object2, line_loop2 = circle_loop(geo_object2)
     surf1 = geo_object2.add_plane_surface(square2)
     surf2 = geo_object2.add_plane_surface(line_loop2)
-    geo_object2.add_physical_surface([surf1], label=1)
+    geo_object2.add_physical([surf1], label=1)
     geo_object2.boolean_difference([surf1], [surf2])
     points, cells, _, cell_data, _ = pygmsh.generate_mesh(geo_object2)
     assert np.allclose(

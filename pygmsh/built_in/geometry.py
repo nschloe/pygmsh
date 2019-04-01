@@ -181,7 +181,7 @@ class Geometry(object):
 
         for e in entities:
             assert isinstance(
-                e, (Point, Line, Surface, Volume)
+                e, (Point, Line, Surface, Volume, PlaneSurface, CircleArc)
             ), "Can add physical groups only for Points, Lines, Surfaces, Volumes, not {}.".format(
                 type(e)
             )
@@ -305,15 +305,15 @@ class Geometry(object):
         arcs = [self.add_circle_arc(p[k], p[0], p[k + 1]) for k in range(1, len(p) - 1)]
         arcs.append(self.add_circle_arc(p[-1], p[0], p[1]))
 
-        if compound and self._gmsh_major() == 3:
-            arcs = [self.add_compound_line(arcs)]
+        if compound:
+            if self._gmsh_major() == 3:
+                arcs = [self.add_compound_line(arcs)]
+            elif self._gmsh_major() == 4:
+                self.add_raw_code(
+                    "Compound Curve{{{}}};".format(",".join([arc.id for arc in arcs]))
+                )
 
         line_loop = self.add_line_loop(arcs)
-
-        if compound and self._gmsh_major() == 4:
-            self.add_raw_code(
-                "Compound Curve{{{}}};".format(",".join([arc.id for arc in arcs]))
-            )
 
         if make_surface:
             plane_surface = self.add_plane_surface(line_loop, holes)
