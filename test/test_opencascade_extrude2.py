@@ -44,14 +44,14 @@ def test():
     surface = geom.add_plane_surface(line_loop)
     geom.extrude(surface, translation_axis=[length, 0, 0])
 
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    mesh = pygmsh.generate_mesh(geom)
 
     ref = 24941.503891355664
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
-    return points, cells
+    assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
+    return mesh
 
 
 if __name__ == "__main__":
     import meshio
 
-    meshio.write_points_cells("opencascade_extrude2.vtu", *test())
+    meshio.write("opencascade_extrude2.vtu", test())

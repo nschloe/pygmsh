@@ -11,12 +11,12 @@ def test(lcar=1.0):
 
     geom.set_transfinite_surface(poly.surface, size=[11, 9])
 
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom, geo_filename="transfinite.geo")
-    assert len(cells["triangle"]) == 10 * 8 * 2
-    return points, cells
+    mesh = pygmsh.generate_mesh(geom, geo_filename="transfinite.geo")
+    assert len(mesh.cells["triangle"]) == 10 * 8 * 2
+    return mesh
 
 
 if __name__ == "__main__":
     import meshio
 
-    meshio.write_points_cells("transfinite.vtu", *test())
+    meshio.write("transfinite.vtu", test())

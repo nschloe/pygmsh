@@ -1,4 +1,5 @@
 """Test module for boolean operations."""
+import meshio
 import numpy as np
 
 import pygmsh
@@ -86,9 +87,9 @@ def test_square_circle_hole():
     Construct it with boolean operations and verify that it is the same.
     """
     for geo_object in built_in_opencascade_geos():
-        points, cells, _, _, _ = pygmsh.generate_mesh(geo_object)
+        mesh = pygmsh.generate_mesh(geo_object)
         surf = 1 - 0.1 ** 2 * np.pi
-        assert np.abs((compute_volume(points, cells) - surf) / surf) < 1e-3
+        assert np.abs((compute_volume(mesh) - surf) / surf) < 1e-3
     return
 
 
@@ -100,24 +101,21 @@ def test_square_circle_slice():
     geo_object = built_in_opencascade_geos_fragments()
 
     # Gmsh 4 default format MSH4 doesn't have geometrical entities.
-    points, cells, _, cell_data, _ = pygmsh.generate_mesh(
-        geo_object, extra_gmsh_arguments=["-format", "msh2"]
-    )
+    mesh = pygmsh.generate_mesh(geo_object, extra_gmsh_arguments=["-format", "msh2"])
     ref = 1
-    val = compute_volume(points, cells)
+    val = compute_volume(mesh)
     assert np.abs(val - ref) < 1e-3 * ref
 
-    print(cell_data["triangle"])
-    outer_mask = np.where(cell_data["triangle"]["gmsh:geometrical"] == 13)[0]
+    outer_mask = np.where(mesh.cell_data["triangle"]["gmsh:geometrical"] == 13)[0]
     outer_cells = {}
-    outer_cells["triangle"] = cells["triangle"][outer_mask]
+    outer_cells["triangle"] = mesh.cells["triangle"][outer_mask]
 
-    inner_mask = np.where(cell_data["triangle"]["gmsh:geometrical"] == 12)[0]
+    inner_mask = np.where(mesh.cell_data["triangle"]["gmsh:geometrical"] == 12)[0]
     inner_cells = {}
-    inner_cells["triangle"] = cells["triangle"][inner_mask]
+    inner_cells["triangle"] = mesh.cells["triangle"][inner_mask]
 
     ref = 1 - 0.1 ** 2 * np.pi
-    value = compute_volume(points, outer_cells)
+    value = compute_volume(meshio.Mesh(mesh.points, outer_cells))
     assert np.abs(value - ref) < 1e-2 * ref
     return
 
@@ -138,17 +136,19 @@ def test_fragments_diff_union():
     geo_object.add_physical([surf2], label=2)
     surf_diff = geo_object.boolean_difference([surf1], [surf2], delete_other=False)
     geo_object.boolean_union([surf_diff, surf2])
-    points, cells, _, cell_data, _ = pygmsh.generate_mesh(geo_object)
-    assert np.abs((compute_volume(points, cells) - 1) / 1) < 1e-3
+    mesh = pygmsh.generate_mesh(geo_object)
+    assert np.abs((compute_volume(mesh) - 1) / 1) < 1e-3
     surf = 1 - 0.1 ** 2 * np.pi
-    outer_mask = np.where(cell_data["triangle"]["gmsh:physical"] == 1)[0]
+    outer_mask = np.where(mesh.cell_data["triangle"]["gmsh:physical"] == 1)[0]
     outer_cells = {}
-    outer_cells["triangle"] = cells["triangle"][outer_mask]
+    outer_cells["triangle"] = mesh.cells["triangle"][outer_mask]
 
-    inner_mask = np.where(cell_data["triangle"]["gmsh:physical"] == 2)[0]
+    inner_mask = np.where(mesh.cell_data["triangle"]["gmsh:physical"] == 2)[0]
     inner_cells = {}
-    inner_cells["triangle"] = cells["triangle"][inner_mask]
-    assert np.abs((compute_volume(points, outer_cells) - surf) / surf) < 1e-2
+    inner_cells["triangle"] = mesh.cells["triangle"][inner_mask]
+
+    value = compute_volume(meshio.Mesh(mesh.points, outer_cells))
+    assert np.abs((value - surf)) < 1e-2 * surf
     return
 
 
@@ -165,12 +165,13 @@ def test_diff_physical_assignment():
     surf2 = geo_object2.add_plane_surface(line_loop2)
     geo_object2.add_physical([surf1], label=1)
     geo_object2.boolean_difference([surf1], [surf2])
-    points, cells, _, cell_data, _ = pygmsh.generate_mesh(geo_object2)
+    mesh = pygmsh.generate_mesh(geo_object2)
     assert np.allclose(
-        cell_data["triangle"]["gmsh:physical"], np.ones(cells["triangle"].shape[0])
+        mesh.cell_data["triangle"]["gmsh:physical"],
+        np.ones(mesh.cells["triangle"].shape[0]),
     )
     surf = 1 - 0.1 ** 2 * np.pi
-    assert np.abs((compute_volume(points, cells) - surf) / surf) < 1e-3
+    assert np.abs((compute_volume(mesh) - surf) / surf) < 1e-3
     return
 
 

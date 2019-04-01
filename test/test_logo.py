@@ -36,17 +36,17 @@ def test():
         [rect1, rect2], [disk1, disk2, rect3, rect4, inter1, inter2]
     )
 
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    mesh = pygmsh.generate_mesh(geom)
     ref = 1082.4470502181903
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
-    return points, cells
+    assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
+    return mesh
 
 
 if __name__ == "__main__":
     import optimesh
 
-    points, cells = test()
-    points, cells = optimesh.lloyd(points, cells["triangle"], 1.0e-5, 10000)
+    mesh = test()
+    points, cells = optimesh.lloyd(mesh.points, mesh.cells["triangle"], 1.0e-5, 10000)
     # # from helpers import plot
     # # plot("logo.png", points, {"triangle": cells})
     import meshio

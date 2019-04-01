@@ -13,12 +13,12 @@
   <img src="https://nschloe.github.io/pygmsh/logo.svg" width="20%">
 </p>
 
-[Gmsh](https://gmsh.info/) is a powerful mesh generation tool with a
-scripting language that is notoriously hard to write.
+[Gmsh](https://gmsh.info/) is a powerful mesh generation tool with a scripting language
+that is notoriously hard to write.
 
-The goal of pygmsh is to combine the power of Gmsh with the versatility of
-Python and to provide useful abstractions from the Gmsh scripting language
-so you can create complex geometries more easily.
+The goal of pygmsh is to combine the power of Gmsh with the versatility of Python and to
+provide useful abstractions from the Gmsh scripting language so you can create complex
+geometries more easily.
 
 See [here](https://pygmsh.readthedocs.io/en/latest/index.html) for the full
 documentation.
@@ -58,21 +58,21 @@ geom.extrude(
     angle=2.0 / 6.0 * np.pi
     )
 
-points, cells, point_data, cell_data, field_data = pygmsh.generate_mesh(geom)
+mesh = pygmsh.generate_mesh(geom)
+# mesh.points, mesh.cells, ...
 ```
-to retrieve all points and cells of the mesh for the specified geometry.
-To store the mesh, you can use [meshio](https://pypi.org/project/meshio);
-for example
+to retrieve all points and cells of the mesh for the specified geometry.  To store the
+mesh, you can use [meshio](https://pypi.org/project/meshio); for example
 ```python
 import meshio
-meshio.write_points_cells('test.vtk', points, cells, cell_data=cell_data)
+meshio.write('test.vtk', mesh)
 ```
 The output file can be visualized with various tools, e.g.,
 [ParaView](https://www.paraview.org/).
 
 You will find the above mesh in the directory
-[`test/`](https://github.com/nschloe/pygmsh/tree/master/test/) along with other
-small examples.
+[`test/`](https://github.com/nschloe/pygmsh/tree/master/test/) along with other small
+examples.
 
 #### OpenCASCADE
 
@@ -101,17 +101,17 @@ flat = geom.boolean_difference([union], [disk3, disk4])
 
 geom.extrude(flat, [0, 0, 0.3])
 
-points, cells, point_data, cell_data, field_data = pygmsh.generate_mesh(geom)
+mesh = pygmsh.generate_mesh(geom)
 ```
 
 ### Installation
 
-pygmsh is [available from the Python Package
-Index](https://pypi.org/project/pygmsh/), so simply type
+pygmsh is [available from the Python Package Index](https://pypi.org/project/pygmsh/),
+so simply type
 ```
-pip install -U pygmsh
+pip3 install pygmsh --user
 ```
-to install or upgrade.
+to install.
 
 ### Usage
 
@@ -121,8 +121,7 @@ import pygmsh as pg
 ```
 and make use of all the goodies the module provides. The
 [documentation](https://pygmsh.readthedocs.org/) and the examples under
-[`test/`](https://github.com/nschloe/pygmsh/tree/master/test/)
-might inspire you.
+[`test/`](https://github.com/nschloe/pygmsh/tree/master/test/) might inspire you.
 
 
 ### Testing

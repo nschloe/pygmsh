@@ -12,12 +12,12 @@ def test():
     geom.add_ellipsoid([0.0, 0.0, 0.0], [1.0, 0.5, 0.75], 0.05)
 
     ref = 1.5676038497587947
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
-    return points, cells
+    mesh = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
+    return mesh
 
 
 if __name__ == "__main__":
     import meshio
 
-    meshio.write_points_cells("ellipsoid.vtu", *test())
+    meshio.write("ellipsoid.vtu", test())

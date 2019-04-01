@@ -22,13 +22,12 @@ def test():
     geom.add_plane_surface(ll)
 
     ref = 0.9156598733673261 if pygmsh.get_gmsh_major_version() < 4 else 0.75
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
-    return points, cells
+    mesh = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
+    return mesh
 
 
 if __name__ == "__main__":
     import meshio
 
-    out = test()
-    meshio.write_points_cells("bsplines.vtu", *out)
+    meshio.write("bsplines.vtu", test())

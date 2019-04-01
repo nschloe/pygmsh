@@ -23,10 +23,10 @@ def test():
 
     geom.boolean_difference([container], [letter_i, i_dot, letter_o])
 
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    mesh = pygmsh.generate_mesh(geom)
     ref = 81.9131851877
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
-    return points, cells
+    assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
+    return mesh
 
 
 if __name__ == "__main__":
@@ -34,4 +34,4 @@ if __name__ == "__main__":
     # meshio.write_points_cells('m.vtu', *test())
     from helpers import plot
 
-    plot("meshio_logo.png", *test())
+    plot("meshio_logo.png", test())

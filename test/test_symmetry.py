@@ -13,15 +13,13 @@ def test():
 
     geom.symmetry(poly, [0.0, 1.0, 0.0, -0.5])
 
-    # print(poly)
-
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    mesh = pygmsh.generate_mesh(geom)
     ref = 1.0
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
-    return points, cells
+    assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
+    return mesh
 
 
 if __name__ == "__main__":
     import meshio
 
-    meshio.write_points_cells("symmetry.vtk", *test())
+    meshio.write("symmetry.vtk", test())

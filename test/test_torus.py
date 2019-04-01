@@ -15,12 +15,12 @@ def test(irad=0.05, orad=0.6):
     geom.add_torus(irad=irad, orad=orad, lcar=0.03, x0=[0.0, 0.0, -1.0], R=R)
 
     ref = 2 * np.pi ** 2 * orad * irad ** 2
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
-    assert np.isclose(compute_volume(points, cells), ref, rtol=5e-2)
-    return points, cells
+    mesh = pygmsh.generate_mesh(geom)
+    assert np.isclose(compute_volume(mesh), ref, rtol=5e-2)
+    return mesh
 
 
 if __name__ == "__main__":
     import meshio
 
-    meshio.write_points_cells("torus.vtu", *test())
+    meshio.write("torus.vtu", test())

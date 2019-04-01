@@ -42,26 +42,30 @@ def get_simplex_volumes(pts, cells):
     return numpy.abs(numpy.linalg.det(p) / math.factorial(n))
 
 
-def compute_volume(points, cells):
-    if "tetra" in cells:
-        vol = math.fsum(get_simplex_volumes(*prune_nodes(points, cells["tetra"])))
-    elif "triangle" in cells or "quad" in cells:
+def compute_volume(mesh):
+    if "tetra" in mesh.cells:
+        vol = math.fsum(
+            get_simplex_volumes(*prune_nodes(mesh.points, mesh.cells["tetra"]))
+        )
+    elif "triangle" in mesh.cells or "quad" in mesh.cells:
         vol = 0.0
-        if "triangle" in cells:
+        if "triangle" in mesh.cells:
             # triangles
             vol += math.fsum(
-                get_triangle_volumes(*prune_nodes(points, cells["triangle"]))
+                get_triangle_volumes(*prune_nodes(mesh.points, mesh.cells["triangle"]))
             )
-        if "quad" in cells:
+        if "quad" in mesh.cells:
             # quad: treat as two triangles
-            quads = cells["quad"].T
+            quads = mesh.cells["quad"].T
             split_cells = numpy.column_stack(
                 [[quads[0], quads[1], quads[2]], [quads[0], quads[2], quads[3]]]
             ).T
-            vol += math.fsum(get_triangle_volumes(*prune_nodes(points, split_cells)))
+            vol += math.fsum(
+                get_triangle_volumes(*prune_nodes(mesh.points, split_cells))
+            )
     else:
-        assert "line" in cells
-        segs = numpy.diff(points[cells["line"]], axis=1).squeeze()
+        assert "line" in mesh.cells
+        segs = numpy.diff(mesh.points[mesh.cells["line"]], axis=1).squeeze()
         vol = numpy.sum(numpy.sqrt(numpy.einsum("...j, ...j", segs, segs)))
 
     return vol

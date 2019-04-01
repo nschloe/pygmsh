@@ -27,13 +27,18 @@ def test(lcar=1.0):
     # surface area for quads
 
     ref = sum(l * w for l, w in permutations(lbw, 2))  # surface area
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom, prune_vertices=False)
+    mesh = pygmsh.generate_mesh(geom, prune_vertices=False)
     # TODO compute hex volumes
-    assert abs(compute_volume(points, {"quad": cells["quad"]}) - ref) < 1.0e-2 * ref
-    return points, cells
+    assert (
+        abs(
+            compute_volume(meshio.Mesh(mesh.points, {"quad": mesh.cells["quad"]})) - ref
+        )
+        < 1.0e-2 * ref
+    )
+    return mesh
 
 
 if __name__ == "__main__":
     import meshio
 
-    meshio.write_points_cells("hex.vtu", *test())
+    meshio.write("hex.vtu", test())

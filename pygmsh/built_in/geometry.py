@@ -666,6 +666,8 @@ class Geometry(object):
         volume = self.add_volume(surface_loop, holes) if with_volume else None
 
         class Ellipsoid(object):
+            dimension = 3
+
             def __init__(self, x0, radii, surface_loop, volume, lcar=None):
                 self.x0 = x0
                 self.lcar = lcar

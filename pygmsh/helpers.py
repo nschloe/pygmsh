@@ -185,4 +185,4 @@ def generate_mesh(
     ):
         mesh.points = mesh.points[:, :2]
 
-    return mesh.points, mesh.cells, mesh.point_data, mesh.cell_data, mesh.field_data
+    return mesh

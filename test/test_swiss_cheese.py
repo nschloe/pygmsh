@@ -30,16 +30,15 @@ def test():
 
     geom.add_ball([0, 0, 0], 1.0, lcar=0.2, holes=holes)
 
-    # Fails on travis for some reason. TODO fix
-    # geom.add_physical_volume(ball, label='cheese')
+    # geom.add_physical_volume(ball, label="cheese")
 
     ref = 4.07064892966291
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
-    assert abs(compute_volume(points, cells) - ref) < 2.0e-2 * ref
-    return points, cells
+    mesh = pygmsh.generate_mesh(geom)
+    assert abs(compute_volume(mesh) - ref) < 2.0e-2 * ref
+    return mesh
 
 
 if __name__ == "__main__":
     import meshio
 
-    meshio.write_points_cells("swiss_cheese.vtu", *test())
+    meshio.write("swiss_cheese.vtu", test())

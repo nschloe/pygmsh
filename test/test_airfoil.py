@@ -141,12 +141,12 @@ def test():
     geom.add_raw_code("Recombine Surface {{{}}};".format(polygon.surface.id))
 
     ref = 10.525891646546
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom, remove_faces=True)
-    assert abs(compute_volume(points, cells) - ref) < 1.0e-2 * ref
-    return points, cells
+    mesh = pygmsh.generate_mesh(geom, remove_faces=True)
+    assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
+    return mesh
 
 
 if __name__ == "__main__":
     import meshio
 
-    meshio.write_points_cells("airfoil.vtu", *test())
+    meshio.write("airfoil.vtu", test())
