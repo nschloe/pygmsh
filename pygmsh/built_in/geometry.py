@@ -181,7 +181,17 @@ class Geometry(object):
 
         for e in entities:
             assert isinstance(
-                e, (Point, Line, Surface, Volume, PlaneSurface, CircleArc)
+                e,
+                (
+                    Point,
+                    Line,
+                    CircleArc,
+                    Surface,
+                    PlaneSurface,
+                    SurfaceBase,
+                    Volume,
+                    VolumeBase,
+                ),
             ), "Can add physical groups only for Points, Lines, Surfaces, Volumes, not {}.".format(
                 type(e)
             )
