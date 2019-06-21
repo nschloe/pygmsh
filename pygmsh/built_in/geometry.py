@@ -184,8 +184,7 @@ class Geometry(object):
                 e,
                 (
                     Point,
-                    Line,
-                    CircleArc,
+                    LineBase,
                     Surface,
                     PlaneSurface,
                     SurfaceBase,
