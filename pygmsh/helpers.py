@@ -65,7 +65,6 @@ def generate_mesh(
     # for debugging purposes:
     geo_filename=None,
     msh_filename=None,
-    bincode=True,
     mesh_file_type="msh",
 ):
     """Return a meshio.Mesh, storing the mesh points, cells, and data,
@@ -120,7 +119,7 @@ def generate_mesh(
         geo_filename,
         "-format",
         mesh_file_type,
-        "-bin" if bincode else "",
+        "-bin",
         "-o",
         msh_filename,
     ] + extra_gmsh_arguments
