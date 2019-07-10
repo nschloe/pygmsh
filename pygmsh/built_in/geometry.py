@@ -451,7 +451,7 @@ class Geometry(object):
             top = LineBase(top)
             # A surface extruded from a single line has always 4 edges
             extruded = SurfaceBase(extruded, 4)
-        elif isinstance(input_entity, SurfaceBase):
+        elif isinstance(input_entity, (SurfaceBase, self.Polygon)):
             top = SurfaceBase(top, input_entity.num_edges)
             extruded = VolumeBase(extruded)
         elif isinstance(input_entity, PointBase):
@@ -463,7 +463,8 @@ class Geometry(object):
 
         lat = []
         # lateral surfaces can be deduced only if we start from a SurfaceBase
-        if isinstance(input_entity, SurfaceBase):
+        # or a Polygon
+        if isinstance(input_entity, (SurfaceBase, self.Polygon)):
             # out[0]` is the surface, out[1] the top, and everything after that
             # the sides, cf.
             # <https://gmsh.info/doc/texinfo/gmsh.html#Extrusions>. Each
@@ -571,6 +572,7 @@ class Geometry(object):
         def __init__(self, points, lines, line_loop, surface, lcar=None):
             self.points = points
             self.lines = lines
+            self.num_edges = len(lines)
             self.line_loop = line_loop
             self.surface = surface
             self.lcar = lcar
