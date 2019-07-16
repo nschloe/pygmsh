@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-import meshio
 import numpy
 
+import meshio
 from helpers import compute_volume
 
 

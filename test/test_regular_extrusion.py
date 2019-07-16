@@ -2,7 +2,6 @@
 """Creates regular cube mesh by extrusion.
 """
 import pygmsh
-
 from helpers import compute_volume
 
 

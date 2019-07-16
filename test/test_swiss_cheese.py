@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import pygmsh
 
+import pygmsh
 from helpers import compute_volume
 
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-from .surface_base import SurfaceBase
 from .line_loop import LineLoop
+from .surface_base import SurfaceBase
 
 
 class PlaneSurface(SurfaceBase):

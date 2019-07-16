@@ -2,7 +2,6 @@
 import pytest
 
 import pygmsh
-
 from helpers import compute_volume
 
 

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from math import pi
+
 import pytest
 
 import pygmsh
-
 from helpers import compute_volume
 
 
