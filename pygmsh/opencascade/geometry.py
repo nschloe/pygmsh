@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 from ..__about__ import __version__
-
+from ..built_in import geometry as bl
 from .ball import Ball
 from .box import Box
 from .cone import Cone
@@ -10,9 +10,8 @@ from .disk import Disk
 from .rectangle import Rectangle
 from .surface_base import SurfaceBase
 from .torus import Torus
-from .wedge import Wedge
 from .volume_base import VolumeBase
-from ..built_in import geometry as bl
+from .wedge import Wedge
 
 
 class Geometry(bl.Geometry):

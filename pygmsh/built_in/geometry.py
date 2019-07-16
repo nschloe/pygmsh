@@ -6,7 +6,6 @@ import numpy
 
 from ..__about__ import __version__
 from ..helpers import _is_string, get_gmsh_major_version
-
 from .bspline import Bspline
 from .circle_arc import CircleArc
 from .compound_line import CompoundLine

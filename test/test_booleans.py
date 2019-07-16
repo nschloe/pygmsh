@@ -1,9 +1,8 @@
 """Test module for boolean operations."""
-import meshio
 import numpy as np
 
+import meshio
 import pygmsh
-
 from helpers import compute_volume
 
 

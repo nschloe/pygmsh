@@ -3,9 +3,7 @@
 from itertools import permutations
 
 import meshio
-
 import pygmsh
-
 from helpers import compute_volume
 
 

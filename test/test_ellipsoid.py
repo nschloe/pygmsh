@@ -3,7 +3,6 @@
 Creates a mesh for an ellipsoid.
 """
 import pygmsh
-
 from helpers import compute_volume
 
 

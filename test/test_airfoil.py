@@ -3,7 +3,6 @@
 import numpy
 
 import pygmsh
-
 from helpers import compute_volume
 
 

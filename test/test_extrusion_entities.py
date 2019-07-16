@@ -2,8 +2,9 @@
 """Create several entities by extrusion, check that the expected
 sub-entities are returned and the resulting mesh is correct.
 """
-import pygmsh
 import numpy as np
+
+import pygmsh
 
 
 def test():

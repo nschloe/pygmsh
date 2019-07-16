@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from numpy import pi, sin, cos
-import pygmsh
+from numpy import cos, pi, sin
 
+import pygmsh
 from helpers import compute_volume
 
 

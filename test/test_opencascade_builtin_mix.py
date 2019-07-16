@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import pygmsh
-
 from helpers import compute_volume
 
 
