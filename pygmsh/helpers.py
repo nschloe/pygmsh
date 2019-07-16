@@ -64,6 +64,7 @@ def generate_mesh(
     extra_gmsh_arguments=None,
     # for debugging purposes:
     geo_filename=None,
+    msh_filename=None,
     mesh_file_type="msh",
 ):
     """Return a meshio.Mesh, storing the mesh points, cells, and data,
@@ -106,8 +107,10 @@ def generate_mesh(
     # Pick the correct filename suffix.
     filename_suffix = "msh" if mesh_file_type[:3] == "msh" else mesh_file_type
 
-    with tempfile.NamedTemporaryFile(suffix="." + filename_suffix) as handle:
-        msh_filename = handle.name
+    preserve_msh = msh_filename is not None
+    if msh_filename is None:
+        with tempfile.NamedTemporaryFile(suffix="." + filename_suffix) as handle:
+            msh_filename = handle.name
 
     gmsh_executable = gmsh_path if gmsh_path is not None else _get_gmsh_exe()
 
@@ -172,7 +175,10 @@ def generate_mesh(
             mesh.point_data[key] = mesh.point_data[key][uvertices]
 
     # clean up
-    os.remove(msh_filename)
+    if preserve_msh:
+        print("\nmsh file: {}".format(msh_filename))
+    else:
+        os.remove(msh_filename)
     if preserve_geo:
         print("\ngeo file: {}".format(geo_filename))
     else:
