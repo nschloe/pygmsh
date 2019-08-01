@@ -110,7 +110,7 @@ so simply type
 ```
 pip3 install pygmsh --user
 ```
-to install.
+to install. Also make sure to have [gmsh](http://gmsh.info/) installed.
 
 ### Usage
 
@@ -138,17 +138,6 @@ To build run
 ```
 sphinx-build -b html doc doc/_build
 ```
-
-### Distribution
-
-To create a new release
-
-1. bump the `__version__` number,
-
-2. publish to PyPi and GitHub:
-    ```
-    $ make publish
-    ```
 
 ### License
 
