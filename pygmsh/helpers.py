@@ -53,7 +53,7 @@ def get_gmsh_major_version(gmsh_exe=_get_gmsh_exe()):
     return int(ex[0])
 
 
-def generate_mesh(
+def generate_mesh(  # noqa: C901
     geo_object,
     verbose=True,
     dim=3,
