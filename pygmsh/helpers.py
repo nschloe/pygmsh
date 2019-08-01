@@ -125,9 +125,14 @@ def generate_mesh(
     ] + extra_gmsh_arguments
 
     # https://stackoverflow.com/a/803421/353337
-    p = subprocess.Popen(
-        [gmsh_executable] + args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-    )
+    try:
+        p = subprocess.Popen(
+            [gmsh_executable] + args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
+    except FileNotFoundError:
+        print("Is gmsh installed?")
+        raise
+
     if verbose:
         while True:
             line = p.stdout.readline()
