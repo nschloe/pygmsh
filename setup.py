@@ -27,7 +27,8 @@ setup(
     project_urls={"Documentation": "https://pygmsh.readthedocs.org/en/latest"},
     license=about["__license__"],
     platforms="any",
-    install_requires=["meshio >=2.0, <3.0", "numpy >= 1.9"],
+    install_requires=["meshio >=3.0, <4.0", "numpy >= 1.9"],
+    python_requires=">=3",
     keywords=["mesh", "gmsh", "mesh generation", "mathematics"],
     classifiers=[
         about["__status__"],
@@ -35,7 +36,6 @@ setup(
         "Intended Audience :: Science/Research",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering :: Mathematics",
     ],
