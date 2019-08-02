@@ -45,7 +45,7 @@ poly = geom.add_polygon([
     [ 0.1,  0.1, 0.0]
     ],
     lcar=0.05
-    )
+)
 
 axis = [0, 0, 1]
 
@@ -55,7 +55,7 @@ geom.extrude(
     rotation_axis=axis,
     point_on_axis=[0, 0, 0],
     angle=2.0 / 6.0 * np.pi
-    )
+)
 
 mesh = pygmsh.generate_mesh(geom)
 # mesh.points, mesh.cells, ...
@@ -64,7 +64,7 @@ to retrieve all points and cells of the mesh for the specified geometry.  To sto
 mesh, you can use [meshio](https://pypi.org/project/meshio); for example
 ```python
 import meshio
-meshio.write('test.vtk', mesh)
+meshio.write("test.vtk", mesh)
 ```
 The output file can be visualized with various tools, e.g.,
 [ParaView](https://www.paraview.org/).
