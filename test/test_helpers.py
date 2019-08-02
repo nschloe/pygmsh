@@ -1,5 +1,4 @@
 """Tests module for helpers in tests."""
-
 import numpy as np
 
 import pygmsh

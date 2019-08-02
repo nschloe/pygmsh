@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 from ..__about__ import __version__
 from ..built_in import geometry as bl
 from .ball import Ball

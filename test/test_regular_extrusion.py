@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Creates regular cube mesh by extrusion.
 """
 import pygmsh

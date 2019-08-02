@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-#
-
-
 class DefineConstant(object):
     def __init__(self, label, value, min_value, max_value, step=None, name=None):
         assert min_value <= value <= max_value

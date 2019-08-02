@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # pygmsh documentation build configuration file, created by
 # sphinx-quickstart on Tue Oct 27 19:56:53 2015.
 #

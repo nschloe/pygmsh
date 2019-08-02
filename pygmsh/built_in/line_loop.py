@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-#
-
-
 class LineLoop(object):
     """
     Increments the Line ID every time a new object is created that inherits

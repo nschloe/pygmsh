@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 from .line_base import LineBase
 from .point import Point
 

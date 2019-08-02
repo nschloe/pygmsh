@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-#
-
 __version__ = "5.0.2"
 __author__ = u"Nico Schlömer"
 __author_email__ = "nico.schloemer@gmail.com"
