@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 from .line_loop import LineLoop
 from .surface_base import SurfaceBase
 

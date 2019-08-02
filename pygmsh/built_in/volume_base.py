@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-#
-
-
 class VolumeBase(object):
     """
     Increments the Line ID every time a new object

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 from .volume_base import VolumeBase
 
 

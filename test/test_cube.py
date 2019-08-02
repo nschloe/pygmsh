@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Creates a mesh on a cube.
 """
 import pygmsh

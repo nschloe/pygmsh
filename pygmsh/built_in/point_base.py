@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-#
-
-
 class PointBase(object):
     """
     Increments the Point ID every time a new object

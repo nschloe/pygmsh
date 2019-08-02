@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 from .point_base import PointBase
 
 

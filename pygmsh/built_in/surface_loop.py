@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-#
-
-
 class SurfaceLoop(object):
     """
     Creates a surface loop (a shell).

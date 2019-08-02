@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Creates a mesh for a square with a round hole.
 """

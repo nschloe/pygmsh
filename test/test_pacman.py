@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from numpy import cos, pi, sin
 
 import pygmsh

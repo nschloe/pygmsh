@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # pygmsh documentation build configuration file, created by
 # sphinx-quickstart on Tue Oct 27 19:56:53 2015.
 #
@@ -72,7 +70,7 @@ master_doc = "index"
 
 # General information about the project.
 project = u"pygmsh"
-copyright = u"2015-2017, Nico Schlömer"
+copyright = u"2015-2019, Nico Schlömer"
 author = u"Nico Schlömer"
 
 # The version info for the project you're documenting, acts as replacement for

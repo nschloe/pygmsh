@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 from .surface_base import SurfaceBase
 
 

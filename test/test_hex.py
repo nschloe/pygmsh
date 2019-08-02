@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from itertools import permutations
 
 import meshio

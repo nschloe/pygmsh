@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-#
-
-
 class CompoundVolume(object):
     """
     Creates a compound volume from several elementary volumes.
