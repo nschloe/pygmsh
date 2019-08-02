@@ -28,10 +28,6 @@ setup(
     license=about["__license__"],
     platforms="any",
     install_requires=["meshio >=2.0, <3.0", "numpy >= 1.9"],
-    extras_require={
-        "all": ["pipdate >=0.3.0, <0.4.0"],
-        "update": ["pipdate >=0.3.0, <0.4.0"],
-    },
     keywords=["mesh", "gmsh", "mesh generation", "mathematics"],
     classifiers=[
         about["__status__"],
