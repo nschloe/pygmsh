@@ -8,7 +8,7 @@ class Ellipsoid(VolumeBase):
     Parameters
     ----------
     center: array-like[3]
-        Center of the ball.
+        Center of the ellipsoid.
     radii: array-like[3]
         The radii of the ellipsoid along the semi-axes
     char_length: float
@@ -26,10 +26,13 @@ class Ellipsoid(VolumeBase):
             return ", ".join(str(x) for x in point)
 
         self.code = "\n".join(
-            ["{} = newv;".format(self.id),
-             "Sphere({}) = {{ {}, 1.0 }};".format(self.id, as_str(center)),
-             "Dilate {{{{{}}}, {{{}}}}} {{ Volume{{{}}}; }}".format(as_str(center), as_str(radii), self.id),
-             ]
+            [
+                "{} = newv;".format(self.id),
+                "Sphere({}) = {{ {}, 1.0 }};".format(self.id, as_str(center)),
+                "Dilate {{{{{}}}, {{{}}}}} {{ Volume{{{}}}; }}".format(
+                    as_str(center), as_str(radii), self.id
+                ),
+            ]
             + self.char_length_code(char_length)
         )
         return
