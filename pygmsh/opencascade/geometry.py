@@ -5,6 +5,7 @@ from .box import Box
 from .cone import Cone
 from .cylinder import Cylinder
 from .disk import Disk
+from .ellipsoid import Ellipsoid
 from .rectangle import Rectangle
 from .surface_base import SurfaceBase
 from .torus import Torus
@@ -65,6 +66,11 @@ class Geometry(bl.Geometry):
 
     def add_cylinder(self, *args, **kwargs):
         p = Cylinder(*args, **kwargs)
+        self._GMSH_CODE.append(p.code)
+        return p
+
+    def add_ellipsoid(self, *args, **kwargs):
+        p = Ellipsoid(*args, **kwargs)
         self._GMSH_CODE.append(p.code)
         return p
 
