@@ -43,6 +43,8 @@ jobs:
         excode README.md test/readme_test.py --filter python,test
     - name: Test with pytest
       run: |
+        which gmsh
+        gmsh --version
         pip install pytest pytest-cov
         cd test/ && pytest --cov pygmsh
     - name: Submit to codecov
