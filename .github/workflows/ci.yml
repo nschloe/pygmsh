@@ -20,8 +20,11 @@ jobs:
         pip install black
         black --check .
 
+  # This build process doesn't work yet. The problem is that we need a rather new
+  # version of gmsh (4.4.*) to avoid certain MPI errors present in older versions. To
+  # this end, we need Ubuntu 19.04+ and a PPA, but ubuntu-latest on gh-actions is 18.04.
   build:
-    runs-on: ubuntu-19.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-python@v1
       with:
