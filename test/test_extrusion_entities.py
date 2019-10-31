@@ -48,8 +48,14 @@ def test(kernel):
         mesh = geom.generate_mesh()
         assert len(mesh.points) == 8 + 6
         assert len(poly_lat) == 3
+        return mesh
 
 
 if __name__ == "__main__":
-    test(pygmsh.geo)
+    import meshio
+
+    mesh = test(pygmsh.geo)
+    meshio.write("extrusion.vtu", test())
+
     # test(pygmsh.occ)
+
