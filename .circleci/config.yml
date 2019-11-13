@@ -12,10 +12,12 @@ jobs:
   build:
     working_directory: ~/work
     docker:
-      - image: circleci/python:3
+      # circleci/python:3 is based on debian:buster where we don't have gmsh 4.4.1 yet
+      # - image: circleci/python:3
+      - image: ubuntu:19.10
     steps:
-      - run: sudo apt update
-      - run: sudo apt install -y gmsh
+      - run: apt update
+      - run: apt install -y gmsh
       - run: pip install pytest pytest-cov excode --user
       - checkout
       # install
@@ -29,6 +31,7 @@ jobs:
           environment:
             MPLBACKEND: Agg
       # submit to codecov
+      - run: apt install -y curl
       - run: bash <(curl -s https://codecov.io/bash)
 
 workflows:
