@@ -22,7 +22,7 @@ jobs:
 
   # This build process doesn't work yet. The problem is that we need a rather new
   # version of gmsh (4.4.*) to avoid certain MPI errors present in older versions. To
-  # this end, we need Ubuntu 19.04+ and a PPA, but ubuntu-latest on gh-actions is 18.04.
+  # this end, we need Ubuntu 19.10+, but ubuntu-latest on gh-actions is 18.04.
   build:
     runs-on: ubuntu-latest
     steps:
@@ -30,6 +30,7 @@ jobs:
       with:
         python-version: "3.x"
     - uses: actions/checkout@v1
+    - run: sudo apt install -y python3-pip
     - name: Install gmsh from PPA
       run: |
         sudo apt-get install -y software-properties-common
