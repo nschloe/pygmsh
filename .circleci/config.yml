@@ -17,7 +17,7 @@ jobs:
       - image: ubuntu:19.10
     steps:
       - run: apt update
-      - run: apt install -y gmsh
+      - run: apt install -y gmsh python3-pip
       - run: pip install pytest pytest-cov excode --user
       - checkout
       # install
