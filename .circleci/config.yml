@@ -18,11 +18,11 @@ jobs:
     steps:
       - run: apt update
       - run: apt install -y gmsh python3-pip
-      - run: pip3 install pytest pytest-cov excode --user
+      - run: pip3 install pytest pytest-cov excode
       - checkout
       # install
-      - run: pip3 install . --user
-      - run: pip3 install -r test_requirements.txt --user
+      - run: pip3 install .
+      - run: pip3 install -r test_requirements.txt
       # The actual test
       - run: excode README.md test/readme_test.py --filter python,test
       - run:
