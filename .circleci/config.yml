@@ -3,36 +3,37 @@ version: 2
 jobs:
   lint:
     docker:
-      - image: ubuntu:18.04
+      - image: circleci/python:3
     steps:
       - checkout
-      - run: apt update
-      - run: apt install -y python3-pip
-      - run: pip3 install -U black flake8
-      - run: LC_ALL=C.UTF-8 black --check .
+      - run: pip install black flake8 --user
+      - run: black --check .
       - run: flake8 .
   build:
     working_directory: ~/work
     docker:
-      - image: ubuntu:18.10
+      - image: circleci/python:3
     steps:
-      - run: apt update
-      - run: apt install -y git python3-pip gmsh
-      - run: pip3 install -U pytest pytest-cov excode
+      # - run: sudo apt update
+      # - run: sudo apt install -y gmsh
+      - run: pip install pytest pytest-cov excode --user
       - checkout
       # install gmsh from ppa
-      - run: apt-get install -y software-properties-common
-      - run: LANG=C.UTF-8 apt-add-repository -y ppa:nschloe/gmsh-backports
-      - run: apt update
-      - run: apt install -y gmsh
+      - run: sudo apt-get install -y software-properties-common
+      - run: sudo apt-add-repository -y ppa:nschloe/gmsh-backports
+      - run: sudo apt update
+      - run: sudo apt install -y gmsh
       # install
-      - run: pip3 install .
-      - run: pip3 install -r test_requirements.txt
+      - run: pip install . --user
+      - run: pip install -r test_requirements.txt --user
       # The actual test
       - run: excode README.md test/readme_test.py --filter python,test
-      - run: cd test/ && MPLBACKEND=Agg pytest --cov pygmsh
+      - run:
+          command: pytest --cov pygmsh
+          working_directory: test/
+          environment:
+            MPLBACKEND: Agg
       # submit to codecov
-      - run: apt install -y curl
       - run: bash <(curl -s https://codecov.io/bash)
 
 workflows:
