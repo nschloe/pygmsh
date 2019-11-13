@@ -14,15 +14,10 @@ jobs:
     docker:
       - image: circleci/python:3
     steps:
-      # - run: sudo apt update
-      # - run: sudo apt install -y gmsh
-      - run: pip install pytest pytest-cov excode --user
-      - checkout
-      # install gmsh from ppa
-      - run: sudo apt-get install -y software-properties-common
-      - run: sudo apt-add-repository -y ppa:nschloe/gmsh-backports
       - run: sudo apt update
       - run: sudo apt install -y gmsh
+      - run: pip install pytest pytest-cov excode --user
+      - checkout
       # install
       - run: pip install . --user
       - run: pip install -r test_requirements.txt --user
