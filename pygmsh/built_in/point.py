@@ -12,8 +12,6 @@ class Point(PointBase):
         The prescribed mesh element size at this point.
     """
 
-    dimension = 0
-
     def __init__(self, x, lcar=None):
         super(Point, self).__init__()
 

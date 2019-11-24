@@ -10,6 +10,7 @@ class PointBase(object):
     """
 
     _ID = 0
+    dimension = 0
 
     def __init__(self, id0=None):
         if id0:

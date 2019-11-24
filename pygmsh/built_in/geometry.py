@@ -181,6 +181,7 @@ class Geometry(object):
                 e,
                 (
                     Point,
+                    PointBase,
                     LineBase,
                     Surface,
                     PlaneSurface,
