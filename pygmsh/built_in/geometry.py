@@ -110,6 +110,37 @@ class Geometry(object):
         self._GMSH_CODE.append(p.code)
         return p
 
+    def add_unordered_line_loop(self, lines):
+        # Categorise graph edges by their vertex pair ids
+        point_pair_ids = numpy.array([[line.points[0].id, line.points[1].id] for line in lines])
+
+        # Indices of reordering
+        order = numpy.arange(len(point_pair_ids), dtype=int)
+        # Compute orientations where orient[j] == -1 requires edge j to be reversed
+        orient = numpy.array([1] * len(point_pair_ids), dtype=numpy.int)
+
+        for j in range(1, len(point_pair_ids)):
+            out = point_pair_ids[j - 1, 1]  # edge out from vertex
+            inn = point_pair_ids[j:, 0]     # candidates for edge in to vertices
+            wh = numpy.where(inn == out)[0] + j
+            if len(wh) == 0:
+                # look for candidates in those which are not correctly oriented
+                inn = point_pair_ids[j:, 1]
+                wh = numpy.where(inn == out)[0] + j
+                # reorient remaining edges
+                point_pair_ids[j:] = numpy.flip(point_pair_ids[j:], axis=1)
+                orient[j:] *= -1
+
+            # reorder
+            point_pair_ids[[j, wh[0]]] = point_pair_ids[[wh[0], j]]
+            order[[j, wh[0]]] = order[[wh[0], j]]
+
+        # Reconstruct an ordered and oriented line loop
+        lines = [lines[o] for o in order]
+        lines = [-lines[j] if orient[j] == -1 else lines[j] for j in range(len(orient))]
+
+        return self.add_line_loop(lines)
+
     def add_plane_surface(self, *args, **kwargs):
         p = PlaneSurface(*args, **kwargs)
         self._GMSH_CODE.append(p.code)
