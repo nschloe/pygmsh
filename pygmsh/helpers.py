@@ -162,14 +162,16 @@ def generate_mesh(  # noqa: C901
 
     if prune_vertices:
         # Make sure to include only those vertices which belong to a cell.
-        ncells = numpy.concatenate([numpy.concatenate(c) for c in mesh.cells.values()])
+        ncells = numpy.concatenate([numpy.concatenate(c) for _, c in mesh.cells])
         uvertices, uidx = numpy.unique(ncells, return_inverse=True)
 
         k = 0
-        for key in mesh.cells.keys():
-            n = numpy.prod(mesh.cells[key].shape)
-            mesh.cells[key] = uidx[k : k + n].reshape(mesh.cells[key].shape)
+        cells = []
+        for key, cellblock in mesh.cells:
+            n = numpy.prod(cellblock.shape)
+            cells.append((key, uidx[k : k + n].reshape(cellblock.shape)))
             k += n
+        mesh.cells = cells
 
         mesh.points = mesh.points[uvertices]
         for key in mesh.point_data:
