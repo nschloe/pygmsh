@@ -112,7 +112,9 @@ class Geometry(object):
 
     def add_unordered_line_loop(self, lines):
         # Categorise graph edges by their vertex pair ids
-        point_pair_ids = numpy.array([[line.points[0].id, line.points[1].id] for line in lines])
+        point_pair_ids = numpy.array(
+            [[line.points[0].id, line.points[1].id] for line in lines]
+        )
 
         # Indices of reordering
         order = numpy.arange(len(point_pair_ids), dtype=int)
@@ -121,7 +123,7 @@ class Geometry(object):
 
         for j in range(1, len(point_pair_ids)):
             out = point_pair_ids[j - 1, 1]  # edge out from vertex
-            inn = point_pair_ids[j:, 0]     # candidates for edge in to vertices
+            inn = point_pair_ids[j:, 0]  # candidates for edge in to vertices
             wh = numpy.where(inn == out)[0] + j
             if len(wh) == 0:
                 # look for candidates in those which are not correctly oriented

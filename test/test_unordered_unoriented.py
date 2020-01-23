@@ -16,8 +16,10 @@ def test():
     # Shuffle the orientation of lines by point order
     o = [0 if k % 3 == 0 else 1 for k in range(len(points))]
 
-    lines = [geom.add_line(points[k + o[k]], points[k + (o[k] + 1) % 2])
-             for k in range(len(points) - 1)]
+    lines = [
+        geom.add_line(points[k + o[k]], points[k + (o[k] + 1) % 2])
+        for k in range(len(points) - 1)
+    ]
     lines.append(geom.add_line(points[-1], points[0]))
 
     # Shuffle the order of lines
