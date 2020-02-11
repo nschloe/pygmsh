@@ -11,6 +11,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1173105.svg?style=flat-square)](https://doi.org/10.5281/zenodo.1173105)
 [![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?style=flat-square&logo=github&label=Stars&logoColor=white)](https://github.com/nschloe/pygmsh)
 [![PyPi downloads](https://img.shields.io/pypi/dm/pygmsh.svg?style=flat-square)](https://pypistats.org/packages/pygmsh)
+[![Slack](https://img.shields.io/static/v1?logo=slack&label=slack&message=chat&color=4a154b&style=flat-square)](https://app.slack.com/client/TTL6Q54A3/CTLGZQFML/)
 
 [Gmsh](https://gmsh.info/) is a powerful mesh generation tool with a scripting language
 that is notoriously hard to write.
@@ -108,7 +109,7 @@ mesh = pygmsh.generate_mesh(geom)
 pygmsh is [available from the Python Package Index](https://pypi.org/project/pygmsh/),
 so simply type
 ```
-pip3 install pygmsh --user
+pip install pygmsh
 ```
 to install. Also make sure to have [gmsh](http://gmsh.info/) installed.
 
