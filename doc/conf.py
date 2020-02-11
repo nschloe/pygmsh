@@ -70,7 +70,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "pygmsh"
-copyright = "2015-2019, Nico Schlömer"
+copyright = "2015-2020, Nico Schlömer"
 author = "Nico Schlömer"
 
 # The version info for the project you're documenting, acts as replacement for
