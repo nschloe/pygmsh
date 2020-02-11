@@ -15,13 +15,13 @@ class CompoundLine(LineBase):
     """
 
     def __init__(self, lines):
-        super(CompoundLine, self).__init__()
+        super().__init__()
 
         self.lines = lines
 
         self.code = "\n".join(
             [
-                "{} = newl;".format(self.id),
+                f"{self.id} = newl;",
                 "Compound Line({}) = {{{}}};".format(
                     self.id, ",".join([l.id for l in self.lines])
                 ),

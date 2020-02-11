@@ -16,7 +16,7 @@ class Box(VolumeBase):
     """
 
     def __init__(self, x0, extents, char_length=None):
-        super(Box, self).__init__()
+        super().__init__()
 
         assert len(x0) == 3
         assert len(extents) == 3
@@ -26,10 +26,10 @@ class Box(VolumeBase):
         self.char_length = char_length
 
         args = list(x0) + list(extents)
-        args = ", ".join(["{}".format(arg) for arg in args])
+        args = ", ".join([f"{arg}" for arg in args])
 
         self.code = "\n".join(
-            ["{} = newv;".format(self.id), "Box({}) = {{{}}};".format(self.id, args)]
+            [f"{self.id} = newv;", f"Box({self.id}) = {{{args}}};"]
             + self.char_length_code(char_length)
         )
         return

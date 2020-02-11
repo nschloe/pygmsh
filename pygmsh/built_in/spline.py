@@ -13,7 +13,7 @@ class Spline(LineBase):
     """
 
     def __init__(self, points):
-        super(Spline, self).__init__()
+        super().__init__()
 
         for c in points:
             assert isinstance(c, Point)
@@ -23,7 +23,7 @@ class Spline(LineBase):
 
         self.code = "\n".join(
             [
-                "{} = newl;".format(self.id),
+                f"{self.id} = newl;",
                 "Spline({}) = {{{}}};".format(
                     self.id, ", ".join([c.id for c in self.points])
                 ),

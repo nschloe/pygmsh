@@ -18,7 +18,7 @@ class Torus(VolumeBase):
     """
 
     def __init__(self, center, radius0, radius1, alpha=None, char_length=None):
-        super(Torus, self).__init__()
+        super().__init__()
 
         assert len(center) == 3
 
@@ -31,10 +31,10 @@ class Torus(VolumeBase):
         args = list(center) + [radius0] + [radius1]
         if alpha is not None:
             args.append(alpha)
-        args = ", ".join(["{}".format(arg) for arg in args])
+        args = ", ".join([f"{arg}" for arg in args])
 
         self.code = "\n".join(
-            ["{} = newv;".format(self.id), "Torus({}) = {{{}}};".format(self.id, args)]
+            [f"{self.id} = newv;", f"Torus({self.id}) = {{{args}}};"]
             + self.char_length_code(char_length)
         )
         return

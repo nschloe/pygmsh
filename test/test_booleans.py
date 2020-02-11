@@ -147,7 +147,7 @@ def test_fragments_diff_union():
     inner_cells["triangle"] = mesh.cells["triangle"][inner_mask]
 
     value = compute_volume(meshio.Mesh(mesh.points, outer_cells))
-    assert np.abs((value - surf)) < 1e-2 * surf
+    assert np.abs(value - surf) < 1e-2 * surf
     return
 
 

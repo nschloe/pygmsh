@@ -17,7 +17,7 @@ class CircleArc(LineBase):
     """
 
     def __init__(self, start, center, end):
-        super(CircleArc, self).__init__()
+        super().__init__()
 
         assert isinstance(start, Point)
         assert isinstance(center, Point)
@@ -29,7 +29,7 @@ class CircleArc(LineBase):
 
         self.code = "\n".join(
             [
-                "{} = newl;".format(self.id),
+                f"{self.id} = newl;",
                 "Circle({}) = {{{}, {}, {}}};".format(
                     self.id, start.id, center.id, end.id
                 ),

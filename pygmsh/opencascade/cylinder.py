@@ -20,7 +20,7 @@ class Cylinder(VolumeBase):
     """
 
     def __init__(self, x0, axis, radius, angle=None, char_length=None):
-        super(Cylinder, self).__init__()
+        super().__init__()
 
         assert len(x0) == 3
         assert len(axis) == 3
@@ -34,17 +34,17 @@ class Cylinder(VolumeBase):
         args = list(x0) + list(axis) + [radius]
         if angle is not None:
             args.append(angle)
-        args = ", ".join(["{}".format(arg) for arg in args])
+        args = ", ".join([f"{arg}" for arg in args])
 
         code = [
-            "{} = newv;".format(self.id),
-            "Cylinder({}) = {{{}}};".format(self.id, args),
+            f"{self.id} = newv;",
+            f"Cylinder({self.id}) = {{{args}}};",
         ]
 
         if self.char_length:
             code.extend(
                 [
-                    "pts_{}[] = PointsOf{{Volume{{{}}};}};".format(self.id, self.id),
+                    f"pts_{self.id}[] = PointsOf{{Volume{{{self.id}}};}};",
                     "Characteristic Length{{pts_{}[]}} = {};".format(
                         self.id, char_length
                     ),

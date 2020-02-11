@@ -28,7 +28,7 @@ setup(
     license=about["__license__"],
     platforms="any",
     install_requires=["meshio >=3.0, <4.0", "numpy >= 1.9"],
-    python_requires=">=3",
+    python_requires=">=3.6",
     keywords=["mesh", "gmsh", "mesh generation", "mathematics"],
     classifiers=[
         about["__status__"],

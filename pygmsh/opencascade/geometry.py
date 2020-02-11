@@ -15,22 +15,22 @@ from .wedge import Wedge
 
 class Geometry(bl.Geometry):
     def __init__(self, characteristic_length_min=None, characteristic_length_max=None):
-        super(Geometry, self).__init__()
+        super().__init__()
         self._BOOLEAN_ID = 0
         self._EXTRUDE_ID = 0
         self._GMSH_CODE = [
-            "// This code was created by pygmsh v{}.".format(__version__),
+            f"// This code was created by pygmsh v{__version__}.",
             'SetFactory("OpenCASCADE");',
         ]
 
         if characteristic_length_min is not None:
             self._GMSH_CODE.append(
-                "Mesh.CharacteristicLengthMin = {};".format(characteristic_length_min)
+                f"Mesh.CharacteristicLengthMin = {characteristic_length_min};"
             )
 
         if characteristic_length_max is not None:
             self._GMSH_CODE.append(
-                "Mesh.CharacteristicLengthMax = {};".format(characteristic_length_max)
+                f"Mesh.CharacteristicLengthMax = {characteristic_length_max};"
             )
         return
 
@@ -113,7 +113,7 @@ class Geometry(bl.Geometry):
                 e.dimension == dim
             ), "Incompatible input type '{}' for Boolean operation.".format(type(e))
 
-        name = "bo{}".format(self._BOOLEAN_ID)
+        name = f"bo{self._BOOLEAN_ID}"
 
         input_delete = "Delete;" if delete_first else ""
 
@@ -123,16 +123,14 @@ class Geometry(bl.Geometry):
 
         if input_entities:
             formatted_input_entities = (
-                ";".join(["%s{%s}" % (legal_dim_type, e.id) for e in input_entities])
-                + ";"
+                ";".join([f"{legal_dim_type}{{{e.id}}}" for e in input_entities]) + ";"
             )
         else:
             formatted_input_entities = ""
 
         if tool_entities:
             formatted_tool_entities = (
-                ";".join(["%s{%s}" % (legal_dim_type, e.id) for e in tool_entities])
-                + ";"
+                ";".join([f"{legal_dim_type}{{{e.id}}}" for e in tool_entities]) + ";"
             )
         else:
             formatted_tool_entities = ""

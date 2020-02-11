@@ -25,7 +25,7 @@ class Ball(VolumeBase):
     """
 
     def __init__(self, center, radius, x0=None, x1=None, alpha=None, char_length=None):
-        super(Ball, self).__init__()
+        super().__init__()
 
         self.center = center
         self.radius = radius
@@ -38,10 +38,10 @@ class Ball(VolumeBase):
                 args.append(x1)
                 if alpha is not None:
                     args.append(alpha)
-        args = ", ".join(["{}".format(arg) for arg in args])
+        args = ", ".join([f"{arg}" for arg in args])
 
         self.code = "\n".join(
-            ["{} = newv;".format(self.id), "Sphere({}) = {{{}}};".format(self.id, args)]
+            [f"{self.id} = newv;", f"Sphere({self.id}) = {{{args}}};"]
             + self.char_length_code(char_length)
         )
         return

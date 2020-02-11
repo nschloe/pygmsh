@@ -29,7 +29,7 @@ class PlaneSurface(SurfaceBase):
     """
 
     def __init__(self, line_loop, holes=None):
-        super(PlaneSurface, self).__init__()
+        super().__init__()
 
         assert isinstance(line_loop, LineLoop)
         self.line_loop = line_loop
@@ -44,7 +44,7 @@ class PlaneSurface(SurfaceBase):
         line_loops = [self.line_loop] + self.holes
         self.code = "\n".join(
             [
-                "{} = news;".format(self.id),
+                f"{self.id} = news;",
                 "Plane Surface({}) = {{{}}};".format(
                     self.id, ",".join([ll.id for ll in line_loops])
                 ),
