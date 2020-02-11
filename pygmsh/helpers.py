@@ -111,7 +111,7 @@ def generate_mesh(  # noqa: C901
     gmsh_executable = gmsh_path if gmsh_path is not None else _get_gmsh_exe()
 
     args = [
-        "-{}".format(dim),
+        f"-{dim}",
         geo_filename,
         "-format",
         mesh_file_type,
@@ -146,10 +146,15 @@ def generate_mesh(  # noqa: C901
     if remove_faces:
         # Only keep the cells of highest topological dimension; discard faces
         # and such.
-        two_d_cells = set(["triangle", "quad"])
-        three_d_cells = set(
-            ["tetra", "hexahedron", "wedge", "pyramid", "penta_prism", "hexa_prism"]
-        )
+        two_d_cells = {"triangle", "quad"}
+        three_d_cells = {
+            "tetra",
+            "hexahedron",
+            "wedge",
+            "pyramid",
+            "penta_prism",
+            "hexa_prism",
+        }
         if any(k in mesh.cells for k in three_d_cells):
             keep_keys = three_d_cells.intersection(mesh.cells.keys())
         elif any(k in mesh.cells for k in two_d_cells):
@@ -177,11 +182,11 @@ def generate_mesh(  # noqa: C901
 
     # clean up
     if preserve_msh:
-        print("\nmsh file: {}".format(msh_filename))
+        print(f"\nmsh file: {msh_filename}")
     else:
         os.remove(msh_filename)
     if preserve_geo:
-        print("\ngeo file: {}".format(geo_filename))
+        print(f"\ngeo file: {geo_filename}")
     else:
         os.remove(geo_filename)
 

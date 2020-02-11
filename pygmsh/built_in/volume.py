@@ -28,7 +28,7 @@ class Volume(VolumeBase):
     """
 
     def __init__(self, surface_loop, holes=None):
-        super(Volume, self).__init__()
+        super().__init__()
 
         if holes is None:
             holes = []
@@ -40,7 +40,7 @@ class Volume(VolumeBase):
 
         self.code = "\n".join(
             [
-                "{} = newv;".format(self.id),
+                f"{self.id} = newv;",
                 "Volume({}) = {{{}}};".format(
                     self.id, ", ".join([s.id for s in surface_loops])
                 ),

@@ -1,4 +1,5 @@
 from math import pi
+
 import pytest
 
 import pygmsh

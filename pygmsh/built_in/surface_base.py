@@ -1,4 +1,4 @@
-class SurfaceBase(object):
+class SurfaceBase:
     """
     Increments the Line ID every time a new object is created that inherits
     from LineBase.
@@ -18,7 +18,7 @@ class SurfaceBase(object):
             assert isinstance(id0, str)
             self.id = id0
         else:
-            self.id = "s{}".format(SurfaceBase._ID)
+            self.id = f"s{SurfaceBase._ID}"
             SurfaceBase._ID += 1
         self.num_edges = num_edges
         return

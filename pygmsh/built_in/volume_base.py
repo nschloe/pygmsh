@@ -1,4 +1,4 @@
-class VolumeBase(object):
+class VolumeBase:
     """
     Increments the Line ID every time a new object
     is created that inherits from LineBase.
@@ -16,6 +16,6 @@ class VolumeBase(object):
         if id0:
             self.id = id0
         else:
-            self.id = "vol{}".format(VolumeBase._ID)
+            self.id = f"vol{VolumeBase._ID}"
             VolumeBase._ID += 1
         return

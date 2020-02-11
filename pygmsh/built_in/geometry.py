@@ -26,7 +26,7 @@ from .volume import Volume
 from .volume_base import VolumeBase
 
 
-class Geometry(object):
+class Geometry:
     def __init__(self, gmsh_major_version=None):
         self._EXTRUDE_ID = 0
         self._BOOLEAN_ID = 0
@@ -34,9 +34,7 @@ class Geometry(object):
         self._FIELD_ID = 0
         self._GMSH_MAJOR = gmsh_major_version
         self._TAKEN_PHYSICALGROUP_IDS = []
-        self._GMSH_CODE = [
-            "// This code was created by pygmsh v{}.".format(__version__)
-        ]
+        self._GMSH_CODE = [f"// This code was created by pygmsh v{__version__}."]
         return
 
     def _gmsh_major(self):
@@ -161,13 +159,13 @@ class Geometry(object):
         if isinstance(label, int):
             assert (
                 label not in self._TAKEN_PHYSICALGROUP_IDS
-            ), "Physical group label {} already taken.".format(label)
+            ), f"Physical group label {label} already taken."
             self._TAKEN_PHYSICALGROUP_IDS += [label]
             return str(label)
 
         assert _is_string(label)
         self._TAKEN_PHYSICALGROUP_IDS += [max_id + 1]
-        return '"{}"'.format(label)
+        return f'"{label}"'
 
     def add_physical(self, entities, label=None):
         if not isinstance(entities, list):
@@ -254,7 +252,7 @@ class Geometry(object):
             self.set_transfinite_lines(
                 [surface.line_loop.lines[1], surface.line_loop.lines[3]], size[1]
             )
-        code = "Transfinite Surface {{{}}}".format(surface.id)
+        code = f"Transfinite Surface {{{surface.id}}}"
         if orientation is not None:
             code += " " + orientation
         self._GMSH_CODE.append(code + ";")
@@ -325,11 +323,11 @@ class Geometry(object):
         if make_surface:
             plane_surface = self.add_plane_surface(line_loop, holes)
             if compound and self._gmsh_major() == 4:
-                self.add_raw_code("Compound Surface{{{}}};".format(plane_surface.id))
+                self.add_raw_code(f"Compound Surface{{{plane_surface.id}}};")
         else:
             plane_surface = None
 
-        class Circle(object):
+        class Circle:
             def __init__(
                 self,
                 x0,
@@ -385,19 +383,19 @@ class Geometry(object):
         if _is_string(input_entity):
             entity = Dummy(input_entity)
         elif isinstance(input_entity, PointBase):
-            entity = Dummy("Point{{{}}}".format(input_entity.id))
+            entity = Dummy(f"Point{{{input_entity.id}}}")
         elif isinstance(input_entity, SurfaceBase):
-            entity = Dummy("Surface{{{}}}".format(input_entity.id))
+            entity = Dummy(f"Surface{{{input_entity.id}}}")
         elif hasattr(input_entity, "surface"):
-            entity = Dummy("Surface{{{}}}".format(input_entity.surface.id))
+            entity = Dummy(f"Surface{{{input_entity.surface.id}}}")
         else:
             assert isinstance(input_entity, LineBase), "Illegal extrude entity."
-            entity = Dummy("Line{{{}}}".format(input_entity.id))
+            entity = Dummy(f"Line{{{input_entity.id}}}")
 
         extrusion_string = ""
 
         # out[] = Extrude{0,1,0}{ Line{1}; };
-        name = "ex{}".format(self._EXTRUDE_ID)
+        name = f"ex{self._EXTRUDE_ID}"
         if translation_axis is not None:
             if rotation_axis is not None:
                 extrusion_string += "{}[] = Extrude{{{{{}}}, {{{}}}, {{{}}}, {}}}{{{};".format(
@@ -442,8 +440,8 @@ class Geometry(object):
         # > list. This list will contain the "top" of the extruded surface (in
         # > out[0]) as well as the newly created volume (in out[1]).
         #
-        top = "{}[0]".format(name)
-        extruded = "{}[1]".format(name)
+        top = f"{name}[0]"
+        extruded = f"{name}[1]"
 
         if isinstance(input_entity, LineBase):
             top = LineBase(top)
@@ -497,11 +495,11 @@ class Geometry(object):
             nodes_list = []
 
         self._FIELD_ID += 1
-        name = "field{}".format(self._FIELD_ID)
+        name = f"field{self._FIELD_ID}"
 
-        self._GMSH_CODE.append("{} = newf;".format(name))
+        self._GMSH_CODE.append(f"{name} = newf;")
 
-        self._GMSH_CODE.append("Field[{}] = BoundaryLayer;".format(name))
+        self._GMSH_CODE.append(f"Field[{name}] = BoundaryLayer;")
         if edges_list:
             self._GMSH_CODE.append(
                 "Field[{}].EdgesList = {{{}}};".format(
@@ -519,26 +517,26 @@ class Geometry(object):
                 )
             )
         if hfar:
-            self._GMSH_CODE.append("Field[{}].hfar= {!r};".format(name, hfar))
+            self._GMSH_CODE.append(f"Field[{name}].hfar= {hfar!r};")
         if hwall_n:
-            self._GMSH_CODE.append("Field[{}].hwall_n= {!r};".format(name, hwall_n))
+            self._GMSH_CODE.append(f"Field[{name}].hwall_n= {hwall_n!r};")
         if ratio:
-            self._GMSH_CODE.append("Field[{}].ratio= {!r};".format(name, ratio))
+            self._GMSH_CODE.append(f"Field[{name}].ratio= {ratio!r};")
         if thickness:
-            self._GMSH_CODE.append("Field[{}].thickness= {!r};".format(name, thickness))
+            self._GMSH_CODE.append(f"Field[{name}].thickness= {thickness!r};")
         if anisomax:
-            self._GMSH_CODE.append("Field[{}].AnisoMax= {!r};".format(name, anisomax))
+            self._GMSH_CODE.append(f"Field[{name}].AnisoMax= {anisomax!r};")
         return name
 
     def add_background_field(self, fields, aggregation_type="Min"):
         self._FIELD_ID += 1
-        name = "field{}".format(self._FIELD_ID)
-        self._GMSH_CODE.append("{} = newf;".format(name))
-        self._GMSH_CODE.append("Field[{}] = {};".format(name, aggregation_type))
+        name = f"field{self._FIELD_ID}"
+        self._GMSH_CODE.append(f"{name} = newf;")
+        self._GMSH_CODE.append(f"Field[{name}] = {aggregation_type};")
         self._GMSH_CODE.append(
             "Field[{}].FieldsList = {{{}}};".format(name, ", ".join(fields))
         )
-        self._GMSH_CODE.append("Background Field = {};".format(name))
+        self._GMSH_CODE.append(f"Background Field = {name};")
         return name
 
     def add_comment(self, string):
@@ -566,7 +564,7 @@ class Geometry(object):
             make_surface=make_surface,
         )
 
-    class Polygon(object):
+    class Polygon:
         def __init__(self, points, lines, line_loop, surface, lcar=None):
             self.points = points
             self.lines = lines
@@ -595,7 +593,7 @@ class Geometry(object):
         # Create lines
         lines = [self.add_line(p[k], p[k + 1]) for k in range(len(p) - 1)]
         lines.append(self.add_line(p[-1], p[0]))
-        ll = self.add_line_loop((lines))
+        ll = self.add_line_loop(lines)
         surface = self.add_plane_surface(ll, holes) if make_surface else None
         return self.Polygon(p, lines, ll, surface, lcar=lcar)
 
@@ -674,7 +672,7 @@ class Geometry(object):
         # Create volume.
         volume = self.add_volume(surface_loop, holes) if with_volume else None
 
-        class Ellipsoid(object):
+        class Ellipsoid:
             dimension = 3
 
             def __init__(self, x0, radii, surface_loop, volume, lcar=None):
@@ -741,7 +739,7 @@ class Geometry(object):
         # Create volume
         vol = self.add_volume(surface_loop, holes) if with_volume else None
 
-        class Box(object):
+        class Box:
             def __init__(self, x0, x1, y0, y1, z0, z1, surface_loop, volume, lcar=None):
                 self.x0 = x0
                 self.x1 = x1
@@ -869,7 +867,7 @@ class Geometry(object):
                 previous,
                 rotation_axis=rot_axis,
                 point_on_axis=point_on_rot_axis,
-                angle="2*Pi/{}".format(num_steps),
+                angle=f"2*Pi/{num_steps}",
             )
             previous = top
             all_volumes.append(vol)
@@ -1025,7 +1023,7 @@ class Geometry(object):
         entity = "{}{{{}}};".format(d[input_entity.dimension], input_entity.id)
 
         if duplicate:
-            entity = "Duplicata{{{}}}".format(entity)
+            entity = f"Duplicata{{{entity}}}"
 
         self._GMSH_CODE.append(
             "Symmetry {{{}}} {{{}}}".format(
@@ -1038,5 +1036,5 @@ class Geometry(object):
         d = {0: "Point", 1: "Line"}
         entity = "{}{{{}}}".format(d[input_entity.dimension], input_entity.id)
 
-        self._GMSH_CODE.append("{} In Surface{{{}}};".format(entity, surface.id))
+        self._GMSH_CODE.append(f"{entity} In Surface{{{surface.id}}};")
         return

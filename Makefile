@@ -33,5 +33,5 @@ black:
 	black .
 
 lint:
-	flake8 setup.py pygmsh/ test/*.py
+	flake8 .
 	black --check .

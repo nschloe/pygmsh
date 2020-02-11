@@ -1,4 +1,4 @@
-class LineLoop(object):
+class LineLoop:
     """
     Increments the Line ID every time a new object is created that inherits
     from LineBase.
@@ -24,12 +24,12 @@ class LineLoop(object):
     def __init__(self, lines):
         self.lines = lines
 
-        self.id = "ll{}".format(LineLoop._ID)
+        self.id = f"ll{LineLoop._ID}"
         LineLoop._ID += 1
 
         self.code = "\n".join(
             [
-                "{} = newll;".format(self.id),
+                f"{self.id} = newll;",
                 "Line Loop({}) = {{{}}};".format(
                     self.id, ", ".join([l.id for l in lines])
                 ),

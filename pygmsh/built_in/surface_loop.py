@@ -1,4 +1,4 @@
-class SurfaceLoop(object):
+class SurfaceLoop:
     """
     Creates a surface loop (a shell).
     Increments the Line ID every time a new object is created that inherits
@@ -26,12 +26,12 @@ class SurfaceLoop(object):
     def __init__(self, surfaces):
         self.surfaces = surfaces
 
-        self.id = "sl{}".format(SurfaceLoop._ID)
+        self.id = f"sl{SurfaceLoop._ID}"
         SurfaceLoop._ID += 1
 
         self.code = "\n".join(
             [
-                "{} = news;".format(self.id),
+                f"{self.id} = news;",
                 "Surface Loop({}) = {{{}}};".format(
                     self.id, ",".join([s.id for s in surfaces])
                 ),
