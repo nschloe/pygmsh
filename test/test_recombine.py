@@ -23,12 +23,13 @@ def test():
 
     assert 'quad' in mesh.cells.keys()
     ref = np.array([[0, 4, 8, 7],
-       [7, 8, 6, 2],
-       [4, 1, 5, 8],
-       [8, 5, 3, 6]])
+                    [7, 8, 6, 2],
+                    [4, 1, 5, 8],
+                    [8, 5, 3, 6]])
     assert np.array_equal(ref, mesh.cells['quad'])
 
     return mesh
+
 
 if __name__ == "__main__":
     import meshio
