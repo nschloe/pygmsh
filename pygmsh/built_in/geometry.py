@@ -258,6 +258,17 @@ class Geometry:
         self._GMSH_CODE.append(code + ";")
         return
 
+    def set_recombined_surfaces(self, surfaces):
+        for i, surface in enumerate(surfaces):
+            assert isinstance(
+                surface, (PlaneSurface, Surface)
+            ), "item {} is not a surface".format(i)
+        code = "Recombine Surface {{{}}}".format(
+            ", ".join([surface.id for surface in surfaces])
+        )
+        self._GMSH_CODE.append(code + ";")
+        return
+
     def add_circle(
         self,
         x0,
