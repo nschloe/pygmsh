@@ -1,5 +1,6 @@
-import pygmsh
 import numpy as np
+
+import pygmsh
 
 
 def test():
@@ -21,9 +22,9 @@ def test():
 
     mesh = pygmsh.generate_mesh(geom)
 
-    assert "quad" in mesh.cells.keys()
+    assert "quad" in mesh.cells_dict.keys()
     ref = np.array([[0, 4, 8, 7], [7, 8, 6, 2], [4, 1, 5, 8], [8, 5, 3, 6]])
-    assert np.array_equal(ref, mesh.cells["quad"])
+    assert np.array_equal(ref, mesh.cells_dict["quad"])
 
     return mesh
 

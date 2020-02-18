@@ -105,13 +105,13 @@ def test_square_circle_slice():
     val = compute_volume(mesh)
     assert np.abs(val - ref) < 1e-3 * ref
 
-    outer_mask = np.where(mesh.cell_data["triangle"]["gmsh:geometrical"] == 13)[0]
+    outer_mask = np.where(mesh.cell_data["gmsh:geometrical"][2] == 13)[0]
     outer_cells = {}
-    outer_cells["triangle"] = mesh.cells["triangle"][outer_mask]
+    outer_cells["triangle"] = mesh.cells_dict["triangle"][outer_mask]
 
-    inner_mask = np.where(mesh.cell_data["triangle"]["gmsh:geometrical"] == 12)[0]
+    inner_mask = np.where(mesh.cell_data["gmsh:geometrical"][2] == 12)[0]
     inner_cells = {}
-    inner_cells["triangle"] = mesh.cells["triangle"][inner_mask]
+    inner_cells["triangle"] = mesh.cells_dict["triangle"][inner_mask]
 
     ref = 1 - 0.1 ** 2 * np.pi
     value = compute_volume(meshio.Mesh(mesh.points, outer_cells))
@@ -138,17 +138,16 @@ def test_fragments_diff_union():
     mesh = pygmsh.generate_mesh(geo_object)
     assert np.abs((compute_volume(mesh) - 1) / 1) < 1e-3
     surf = 1 - 0.1 ** 2 * np.pi
-    outer_mask = np.where(mesh.cell_data["triangle"]["gmsh:physical"] == 1)[0]
+    outer_mask = np.where(mesh.cell_data_dict["gmsh:physical"]["triangle"] == 1)[0]
     outer_cells = {}
-    outer_cells["triangle"] = mesh.cells["triangle"][outer_mask]
+    outer_cells["triangle"] = mesh.cells_dict["triangle"][outer_mask]
 
-    inner_mask = np.where(mesh.cell_data["triangle"]["gmsh:physical"] == 2)[0]
+    inner_mask = np.where(mesh.cell_data_dict["gmsh:physical"]["triangle"] == 2)[0]
     inner_cells = {}
-    inner_cells["triangle"] = mesh.cells["triangle"][inner_mask]
+    inner_cells["triangle"] = mesh.cells_dict["triangle"][inner_mask]
 
     value = compute_volume(meshio.Mesh(mesh.points, outer_cells))
     assert np.abs(value - surf) < 1e-2 * surf
-    return
 
 
 def test_diff_physical_assignment():
@@ -166,8 +165,8 @@ def test_diff_physical_assignment():
     geo_object2.boolean_difference([surf1], [surf2])
     mesh = pygmsh.generate_mesh(geo_object2)
     assert np.allclose(
-        mesh.cell_data["triangle"]["gmsh:physical"],
-        np.ones(mesh.cells["triangle"].shape[0]),
+        mesh.cell_data_dict["gmsh:physical"]["triangle"],
+        np.ones(mesh.cells_dict["triangle"].shape[0]),
     )
     surf = 1 - 0.1 ** 2 * np.pi
     assert np.abs((compute_volume(mesh) - surf) / surf) < 1e-3

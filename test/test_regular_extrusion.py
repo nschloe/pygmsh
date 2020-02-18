@@ -23,7 +23,7 @@ def test():
 
     # Each grid-cell from layered extrusion will result in 6 tetrahedrons.
     ref_tetras = 6 * x_layers * y_layers * z_layers
-    assert len(mesh.cells["tetra"]) == ref_tetras
+    assert len(mesh.cells_dict["tetra"]) == ref_tetras
 
     return mesh
 

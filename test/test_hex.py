@@ -29,7 +29,8 @@ def test(lcar=1.0):
     # TODO compute hex volumes
     assert (
         abs(
-            compute_volume(meshio.Mesh(mesh.points, {"quad": mesh.cells["quad"]})) - ref
+            compute_volume(meshio.Mesh(mesh.points, {"quad": mesh.cells_dict["quad"]}))
+            - ref
         )
         < 1.0e-2 * ref
     )

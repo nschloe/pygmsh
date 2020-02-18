@@ -144,8 +144,7 @@ def generate_mesh(  # noqa: C901
     mesh = meshio.read(msh_filename)
 
     if remove_faces:
-        # Only keep the cells of highest topological dimension; discard faces
-        # and such.
+        # Only keep the cells of highest topological dimension; discard faces and such.
         two_d_cells = {"triangle", "quad"}
         three_d_cells = {
             "tetra",
@@ -160,21 +159,26 @@ def generate_mesh(  # noqa: C901
         elif any(k in mesh.cells for k in two_d_cells):
             keep_keys = two_d_cells.intersection(mesh.cells.keys())
         else:
-            keep_keys = mesh.cells.keys()
+            keep_keys = set(cell_type for cell_type, _ in mesh.cells)
 
-        mesh.cells = {key: mesh.cells[key] for key in keep_keys}
-        mesh.cell_data = {key: mesh.cell_data[key] for key in keep_keys}
+        for key, val in mesh.cell_data.items():
+            mesh.cell_data[key] = [
+                d for d, c in zip(val, mesh.cells) if c[0] in keep_keys
+            ]
+        mesh.cells = [c for c in mesh.cells if c[0] in keep_keys]
 
     if prune_vertices:
         # Make sure to include only those vertices which belong to a cell.
-        ncells = numpy.concatenate([numpy.concatenate(c) for c in mesh.cells.values()])
+        ncells = numpy.concatenate([numpy.concatenate(c) for _, c in mesh.cells])
         uvertices, uidx = numpy.unique(ncells, return_inverse=True)
 
         k = 0
-        for key in mesh.cells.keys():
-            n = numpy.prod(mesh.cells[key].shape)
-            mesh.cells[key] = uidx[k : k + n].reshape(mesh.cells[key].shape)
+        cells = []
+        for key, cellblock in mesh.cells:
+            n = numpy.prod(cellblock.shape)
+            cells.append((key, uidx[k : k + n].reshape(cellblock.shape)))
             k += n
+        mesh.cells = cells
 
         mesh.points = mesh.points[uvertices]
         for key in mesh.point_data:

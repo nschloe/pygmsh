@@ -262,7 +262,7 @@ class Geometry:
         for i, surface in enumerate(surfaces):
             assert isinstance(
                 surface, (PlaneSurface, Surface)
-            ), "item {} is not a surface".format(i)
+            ), f"item {i} is not a surface"
         code = "Recombine Surface {{{}}}".format(
             ", ".join([surface.id for surface in surfaces])
         )
