@@ -138,11 +138,11 @@ def test_fragments_diff_union():
     mesh = pygmsh.generate_mesh(geo_object)
     assert np.abs((compute_volume(mesh) - 1) / 1) < 1e-3
     surf = 1 - 0.1 ** 2 * np.pi
-    outer_mask = np.where(mesh.cell_data["gmsh:physical"][1] == 1)[0]
+    outer_mask = np.where(mesh.cell_data_dict["gmsh:physical"]["triangle"] == 1)[0]
     outer_cells = {}
     outer_cells["triangle"] = mesh.cells_dict["triangle"][outer_mask]
 
-    inner_mask = np.where(mesh.cell_data["gmsh:physical"][1] == 2)[0]
+    inner_mask = np.where(mesh.cell_data_dict["gmsh:physical"]["triangle"] == 2)[0]
     inner_cells = {}
     inner_cells["triangle"] = mesh.cells_dict["triangle"][inner_mask]
 
@@ -165,8 +165,8 @@ def test_diff_physical_assignment():
     geo_object2.boolean_difference([surf1], [surf2])
     mesh = pygmsh.generate_mesh(geo_object2)
     assert np.allclose(
-        mesh.cell_data["triangle"]["gmsh:physical"],
-        np.ones(mesh.cells["triangle"].shape[0]),
+        mesh.cell_data_dict["gmsh:physical"]["triangle"],
+        np.ones(mesh.cells_dict["triangle"].shape[0]),
     )
     surf = 1 - 0.1 ** 2 * np.pi
     assert np.abs((compute_volume(mesh) - surf) / surf) < 1e-3
