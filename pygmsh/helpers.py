@@ -176,7 +176,7 @@ def generate_mesh(  # noqa: C901
         cells = []
         for key, cellblock in mesh.cells:
             n = numpy.prod(cellblock.shape)
-            cells.append((key, uidx[k : k + n].reshape(cellblock.shape)))
+            cells.append(meshio.Cells(key, uidx[k : k + n].reshape(cellblock.shape)))
             k += n
         mesh.cells = cells
 
