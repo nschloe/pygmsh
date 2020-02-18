@@ -9,7 +9,7 @@ jobs:
     - uses: actions/setup-python@v1
       with:
         python-version: "3.x"
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Lint with flake8
       run: |
         pip install flake8
@@ -28,7 +28,7 @@ jobs:
     - uses: actions/setup-python@v1
       with:
         python-version: "3.x"
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - run: sudo apt install -y python3-pip
     - name: Install gmsh from PPA
       run: |
@@ -50,5 +50,5 @@ jobs:
         gmsh --version
         pip install pytest pytest-cov
         cd test/ && pytest --cov pygmsh
-    - name: Submit to codecov
-      run: bash <(curl -s https://codecov.io/bash)
+    # - name: Submit to codecov
+    #   run: bash <(curl -s https://codecov.io/bash)
