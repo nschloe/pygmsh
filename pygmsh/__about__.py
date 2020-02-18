@@ -1,4 +1,4 @@
-__version__ = "6.0.3"
+__version__ = "6.0.4"
 __author__ = "Nico Schlömer"
 __author_email__ = "nico.schloemer@gmail.com"
 __copyright__ = f"Copyright (c) 2013-2020, {__author__} <{__author_email__}>"
