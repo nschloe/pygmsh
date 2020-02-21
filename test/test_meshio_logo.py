@@ -32,4 +32,5 @@ if __name__ == "__main__":
     # meshio.write_points_cells('m.vtu', *test())
     from helpers import plot
 
-    plot("meshio_logo.png", test())
+    mesh = test()
+    plot("meshio_logo.png", mesh.points, mesh.get_cells_type("triangle"))

@@ -23,4 +23,4 @@ def test(radius=1.0):
 if __name__ == "__main__":
     import meshio
 
-    meshio.write("circle_transformed.vtk", *test())
+    meshio.write("circle_transformed.vtk", test())
