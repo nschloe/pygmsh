@@ -72,11 +72,11 @@ def compute_volume(mesh):
     return vol
 
 
-def plot(filename, points, cells):
+def plot(filename, points, triangles):
     import matplotlib.pyplot as plt
 
     pts = points[:, :2]
-    for e in cells["triangle"]:
+    for e in triangles:
         for idx in [[0, 1], [1, 2], [2, 0]]:
             X = pts[e[idx]]
             plt.plot(X[:, 0], X[:, 1], "-k")
@@ -85,4 +85,3 @@ def plot(filename, points, cells):
 
     # plt.show()
     plt.savefig(filename, transparent=True)
-    return

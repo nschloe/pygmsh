@@ -44,7 +44,9 @@ if __name__ == "__main__":
     import optimesh
 
     mesh = test()
-    points, cells = optimesh.lloyd(mesh.points, mesh.cells["triangle"], 1.0e-5, 10000)
+    points, cells = optimesh.cvt.quasi_newton_uniform_lloyd(
+        mesh.points, mesh.get_cells_type("triangle"), 1.0e-5, 10000
+    )
     # # from helpers import plot
     # # plot("logo.png", points, {"triangle": cells})
     import meshio
