@@ -26,7 +26,8 @@ def test():
     random.seed(1)
     random.shuffle(lines)
 
-    ll = geom.add_unordered_line_loop(lines)
+    oriented_lines = pygmsh.orient_lines(lines)
+    ll = geom.add_line_loop(oriented_lines)
     geom.add_plane_surface(ll)
 
     mesh = pygmsh.generate_mesh(geom, prune_z_0=True)
