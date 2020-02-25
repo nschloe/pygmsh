@@ -13,7 +13,7 @@ class Point(PointBase):
     """
 
     def __init__(self, x, lcar=None):
-        super(Point, self).__init__()
+        super().__init__()
 
         self.x = x
         self.lcar = lcar
@@ -24,7 +24,7 @@ class Point(PointBase):
 
         self.code = "\n".join(
             [
-                "{} = newp;".format(self.id),
+                f"{self.id} = newp;",
                 ("Point({}) = {{" + fmt + "}};").format(self.id, *args),
             ]
         )

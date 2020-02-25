@@ -13,7 +13,7 @@ class Bspline(LineBase):
     """
 
     def __init__(self, control_points):
-        super(Bspline, self).__init__()
+        super().__init__()
 
         for c in control_points:
             assert isinstance(c, Point)
@@ -23,7 +23,7 @@ class Bspline(LineBase):
 
         self.code = "\n".join(
             [
-                "{} = newl;".format(self.id),
+                f"{self.id} = newl;",
                 "BSpline({}) = {{{}}};".format(
                     self.id, ", ".join([c.id for c in self.control_points])
                 ),

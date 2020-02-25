@@ -18,7 +18,7 @@ class Disk(SurfaceBase):
     """
 
     def __init__(self, x0, radius0, radius1=None, char_length=None):
-        super(Disk, self).__init__()
+        super().__init__()
 
         assert len(x0) == 3
         if radius1 is not None:
@@ -33,10 +33,10 @@ class Disk(SurfaceBase):
         if radius1 is not None:
             args.append(radius1)
 
-        args = ", ".join(["{}".format(arg) for arg in args])
+        args = ", ".join([f"{arg}" for arg in args])
 
         self.code = "\n".join(
-            ["{} = news;".format(self.id), "Disk({}) = {{{}}};".format(self.id, args)]
+            [f"{self.id} = news;", f"Disk({self.id}) = {{{args}}};"]
             + self.char_length_code(char_length)
         )
         return

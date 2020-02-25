@@ -1,7 +1,7 @@
 import copy
 
 
-class LineBase(object):
+class LineBase:
     """
     Increments the Line ID every time a new object
     is created that inherits from LineBase.
@@ -19,7 +19,7 @@ class LineBase(object):
         if id0:
             self.id = id0
         else:
-            self.id = "l{}".format(LineBase._ID)
+            self.id = f"l{LineBase._ID}"
             LineBase._ID += 1
         return
 

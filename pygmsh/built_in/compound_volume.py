@@ -1,4 +1,4 @@
-class CompoundVolume(object):
+class CompoundVolume:
     """
     Creates a compound volume from several elementary volumes.
     When meshed, a compound volume will be reparametrized as a
@@ -16,12 +16,12 @@ class CompoundVolume(object):
     def __init__(self, volumes):
         self.volumes = volumes
 
-        self.id = "cv{}".format(CompoundVolume._ID)
+        self.id = f"cv{CompoundVolume._ID}"
         CompoundVolume._ID += 1
 
         self.code = "\n".join(
             [
-                "{} = newv;".format(self.id),
+                f"{self.id} = newv;",
                 "Compound Volume({}) = {{{}}};".format(
                     self.id, ",".join([v.id for v in volumes])
                 ),

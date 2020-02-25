@@ -10,7 +10,7 @@ def test(lcar=1.0):
     geom.set_transfinite_surface(poly.surface, size=[11, 9])
 
     mesh = pygmsh.generate_mesh(geom, geo_filename="transfinite.geo")
-    assert len(mesh.cells["triangle"]) == 10 * 8 * 2
+    assert len(mesh.cells_dict["triangle"]) == 10 * 8 * 2
     return mesh
 
 

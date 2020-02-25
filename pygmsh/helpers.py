@@ -111,7 +111,7 @@ def generate_mesh(  # noqa: C901
     gmsh_executable = gmsh_path if gmsh_path is not None else _get_gmsh_exe()
 
     args = [
-        "-{}".format(dim),
+        f"-{dim}",
         geo_filename,
         "-format",
         mesh_file_type,
@@ -144,32 +144,43 @@ def generate_mesh(  # noqa: C901
     mesh = meshio.read(msh_filename)
 
     if remove_faces:
-        # Only keep the cells of highest topological dimension; discard faces
-        # and such.
-        two_d_cells = set(["triangle", "quad"])
-        three_d_cells = set(
-            ["tetra", "hexahedron", "wedge", "pyramid", "penta_prism", "hexa_prism"]
-        )
+        # Only keep the cells of highest topological dimension; discard faces and such.
+        two_d_cells = {"triangle", "quad"}
+        three_d_cells = {
+            "tetra",
+            "hexahedron",
+            "wedge",
+            "pyramid",
+            "penta_prism",
+            "hexa_prism",
+        }
         if any(k in mesh.cells for k in three_d_cells):
             keep_keys = three_d_cells.intersection(mesh.cells.keys())
         elif any(k in mesh.cells for k in two_d_cells):
             keep_keys = two_d_cells.intersection(mesh.cells.keys())
         else:
-            keep_keys = mesh.cells.keys()
+            keep_keys = set(cell_type for cell_type, _ in mesh.cells)
 
-        mesh.cells = {key: mesh.cells[key] for key in keep_keys}
-        mesh.cell_data = {key: mesh.cell_data[key] for key in keep_keys}
+        for key, val in mesh.cell_data.items():
+            mesh.cell_data[key] = [
+                d for d, c in zip(val, mesh.cells) if c[0] in keep_keys
+            ]
+        mesh.cells = [c for c in mesh.cells if c[0] in keep_keys]
 
     if prune_vertices:
         # Make sure to include only those vertices which belong to a cell.
-        ncells = numpy.concatenate([numpy.concatenate(c) for c in mesh.cells.values()])
+        ncells = numpy.concatenate([numpy.concatenate(c) for _, c in mesh.cells])
         uvertices, uidx = numpy.unique(ncells, return_inverse=True)
 
         k = 0
-        for key in mesh.cells.keys():
-            n = numpy.prod(mesh.cells[key].shape)
-            mesh.cells[key] = uidx[k : k + n].reshape(mesh.cells[key].shape)
+        cells = []
+        for key, cellblock in mesh.cells:
+            n = numpy.prod(cellblock.shape)
+            cells.append(
+                meshio.CellBlock(key, uidx[k : k + n].reshape(cellblock.shape))
+            )
             k += n
+        mesh.cells = cells
 
         mesh.points = mesh.points[uvertices]
         for key in mesh.point_data:
@@ -177,11 +188,11 @@ def generate_mesh(  # noqa: C901
 
     # clean up
     if preserve_msh:
-        print("\nmsh file: {}".format(msh_filename))
+        print(f"\nmsh file: {msh_filename}")
     else:
         os.remove(msh_filename)
     if preserve_geo:
-        print("\ngeo file: {}".format(geo_filename))
+        print(f"\ngeo file: {geo_filename}")
     else:
         os.remove(geo_filename)
 

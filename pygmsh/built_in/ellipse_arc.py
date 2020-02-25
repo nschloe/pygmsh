@@ -19,7 +19,7 @@ class EllipseArc(LineBase):
     """
 
     def __init__(self, start, center, point_on_major_axis, end):
-        super(EllipseArc, self).__init__()
+        super().__init__()
 
         assert isinstance(start, Point)
         assert isinstance(center, Point)
@@ -33,7 +33,7 @@ class EllipseArc(LineBase):
 
         self.code = "\n".join(
             [
-                "{} = newl;".format(self.id),
+                f"{self.id} = newl;",
                 "Ellipse({}) = {{{}, {}, {}, {}}};".format(
                     self.id, start.id, center.id, point_on_major_axis.id, end.id
                 ),

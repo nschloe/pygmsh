@@ -135,7 +135,7 @@ def test():
         [[xmin, ymin, 0.0], [xmax, ymin, 0.0], [xmax, ymax, 0.0], [xmin, ymax, 0.0]]
     )
     polygon = geom.add_polygon(domainCoordinates, char_length, holes=[airfoil])
-    geom.add_raw_code("Recombine Surface {{{}}};".format(polygon.surface.id))
+    geom.add_raw_code(f"Recombine Surface {{{polygon.surface.id}}};")
 
     ref = 10.525891646546
     mesh = pygmsh.generate_mesh(geom, remove_faces=True)

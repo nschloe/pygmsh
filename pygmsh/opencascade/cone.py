@@ -18,7 +18,7 @@ class Cone(VolumeBase):
     """
 
     def __init__(self, center, axis, radius0, radius1, alpha=None, char_length=None):
-        super(Cone, self).__init__()
+        super().__init__()
 
         assert len(center) == 3
         assert len(axis) == 3
@@ -32,10 +32,10 @@ class Cone(VolumeBase):
         args = list(center) + list(axis) + [radius0] + [radius1]
         if alpha is not None:
             args.append(alpha)
-        args = ", ".join(["{}".format(arg) for arg in args])
+        args = ", ".join([f"{arg}" for arg in args])
 
         self.code = "\n".join(
-            ["{} = newv;".format(self.id), "Cone({}) = {{{}}};".format(self.id, args)]
+            [f"{self.id} = newv;", f"Cone({self.id}) = {{{args}}};"]
             + self.char_length_code(char_length)
         )
         return

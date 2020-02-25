@@ -17,14 +17,14 @@ class CompoundSurface(SurfaceBase):
     """
 
     def __init__(self, surfaces):
-        super(CompoundSurface, self).__init__()
+        super().__init__()
         self.num_edges = sum(s.num_edges for s in surfaces)
 
         self.surfaces = surfaces
 
         self.code = "\n".join(
             [
-                "{} = news;".format(self.id),
+                f"{self.id} = news;",
                 "Compound Surface({}) = {{{}}};".format(
                     self.id, ",".join([s.id for s in surfaces])
                 ),

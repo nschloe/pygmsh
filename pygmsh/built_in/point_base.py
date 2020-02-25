@@ -1,4 +1,4 @@
-class PointBase(object):
+class PointBase:
     """
     Increments the Point ID every time a new object
     is created that inherits from PointBase.
@@ -16,6 +16,6 @@ class PointBase(object):
         if id0:
             self.id = id0
         else:
-            self.id = "p{}".format(PointBase._ID)
+            self.id = f"p{PointBase._ID}"
             PointBase._ID += 1
         return
