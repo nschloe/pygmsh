@@ -18,6 +18,7 @@ jobs:
     steps:
       - run: apt update
       - run: apt install -y gmsh python3-pip
+      - run: pip3 install pip -U
       - run: pip3 install pytest pytest-cov excode
       - checkout
       # install
