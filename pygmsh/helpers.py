@@ -154,18 +154,18 @@ def generate_mesh(  # noqa: C901
             "penta_prism",
             "hexa_prism",
         }
-        if any(k in mesh.cells for k in three_d_cells):
-            keep_keys = three_d_cells.intersection(mesh.cells.keys())
-        elif any(k in mesh.cells for k in two_d_cells):
-            keep_keys = two_d_cells.intersection(mesh.cells.keys())
+        if any(c.type in three_d_cells for c in mesh.cells):
+            keep_types = three_d_cells
+        elif any(c.type in two_d_cells for c in mesh.cells):
+            keep_types = two_d_cells
         else:
-            keep_keys = set(cell_type for cell_type, _ in mesh.cells)
+            keep_types = set(cell_type for cell_type, _ in mesh.cells)
 
-        for key, val in mesh.cell_data.items():
-            mesh.cell_data[key] = [
-                d for d, c in zip(val, mesh.cells) if c[0] in keep_keys
+        for name, val in mesh.cell_data.items():
+            mesh.cell_data[name] = [
+                d for d, c in zip(val, mesh.cells) if c[0] in keep_types
             ]
-        mesh.cells = [c for c in mesh.cells if c[0] in keep_keys]
+        mesh.cells = [c for c in mesh.cells if c[0] in keep_types]
 
     if prune_vertices:
         # Make sure to include only those vertices which belong to a cell.
