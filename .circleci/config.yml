@@ -18,18 +18,11 @@ jobs:
     steps:
       - run: apt update
       - run: apt install -y gmsh python3-pip
-      - run: pip3 install pytest pytest-cov excode
+      - run: pip3 install excode tox
       - checkout
-      # install
-      - run: pip3 install .
-      - run: pip3 install -r test_requirements.txt
       # The actual test
       - run: excode README.md test/readme_test.py --filter python,test
-      - run:
-          command: pytest --cov pygmsh
-          working_directory: test/
-          environment:
-            MPLBACKEND: Agg
+      - run: tox
       # submit to codecov
       - run: apt install -y curl
       - run: bash <(curl -s https://codecov.io/bash)

@@ -138,7 +138,7 @@ def test():
     geom.add_raw_code(f"Recombine Surface {{{polygon.surface.id}}};")
 
     ref = 10.525891646546
-    mesh = pygmsh.generate_mesh(geom, remove_faces=True)
+    mesh = pygmsh.generate_mesh(geom, remove_lower_dim_cells=True)
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 
