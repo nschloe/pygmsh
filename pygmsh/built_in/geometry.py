@@ -1037,8 +1037,11 @@ class Geometry:
             "Rotate {{ {{{}}},  {{{}}}, {}  }} {{{}{{{}}}; }}".format(
                 ", ".join([str(ax) for ax in axis]),
                 ", ".join([str(p) for p in point]),
-                angle, d[input_entity.dimension],
-                input_entity.id,))
+                angle,
+                d[input_entity.dimension],
+                input_entity.id,
+            )
+        )
 
         return
 
