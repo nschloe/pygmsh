@@ -1027,7 +1027,8 @@ class Geometry:
         return
 
     def rotate(self, input_entity, point, angle, axis):
-        """Translates input_entity itself by vector.
+        """Rotate input_entity around a given point with a give angle.
+           Rotation axis has to be specified.
 
         Changes the input object.
         """
