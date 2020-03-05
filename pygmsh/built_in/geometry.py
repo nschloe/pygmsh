@@ -1026,6 +1026,21 @@ class Geometry:
         )
         return
 
+    def rotate(self, input_entity, point, angle, axis):
+        """Translates input_entity itself by vector.
+
+        Changes the input object.
+        """
+        d = {1: "Line", 2: "Surface", 3: "Volume"}
+        self._GMSH_CODE.append(
+            "Rotate {{ {{{}}},  {{{}}}, {}  }} {{{}{{{}}}; }}".format(
+                ", ".join([str(ax) for ax in axis]),
+                ", ".join([str(p) for p in point]),
+                angle, d[input_entity.dimension],
+                input_entity.id,))
+
+        return
+
     def symmetry(self, input_entity, coefficients, duplicate=True):
         """Transforms all elementary entities symmetrically to a plane. The vector
         should contain four expressions giving the coefficients of the plane's equation.
