@@ -144,4 +144,4 @@ sphinx-build -b html doc doc/_build
 
 ### License
 
-pygmsh is published under the [MIT license](https://en.wikipedia.org/wiki/MIT_License).
+This software is published under the [GPLv3 license](https://www.gnu.org/licenses/gpl-3.0.en.html).
