@@ -34,7 +34,7 @@ def test():
         anisomax=100.0,
     )
 
-    geom.add_background_field([field0, field1])
+    geom.set_boundary_layers([field0, field1])
 
     ref = 4.0
     mesh = pygmsh.generate_mesh(geom)

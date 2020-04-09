@@ -517,6 +517,12 @@ class Geometry:
                     name, ",".join([e.id for e in edges_list])
                 )
             )
+            # edge nodes must be specified, too, cf.
+            # <https://gitlab.onelab.info/gmsh/gmsh/-/issues/812#note_9454>
+            nodes = list(set([p.id for e in edges_list for p in e.points]))
+            self._GMSH_CODE.append(
+                "Field[{}].NodesList = {{{}}};".format(name, ",".join(nodes))
+            )
         if faces_list:
             self._GMSH_CODE.append(
                 "Field[{}].FacesList = {{{}}};".format(name, ",".join(faces_list))
@@ -539,16 +545,10 @@ class Geometry:
             self._GMSH_CODE.append(f"Field[{name}].AnisoMax= {anisomax!r};")
         return name
 
-    def add_background_field(self, fields, aggregation_type="Min"):
-        self._FIELD_ID += 1
-        name = f"field{self._FIELD_ID}"
-        self._GMSH_CODE.append(f"{name} = newf;")
-        self._GMSH_CODE.append(f"Field[{name}] = {aggregation_type};")
-        self._GMSH_CODE.append(
-            "Field[{}].FieldsList = {{{}}};".format(name, ", ".join(fields))
-        )
-        self._GMSH_CODE.append(f"Background Field = {name};")
-        return name
+    def set_boundary_layers(self, fields):
+        fields_string = ",".join(fields)
+        self._GMSH_CODE.append(f"BoundaryLayer Field = {{{fields_string}}};")
+        return
 
     def add_comment(self, string):
         self._GMSH_CODE.append("// " + string)
