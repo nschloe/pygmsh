@@ -1,6 +1,6 @@
-import os
 import subprocess
 import tempfile
+from pathlib import Path
 
 import numpy
 
@@ -25,28 +25,24 @@ def rotation_matrix(u, theta):
     return R
 
 
-def _is_string(obj):
-    try:
-        # Python 2
-        return isinstance(obj, basestring)
-    except NameError:
-        # Python 3
-        return isinstance(obj, str)
-
-
 def _get_gmsh_exe():
-    macos_gmsh_location = "/Applications/Gmsh.app/Contents/MacOS/gmsh"
-    return macos_gmsh_location if os.path.isfile(macos_gmsh_location) else "gmsh"
+    macos_gmsh_location = Path("/Applications/Gmsh.app/Contents/MacOS/gmsh")
+    return macos_gmsh_location if macos_gmsh_location.is_file() else "gmsh"
 
 
-def get_gmsh_major_version(gmsh_exe=_get_gmsh_exe()):
-    out = (
-        subprocess.check_output([gmsh_exe, "--version"], stderr=subprocess.STDOUT)
+def get_gmsh_version(gmsh_exe=_get_gmsh_exe()):
+    gmsh_exe = Path(gmsh_exe)
+    return (
+        subprocess.check_output(
+            [gmsh_exe.as_posix(), "--version"], stderr=subprocess.STDOUT
+        )
         .strip()
         .decode("utf8")
     )
-    ex = out.split(".")
-    return int(ex[0])
+
+
+def get_gmsh_major_version(gmsh_exe=_get_gmsh_exe()):
+    return int(get_gmsh_version(gmsh_exe=gmsh_exe).split(".")[0])
 
 
 def generate_mesh(  # noqa: C901
@@ -187,11 +183,11 @@ def generate_mesh(  # noqa: C901
     if preserve_msh:
         print(f"\nmsh file: {msh_filename}")
     else:
-        os.remove(msh_filename)
+        Path(msh_filename).unlink()
     if preserve_geo:
         print(f"\ngeo file: {geo_filename}")
     else:
-        os.remove(geo_filename)
+        Path(geo_filename).unlink()
 
     if (
         prune_z_0
