@@ -1,6 +1,6 @@
-import os
 import subprocess
 import tempfile
+from pathlib import Path
 
 import numpy
 
@@ -26,8 +26,8 @@ def rotation_matrix(u, theta):
 
 
 def _get_gmsh_exe():
-    macos_gmsh_location = "/Applications/Gmsh.app/Contents/MacOS/gmsh"
-    return macos_gmsh_location if os.path.isfile(macos_gmsh_location) else "gmsh"
+    macos_gmsh_location = Path("/Applications/Gmsh.app/Contents/MacOS/gmsh")
+    return macos_gmsh_location if macos_gmsh_location.is_file() else "gmsh"
 
 
 def get_gmsh_version(gmsh_exe=_get_gmsh_exe()):
@@ -180,11 +180,11 @@ def generate_mesh(  # noqa: C901
     if preserve_msh:
         print(f"\nmsh file: {msh_filename}")
     else:
-        os.remove(msh_filename)
+        Path(msh_filename).unlink()
     if preserve_geo:
         print(f"\ngeo file: {geo_filename}")
     else:
-        os.remove(geo_filename)
+        Path(geo_filename).unlink()
 
     if (
         prune_z_0
