@@ -30,14 +30,16 @@ def _get_gmsh_exe():
     return macos_gmsh_location if os.path.isfile(macos_gmsh_location) else "gmsh"
 
 
-def get_gmsh_major_version(gmsh_exe=_get_gmsh_exe()):
-    out = (
+def get_gmsh_version(gmsh_exe=_get_gmsh_exe()):
+    return (
         subprocess.check_output([gmsh_exe, "--version"], stderr=subprocess.STDOUT)
         .strip()
         .decode("utf8")
     )
-    ex = out.split(".")
-    return int(ex[0])
+
+
+def get_gmsh_major_version(gmsh_exe=_get_gmsh_exe()):
+    return int(get_gmsh_major_version(gmsh_exe=gmsh_exe).split(".")[0])
 
 
 def generate_mesh(  # noqa: C901
