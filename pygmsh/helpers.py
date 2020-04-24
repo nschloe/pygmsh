@@ -31,15 +31,18 @@ def _get_gmsh_exe():
 
 
 def get_gmsh_version(gmsh_exe=_get_gmsh_exe()):
+    gmsh_exe = Path(gmsh_exe)
     return (
-        subprocess.check_output([gmsh_exe, "--version"], stderr=subprocess.STDOUT)
+        subprocess.check_output(
+            [gmsh_exe.as_posix(), "--version"], stderr=subprocess.STDOUT
+        )
         .strip()
         .decode("utf8")
     )
 
 
 def get_gmsh_major_version(gmsh_exe=_get_gmsh_exe()):
-    return int(get_gmsh_major_version(gmsh_exe=gmsh_exe).split(".")[0])
+    return int(get_gmsh_version(gmsh_exe=gmsh_exe).split(".")[0])
 
 
 def generate_mesh(  # noqa: C901
