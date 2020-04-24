@@ -25,15 +25,6 @@ def rotation_matrix(u, theta):
     return R
 
 
-def _is_string(obj):
-    try:
-        # Python 2
-        return isinstance(obj, basestring)
-    except NameError:
-        # Python 3
-        return isinstance(obj, str)
-
-
 def _get_gmsh_exe():
     macos_gmsh_location = "/Applications/Gmsh.app/Contents/MacOS/gmsh"
     return macos_gmsh_location if os.path.isfile(macos_gmsh_location) else "gmsh"

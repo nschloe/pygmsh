@@ -3,7 +3,7 @@ import warnings
 import numpy
 
 from ..__about__ import __version__
-from ..helpers import _is_string, get_gmsh_major_version
+from ..helpers import get_gmsh_major_version
 from .bspline import Bspline
 from .circle_arc import CircleArc
 from .compound_line import CompoundLine
@@ -163,7 +163,7 @@ class Geometry:
             self._TAKEN_PHYSICALGROUP_IDS += [label]
             return str(label)
 
-        assert _is_string(label)
+        assert isinstance(label, str)
         self._TAKEN_PHYSICALGROUP_IDS += [max_id + 1]
         return f'"{label}"'
 
@@ -391,7 +391,7 @@ class Geometry:
         """
         self._EXTRUDE_ID += 1
 
-        if _is_string(input_entity):
+        if isinstance(input_entity, str):
             entity = Dummy(input_entity)
         elif isinstance(input_entity, PointBase):
             entity = Dummy(f"Point{{{input_entity.id}}}")
@@ -557,7 +557,7 @@ class Geometry:
     def add_raw_code(self, string_or_list):
         """Add raw Gmsh code.
         """
-        if _is_string(string_or_list):
+        if isinstance(string_or_list, str):
             self._GMSH_CODE.append(string_or_list)
         else:
             assert isinstance(string_or_list, list)
