@@ -5,7 +5,7 @@ from .helpers import (
     get_gmsh_major_version,
     get_gmsh_version,
     rotation_matrix,
-    orient_lines
+    orient_lines,
 )
 
 __all__ = [
