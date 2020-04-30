@@ -1,21 +1,18 @@
 from . import built_in, opencascade
-from .__about__ import __author__, __author_email__, __version__, __website__
+from .__about__ import __version__
 from .helpers import (
     generate_mesh,
     get_gmsh_major_version,
+    get_gmsh_version,
     rotation_matrix,
-    orient_lines,
 )
 
 __all__ = [
     "built_in",
     "opencascade",
     "generate_mesh",
+    "get_gmsh_version",
     "get_gmsh_major_version",
     "rotation_matrix",
-    "orient_lines",
     "__version__",
-    "__author__",
-    "__author_email__",
-    "__website__",
 ]

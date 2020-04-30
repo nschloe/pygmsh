@@ -3,7 +3,7 @@ import warnings
 import numpy
 
 from ..__about__ import __version__
-from ..helpers import _is_string, get_gmsh_major_version
+from ..helpers import get_gmsh_major_version
 from .bspline import Bspline
 from .circle_arc import CircleArc
 from .compound_line import CompoundLine
@@ -163,7 +163,7 @@ class Geometry:
             self._TAKEN_PHYSICALGROUP_IDS += [label]
             return str(label)
 
-        assert _is_string(label)
+        assert isinstance(label, str)
         self._TAKEN_PHYSICALGROUP_IDS += [max_id + 1]
         return f'"{label}"'
 
@@ -391,7 +391,7 @@ class Geometry:
         """
         self._EXTRUDE_ID += 1
 
-        if _is_string(input_entity):
+        if isinstance(input_entity, str):
             entity = Dummy(input_entity)
         elif isinstance(input_entity, PointBase):
             entity = Dummy(f"Point{{{input_entity.id}}}")
@@ -517,6 +517,12 @@ class Geometry:
                     name, ",".join([e.id for e in edges_list])
                 )
             )
+            # edge nodes must be specified, too, cf.
+            # <https://gitlab.onelab.info/gmsh/gmsh/-/issues/812#note_9454>
+            nodes = list(set([p.id for e in edges_list for p in e.points]))
+            self._GMSH_CODE.append(
+                "Field[{}].NodesList = {{{}}};".format(name, ",".join(nodes))
+            )
         if faces_list:
             self._GMSH_CODE.append(
                 "Field[{}].FacesList = {{{}}};".format(name, ",".join(faces_list))
@@ -539,16 +545,10 @@ class Geometry:
             self._GMSH_CODE.append(f"Field[{name}].AnisoMax= {anisomax!r};")
         return name
 
-    def add_background_field(self, fields, aggregation_type="Min"):
-        self._FIELD_ID += 1
-        name = f"field{self._FIELD_ID}"
-        self._GMSH_CODE.append(f"{name} = newf;")
-        self._GMSH_CODE.append(f"Field[{name}] = {aggregation_type};")
-        self._GMSH_CODE.append(
-            "Field[{}].FieldsList = {{{}}};".format(name, ", ".join(fields))
-        )
-        self._GMSH_CODE.append(f"Background Field = {name};")
-        return name
+    def set_boundary_layers(self, fields):
+        fields_string = ",".join(fields)
+        self._GMSH_CODE.append(f"BoundaryLayer Field = {{{fields_string}}};")
+        return
 
     def add_comment(self, string):
         self._GMSH_CODE.append("// " + string)
@@ -557,7 +557,7 @@ class Geometry:
     def add_raw_code(self, string_or_list):
         """Add raw Gmsh code.
         """
-        if _is_string(string_or_list):
+        if isinstance(string_or_list, str):
             self._GMSH_CODE.append(string_or_list)
         else:
             assert isinstance(string_or_list, list)
@@ -1024,6 +1024,25 @@ class Geometry:
                 input_entity.id,
             )
         )
+        return
+
+    def rotate(self, input_entity, point, angle, axis):
+        """Rotate input_entity around a given point with a give angle.
+           Rotation axis has to be specified.
+
+        Changes the input object.
+        """
+        d = {1: "Line", 2: "Surface", 3: "Volume"}
+        self._GMSH_CODE.append(
+            "Rotate {{ {{{}}},  {{{}}}, {}  }} {{{}{{{}}}; }}".format(
+                ", ".join([str(ax) for ax in axis]),
+                ", ".join([str(p) for p in point]),
+                angle,
+                d[input_entity.dimension],
+                input_entity.id,
+            )
+        )
+
         return
 
     def symmetry(self, input_entity, coefficients, duplicate=True):

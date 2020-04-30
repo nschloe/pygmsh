@@ -41,14 +41,28 @@ def test():
 
 
 if __name__ == "__main__":
+    mesh = test()
+    points = mesh.points
+    cells = mesh.get_cells_type("triangle")
+
     import optimesh
 
-    mesh = test()
-    points, cells = optimesh.cvt.quasi_newton_uniform_lloyd(
-        mesh.points, mesh.get_cells_type("triangle"), 1.0e-5, 10000
+    # points, cells = optimesh.cvt.quasi_newton_uniform_lloyd(
+    #     points, cells, 1.0e-5, 1000, omega=2.0, verbose=True
+    # )
+    # points, cells = optimesh.cvt.quasi_newton_uniform_blocks(
+    #     points, cells, 1.0e-5, 1000, verbose=True
+    # )
+    points, cells = optimesh.cvt.quasi_newton_uniform_full(
+        points, cells, 1.0e-5, 1000, verbose=True
     )
+
     # # from helpers import plot
     # # plot("logo.png", points, {"triangle": cells})
     import meshio
 
-    meshio.write_points_cells("logo.svg", points, {"triangle": cells})
+    # meshio.write_points_cells("logo.vtu", points, {"triangle": cells})
+    mesh = meshio.Mesh(points, {"triangle": cells})
+    meshio.svg.write(
+        "logo.svg", mesh, float_fmt=".3f", stroke_width="1", force_width=300
+    )
