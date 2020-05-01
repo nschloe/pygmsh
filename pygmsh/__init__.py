@@ -5,6 +5,7 @@ from .helpers import (
     get_gmsh_major_version,
     get_gmsh_version,
     rotation_matrix,
+    orient_lines,
 )
 
 __all__ = [
@@ -14,5 +15,6 @@ __all__ = [
     "get_gmsh_version",
     "get_gmsh_major_version",
     "rotation_matrix",
+    "orient_lines",
     "__version__",
 ]

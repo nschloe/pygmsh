@@ -25,6 +25,45 @@ def rotation_matrix(u, theta):
     return R
 
 
+def orient_lines(lines):
+    """Given a sequence of unordered and unoriented lines defining a closed polygon,
+    returns a reordered list of reoriented lines of that polygon.
+
+    :param lines: a sequence of lines defining a closed polygon
+    """
+    # Categorise graph edges by their vertex pair ids
+    point_pair_ids = numpy.array(
+        [[line.points[0].id, line.points[1].id] for line in lines]
+    )
+
+    # Indices of reordering
+    order = numpy.arange(len(point_pair_ids), dtype=int)
+    # Compute orientations where oriented[j] == False requires edge j to be reversed
+    oriented = numpy.array([True] * len(point_pair_ids), dtype=numpy.bool)
+
+    for j in range(1, len(point_pair_ids)):
+        out = point_pair_ids[j - 1, 1]  # edge out from vertex
+        inn = point_pair_ids[j:, 0]  # candidates for edge into vertices
+        wh = numpy.where(inn == out)[0] + j
+        if len(wh) == 0:
+            # look for candidates in those which are not correctly oriented
+            inn = point_pair_ids[j:, 1]
+            wh = numpy.where(inn == out)[0] + j
+            # reorient remaining edges
+            point_pair_ids[j:] = numpy.flip(point_pair_ids[j:], axis=1)
+            oriented[j:] ^= True
+
+        # reorder
+        point_pair_ids[[j, wh[0]]] = point_pair_ids[[wh[0], j]]
+        order[[j, wh[0]]] = order[[wh[0], j]]
+
+    # Reconstruct an ordered and oriented line loop
+    lines = [lines[o] for o in order]
+    lines = [lines[j] if oriented[j] else -lines[j] for j in range(len(oriented))]
+
+    return lines
+
+
 def _get_gmsh_exe():
     macos_gmsh_location = Path("/Applications/Gmsh.app/Contents/MacOS/gmsh")
     return macos_gmsh_location if macos_gmsh_location.is_file() else "gmsh"
