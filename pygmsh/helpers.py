@@ -64,15 +64,6 @@ def orient_lines(lines):
     return lines
 
 
-def _is_string(obj):
-    try:
-        # Python 2
-        return isinstance(obj, basestring)
-    except NameError:
-        # Python 3
-        return isinstance(obj, str)
-
-
 def _get_gmsh_exe():
     macos_gmsh_location = Path("/Applications/Gmsh.app/Contents/MacOS/gmsh")
     return macos_gmsh_location if macos_gmsh_location.is_file() else "gmsh"
