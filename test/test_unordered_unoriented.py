@@ -1,5 +1,6 @@
-import numpy
 import random
+
+import numpy
 
 import pygmsh
 from helpers import compute_volume

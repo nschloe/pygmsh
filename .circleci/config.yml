@@ -18,10 +18,9 @@ jobs:
     steps:
       - run: apt update
       - run: apt install -y gmsh python3-pip
-      - run: pip3 install excode tox
+      - run: pip3 install tox
       - checkout
       # The actual test
-      - run: excode README.md test/readme_test.py --filter python,test
       - run: tox
       # submit to codecov
       - run: apt install -y curl
