@@ -30,7 +30,7 @@ documentation.
 ![](https://nschloe.github.io/pygmsh/screw.png)
 
 To create the above mesh, simply do
-```python,test
+```python
 import pygmsh
 import numpy as np
 
@@ -84,7 +84,7 @@ As of version 3.0, Gmsh supports OpenCASCADE, allowing for a CAD-style geometry
 specification.
 
 Example:
-```python,test
+```python
 import pygmsh
 
 geom = pygmsh.opencascade.Geometry(

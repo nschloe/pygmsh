@@ -4,8 +4,8 @@ from .helpers import (
     generate_mesh,
     get_gmsh_major_version,
     get_gmsh_version,
-    rotation_matrix,
     orient_lines,
+    rotation_matrix,
 )
 
 __all__ = [
