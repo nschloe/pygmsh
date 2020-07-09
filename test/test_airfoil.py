@@ -1,7 +1,7 @@
 import numpy
+from helpers import compute_volume
 
 import pygmsh
-from helpers import compute_volume
 
 
 def test():

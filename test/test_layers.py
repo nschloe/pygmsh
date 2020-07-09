@@ -1,5 +1,6 @@
-import pygmsh
 from helpers import compute_volume
+
+import pygmsh
 
 
 def test(lcar=0.05):

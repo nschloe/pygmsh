@@ -1,8 +1,9 @@
 from itertools import permutations
 
 import meshio
-import pygmsh
 from helpers import compute_volume
+
+import pygmsh
 
 
 def test(lcar=1.0):

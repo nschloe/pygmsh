@@ -9,12 +9,11 @@
 #
 # All configuration values have a default; values that are commented out
 # serve to show the default.
-
 import os
 import sys
 
 try:
-    import unittest.mock as mock
+    from unittest import mock as mock
 except ImportError:
     import mock
 

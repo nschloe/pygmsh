@@ -1,7 +1,7 @@
 import pytest
+from helpers import compute_volume
 
 import pygmsh
-from helpers import compute_volume
 
 
 @pytest.mark.skipif(pygmsh.get_gmsh_major_version() < 3, reason="requires Gmsh >= 3")

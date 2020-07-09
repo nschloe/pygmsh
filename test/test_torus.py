@@ -1,7 +1,7 @@
 import numpy as np
+from helpers import compute_volume
 
 import pygmsh
-from helpers import compute_volume
 
 
 def test(irad=0.05, orad=0.6):

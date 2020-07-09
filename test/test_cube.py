@@ -1,7 +1,8 @@
 """Creates a mesh on a cube.
 """
-import pygmsh
 from helpers import compute_volume
+
+import pygmsh
 
 
 def test():

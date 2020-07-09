@@ -1,6 +1,5 @@
-import numpy
-
 import meshio
+import numpy
 from helpers import compute_volume
 
 

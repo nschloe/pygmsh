@@ -1,9 +1,9 @@
 """Test module for boolean operations."""
-import numpy as np
-
 import meshio
-import pygmsh
+import numpy as np
 from helpers import compute_volume
+
+import pygmsh
 
 
 def square_loop(geo_object):
