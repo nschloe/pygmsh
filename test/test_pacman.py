@@ -1,7 +1,7 @@
+from helpers import compute_volume
 from numpy import cos, pi, sin
 
 import pygmsh
-from helpers import compute_volume
 
 
 def test(lcar=0.3):

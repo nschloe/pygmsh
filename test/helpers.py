@@ -73,7 +73,7 @@ def compute_volume(mesh):
 
 
 def plot(filename, points, triangles):
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     pts = points[:, :2]
     for e in triangles:

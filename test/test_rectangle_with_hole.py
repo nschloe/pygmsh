@@ -1,8 +1,9 @@
 """
 Creates a mesh for a square with a round hole.
 """
-import pygmsh
 from helpers import compute_volume
+
+import pygmsh
 
 
 def test():

@@ -2,9 +2,8 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-import numpy
-
 import meshio
+import numpy
 
 
 def rotation_matrix(u, theta):
