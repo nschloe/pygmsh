@@ -65,6 +65,7 @@ mesh = pygmsh.generate_mesh(geom)
 ```
 to retrieve all points and cells of the mesh for the specified geometry.  To store the
 mesh, you can use [meshio](https://pypi.org/project/meshio); for example
+<!--exdown-skip-->
 ```python
 import meshio
 meshio.write("test.vtk", mesh)
