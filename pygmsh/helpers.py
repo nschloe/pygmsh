@@ -1,3 +1,4 @@
+import shutil
 import subprocess
 import tempfile
 from pathlib import Path
@@ -65,7 +66,7 @@ def orient_lines(lines):
 
 def _get_gmsh_exe():
     macos_gmsh_location = Path("/Applications/Gmsh.app/Contents/MacOS/gmsh")
-    return macos_gmsh_location if macos_gmsh_location.is_file() else "gmsh"
+    return macos_gmsh_location if macos_gmsh_location.is_file() else shutil.which("gmsh")
 
 
 def get_gmsh_version(gmsh_exe=_get_gmsh_exe()):
