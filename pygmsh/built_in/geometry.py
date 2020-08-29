@@ -43,8 +43,7 @@ class Geometry:
         return self._GMSH_MAJOR
 
     def get_code(self):
-        """Returns properly formatted Gmsh code.
-        """
+        """Returns properly formatted Gmsh code."""
         return "\n".join(self._GMSH_CODE)
 
     # All of the add_* method below could be replaced by
@@ -280,8 +279,7 @@ class Geometry:
         holes=None,
         make_surface=True,
     ):
-        """Add circle in the :math:`x`-:math:`y`-plane.
-        """
+        """Add circle in the :math:`x`-:math:`y`-plane."""
         if holes is None:
             holes = []
         else:
@@ -409,13 +407,15 @@ class Geometry:
         name = f"ex{self._EXTRUDE_ID}"
         if translation_axis is not None:
             if rotation_axis is not None:
-                extrusion_string += "{}[] = Extrude{{{{{}}}, {{{}}}, {{{}}}, {}}}{{{};".format(
-                    name,
-                    ",".join(repr(x) for x in translation_axis),
-                    ",".join(repr(x) for x in rotation_axis),
-                    ",".join(repr(x) for x in point_on_axis),
-                    angle,
-                    entity.id,
+                extrusion_string += (
+                    "{}[] = Extrude{{{{{}}}, {{{}}}, {{{}}}, {}}}{{{};".format(
+                        name,
+                        ",".join(repr(x) for x in translation_axis),
+                        ",".join(repr(x) for x in rotation_axis),
+                        ",".join(repr(x) for x in point_on_axis),
+                        angle,
+                        entity.id,
+                    )
                 )
             else:
                 # Only translation
@@ -555,8 +555,7 @@ class Geometry:
         return
 
     def add_raw_code(self, string_or_list):
-        """Add raw Gmsh code.
-        """
+        """Add raw Gmsh code."""
         if isinstance(string_or_list, str):
             self._GMSH_CODE.append(string_or_list)
         else:

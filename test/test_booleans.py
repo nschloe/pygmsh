@@ -151,7 +151,7 @@ def test_fragments_diff_union():
 
 
 def test_diff_physical_assignment():
-    """ construct surface using boolean.
+    """construct surface using boolean.
 
     Ensure that after a difference operation the initial volume physical label
     is kept for the operated geometry.
