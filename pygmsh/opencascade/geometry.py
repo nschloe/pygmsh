@@ -35,8 +35,7 @@ class Geometry(bl.Geometry):
         return
 
     def get_code(self):
-        """Returns properly formatted Gmsh code.
-        """
+        """Returns properly formatted Gmsh code."""
         return "\n".join(self._GMSH_CODE)
 
     def add_rectangle(self, *args, **kwargs):

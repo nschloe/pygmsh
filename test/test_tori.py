@@ -5,8 +5,7 @@ import pygmsh
 
 
 def test(irad=0.05, orad=0.6):
-    """Torus, rotated in space.
-    """
+    """Torus, rotated in space."""
     geom = pygmsh.built_in.Geometry()
 
     R = pygmsh.rotation_matrix([1.0, 0.0, 0.0], np.pi / 2)
