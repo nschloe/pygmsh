@@ -6,9 +6,6 @@ import numpy
 from ..helpers import get_gmsh_major_version
 from .bspline import Bspline
 from .circle_arc import CircleArc
-from .compound_line import CompoundLine
-from .compound_surface import CompoundSurface
-from .compound_volume import CompoundVolume
 from .define_constant import DefineConstant
 from .dummy import Dummy
 from .ellipse_arc import EllipseArc
@@ -67,24 +64,6 @@ class Geometry:
 
     def add_circle_arc(self, *args, **kwargs):
         return CircleArc(*args, **kwargs)
-
-    def add_compound_line(self, *args, **kwargs):
-        assert self._gmsh_major() == 3
-        e = CompoundLine(*args, **kwargs)
-        self._GMSH_CODE.append(e.code)
-        return e
-
-    def add_compound_surface(self, *args, **kwargs):
-        assert self._gmsh_major() == 3
-        e = CompoundSurface(*args, **kwargs)
-        self._GMSH_CODE.append(e.code)
-        return e
-
-    def add_compound_volume(self, *args, **kwargs):
-        assert self._gmsh_major() == 3
-        e = CompoundVolume(*args, **kwargs)
-        self._GMSH_CODE.append(e.code)
-        return e
 
     def add_ellipse_arc(self, *args, **kwargs):
         p = EllipseArc(*args, **kwargs)
@@ -768,9 +747,6 @@ class Geometry:
         :param irad: inner radius of the torus
         :param orad: outer radius of the torus
         """
-        self.add_comment(76 * "-")
-        self.add_comment("Torus")
-
         # Add circle
         x0t = numpy.dot(R, numpy.array([0.0, orad, 0.0]))
         Rc = numpy.array([[0.0, 0.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
@@ -796,23 +772,13 @@ class Geometry:
                 previous,
                 rotation_axis=rot_axis,
                 point_on_axis=point_on_rot_axis,
-                angle=f"2*Pi/{num_steps}",
+                angle=2 * numpy.pi / num_steps,
             )
             previous = top
             all_volumes.append(vol)
 
-        if self._gmsh_major() == 3:
-            # This actually returns the volume, but the gmsh 4 version doesn't have that
-            # feature. Hence, for compatibility, also ditch it here.
-            self.add_compound_volume(all_volumes)
-        else:
-            assert self._gmsh_major() == 4
-            self.add_raw_code(
-                "Compound Volume{{{}}};".format(",".join(v.id for v in all_volumes))
-            )
-
-        self.add_comment(76 * "-" + "\n")
-        return
+        assert self._gmsh_major() == 4
+        self._COMPOUND_ENTITIES.append((3, [v._ID for v in all_volumes]))
 
     def add_pipe(
         self,
