@@ -846,7 +846,7 @@ class Geometry:
 
         # Extrude all edges three times by 2*Pi/3.
         previous = e
-        angle = "2*Pi/3"
+        angle = 2 * numpy.pi / 3
         all_surfaces = []
         # com = []
         for i in range(3):
