@@ -7,7 +7,6 @@ from ..helpers import get_gmsh_major_version
 from .bspline import BSpline
 from .circle_arc import CircleArc
 from .curve_loop import CurveLoop
-from .define_constant import DefineConstant
 from .dummy import Dummy
 from .ellipse_arc import EllipseArc
 from .line import Line
@@ -91,11 +90,6 @@ class Geometry:
 
     def add_volume(self, *args, **kwargs):
         return Volume(*args, **kwargs)
-
-    def define_constant(self, *args, **kwargs):
-        e = DefineConstant(*args, **kwargs)
-        self._GMSH_CODE.append(e.code)
-        return e
 
     def _new_physical_group(self, label=None):
         # See
@@ -193,10 +187,10 @@ class Geometry:
                 surface, (PlaneSurface, Surface, self.Polygon)
             ), "we can create transfinite lines only if we have a line loop"
             self.set_transfinite_lines(
-                [surface.curve_loop.lines[0], surface.curve_loop.lines[2]], size[0]
+                [surface.curve_loop.curves[0], surface.curve_loop.curves[2]], size[0]
             )
             self.set_transfinite_lines(
-                [surface.curve_loop.lines[1], surface.curve_loop.lines[3]], size[1]
+                [surface.curve_loop.curves[1], surface.curve_loop.curves[3]], size[1]
             )
         code = f"Transfinite Surface {{{surface.id}}}"
         if orientation is not None:
