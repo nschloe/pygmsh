@@ -1,8 +1,8 @@
 import warnings
 
+import gmsh
 import numpy
 
-import gmsh
 from ..__about__ import __version__
 from ..helpers import get_gmsh_major_version
 from .bspline import Bspline
@@ -36,6 +36,7 @@ class Geometry:
         self._GMSH_MAJOR = gmsh_major_version
         self._TAKEN_PHYSICALGROUP_IDS = []
         self._COMPOUND_ENTITIES = []
+        self._RECOMBINE_ENTITIES = []
 
         gmsh.initialize()
         gmsh.model.add("pygmsh model")
@@ -95,9 +96,7 @@ class Geometry:
         return p
 
     def add_line(self, *args, **kwargs):
-        p = Line(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+        return Line(*args, **kwargs)
 
     def add_line_loop(self, *args, **kwargs):
         return LineLoop(*args, **kwargs)
@@ -253,11 +252,8 @@ class Geometry:
             assert isinstance(
                 surface, (PlaneSurface, Surface)
             ), f"item {i} is not a surface"
-        code = "Recombine Surface {{{}}}".format(
-            ", ".join([surface.id for surface in surfaces])
-        )
-        self._GMSH_CODE.append(code + ";")
-        return
+        for surface in surfaces:
+            self._RECOMBINE_ENTITIES.append((2, surface._ID))
 
     def add_circle(
         self,
@@ -570,7 +566,6 @@ class Geometry:
             if surface is not None:
                 self.id = self.surface.id
             self.dimension = 2
-            return
 
     def add_polygon(self, X, lcar=None, holes=None, make_surface=True):
         if holes is None:

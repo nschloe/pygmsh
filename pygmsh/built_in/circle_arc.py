@@ -1,7 +1,7 @@
+import gmsh
+
 from .line_base import LineBase
 from .point import Point
-
-import gmsh
 
 
 class CircleArc(LineBase):

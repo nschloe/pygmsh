@@ -1,7 +1,7 @@
+import gmsh
+
 from .line_loop import LineLoop
 from .surface_base import SurfaceBase
-
-import gmsh
 
 
 class PlaneSurface(SurfaceBase):

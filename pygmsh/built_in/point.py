@@ -1,6 +1,6 @@
-from .point_base import PointBase
-
 import gmsh
+
+from .point_base import PointBase
 
 
 class Point(PointBase):

@@ -182,6 +182,9 @@ def generate_mesh(  # noqa: C901
     for c in geo_object._COMPOUND_ENTITIES:
         gmsh.model.mesh.setCompound(*c)
 
+    for s in geo_object._RECOMBINE_ENTITIES:
+        gmsh.model.mesh.setRecombine(*s)
+
     gmsh.model.mesh.generate(dim)
 
     # idx, points, _ = gmsh.model.mesh.getNodes()

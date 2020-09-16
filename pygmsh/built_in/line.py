@@ -1,3 +1,5 @@
+import gmsh
+
 from .line_base import LineBase
 from .point import Point
 
@@ -28,7 +30,4 @@ class Line(LineBase):
         assert isinstance(p1, Point)
         self.points = [p0, p1]
 
-        self.code = "\n".join(
-            [f"{self.id} = newl;", f"Line({self.id}) = {{{p0.id}, {p1.id}}};"]
-        )
-        return
+        self._ID = gmsh.model.geo.addLine(p0._ID, p1._ID)
