@@ -13,7 +13,7 @@ def test():
         x0=[0.5, 0.5, 0.0], radius=0.25, lcar=0.1, num_sections=4, make_surface=False
     )
 
-    geom.add_rectangle(0.0, 1.0, 0.0, 1.0, 0.0, lcar=0.1, holes=[circle.line_loop])
+    geom.add_rectangle(0.0, 1.0, 0.0, 1.0, 0.0, lcar=0.1, holes=[circle.curve_loop])
 
     ref = 0.8086582838174551
     mesh = pygmsh.generate_mesh(geom, geo_filename="h.geo")

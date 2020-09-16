@@ -19,7 +19,7 @@ def test():
     geom.add_polygon(
         [[-1.0, -1.0, 0.0], [+7.0, -1.0, 0.0], [+7.0, +2.0, 0.0], [-1.0, +2.0, 0.0]],
         lcar,
-        holes=[circle.line_loop, triangle.line_loop, rectangle.line_loop],
+        holes=[circle.curve_loop, triangle.curve_loop, rectangle.curve_loop],
     )
 
     ref = 24.0

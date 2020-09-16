@@ -39,8 +39,8 @@ def test():
     lines.append(geom.add_line(points[6], points[7]))
     lines.append(geom.add_line(points[7], points[0]))
 
-    line_loop = geom.add_line_loop(lines)
-    surface = geom.add_plane_surface(line_loop)
+    curve_loop = geom.add_curve_loop(lines)
+    surface = geom.add_plane_surface(curve_loop)
     geom.extrude(surface, translation_axis=[length, 0, 0])
 
     mesh = pygmsh.generate_mesh(geom)

@@ -1,7 +1,7 @@
 import gmsh
 
 
-class LineLoop:
+class CurveLoop:
     """
     Increments the Line ID every time a new object is created that inherits
     from LineBase.

@@ -13,7 +13,7 @@ def test():
     l1 = geom.add_line(p1, p3)
     l2 = geom.add_line(p3, p2)
     l3 = geom.add_line(p2, p0)
-    ll0 = geom.add_line_loop((l0, l1, l2, l3))
+    ll0 = geom.add_curve_loop((l0, l1, l2, l3))
     rs0 = geom.add_surface(ll0)
     geom.set_transfinite_lines([l3, l1], 3, progression=1)
     geom.set_transfinite_lines([l2, l0], 3, progression=1)

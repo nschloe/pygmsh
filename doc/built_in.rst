@@ -62,9 +62,9 @@ LineBase
     :undoc-members:
     :show-inheritance:
 
-LineLoop
+CurveLoop
 --------
-.. automodule:: pygmsh.built_in.line_loop
+.. automodule:: pygmsh.built_in.curve_loop
     :members:
     :undoc-members:
     :show-inheritance:

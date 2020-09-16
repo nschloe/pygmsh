@@ -1,16 +1,16 @@
 import gmsh
 
-from .line_loop import LineLoop
+from .curve_loop import CurveLoop
 
 
 class Surface:
     """
-    Generates a Surface from a LineLoop.
+    Generates a Surface from a CurveLoop.
 
     Parameters
     ----------
-    line_loop : Object
-        LineLoop object that contains all the Line objects for the loop construction.
+    curve_loop : Object
+        CurveLoop object that contains all the Line objects for the loop construction.
 
     Notes
     -----
@@ -24,11 +24,11 @@ class Surface:
 
     dimension = 2
 
-    def __init__(self, line_loop):
-        assert isinstance(line_loop, LineLoop)
-        self.line_loop = line_loop
-        self.num_edges = len(line_loop)
-        self._ID = gmsh.model.geo.addSurfaceFilling([self.line_loop._ID])
+    def __init__(self, curve_loop):
+        assert isinstance(curve_loop, CurveLoop)
+        self.curve_loop = curve_loop
+        self.num_edges = len(curve_loop)
+        self._ID = gmsh.model.geo.addSurfaceFilling([self.curve_loop._ID])
 
     def __repr__(self):
         return f"<pygmsh Surface object, ID {self._ID}>"

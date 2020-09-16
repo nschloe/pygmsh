@@ -28,7 +28,7 @@ def test():
     random.shuffle(lines)
 
     oriented_lines = pygmsh.orient_lines(lines)
-    ll = geom.add_line_loop(oriented_lines)
+    ll = geom.add_curve_loop(oriented_lines)
     geom.add_plane_surface(ll)
 
     mesh = pygmsh.generate_mesh(geom, prune_z_0=True)

@@ -17,7 +17,7 @@ def test():
     p3 = geom.add_point([0.5, 1.0, 0.0], lcar)
     s2 = geom.add_spline([p4, p3, p2, p1])
 
-    ll = geom.add_line_loop([s1, s2])
+    ll = geom.add_curve_loop([s1, s2])
     geom.add_plane_surface(ll)
 
     ref = 1.0809439490373247

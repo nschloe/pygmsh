@@ -18,7 +18,7 @@ def test():
     )
 
     field0 = geom.add_boundary_layer(
-        edges_list=[poly.line_loop.lines[0]],
+        edges_list=[poly.curve_loop.curves[0]],
         hfar=0.1,
         hwall_n=0.01,
         ratio=1.1,
@@ -27,7 +27,7 @@ def test():
     )
 
     field1 = geom.add_boundary_layer(
-        nodes_list=[poly.line_loop.lines[1].points[1]],
+        nodes_list=[poly.curve_loop.curves[1].points[1]],
         hfar=0.1,
         hwall_n=0.01,
         ratio=1.1,

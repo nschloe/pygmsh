@@ -23,7 +23,7 @@ def test(lcar=0.3):
     c3 = geom.add_circle_arc(p5, p1, p7)
     l1 = geom.add_line(p7, p8)
     l2 = geom.add_line(p8, p6)
-    ll = geom.add_line_loop([c0, c1, c2, c3, l1, l2])
+    ll = geom.add_curve_loop([c0, c1, c2, c3, l1, l2])
 
     pacman = geom.add_plane_surface(ll)
 

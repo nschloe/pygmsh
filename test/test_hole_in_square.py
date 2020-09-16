@@ -23,7 +23,7 @@ def test():
     squareHole = geom.add_polygon(squareHoleCoordinates, lcar, make_surface=False)
 
     # Create square domain with square hole
-    geom.add_rectangle(xmin, xmax, ymin, ymax, 0.0, lcar, holes=[squareHole.line_loop])
+    geom.add_rectangle(xmin, xmax, ymin, ymax, 0.0, lcar, holes=[squareHole.curve_loop])
 
     mesh = pygmsh.generate_mesh(geom, extra_gmsh_arguments=["-order", "2"])
     # TODO support for volumes of triangle6

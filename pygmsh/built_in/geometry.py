@@ -6,12 +6,12 @@ import numpy
 from ..helpers import get_gmsh_major_version
 from .bspline import BSpline
 from .circle_arc import CircleArc
+from .curve_loop import CurveLoop
 from .define_constant import DefineConstant
 from .dummy import Dummy
 from .ellipse_arc import EllipseArc
 from .line import Line
 from .line_base import LineBase
-from .line_loop import LineLoop
 from .plane_surface import PlaneSurface
 from .point import Point
 from .point_base import PointBase
@@ -71,8 +71,8 @@ class Geometry:
     def add_line(self, *args, **kwargs):
         return Line(*args, **kwargs)
 
-    def add_line_loop(self, *args, **kwargs):
-        return LineLoop(*args, **kwargs)
+    def add_curve_loop(self, *args, **kwargs):
+        return CurveLoop(*args, **kwargs)
 
     def add_plane_surface(self, *args, **kwargs):
         return PlaneSurface(*args, **kwargs)
@@ -193,10 +193,10 @@ class Geometry:
                 surface, (PlaneSurface, Surface, self.Polygon)
             ), "we can create transfinite lines only if we have a line loop"
             self.set_transfinite_lines(
-                [surface.line_loop.lines[0], surface.line_loop.lines[2]], size[0]
+                [surface.curve_loop.lines[0], surface.curve_loop.lines[2]], size[0]
             )
             self.set_transfinite_lines(
-                [surface.line_loop.lines[1], surface.line_loop.lines[3]], size[1]
+                [surface.curve_loop.lines[1], surface.curve_loop.lines[3]], size[1]
             )
         code = f"Transfinite Surface {{{surface.id}}}"
         if orientation is not None:
@@ -267,10 +267,10 @@ class Geometry:
         if compound:
             self._COMPOUND_ENTITIES.append((1, [arc._ID for arc in arcs]))
 
-        line_loop = self.add_line_loop(arcs)
+        curve_loop = self.add_curve_loop(arcs)
 
         if make_surface:
-            plane_surface = self.add_plane_surface(line_loop, holes)
+            plane_surface = self.add_plane_surface(curve_loop, holes)
             if compound:
                 self._COMPOUND_ENTITIES.append((2, [plane_surface._ID]))
         else:
@@ -285,7 +285,7 @@ class Geometry:
                 compound,
                 num_sections,
                 holes,
-                line_loop,
+                curve_loop,
                 plane_surface,
                 lcar=None,
             ):
@@ -296,7 +296,7 @@ class Geometry:
                 self.compound = compound
                 self.num_sections = num_sections
                 self.holes = holes
-                self.line_loop = line_loop
+                self.curve_loop = curve_loop
                 self.plane_surface = plane_surface
                 return
 
@@ -307,7 +307,7 @@ class Geometry:
             compound,
             num_sections,
             holes,
-            line_loop,
+            curve_loop,
             plane_surface,
             lcar=lcar,
         )
@@ -483,11 +483,11 @@ class Geometry:
         )
 
     class Polygon:
-        def __init__(self, points, lines, line_loop, surface, lcar=None):
+        def __init__(self, points, lines, curve_loop, surface, lcar=None):
             self.points = points
             self.lines = lines
             self.num_edges = len(lines)
-            self.line_loop = line_loop
+            self.curve_loop = curve_loop
             self.surface = surface
             self.lcar = lcar
             if surface is not None:
@@ -510,7 +510,7 @@ class Geometry:
         # Create lines
         lines = [self.add_line(p[k], p[k + 1]) for k in range(len(p) - 1)]
         lines.append(self.add_line(p[-1], p[0]))
-        ll = self.add_line_loop(lines)
+        ll = self.add_curve_loop(lines)
         surface = self.add_plane_surface(ll, holes) if make_surface else None
         return self.Polygon(p, lines, ll, surface, lcar=lcar)
 
@@ -558,15 +558,15 @@ class Geometry:
         # Add surfaces (1/8th of the ball surface).
         ll = [
             # one half
-            self.add_line_loop([c[4], c[9], c[3]]),
-            self.add_line_loop([c[8], -c[4], c[0]]),
-            self.add_line_loop([-c[9], c[5], c[2]]),
-            self.add_line_loop([-c[5], -c[8], c[1]]),
+            self.add_curve_loop([c[4], c[9], c[3]]),
+            self.add_curve_loop([c[8], -c[4], c[0]]),
+            self.add_curve_loop([-c[9], c[5], c[2]]),
+            self.add_curve_loop([-c[5], -c[8], c[1]]),
             # the other half
-            self.add_line_loop([c[7], -c[3], c[10]]),
-            self.add_line_loop([-c[11], c[7], c[0]]),
-            self.add_line_loop([-c[10], -c[2], c[6]]),
-            self.add_line_loop([c[1], c[6], c[11]]),
+            self.add_curve_loop([c[7], -c[3], c[10]]),
+            self.add_curve_loop([-c[11], c[7], c[0]]),
+            self.add_curve_loop([-c[10], -c[2], c[6]]),
+            self.add_curve_loop([c[1], c[6], c[11]]),
         ]
         # Create a surface for each line loop.
         print()
@@ -656,12 +656,12 @@ class Geometry:
         ]
         # Define the six line loops.
         ll = [
-            self.add_line_loop([e[0], e[3], -e[5], -e[1]]),
-            self.add_line_loop([e[0], e[4], -e[8], -e[2]]),
-            self.add_line_loop([e[1], e[6], -e[9], -e[2]]),
-            self.add_line_loop([e[3], e[7], -e[10], -e[4]]),
-            self.add_line_loop([e[5], e[7], -e[11], -e[6]]),
-            self.add_line_loop([e[8], e[10], -e[11], -e[9]]),
+            self.add_curve_loop([e[0], e[3], -e[5], -e[1]]),
+            self.add_curve_loop([e[0], e[4], -e[8], -e[2]]),
+            self.add_curve_loop([e[1], e[6], -e[9], -e[2]]),
+            self.add_curve_loop([e[3], e[7], -e[10], -e[4]]),
+            self.add_curve_loop([e[5], e[7], -e[11], -e[6]]),
+            self.add_curve_loop([e[8], e[10], -e[11], -e[9]]),
         ]
         # Create a surface for each line loop.
         s = [self.add_surface(l) for l in ll]
@@ -730,7 +730,7 @@ class Geometry:
         # the entity that has been extruded at the far end. This can be used
         # for the following Extrude() step.  The second [1] entry of the array
         # is the surface that was created by the extrusion.
-        previous = c.line_loop.lines
+        previous = c.curve_loop.lines
         angle = 2 * numpy.pi / 3
         all_surfaces = []
         for i in range(3):
@@ -902,7 +902,7 @@ class Geometry:
             x0, inner_radius, lcar=lcar, R=numpy.dot(R, Rc), make_surface=False
         )
         circ = self.add_circle(
-            x0, outer_radius, lcar=lcar, R=numpy.dot(R, Rc), holes=[c_inner.line_loop]
+            x0, outer_radius, lcar=lcar, R=numpy.dot(R, Rc), holes=[c_inner.curve_loop]
         )
 
         # Now Extrude the ring surface.

@@ -24,8 +24,8 @@ def square_loop(geo_object):
     for point1, point2 in zip(points[:-1], points[1:]):
         line = geo_object.add_line(point1, point2)
         lines.append(line)
-    line_loop = geo_object.add_line_loop(lines)
-    return geo_object, line_loop
+    curve_loop = geo_object.add_curve_loop(lines)
+    return geo_object, curve_loop
 
 
 def circle_loop(geo_object):
@@ -44,8 +44,8 @@ def circle_loop(geo_object):
         geo_object.add_circle_arc(point1, geo_object.add_point([0, 0, 0], 0.05), point2)
         for point1, point2 in zip(points[:-1], points[1:])
     ]
-    line_loop = geo_object.add_line_loop(quarter_circles)
-    return geo_object, line_loop
+    curve_loop = geo_object.add_curve_loop(quarter_circles)
+    return geo_object, curve_loop
 
 
 def built_in_opencascade_geos():
@@ -59,9 +59,9 @@ def built_in_opencascade_geos():
     # construct surface using boolean
     geo_object2 = pygmsh.opencascade.Geometry(0.05, 0.05)
     geo_object2, square2 = square_loop(geo_object2)
-    geo_object2, line_loop2 = circle_loop(geo_object2)
+    geo_object2, curve_loop2 = circle_loop(geo_object2)
     surf1 = geo_object2.add_plane_surface(square2)
-    surf2 = geo_object2.add_plane_surface(line_loop2)
+    surf2 = geo_object2.add_plane_surface(curve_loop2)
     geo_object2.boolean_difference([surf1], [surf2])
 
     return geo_object, geo_object2
@@ -72,9 +72,9 @@ def built_in_opencascade_geos_fragments():
 
     geo_object = pygmsh.opencascade.Geometry(0.04, 0.04)
     geo_object, square = square_loop(geo_object)
-    geo_object, line_loop = circle_loop(geo_object)
+    geo_object, curve_loop = circle_loop(geo_object)
     surf1 = geo_object.add_plane_surface(square)
-    surf2 = geo_object.add_plane_surface(line_loop)
+    surf2 = geo_object.add_plane_surface(curve_loop)
 
     geo_object.boolean_fragments([surf1], [surf2])
     return geo_object
@@ -127,9 +127,9 @@ def test_fragments_diff_union():
     # construct surface using boolean
     geo_object = pygmsh.opencascade.Geometry(0.04, 0.04)
     geo_object, square = square_loop(geo_object)
-    geo_object, line_loop = circle_loop(geo_object)
+    geo_object, curve_loop = circle_loop(geo_object)
     surf1 = geo_object.add_plane_surface(square)
-    surf2 = geo_object.add_plane_surface(line_loop)
+    surf2 = geo_object.add_plane_surface(curve_loop)
 
     geo_object.add_physical([surf1], label=1)
     geo_object.add_physical([surf2], label=2)
@@ -158,9 +158,9 @@ def test_diff_physical_assignment():
     """
     geo_object2 = pygmsh.opencascade.Geometry(0.05, 0.05)
     geo_object2, square2 = square_loop(geo_object2)
-    geo_object2, line_loop2 = circle_loop(geo_object2)
+    geo_object2, curve_loop2 = circle_loop(geo_object2)
     surf1 = geo_object2.add_plane_surface(square2)
-    surf2 = geo_object2.add_plane_surface(line_loop2)
+    surf2 = geo_object2.add_plane_surface(curve_loop2)
     geo_object2.add_physical([surf1], label=1)
     geo_object2.boolean_difference([surf1], [surf2])
     mesh = pygmsh.generate_mesh(geo_object2)

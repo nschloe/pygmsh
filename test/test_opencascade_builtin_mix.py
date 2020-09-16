@@ -16,7 +16,7 @@ def test():
     l1 = geom.add_line(p1, p2)
     l2 = geom.add_line(p2, p3)
     l3 = geom.add_line(p3, p0)
-    ll0 = geom.add_line_loop([l0, l1, l2, l3])
+    ll0 = geom.add_curve_loop([l0, l1, l2, l3])
     square_builtin = geom.add_plane_surface(ll0)
     square_opencascade = geom.add_rectangle([0, 0, 0], 1.0, 1.0)
     geom.boolean_difference([square_opencascade], [square_builtin])
