@@ -454,9 +454,6 @@ class Geometry:
         self._GMSH_CODE.append(f"BoundaryLayer Field = {{{fields_string}}};")
         return
 
-    def add_comment(self, string):
-        self._GMSH_CODE.append("// " + string)
-
     def add_raw_code(self, string_or_list):
         """Add raw Gmsh code."""
         if isinstance(string_or_list, str):
@@ -821,7 +818,6 @@ class Geometry:
         """Hollow cylinder.
         Define a rectangle, extrude it by rotation.
         """
-        self.add_comment("Define rectangle.")
         X = numpy.array(
             [
                 [0.0, outer_radius, -0.5 * length],
@@ -853,9 +849,7 @@ class Geometry:
         angle = "2*Pi/3"
         all_surfaces = []
         # com = []
-        self.add_comment("Extrude in 3 steps.")
         for i in range(3):
-            self.add_comment("Step {}".format(i + 1))
             for k, p in enumerate(previous):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
                 top, surf, _ = self.extrude(
