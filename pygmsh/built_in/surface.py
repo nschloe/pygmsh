@@ -1,6 +1,6 @@
-from .line_loop import LineLoop
-
 import gmsh
+
+from .line_loop import LineLoop
 
 
 class Surface:

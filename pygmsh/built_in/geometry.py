@@ -524,6 +524,9 @@ class Geometry:
         if holes:
             assert with_volume
 
+        print(x0)
+        print(radii)
+
         # Add points.
         p = [
             self.add_point(x0, lcar=lcar),
@@ -551,6 +554,7 @@ class Geometry:
             self.add_ellipse_arc(p[3], p[0], p[5], p[5]),
             self.add_ellipse_arc(p[5], p[0], p[6], p[6]),
         ]
+
         # Add surfaces (1/8th of the ball surface).
         ll = [
             # one half
@@ -560,11 +564,23 @@ class Geometry:
             self.add_line_loop([-c[5], -c[8], c[1]]),
             # the other half
             self.add_line_loop([c[7], -c[3], c[10]]),
-            self.add_line_loop([c[11], -c[7], -c[0]]),
+            self.add_line_loop([-c[11], c[7], c[0]]),
             self.add_line_loop([-c[10], -c[2], c[6]]),
-            self.add_line_loop([-c[1], -c[6], -c[11]]),
+            self.add_line_loop([c[1], c[6], c[11]]),
         ]
         # Create a surface for each line loop.
+        print()
+        for pp in p:
+            print(pp)
+        print()
+        for cc in c:
+            print(cc)
+        print()
+        for l in ll:
+            print(l)
+            self.add_surface(l)
+
+        exit(1)
         s = [self.add_surface(l) for l in ll]
 
         # Combine the surfaces to avoid seams

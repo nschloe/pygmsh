@@ -15,21 +15,27 @@ class LineLoop:
 
     Notes
     -----
-    A line loop must be a closed loop, and the elementary lines
-    should be ordered and oriented (negating to specify reverse orientation).
-    If the orientation is correct, but the ordering is wrong, Gmsh will
-    actually reorder the list internally to create a consistent loop.
+    A line loop must be a closed loop, and the elementary lines should be ordered and
+    oriented (negating to specify reverse orientation). If the orientation is correct,
+    but the ordering is wrong, Gmsh will actually reorder the list internally to create
+    a consistent loop.
     """
 
     dimension = 1
 
-    def __init__(self, lines):
-        self.lines = lines
-        self._ID = gmsh.model.geo.addCurveLoop([l._ID for l in lines])
+    def __init__(self, curves):
+        print(curves)
+        for k in range(len(curves) - 1):
+            assert curves[k].points[-1] == curves[k + 1].points[0]
+        assert curves[-1].points[-1] == curves[0].points[0]
+        self._ID = gmsh.model.geo.addCurveLoop([c._ID for c in curves])
+
+        self.curves = curves
+        print(curves)
 
     def __len__(self):
-        return len(self.lines)
+        return len(self.curves)
 
     def __repr__(self):
-        lines = ", ".join([str(l._ID) for l in self.lines])
-        return f"<pygmsh LineLoop object, ID {self._ID}, lines ({lines})>"
+        curves = ", ".join([str(l._ID) for l in self.curves])
+        return f"<pygmsh CurveLoop object, ID {self._ID}, curves ({curves})>"

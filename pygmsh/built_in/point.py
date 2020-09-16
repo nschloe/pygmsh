@@ -21,3 +21,7 @@ class Point(PointBase):
         self.x = x
         self.lcar = lcar
         self._ID = gmsh.model.geo.addPoint(x[0], x[1], x[2], meshSize=lcar)
+
+    def __repr__(self):
+        X = ", ".join(str(x) for x in self.x)
+        return f"<pygmsh Point object, ID {self._ID}, x = [{X}]>"
