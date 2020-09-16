@@ -356,23 +356,21 @@ class Geometry:
         the entities is not provided, this method will produce only translation or
         rotation.
         """
-        if isinstance(input_entity, str):
-            assert False
-            entity = Dummy(input_entity)
-        elif isinstance(input_entity, PointBase):
-            dim = 0
-            entity = Dummy(f"Point{{{input_entity.id}}}")
-        elif isinstance(input_entity, SurfaceBase):
-            dim = 2
-            entity = Dummy(f"Surface{{{input_entity.id}}}")
-        elif hasattr(input_entity, "surface"):
-            dim = 2
-            eid = input_entity.surface._ID
-            entity = Dummy(f"Surface{{{input_entity.surface.id}}}")
+        if isinstance(input_entity, (PointBase, LineBase, SurfaceBase, Dummy)):
+            eid = input_entity._ID
+            dim = input_entity.dimension
         else:
-            assert isinstance(input_entity, LineBase), "Illegal extrude entity."
-            dim = 1
-            entity = Dummy(f"Line{{{input_entity.id}}}")
+            assert hasattr(
+                input_entity, "surface"
+            ), f"Illegal extrude entity {input_entity}."
+            eid = input_entity.surface._ID
+            dim = input_entity.surface.dimension
+
+        assert dim is not None
+
+        # TODO get this to work
+        # <https://gitlab.onelab.info/gmsh/gmsh/-/issues/990#note_11180>
+        heights = [] if num_layers is None else numpy.linspace(0.0, 1.0, num_layers + 2)
 
         if translation_axis is not None and rotation_axis is None:
             out_dim_tags = gmsh.model.geo.extrude(
@@ -380,6 +378,7 @@ class Geometry:
                 translation_axis[0],
                 translation_axis[1],
                 translation_axis[2],
+                heights=heights,
                 recombine=recombine,
             )
         elif translation_axis is None and rotation_axis is not None:
@@ -393,6 +392,7 @@ class Geometry:
                 rotation_axis[1],
                 rotation_axis[2],
                 angle,
+                heights=heights,
                 recombine=recombine,
             )
         else:
@@ -410,50 +410,15 @@ class Geometry:
                 rotation_axis[1],
                 rotation_axis[2],
                 angle,
-                heights=[0.7],
+                heights=heights,
                 recombine=recombine,
             )
 
-        # # From <https://www.manpagez.com/info/gmsh/gmsh-2.4.0/gmsh_66.php>:
-        # #
-        # # > In this last extrusion command we retrieved the volume number
-        # # > programatically by saving the output of the command into a
-        # # > list. This list will contain the "top" of the extruded surface (in
-        # # > out[0]) as well as the newly created volume (in out[1]).
-        # #
-        # top = f"{name}[0]"
-        # extruded = f"{name}[1]"
+        top = Dummy(*out_dim_tags[0])
+        extruded = Dummy(*out_dim_tags[1])
+        lateral = [Dummy(*e) for e in out_dim_tags[1:]]
 
-        # if isinstance(input_entity, LineBase):
-        #     top = LineBase(top)
-        #     # A surface extruded from a single line has always 4 edges
-        #     extruded = SurfaceBase(extruded, 4)
-        # elif isinstance(input_entity, (SurfaceBase, self.Polygon)):
-        #     top = SurfaceBase(top, input_entity.num_edges)
-        #     extruded = VolumeBase(extruded)
-        # elif isinstance(input_entity, PointBase):
-        #     top = PointBase(top)
-        #     extruded = LineBase(extruded)
-        # else:
-        #     top = Dummy(top)
-        #     extruded = Dummy(extruded)
-
-        # lat = []
-        # # lateral surfaces can be deduced only if we start from a SurfaceBase
-        # # or a Polygon
-        # if isinstance(input_entity, (SurfaceBase, self.Polygon)):
-        #     # out[0]` is the surface, out[1] the top, and everything after that
-        #     # the sides, cf.
-        #     # <https://gmsh.info/doc/texinfo/gmsh.html#Extrusions>. Each
-        #     # lateral surface has 4 edges: the one from input_entity, the one
-        #     # from top, and the two lines (or splines) connecting their extreme
-        #     # points.
-        #     lat = [
-        #         SurfaceBase("{}[{}]".format(name, i + 2), 4)
-        #         for i in range(input_entity.num_edges)
-        #     ]
-        # return top, extruded, lat
-        return out_dim_tags
+        return top, extruded, lateral
 
     def add_boundary_layer(
         self,

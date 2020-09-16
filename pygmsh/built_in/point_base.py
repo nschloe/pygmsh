@@ -18,4 +18,3 @@ class PointBase:
         else:
             self.id = f"p{PointBase._ID}"
             PointBase._ID += 1
-        return

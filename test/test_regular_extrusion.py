@@ -15,6 +15,7 @@ def test():
     geom = pygmsh.built_in.Geometry()
     p = geom.add_point([0, 0, 0], 1)
     _, l, _ = geom.extrude(p, [x, 0, 0], num_layers=x_layers)
+
     _, s, _ = geom.extrude(l, [0, y, 0], num_layers=y_layers)
     geom.extrude(s, [0, 0, z], num_layers=z_layers)
     mesh = pygmsh.generate_mesh(geom)
@@ -22,7 +23,7 @@ def test():
     ref_vol = x * y * z
     assert abs(compute_volume(mesh) - ref_vol) < 1.0e-2 * ref_vol
 
-    # Each grid-cell from layered extrusion will result in 6 tetrahedrons.
+    # Each grid-cell from layered extrusion will result in 6 tetrahedra.
     ref_tetras = 6 * x_layers * y_layers * z_layers
     assert len(mesh.cells_dict["tetra"]) == ref_tetras
 
