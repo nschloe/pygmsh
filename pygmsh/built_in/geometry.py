@@ -3,7 +3,6 @@ import warnings
 import gmsh
 import numpy
 
-from ..__about__ import __version__
 from ..helpers import get_gmsh_major_version
 from .bspline import Bspline
 from .circle_arc import CircleArc
@@ -106,9 +105,7 @@ class Geometry:
         return Point(*args, **kwargs)
 
     def add_spline(self, *args, **kwargs):
-        p = Spline(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+        return Spline(*args, **kwargs)
 
     def add_surface(self, *args, **kwargs):
         s = Surface(*args, api_level=self._gmsh_major(), **kwargs)

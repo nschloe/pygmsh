@@ -1,3 +1,5 @@
+import gmsh
+
 from .line_base import LineBase
 from .point import Point
 
@@ -21,12 +23,4 @@ class Spline(LineBase):
 
         self.points = points
 
-        self.code = "\n".join(
-            [
-                f"{self.id} = newl;",
-                "Spline({}) = {{{}}};".format(
-                    self.id, ", ".join([c.id for c in self.points])
-                ),
-            ]
-        )
-        return
+        self._ID = gmsh.model.geo.addSpline([c._ID for c in self.points])
