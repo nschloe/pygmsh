@@ -65,9 +65,7 @@ class Geometry:
     # in which case the circle code never gets added to geom.
 
     def add_bspline(self, *args, **kwargs):
-        p = Bspline(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+        return Bspline(*args, **kwargs)
 
     def add_circle_arc(self, *args, **kwargs):
         return CircleArc(*args, **kwargs)

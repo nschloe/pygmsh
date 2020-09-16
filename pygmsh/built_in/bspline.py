@@ -1,6 +1,8 @@
 from .line_base import LineBase
 from .point import Point
 
+import gmsh
+
 
 class Bspline(LineBase):
     """
@@ -21,12 +23,4 @@ class Bspline(LineBase):
 
         self.control_points = control_points
 
-        self.code = "\n".join(
-            [
-                f"{self.id} = newl;",
-                "BSpline({}) = {{{}}};".format(
-                    self.id, ", ".join([c.id for c in self.control_points])
-                ),
-            ]
-        )
-        return
+        self._ID = gmsh.model.geo.addBSpline([c._ID for c in self.control_points])
