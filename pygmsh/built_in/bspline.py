@@ -4,9 +4,9 @@ from .line_base import LineBase
 from .point import Point
 
 
-class Bspline(LineBase):
+class BSpline(LineBase):
     """
-    Creates a BSpline.
+    Creates a B-spline.
 
     Parameters
     ----------
@@ -15,12 +15,9 @@ class Bspline(LineBase):
     """
 
     def __init__(self, control_points):
-        super().__init__()
-
         for c in control_points:
             assert isinstance(c, Point)
         assert len(control_points) > 1
 
-        self.control_points = control_points
-
-        self._ID = gmsh.model.geo.addBSpline([c._ID for c in self.control_points])
+        id0 = gmsh.model.geo.addBSpline([c._ID for c in control_points])
+        super().__init__(id0, control_points)

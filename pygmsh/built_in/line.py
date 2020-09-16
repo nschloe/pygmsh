@@ -24,10 +24,7 @@ class Line(LineBase):
     dimension = 1
 
     def __init__(self, p0, p1):
-        super().__init__()
-
         assert isinstance(p0, Point)
         assert isinstance(p1, Point)
-        self.points = [p0, p1]
-
-        self._ID = gmsh.model.geo.addLine(p0._ID, p1._ID)
+        id0 = gmsh.model.geo.addLine(p0._ID, p1._ID)
+        super().__init__(id0, [p0, p1])

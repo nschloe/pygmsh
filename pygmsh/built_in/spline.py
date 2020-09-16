@@ -15,12 +15,9 @@ class Spline(LineBase):
     """
 
     def __init__(self, points):
-        super().__init__()
-
         for c in points:
             assert isinstance(c, Point)
         assert len(points) > 1
 
-        self.points = points
-
-        self._ID = gmsh.model.geo.addSpline([c._ID for c in self.points])
+        id0 = gmsh.model.geo.addSpline([c._ID for c in points])
+        super().__init__(id0, points)

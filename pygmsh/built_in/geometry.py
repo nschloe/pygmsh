@@ -4,7 +4,7 @@ import gmsh
 import numpy
 
 from ..helpers import get_gmsh_major_version
-from .bspline import Bspline
+from .bspline import BSpline
 from .circle_arc import CircleArc
 from .define_constant import DefineConstant
 from .dummy import Dummy
@@ -60,7 +60,7 @@ class Geometry:
     # in which case the circle code never gets added to geom.
 
     def add_bspline(self, *args, **kwargs):
-        return Bspline(*args, **kwargs)
+        return BSpline(*args, **kwargs)
 
     def add_circle_arc(self, *args, **kwargs):
         return CircleArc(*args, **kwargs)
