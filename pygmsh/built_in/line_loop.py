@@ -26,7 +26,10 @@ class LineLoop:
     def __init__(self, lines):
         self.lines = lines
         self._ID = gmsh.model.geo.addCurveLoop([l._ID for l in lines])
-        self.id = f"ll{self._ID}"
 
     def __len__(self):
         return len(self.lines)
+
+    def __repr__(self):
+        lines = ", ".join([str(l._ID) for l in self.lines])
+        return f"<pygmsh LineLoop object, ID {self._ID}, lines ({lines})>"
