@@ -1,6 +1,8 @@
 from .line_loop import LineLoop
 from .surface_base import SurfaceBase
 
+import gmsh
+
 
 class PlaneSurface(SurfaceBase):
     """
@@ -42,13 +44,5 @@ class PlaneSurface(SurfaceBase):
         self.holes = [h if isinstance(h, LineLoop) else h.line_loop for h in holes]
 
         line_loops = [self.line_loop] + self.holes
-        self.code = "\n".join(
-            [
-                f"{self.id} = news;",
-                "Plane Surface({}) = {{{}}};".format(
-                    self.id, ",".join([ll.id for ll in line_loops])
-                ),
-            ]
-        )
+        self._ID = gmsh.model.geo.addPlaneSurface([ll._ID for ll in line_loops])
         self.num_edges = len(self.line_loop) + sum(len(h) for h in self.holes)
-        return

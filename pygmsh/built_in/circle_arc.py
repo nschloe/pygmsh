@@ -1,6 +1,8 @@
 from .line_base import LineBase
 from .point import Point
 
+import gmsh
+
 
 class CircleArc(LineBase):
     """
@@ -26,13 +28,4 @@ class CircleArc(LineBase):
         self.start = start
         self.center = center
         self.end = end
-
-        self.code = "\n".join(
-            [
-                f"{self.id} = newl;",
-                "Circle({}) = {{{}, {}, {}}};".format(
-                    self.id, start.id, center.id, end.id
-                ),
-            ]
-        )
-        return
+        self._ID = gmsh.model.geo.addCircleArc(start._ID, center._ID, end._ID)

@@ -1,3 +1,6 @@
+import gmsh
+
+
 class LineLoop:
     """
     Increments the Line ID every time a new object is created that inherits
@@ -18,24 +21,12 @@ class LineLoop:
     actually reorder the list internally to create a consistent loop.
     """
 
-    _ID = 0
     dimension = 1
 
     def __init__(self, lines):
         self.lines = lines
-
-        self.id = f"ll{LineLoop._ID}"
-        LineLoop._ID += 1
-
-        self.code = "\n".join(
-            [
-                f"{self.id} = newll;",
-                "Line Loop({}) = {{{}}};".format(
-                    self.id, ", ".join([l.id for l in lines])
-                ),
-            ]
-        )
-        return
+        self._ID = gmsh.model.geo.addCurveLoop([l._ID for l in lines])
+        self.id = f"ll{self._ID}"
 
     def __len__(self):
         return len(self.lines)

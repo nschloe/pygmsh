@@ -2,6 +2,7 @@ import warnings
 
 import numpy
 
+import gmsh
 from ..__about__ import __version__
 from ..helpers import get_gmsh_major_version
 from .bspline import Bspline
@@ -34,17 +35,15 @@ class Geometry:
         self._FIELD_ID = 0
         self._GMSH_MAJOR = gmsh_major_version
         self._TAKEN_PHYSICALGROUP_IDS = []
-        self._GMSH_CODE = [f"// This code was created by pygmsh v{__version__}."]
-        return
+        self._COMPOUND_ENTITIES = []
+
+        gmsh.initialize()
+        gmsh.model.add("pygmsh model")
 
     def _gmsh_major(self):
         if self._GMSH_MAJOR is None:
             self._GMSH_MAJOR = get_gmsh_major_version()
         return self._GMSH_MAJOR
-
-    def get_code(self):
-        """Returns properly formatted Gmsh code."""
-        return "\n".join(self._GMSH_CODE)
 
     # All of the add_* method below could be replaced by
     #
@@ -70,9 +69,7 @@ class Geometry:
         return p
 
     def add_circle_arc(self, *args, **kwargs):
-        p = CircleArc(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+        return CircleArc(*args, **kwargs)
 
     def add_compound_line(self, *args, **kwargs):
         assert self._gmsh_major() == 3
@@ -103,19 +100,13 @@ class Geometry:
         return p
 
     def add_line_loop(self, *args, **kwargs):
-        p = LineLoop(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+        return LineLoop(*args, **kwargs)
 
     def add_plane_surface(self, *args, **kwargs):
-        p = PlaneSurface(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+        return PlaneSurface(*args, **kwargs)
 
     def add_point(self, *args, **kwargs):
-        p = Point(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+        return Point(*args, **kwargs)
 
     def add_spline(self, *args, **kwargs):
         p = Spline(*args, **kwargs)
@@ -316,23 +307,19 @@ class Geometry:
         p = [self.add_point(x, lcar=lcar) for x in X]
 
         # Define the circle arcs.
-        arcs = [self.add_circle_arc(p[k], p[0], p[k + 1]) for k in range(1, len(p) - 1)]
-        arcs.append(self.add_circle_arc(p[-1], p[0], p[1]))
+        arcs = [
+            self.add_circle_arc(p[k], p[0], p[k + 1]) for k in range(1, len(p) - 1)
+        ] + [self.add_circle_arc(p[-1], p[0], p[1])]
 
         if compound:
-            if self._gmsh_major() == 3:
-                arcs = [self.add_compound_line(arcs)]
-            elif self._gmsh_major() == 4:
-                self.add_raw_code(
-                    "Compound Curve{{{}}};".format(",".join([arc.id for arc in arcs]))
-                )
+            self._COMPOUND_ENTITIES.append((1, [arc._ID for arc in arcs]))
 
         line_loop = self.add_line_loop(arcs)
 
         if make_surface:
             plane_surface = self.add_plane_surface(line_loop, holes)
-            if compound and self._gmsh_major() == 4:
-                self.add_raw_code(f"Compound Surface{{{plane_surface.id}}};")
+            if compound:
+                self._COMPOUND_ENTITIES.append((2, [plane_surface._ID]))
         else:
             plane_surface = None
 
@@ -552,7 +539,6 @@ class Geometry:
 
     def add_comment(self, string):
         self._GMSH_CODE.append("// " + string)
-        return
 
     def add_raw_code(self, string_or_list):
         """Add raw Gmsh code."""
@@ -562,7 +548,6 @@ class Geometry:
             assert isinstance(string_or_list, list)
             for string in string_or_list:
                 self._GMSH_CODE.append(string)
-        return
 
     def add_rectangle(
         self, xmin, xmax, ymin, ymax, z, lcar=None, holes=None, make_surface=True
