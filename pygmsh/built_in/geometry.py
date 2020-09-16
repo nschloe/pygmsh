@@ -158,9 +158,7 @@ class Geometry:
         if not isinstance(entities, list):
             entities = [entities]
 
-        d = {0: "Point", 1: "Line", 2: "Surface", 3: "Volume"}
-        tpe = d[entities[0].dimension]
-
+        dim = entities[0].dimension
         for e in entities:
             assert isinstance(
                 e,
@@ -177,32 +175,26 @@ class Geometry:
             ), "Can add physical groups only for Points, Lines, Surfaces, Volumes, not {}.".format(
                 type(e)
             )
-            assert d[e.dimension] == tpe
+            assert e.dimension == dim
 
         label = self._new_physical_group(label)
-        self._GMSH_CODE.append(
-            "Physical {}({}) = {{{}}};".format(
-                tpe, label, ", ".join([e.id for e in entities])
-            )
-        )
-        return
+        tag = gmsh.model.addPhysicalGroup(dim, [e._ID for e in entities])
+        if label is not None:
+            gmsh.model.setPhysicalName(dim, tag, label)
 
     def add_physical_point(self, points, label=None):
         warnings.warn("add_physical_point() is deprecated. use add_physical() instead.")
         self.add_physical(points, label=label)
-        return
 
     def add_physical_line(self, lines, label=None):
         warnings.warn("add_physical_line() is deprecated. use add_physical() instead.")
         self.add_physical(lines, label=label)
-        return
 
     def add_physical_surface(self, surfaces, label=None):
         warnings.warn(
             "add_physical_surface() is deprecated. use add_physical() instead."
         )
         self.add_physical(surfaces, label=label)
-        return
 
     def add_physical_volume(self, volumes, label=None):
         warnings.warn(

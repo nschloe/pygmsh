@@ -25,10 +25,6 @@ def test(lcar=0.3):
     l2 = geom.add_line(p8, p6)
     ll = geom.add_line_loop([c0, c1, c2, c3, l1, l2])
 
-    # test adding raw code
-    geom.add_raw_code("// dummy")
-    geom.add_raw_code(["// dummy"])
-
     pacman = geom.add_plane_surface(ll)
 
     # test setting physical groups
