@@ -34,6 +34,7 @@ class Surface:
         self.line_loop = line_loop
 
         self.id = f"rs{Surface._ID}"
+        self.num_edges = len(line_loop)
         Surface._ID += 1
 
         # `Ruled Surface` was deprecated in Gmsh 3 in favor of `Surface`.
@@ -42,5 +43,3 @@ class Surface:
         self.code = "\n".join(
             [f"{self.id} = news;", f"{name}({self.id}) = {{{self.line_loop.id}}};"]
         )
-        self.num_edges = len(line_loop)
-        return
