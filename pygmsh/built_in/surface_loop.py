@@ -1,3 +1,6 @@
+import gmsh
+
+
 class SurfaceLoop:
     """
     Creates a surface loop (a shell).
@@ -20,21 +23,9 @@ class SurfaceLoop:
     negative identification numbers to specify reverse orientation).
     """
 
-    _ID = 0
     dimension = 2
 
     def __init__(self, surfaces):
         self.surfaces = surfaces
-
-        self.id = f"sl{SurfaceLoop._ID}"
-        SurfaceLoop._ID += 1
-
-        self.code = "\n".join(
-            [
-                f"{self.id} = news;",
-                "Surface Loop({}) = {{{}}};".format(
-                    self.id, ",".join([s.id for s in surfaces])
-                ),
-            ]
-        )
-        return
+        self._ID = gmsh.model.geo.addSurfaceLoop([s._ID for s in surfaces])
+        self.id = self._ID

@@ -112,14 +112,10 @@ class Geometry:
         return s
 
     def add_surface_loop(self, *args, **kwargs):
-        e = SurfaceLoop(*args, **kwargs)
-        self._GMSH_CODE.append(e.code)
-        return e
+        return SurfaceLoop(*args, **kwargs)
 
     def add_volume(self, *args, **kwargs):
-        e = Volume(*args, **kwargs)
-        self._GMSH_CODE.append(e.code)
-        return e
+        return Volume(*args, **kwargs)
 
     def define_constant(self, *args, **kwargs):
         e = DefineConstant(*args, **kwargs)
@@ -722,8 +718,6 @@ class Geometry:
         :param irad: inner radius of the torus
         :param orad: outer radius of the torus
         """
-        self.add_comment("Torus")
-
         # Add circle
         x0t = numpy.dot(R, numpy.array([0.0, orad, 0.0]))
         # Get circles in y-z plane
@@ -742,10 +736,9 @@ class Geometry:
         # for the following Extrude() step.  The second [1] entry of the array
         # is the surface that was created by the extrusion.
         previous = c.line_loop.lines
-        angle = "2*Pi/3"
+        angle = 2 * numpy.pi / 3
         all_surfaces = []
         for i in range(3):
-            self.add_comment("Round no. {}".format(i + 1))
             for k, p in enumerate(previous):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
                 # ...
@@ -762,11 +755,6 @@ class Geometry:
 
         surface_loop = self.add_surface_loop(all_surfaces)
         vol = self.add_volume(surface_loop)
-
-        # The newline at the end is essential:
-        # If a GEO file doesn't end in a newline, Gmsh will report a syntax
-        # error.
-        self.add_comment("\n")
         return vol
 
     def _add_torus_extrude_circle(
