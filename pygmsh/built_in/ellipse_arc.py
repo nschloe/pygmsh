@@ -1,6 +1,8 @@
 from .line_base import LineBase
 from .point import Point
 
+import gmsh
+
 
 class EllipseArc(LineBase):
     """
@@ -31,12 +33,4 @@ class EllipseArc(LineBase):
         self.point_on_major_axis = point_on_major_axis
         self.end = end
 
-        self.code = "\n".join(
-            [
-                f"{self.id} = newl;",
-                "Ellipse({}) = {{{}, {}, {}, {}}};".format(
-                    self.id, start.id, center.id, point_on_major_axis.id, end.id
-                ),
-            ]
-        )
-        return
+        self._ID = gmsh.model.geo.addEllipseArc(start._ID, center._ID, point_on_major_axis._ID, end._ID)

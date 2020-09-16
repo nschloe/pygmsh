@@ -66,9 +66,7 @@ class Geometry:
         return CircleArc(*args, **kwargs)
 
     def add_ellipse_arc(self, *args, **kwargs):
-        p = EllipseArc(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+        return EllipseArc(*args, **kwargs)
 
     def add_line(self, *args, **kwargs):
         return Line(*args, **kwargs)
@@ -86,9 +84,7 @@ class Geometry:
         return Spline(*args, **kwargs)
 
     def add_surface(self, *args, **kwargs):
-        s = Surface(*args, api_level=self._gmsh_major(), **kwargs)
-        self._GMSH_CODE.append(s.code)
-        return s
+        return Surface(*args, **kwargs)
 
     def add_surface_loop(self, *args, **kwargs):
         return SurfaceLoop(*args, **kwargs)
@@ -324,6 +320,7 @@ class Geometry:
         point_on_axis=None,
         angle=None,
         num_layers=None,
+        heights=None,
         recombine=False,
     ):
         """Extrusion (translation + rotation) of any entity along a given
@@ -331,21 +328,21 @@ class Geometry:
         the entities is not provided, this method will produce only translation or
         rotation.
         """
-        if isinstance(input_entity, (PointBase, LineBase, SurfaceBase, Dummy)):
-            eid = input_entity._ID
-            dim = input_entity.dimension
-        else:
-            assert hasattr(
-                input_entity, "surface"
-            ), f"Illegal extrude entity {input_entity}."
-            eid = input_entity.surface._ID
-            dim = input_entity.surface.dimension
+        eid = input_entity._ID
+        dim = input_entity.dimension
 
         assert dim is not None
 
-        # TODO get this to work
-        # <https://gitlab.onelab.info/gmsh/gmsh/-/issues/990#note_11180>
-        heights = [] if num_layers is None else numpy.linspace(0.0, 1.0, num_layers + 2)
+        if isinstance(num_layers, int):
+            num_layers = [num_layers]
+        if num_layers is None:
+            num_layers = []
+            heights = []
+        else:
+            if heights is None:
+                heights = []
+            else:
+                assert len(num_layers) == len(heights)
 
         if translation_axis is not None and rotation_axis is None:
             out_dim_tags = gmsh.model.geo.extrude(
@@ -353,6 +350,7 @@ class Geometry:
                 translation_axis[0],
                 translation_axis[1],
                 translation_axis[2],
+                numElements=num_layers,
                 heights=heights,
                 recombine=recombine,
             )
@@ -367,6 +365,7 @@ class Geometry:
                 rotation_axis[1],
                 rotation_axis[2],
                 angle,
+                numElements=num_layers,
                 heights=heights,
                 recombine=recombine,
             )
@@ -385,6 +384,7 @@ class Geometry:
                 rotation_axis[1],
                 rotation_axis[2],
                 angle,
+                numElements=num_layers,
                 heights=heights,
                 recombine=recombine,
             )

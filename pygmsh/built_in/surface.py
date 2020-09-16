@@ -1,5 +1,7 @@
 from .line_loop import LineLoop
 
+import gmsh
+
 
 class Surface:
     """
@@ -28,7 +30,7 @@ class Surface:
     num_edges = 0
     dimension = 2
 
-    def __init__(self, line_loop, api_level=2):
+    def __init__(self, line_loop):
         assert isinstance(line_loop, LineLoop)
 
         self.line_loop = line_loop
@@ -38,8 +40,8 @@ class Surface:
         Surface._ID += 1
 
         # `Ruled Surface` was deprecated in Gmsh 3 in favor of `Surface`.
-        name = "Surface" if api_level > 2 else "Ruled Surface"
-
-        self.code = "\n".join(
-            [f"{self.id} = news;", f"{name}({self.id}) = {{{self.line_loop.id}}};"]
-        )
+        # name = "Surface" if api_level > 2 else "Ruled Surface"
+        # self.code = "\n".join(
+        #     [f"{self.id} = news;", f"{name}({self.id}) = {{{self.line_loop.id}}};"]
+        # )
+        self._ID = gmsh.model.geo.addSurfaceFilling([self.line_loop._ID])
