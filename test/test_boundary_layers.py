@@ -19,23 +19,19 @@ def test():
 
     field0 = geom.add_boundary_layer(
         edges_list=[poly.curve_loop.curves[0]],
-        hfar=0.1,
-        hwall_n=0.01,
-        ratio=1.1,
-        thickness=0.2,
-        anisomax=100.0,
+        lcmin=0.01,
+        lcmax=0.1,
+        distmin=0.0,
+        distmax=0.2,
     )
-
     field1 = geom.add_boundary_layer(
         nodes_list=[poly.curve_loop.curves[1].points[1]],
-        hfar=0.1,
-        hwall_n=0.01,
-        ratio=1.1,
-        thickness=0.2,
-        anisomax=100.0,
+        lcmin=0.01,
+        lcmax=0.1,
+        distmin=0.0,
+        distmax=0.2,
     )
-
-    geom.set_boundary_layers([field0, field1])
+    geom.set_background_mesh([field0, field1])
 
     ref = 4.0
     mesh = pygmsh.generate_mesh(geom)

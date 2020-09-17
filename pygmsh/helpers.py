@@ -178,6 +178,9 @@ def generate_mesh(  # noqa: C901
 
     gmsh.model.geo.synchronize()
 
+    for item in geo_object._AFTER_SYNC_QUEUE:
+        item.exec()
+
     # set compound entities after sync
     for c in geo_object._COMPOUND_ENTITIES:
         gmsh.model.mesh.setCompound(*c)

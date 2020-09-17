@@ -31,6 +31,7 @@ class Geometry:
         self._TAKEN_PHYSICALGROUP_IDS = []
         self._COMPOUND_ENTITIES = []
         self._RECOMBINE_ENTITIES = []
+        self._AFTER_SYNC_QUEUE = []
 
         gmsh.initialize()
         gmsh.model.add("pygmsh model")
@@ -382,77 +383,19 @@ class Geometry:
                 heights=heights,
                 recombine=recombine,
             )
-
         top = Dummy(*out_dim_tags[0])
         extruded = Dummy(*out_dim_tags[1])
         lateral = [Dummy(*e) for e in out_dim_tags[1:]]
-
         return top, extruded, lateral
 
-    def add_boundary_layer(
-        self,
-        edges_list=None,
-        faces_list=None,
-        nodes_list=None,
-        anisomax=None,
-        hfar=None,
-        hwall_n=None,
-        ratio=None,
-        thickness=None,
-    ):
-        # Don't use [] as default argument, cf.
-        # <https://stackoverflow.com/a/113198/353337>
-        if edges_list is None:
-            edges_list = []
-        if faces_list is None:
-            faces_list = []
-        if nodes_list is None:
-            nodes_list = []
+    def add_boundary_layer(self, *args, **kwargs):
+        layer = BoundaryLayer(*args, **kwargs)
+        self._AFTER_SYNC_QUEUE.append(layer)
+        return layer
 
-        self._FIELD_ID += 1
-        name = f"field{self._FIELD_ID}"
-
-        self._GMSH_CODE.append(f"{name} = newf;")
-
-        self._GMSH_CODE.append(f"Field[{name}] = BoundaryLayer;")
-        if edges_list:
-            self._GMSH_CODE.append(
-                "Field[{}].EdgesList = {{{}}};".format(
-                    name, ",".join([e.id for e in edges_list])
-                )
-            )
-            # edge nodes must be specified, too, cf.
-            # <https://gitlab.onelab.info/gmsh/gmsh/-/issues/812#note_9454>
-            nodes = list(set([p.id for e in edges_list for p in e.points]))
-            self._GMSH_CODE.append(
-                "Field[{}].NodesList = {{{}}};".format(name, ",".join(nodes))
-            )
-        if faces_list:
-            self._GMSH_CODE.append(
-                "Field[{}].FacesList = {{{}}};".format(name, ",".join(faces_list))
-            )
-        if nodes_list:
-            self._GMSH_CODE.append(
-                "Field[{}].NodesList = {{{}}};".format(
-                    name, ",".join([n.id for n in nodes_list])
-                )
-            )
-        if hfar:
-            self._GMSH_CODE.append(f"Field[{name}].hfar= {hfar!r};")
-        if hwall_n:
-            self._GMSH_CODE.append(f"Field[{name}].hwall_n= {hwall_n!r};")
-        if ratio:
-            self._GMSH_CODE.append(f"Field[{name}].ratio= {ratio!r};")
-        if thickness:
-            self._GMSH_CODE.append(f"Field[{name}].thickness= {thickness!r};")
-        if anisomax:
-            self._GMSH_CODE.append(f"Field[{name}].AnisoMax= {anisomax!r};")
-        return name
-
-    def set_boundary_layers(self, fields):
-        fields_string = ",".join(fields)
-        self._GMSH_CODE.append(f"BoundaryLayer Field = {{{fields_string}}};")
-        return
+    def set_background_mesh(self, *args, **kwargs):
+        setter = SetBackgroundMesh(*args, **kwargs)
+        self._AFTER_SYNC_QUEUE.append(setter)
 
     def add_raw_code(self, string_or_list):
         """Add raw Gmsh code."""
@@ -969,3 +912,66 @@ class Geometry:
 
         self._GMSH_CODE.append(f"{entity} In Volume{{{volume.id}}};")
         return
+
+
+class BoundaryLayer:
+    def __init__(
+        self,
+        lcmin,
+        lcmax,
+        distmin,
+        distmax,
+        edges_list=None,
+        faces_list=None,
+        nodes_list=None,
+    ):
+        self.lcmin = lcmin
+        self.lcmax = lcmax
+        self.distmin = distmin
+        self.distmax = distmax
+        # Don't use [] as default argument, cf.
+        # <https://stackoverflow.com/a/113198/353337>
+        self.edges_list = edges_list if edges_list else []
+        self.faces_list = faces_list if faces_list else []
+        self.nodes_list = nodes_list if nodes_list else []
+
+    def exec(self):
+        tag1 = gmsh.model.mesh.field.add("Distance")
+
+        if self.edges_list:
+            gmsh.model.mesh.field.setNumbers(
+                tag1, "EdgesList", [e._ID for e in self.edges_list]
+            )
+            # edge nodes must be specified, too, cf.
+            # <https://gitlab.onelab.info/gmsh/gmsh/-/issues/812#note_9454>
+            nodes = list(set([p for e in self.edges_list for p in e.points]))
+            gmsh.model.mesh.field.setNumbers(tag1, "NodesList", [n._ID for n in nodes])
+        if self.faces_list:
+            gmsh.model.mesh.field.setNumbers(
+                tag1, "FacesList", [f._ID for f in self.faces_list]
+            )
+        if self.nodes_list:
+            gmsh.model.mesh.field.setNumbers(
+                tag1, "NodesList", [n._ID for n in self.nodes_list]
+            )
+
+        tag2 = gmsh.model.mesh.field.add("Threshold")
+        gmsh.model.mesh.field.setNumber(tag2, "IField", tag1)
+        gmsh.model.mesh.field.setNumber(tag2, "LcMin", self.lcmin)
+        gmsh.model.mesh.field.setNumber(tag2, "LcMax", self.lcmax)
+        gmsh.model.mesh.field.setNumber(tag2, "DistMin", self.distmin)
+        gmsh.model.mesh.field.setNumber(tag2, "DistMax", self.distmax)
+        self.tag = tag2
+
+
+class SetBackgroundMesh:
+    def __init__(self, fields, operator="Min"):
+        self.fields = fields
+        self.operator = operator
+
+    def exec(self):
+        tag = gmsh.model.mesh.field.add(self.operator)
+        gmsh.model.mesh.field.setNumbers(
+            tag, "FieldsList", [f.tag for f in self.fields]
+        )
+        gmsh.model.mesh.field.setAsBackgroundMesh(tag)
