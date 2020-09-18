@@ -5,7 +5,7 @@ import pytest
 
 this_dir = pathlib.Path(__file__).resolve().parent
 
-
+@pytest.mark.skip()
 @pytest.mark.parametrize(
     "string, lineno",
     exdown.extract(this_dir.parent / "README.md", syntax_filter="python"),

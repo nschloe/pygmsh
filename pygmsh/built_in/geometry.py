@@ -134,6 +134,7 @@ class Geometry:
                     SurfaceBase,
                     Volume,
                     VolumeBase,
+                    Dummy,
                 ),
             ), "Can add physical groups only for Points, Lines, Surfaces, Volumes, not {}.".format(
                 type(e)

@@ -56,7 +56,7 @@ poly = geom.add_polygon([
 axis = [0, 0, 1]
 
 geom.extrude(
-    poly,
+    poly.surface,
     translation_axis=axis,
     rotation_axis=axis,
     point_on_axis=[0, 0, 0],
