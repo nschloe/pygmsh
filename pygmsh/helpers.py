@@ -97,7 +97,6 @@ def generate_mesh(  # noqa: C901
     gmsh_path=None,
     extra_gmsh_arguments=None,
     # for debugging purposes:
-    geo_filename=None,
     msh_filename=None,
     mesh_file_type="msh",
 ):

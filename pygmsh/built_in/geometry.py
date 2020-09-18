@@ -836,8 +836,9 @@ class Geometry:
 
         Changes the input object.
         """
-        print(input_entity)
-        gmsh.model.geo.rotate([input_entity._ID], *point, *axis, angle)
+        gmsh.model.geo.rotate(
+            [(input_entity.dimension, input_entity._ID)], *point, *axis, angle
+        )
 
     def symmetry(self, input_entity, coefficients, duplicate=True):
         """Transforms all elementary entities symmetrically to a plane. The vector
