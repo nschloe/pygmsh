@@ -458,9 +458,6 @@ class Geometry:
         if holes:
             assert with_volume
 
-        print(x0)
-        print(radii)
-
         # Add points.
         p = [
             self.add_point(x0, lcar=lcar),
@@ -503,32 +500,13 @@ class Geometry:
             self.add_curve_loop([c[1], c[6], c[11]]),
         ]
         # Create a surface for each line loop.
-        print()
-        for pp in p:
-            print(pp)
-        print()
-        for cc in c:
-            print(cc)
-        print()
-        for l in ll:
-            print(l)
-            self.add_surface(l)
-
-        exit(1)
         s = [self.add_surface(l) for l in ll]
 
         # Combine the surfaces to avoid seams
-        if self._gmsh_major() == 3:
-            s = [self.add_compound_surface(s[:4]), self.add_compound_surface(s[4:])]
-        else:
-            assert self._gmsh_major() == 4
-            # <https://gitlab.onelab.info/gmsh/gmsh/issues/507>
-            self.add_raw_code(
-                "Compound Surface{{{}}};".format(",".join([surf.id for surf in s[:4]]))
-            )
-            self.add_raw_code(
-                "Compound Surface{{{}}};".format(",".join([surf.id for surf in s[4:]]))
-            )
+        # <https://gitlab.onelab.info/gmsh/gmsh/issues/507>
+        # Cannot enable those yet, <https://gitlab.onelab.info/gmsh/gmsh/-/issues/995>
+        # self._COMPOUND_ENTITIES.append((2, [surf._ID for surf in s[:4]]))
+        # self._COMPOUND_ENTITIES.append((2, [surf._ID for surf in s[4:]]))
 
         # Create the surface loop.
         surface_loop = self.add_surface_loop(s)
