@@ -31,6 +31,7 @@ class Geometry:
         self._TAKEN_PHYSICALGROUP_IDS = []
         self._COMPOUND_ENTITIES = []
         self._RECOMBINE_ENTITIES = []
+        self._EMBED_QUEUE = []
         self._AFTER_SYNC_QUEUE = []
 
         gmsh.initialize()
@@ -873,17 +874,13 @@ class Geometry:
         """Embed the point(s) or curve(s) in the given surface. The surface mesh will
         conform to the mesh of the point(s) or curves(s).
         """
-        d = {0: "Point", 1: "Line"}
-        entity = "{}{{{}}}".format(d[input_entity.dimension], input_entity.id)
-        self._GMSH_CODE.append(f"{entity} In Surface{{{surface.id}}};")
+        self._EMBED_QUEUE.append((input_entity, surface))
 
     def in_volume(self, input_entity, volume):
         """Embed the point(s)/curve(s)/surface(s) in the given volume. The volume mesh
         will conform to the mesh of the input entities.
         """
-        d = {0: "Point", 1: "Line", 2: "Surface"}
-        entity = "{}{{{}}}".format(d[input_entity.dimension], input_entity.id)
-        self._GMSH_CODE.append(f"{entity} In Volume{{{volume.id}}};")
+        self._EMBED_QUEUE.append((input_entity, volume))
 
 
 class BoundaryLayer:

@@ -181,6 +181,9 @@ def generate_mesh(  # noqa: C901
     for item in geo_object._AFTER_SYNC_QUEUE:
         item.exec()
 
+    for item, host in geo_object._EMBED_QUEUE:
+        gmsh.model.mesh.embed(item.dimension, [item._ID], host.dimension, host._ID)
+
     # set compound entities after sync
     for c in geo_object._COMPOUND_ENTITIES:
         gmsh.model.mesh.setCompound(*c)
@@ -337,6 +340,7 @@ def generate_mesh(  # noqa: C901
     # mesh = meshio.Mesh(points, d)
 
     gmsh.write(msh_filename)
+    print(msh_filename)
     mesh = meshio.read(msh_filename)
 
     if remove_lower_dim_cells:

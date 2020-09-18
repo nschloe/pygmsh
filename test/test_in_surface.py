@@ -1,11 +1,8 @@
-import pytest
 from helpers import compute_volume
 
 import pygmsh
 
 
-# todo enable <https://gitlab.onelab.info/gmsh/gmsh/-/issues/996>
-@pytest.mark.skip()
 def test():
     geom = pygmsh.built_in.Geometry()
 
