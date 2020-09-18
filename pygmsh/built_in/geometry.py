@@ -488,6 +488,7 @@ class Geometry:
         ]
 
         # Add surfaces (1/8th of the ball surface).
+        # Make sure the loops are oriented outwards!
         ll = [
             # one half
             self.add_curve_loop([c[4], c[9], c[3]]),
@@ -496,18 +497,19 @@ class Geometry:
             self.add_curve_loop([-c[5], -c[8], c[1]]),
             # the other half
             self.add_curve_loop([c[7], -c[3], c[10]]),
-            self.add_curve_loop([-c[11], c[7], c[0]]),
+            self.add_curve_loop([c[11], -c[0], -c[7]]),
             self.add_curve_loop([-c[10], -c[2], c[6]]),
-            self.add_curve_loop([c[1], c[6], c[11]]),
+            self.add_curve_loop([-c[1], -c[11], -c[6]]),
         ]
+
         # Create a surface for each line loop.
         s = [self.add_surface(l) for l in ll]
 
         # Combine the surfaces to avoid seams
         # <https://gitlab.onelab.info/gmsh/gmsh/issues/507>
         # Cannot enable those yet, <https://gitlab.onelab.info/gmsh/gmsh/-/issues/995>
-        # self._COMPOUND_ENTITIES.append((2, [surf._ID for surf in s[:4]]))
-        # self._COMPOUND_ENTITIES.append((2, [surf._ID for surf in s[4:]]))
+        self._COMPOUND_ENTITIES.append((2, [surf._ID for surf in s[:4]]))
+        self._COMPOUND_ENTITIES.append((2, [surf._ID for surf in s[4:]]))
 
         # Create the surface loop.
         surface_loop = self.add_surface_loop(s)
