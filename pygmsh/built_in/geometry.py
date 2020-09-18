@@ -180,17 +180,15 @@ class Geometry:
             assert isinstance(
                 surface, (PlaneSurface, Surface, self.Polygon)
             ), "we can create transfinite lines only if we have a line loop"
-            self.set_transfinite_lines(
-                [surface.curve_loop.curves[0], surface.curve_loop.curves[2]], size[0]
-            )
-            self.set_transfinite_lines(
-                [surface.curve_loop.curves[1], surface.curve_loop.curves[3]], size[1]
-            )
+            cl = surface.curve_loop
+            self.set_transfinite_curve(cl.curves[0], size[0], "Progression", 1.0)
+            self.set_transfinite_curve(cl.curves[2], size[0], "Progression", 1.0)
+            self.set_transfinite_curve(cl.curves[1], size[1], "Progression", 1.0)
+            self.set_transfinite_curve(cl.curves[3], size[1], "Progression", 1.0)
         code = f"Transfinite Surface {{{surface.id}}}"
         if orientation is not None:
             code += " " + orientation
         self._GMSH_CODE.append(code + ";")
-        return
 
     def set_recombined_surfaces(self, surfaces):
         for i, surface in enumerate(surfaces):
@@ -638,7 +636,7 @@ class Geometry:
         # the entity that has been extruded at the far end. This can be used
         # for the following Extrude() step.  The second [1] entry of the array
         # is the surface that was created by the extrusion.
-        previous = c.curve_loop.lines
+        previous = c.curve_loop.curves
         angle = 2 * numpy.pi / 3
         all_surfaces = []
         for i in range(3):
