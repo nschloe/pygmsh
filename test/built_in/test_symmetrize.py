@@ -10,7 +10,8 @@ def test():
         [[0.0, 0.5, 0.0], [1.0, 0.5, 0.0], [1.0, 1.0, 0.0], [0.0, 1.0, 0.0]], lcar=0.05
     )
 
-    geom.symmetry(poly, [0.0, 1.0, 0.0, -0.5])
+    cp = geom.copy(poly.surface)
+    geom.symmetrize(cp, [0.0, 1.0, 0.0, -0.5])
 
     mesh = pygmsh.generate_mesh(geom)
     ref = 1.0

@@ -840,20 +840,17 @@ class Geometry:
             [(input_entity.dimension, input_entity._ID)], *point, *axis, angle
         )
 
-    def symmetry(self, input_entity, coefficients, duplicate=True):
+    def copy(self, input_entity):
+        dim_tag = gmsh.model.geo.copy([(input_entity.dimension, input_entity._ID)])
+        assert len(dim_tag) == 1
+        return Dummy(*dim_tag[0])
+
+    def symmetrize(self, input_entity, coefficients):
         """Transforms all elementary entities symmetrically to a plane. The vector
         should contain four expressions giving the coefficients of the plane's equation.
         """
-        d = {1: "Line", 2: "Surface", 3: "Volume"}
-        entity = "{}{{{}}};".format(d[input_entity.dimension], input_entity.id)
-
-        if duplicate:
-            entity = f"Duplicata{{{entity}}}"
-
-        self._GMSH_CODE.append(
-            "Symmetry {{{}}} {{{}}}".format(
-                ", ".join([str(co) for co in coefficients]), entity
-            )
+        gmsh.model.geo.symmetrize(
+            [(input_entity.dimension, input_entity._ID)], *coefficients
         )
 
     def in_surface(self, input_entity, surface):

@@ -15,7 +15,7 @@ def test(lcar=0.5):
     geom.add_physical(lat, label="lat")
     geom.add_physical(poly.lines[0], label="line")
 
-    mesh = pygmsh.generate_mesh(geom, geo_filename="physical.geo")
+    mesh = pygmsh.generate_mesh(geom)
     return mesh
 
 

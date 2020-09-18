@@ -16,7 +16,7 @@ def test():
     geom.add_rectangle(0.0, 1.0, 0.0, 1.0, 0.0, lcar=0.1, holes=[circle.curve_loop])
 
     ref = 0.8086582838174551
-    mesh = pygmsh.generate_mesh(geom, geo_filename="h.geo")
+    mesh = pygmsh.generate_mesh(geom)
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 
