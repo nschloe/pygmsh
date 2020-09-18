@@ -31,8 +31,6 @@ class PlaneSurface(SurfaceBase):
     """
 
     def __init__(self, curve_loop, holes=None):
-        super().__init__()
-
         assert isinstance(curve_loop, CurveLoop)
         self.curve_loop = curve_loop
 
@@ -44,5 +42,6 @@ class PlaneSurface(SurfaceBase):
         self.holes = [h if isinstance(h, CurveLoop) else h.curve_loop for h in holes]
 
         curve_loops = [self.curve_loop] + self.holes
-        self._ID = gmsh.model.geo.addPlaneSurface([ll._ID for ll in curve_loops])
+        id0 = gmsh.model.geo.addPlaneSurface([ll._ID for ll in curve_loops])
+        super().__init__(id0)
         self.num_edges = len(self.curve_loop) + sum(len(h) for h in self.holes)

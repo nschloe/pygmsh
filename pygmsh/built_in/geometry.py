@@ -32,6 +32,7 @@ class Geometry:
         self._COMPOUND_ENTITIES = []
         self._RECOMBINE_ENTITIES = []
         self._EMBED_QUEUE = []
+        self._TRANSFINITE_CURVE_QUEUE = []
         self._AFTER_SYNC_QUEUE = []
 
         gmsh.initialize()
@@ -165,20 +166,10 @@ class Geometry:
             "add_physical_volume() is deprecated. use add_physical() instead."
         )
         self.add_physical(volumes, label=label)
-        return
 
-    def set_transfinite_lines(self, lines, size, progression=None, bump=None):
-        code = "Transfinite Line {{{0}}} = {1}".format(
-            ", ".join([l.id for l in lines]), size
-        )
-        if progression is not None and bump is not None:
-            raise ValueError("only one optional argument possible", progression, bump)
-        elif progression is not None:
-            code += " Using Progression " + str(progression)
-        elif bump is not None:
-            code += " Using Bump " + str(bump)
-        self._GMSH_CODE.append(code + ";")
-        return
+    def set_transfinite_curve(self, curve, num_nodes, mesh_type, coeff):
+        assert mesh_type in ["Progression", "Bulk"]
+        self._TRANSFINITE_CURVE_QUEUE.append((curve._ID, num_nodes, mesh_type, coeff))
 
     def set_transfinite_surface(self, surface, size=None, orientation=None):
         assert surface.num_edges == 4, "a transfinite surface can only have 4 sides"
@@ -427,7 +418,7 @@ class Geometry:
             self.surface = surface
             self.lcar = lcar
             if surface is not None:
-                self.id = self.surface.id
+                self._ID = self.surface._ID
             self.dimension = 2
 
     def add_polygon(self, X, lcar=None, holes=None, make_surface=True):
@@ -838,7 +829,6 @@ class Geometry:
                 input_entity.id,
             )
         )
-        return
 
     def rotate(self, input_entity, point, angle, axis):
         """Rotate input_entity around a given point with a give angle.
@@ -846,16 +836,8 @@ class Geometry:
 
         Changes the input object.
         """
-        d = {1: "Line", 2: "Surface", 3: "Volume"}
-        self._GMSH_CODE.append(
-            "Rotate {{ {{{}}},  {{{}}}, {}  }} {{{}{{{}}}; }}".format(
-                ", ".join([str(ax) for ax in axis]),
-                ", ".join([str(p) for p in point]),
-                angle,
-                d[input_entity.dimension],
-                input_entity.id,
-            )
-        )
+        print(input_entity)
+        gmsh.model.geo.rotate([input_entity._ID], *point, *axis, angle)
 
     def symmetry(self, input_entity, coefficients, duplicate=True):
         """Transforms all elementary entities symmetrically to a plane. The vector

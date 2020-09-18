@@ -17,7 +17,7 @@ def test(lcar=0.05):
     axis = [0, 0, 1.0]
 
     geom.extrude(
-        poly,
+        poly.surface,
         translation_axis=axis,
         rotation_axis=axis,
         point_on_axis=[0.0, 0.0, 0.0],

@@ -191,6 +191,9 @@ def generate_mesh(  # noqa: C901
     for s in geo_object._RECOMBINE_ENTITIES:
         gmsh.model.mesh.setRecombine(*s)
 
+    for t in geo_object._TRANSFINITE_CURVE_QUEUE:
+        gmsh.model.geo.mesh.setTransfiniteCurve(*t)
+
     gmsh.model.mesh.generate(dim)
 
     # idx, points, _ = gmsh.model.mesh.getNodes()

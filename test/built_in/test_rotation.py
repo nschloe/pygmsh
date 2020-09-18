@@ -18,7 +18,7 @@ def test_rotation2d():
     # Generate rotated geometry
     geom = pygmsh.built_in.Geometry()
     rect = geom.add_rectangle(0.0, 2.0, 0.0, 1.0, 0.0, 0.1)
-    geom.rotate(rect, [0, 0, 0], angle, [0, 0, 1])
+    geom.rotate(rect.surface, [0, 0, 0], angle, [0, 0, 1])
     mesh = pygmsh.generate_mesh(geom, geo_filename="rot.geo")
     new_vertex_index = mesh.cells_dict["vertex"]
     new_vertex_index = new_vertex_index.reshape((new_vertex_index.shape[0],))
