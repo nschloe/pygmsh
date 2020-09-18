@@ -385,7 +385,7 @@ class Geometry:
             )
         top = Dummy(*out_dim_tags[0])
         extruded = Dummy(*out_dim_tags[1])
-        lateral = [Dummy(*e) for e in out_dim_tags[1:]]
+        lateral = [Dummy(*e) for e in out_dim_tags[2:]]
         return top, extruded, lateral
 
     def add_boundary_layer(self, *args, **kwargs):

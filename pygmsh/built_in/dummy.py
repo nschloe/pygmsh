@@ -4,3 +4,6 @@ class Dummy:
         self.dimension = dim
         self.id = id0
         self._ID = id0
+
+    def __repr__(self):
+        return f"pygmsh Dummy object, ID {self._ID}>"
