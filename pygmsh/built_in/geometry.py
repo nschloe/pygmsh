@@ -588,6 +588,7 @@ class Geometry:
             self.add_line(p[5], p[7]),
             self.add_line(p[6], p[7]),
         ]
+
         # Define the six line loops.
         ll = [
             self.add_curve_loop([e[0], e[3], -e[5], -e[1]]),
@@ -597,6 +598,7 @@ class Geometry:
             self.add_curve_loop([e[5], e[7], -e[11], -e[6]]),
             self.add_curve_loop([e[8], e[10], -e[11], -e[9]]),
         ]
+
         # Create a surface for each line loop.
         s = [self.add_surface(l) for l in ll]
         # Create the surface loop.
@@ -616,7 +618,6 @@ class Geometry:
                 self.lcar = lcar
                 self.surface_loop = surface_loop
                 self.volume = volume
-                return
 
         return Box(x0, x1, y0, y1, z0, z1, surface_loop, vol, lcar=lcar)
 

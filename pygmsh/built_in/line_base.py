@@ -16,6 +16,6 @@ class LineBase:
 
     def __neg__(self):
         neg_self = copy.deepcopy(self)
-        self._ID = -self._ID
+        neg_self._ID = -self._ID
         neg_self.points = self.points[::-1]
         return neg_self
