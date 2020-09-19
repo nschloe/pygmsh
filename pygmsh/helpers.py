@@ -34,7 +34,7 @@ def orient_lines(lines):
     """
     # Categorise graph edges by their vertex pair ids
     point_pair_ids = numpy.array(
-        [[line.points[0].id, line.points[1].id] for line in lines]
+        [[line.points[0]._ID, line.points[1]._ID] for line in lines]
     )
 
     # Indices of reordering
@@ -192,6 +192,9 @@ def generate_mesh(  # noqa: C901
 
     for t in geo_object._TRANSFINITE_CURVE_QUEUE:
         gmsh.model.geo.mesh.setTransfiniteCurve(*t)
+
+    for t in geo_object._TRANSFINITE_SURFACE_QUEUE:
+        gmsh.model.geo.mesh.setTransfiniteSurface(*t)
 
     gmsh.model.mesh.generate(dim)
 

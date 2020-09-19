@@ -33,6 +33,7 @@ class Geometry:
         self._RECOMBINE_ENTITIES = []
         self._EMBED_QUEUE = []
         self._TRANSFINITE_CURVE_QUEUE = []
+        self._TRANSFINITE_SURFACE_QUEUE = []
         self._AFTER_SYNC_QUEUE = []
 
         gmsh.initialize()
@@ -171,24 +172,8 @@ class Geometry:
         assert mesh_type in ["Progression", "Bulk"]
         self._TRANSFINITE_CURVE_QUEUE.append((curve._ID, num_nodes, mesh_type, coeff))
 
-    def set_transfinite_surface(self, surface, size=None, orientation=None):
-        assert surface.num_edges == 4, "a transfinite surface can only have 4 sides"
-        # size is not mandatory because in general a user can create it's own
-        # transfinite lines and then just tell gmsh that the surface is
-        # transfinite too
-        if size is not None:
-            assert isinstance(
-                surface, (PlaneSurface, Surface, self.Polygon)
-            ), "we can create transfinite lines only if we have a line loop"
-            cl = surface.curve_loop
-            self.set_transfinite_curve(cl.curves[0], size[0], "Progression", 1.0)
-            self.set_transfinite_curve(cl.curves[2], size[0], "Progression", 1.0)
-            self.set_transfinite_curve(cl.curves[1], size[1], "Progression", 1.0)
-            self.set_transfinite_curve(cl.curves[3], size[1], "Progression", 1.0)
-        code = f"Transfinite Surface {{{surface.id}}}"
-        if orientation is not None:
-            code += " " + orientation
-        self._GMSH_CODE.append(code + ";")
+    def set_transfinite_surface(self, surface, arrangement, corner_tags):
+        self._TRANSFINITE_SURFACE_QUEUE.append((surface._ID, arrangement, corner_tags))
 
     def set_recombined_surfaces(self, surfaces):
         for i, surface in enumerate(surfaces):

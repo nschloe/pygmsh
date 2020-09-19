@@ -9,12 +9,7 @@ class PointBase:
         If no unique ID is given, the object global is incremented.
     """
 
-    _ID = 0
     dimension = 0
 
-    def __init__(self, id0=None):
-        if id0:
-            self.id = id0
-        else:
-            self.id = f"p{PointBase._ID}"
-            PointBase._ID += 1
+    def __init__(self, id0):
+        self._ID = id0

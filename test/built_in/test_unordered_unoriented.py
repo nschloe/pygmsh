@@ -11,7 +11,7 @@ def test():
 
     # Generate an approximation of a circle
     t = numpy.arange(0, 2.0 * numpy.pi, 0.05)
-    x = numpy.vstack((numpy.cos(t), numpy.sin(t), numpy.zeros_like(t))).T
+    x = numpy.column_stack([numpy.cos(t), numpy.sin(t), numpy.zeros_like(t)])
     points = [geom.add_point(p) for p in x]
 
     # Shuffle the orientation of lines by point order

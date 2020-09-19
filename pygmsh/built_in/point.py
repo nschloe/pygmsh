@@ -14,13 +14,14 @@ class Point(PointBase):
         The prescribed mesh element size at this point.
     """
 
-    def __init__(self, x, lcar=None):
-        super().__init__()
-
+    def __init__(self, x, mesh_size=None):
         assert len(x) == 3
         self.x = x
-        self.lcar = lcar
-        self._ID = gmsh.model.geo.addPoint(x[0], x[1], x[2], meshSize=lcar)
+        args = x
+        if mesh_size is not None:
+            args += [mesh_size]
+        id0 = gmsh.model.geo.addPoint(*args)
+        super().__init__(id0)
 
     def __repr__(self):
         X = ", ".join(str(x) for x in self.x)
