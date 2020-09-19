@@ -1,10 +1,8 @@
-import pytest
 from helpers import compute_volume
 
 import pygmsh
 
 
-@pytest.mark.skipif(pygmsh.get_gmsh_major_version() < 3, reason="requires Gmsh >= 3")
 def test_union():
     geom = pygmsh.opencascade.Geometry(
         characteristic_length_min=0.1, characteristic_length_max=0.1
@@ -21,7 +19,6 @@ def test_union():
     return mesh
 
 
-@pytest.mark.skipif(pygmsh.get_gmsh_major_version() < 3, reason="requires Gmsh >= 3")
 def test_intersection():
     geom = pygmsh.opencascade.Geometry(
         characteristic_length_min=0.1, characteristic_length_max=0.1
@@ -38,7 +35,6 @@ def test_intersection():
     return mesh
 
 
-@pytest.mark.skipif(pygmsh.get_gmsh_major_version() < 3, reason="requires Gmsh >= 3")
 def test_difference():
     geom = pygmsh.opencascade.Geometry(
         characteristic_length_min=0.1, characteristic_length_max=0.1
@@ -55,7 +51,6 @@ def test_difference():
     return mesh
 
 
-@pytest.mark.skipif(pygmsh.get_gmsh_major_version() < 3, reason="requires Gmsh >= 3")
 def test_all():
     geom = pygmsh.opencascade.Geometry(
         characteristic_length_min=0.1, characteristic_length_max=0.1

@@ -1,10 +1,8 @@
-import pytest
 from helpers import compute_volume
 
 import pygmsh
 
 
-@pytest.mark.skipif(pygmsh.get_gmsh_major_version() < 3, reason="requires Gmsh >= 3")
 def test():
     geom = pygmsh.opencascade.Geometry()
 
@@ -17,6 +15,4 @@ def test():
 
 
 if __name__ == "__main__":
-    import meshio
-
-    meshio.write("opencascade_wedge.vtu", test())
+    test().write("opencascade_wedge.vtu")

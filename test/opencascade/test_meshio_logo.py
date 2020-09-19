@@ -4,7 +4,6 @@ from helpers import compute_volume
 import pygmsh
 
 
-@pytest.mark.skipif(pygmsh.get_gmsh_major_version() < 3, reason="requires Gmsh >= 3")
 def test():
     geom = pygmsh.opencascade.Geometry(
         characteristic_length_min=0.5, characteristic_length_max=0.5

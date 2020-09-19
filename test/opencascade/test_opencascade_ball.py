@@ -1,12 +1,10 @@
 from math import pi
 
-import pytest
 from helpers import compute_volume
 
 import pygmsh
 
 
-@pytest.mark.skipif(pygmsh.get_gmsh_major_version() < 3, reason="requires Gmsh >= 3")
 def test():
     geom = pygmsh.opencascade.Geometry()
 
@@ -14,13 +12,11 @@ def test():
         [0.0, 0.0, 0.0], 1.0, x0=-0.9, x1=+0.9, alpha=0.5 * pi, char_length=0.1
     )
 
-    ref = 0.976088698545
     mesh = pygmsh.generate_mesh(geom)
+    ref = 0.976088698545
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 
 
 if __name__ == "__main__":
-    import meshio
-
-    meshio.write("opencascade_ball.vtu", test())
+    test().write("opencascade_ball.vtu")
