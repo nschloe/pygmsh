@@ -1,5 +1,4 @@
 from ..__about__ import __version__
-from ..built_in import geometry as bl
 from .ball import Ball
 from .box import Box
 from .cone import Cone
@@ -13,7 +12,7 @@ from .volume_base import VolumeBase
 from .wedge import Wedge
 
 
-class Geometry(bl.Geometry):
+class Geometry:
     def __init__(self, characteristic_length_min=None, characteristic_length_max=None):
         super().__init__()
         self._BOOLEAN_ID = 0
@@ -32,7 +31,6 @@ class Geometry(bl.Geometry):
             self._GMSH_CODE.append(
                 f"Mesh.CharacteristicLengthMax = {characteristic_length_max};"
             )
-        return
 
     def get_code(self):
         """Returns properly formatted Gmsh code."""
@@ -49,9 +47,7 @@ class Geometry(bl.Geometry):
         return p
 
     def add_ball(self, *args, **kwargs):
-        p = Ball(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+        return Ball(*args, **kwargs)
 
     def add_box(self, *args, **kwargs):
         p = Box(*args, **kwargs)

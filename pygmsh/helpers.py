@@ -1,5 +1,4 @@
 import shutil
-import subprocess
 import tempfile
 from pathlib import Path
 
@@ -70,21 +69,6 @@ def _get_gmsh_exe():
     return (
         macos_gmsh_location if macos_gmsh_location.is_file() else shutil.which("gmsh")
     )
-
-
-def get_gmsh_version(gmsh_exe=_get_gmsh_exe()):
-    gmsh_exe = Path(gmsh_exe)
-    return (
-        subprocess.check_output(
-            [gmsh_exe.as_posix(), "--version"], stderr=subprocess.STDOUT
-        )
-        .strip()
-        .decode("utf8")
-    )
-
-
-def get_gmsh_major_version(gmsh_exe=_get_gmsh_exe()):
-    return int(get_gmsh_version(gmsh_exe=gmsh_exe).split(".")[0])
 
 
 def generate_mesh(  # noqa: C901
@@ -175,7 +159,7 @@ def generate_mesh(  # noqa: C901
     #     p.returncode
     # )
 
-    gmsh.model.geo.synchronize()
+    geo_object.synchronize()
 
     for item in geo_object._AFTER_SYNC_QUEUE:
         item.exec()

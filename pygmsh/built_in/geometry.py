@@ -3,7 +3,6 @@ import warnings
 import gmsh
 import numpy
 
-from ..helpers import get_gmsh_major_version
 from .bspline import BSpline
 from .circle_arc import CircleArc
 from .curve_loop import CurveLoop
@@ -23,11 +22,10 @@ from .volume_base import VolumeBase
 
 
 class Geometry:
-    def __init__(self, gmsh_major_version=None):
+    def __init__(self):
         self._BOOLEAN_ID = 0
         self._ARRAY_ID = 0
         self._FIELD_ID = 0
-        self._GMSH_MAJOR = gmsh_major_version
         self._TAKEN_PHYSICALGROUP_IDS = []
         self._COMPOUND_ENTITIES = []
         self._RECOMBINE_ENTITIES = []
@@ -39,10 +37,8 @@ class Geometry:
         gmsh.initialize()
         gmsh.model.add("pygmsh model")
 
-    def _gmsh_major(self):
-        if self._GMSH_MAJOR is None:
-            self._GMSH_MAJOR = get_gmsh_major_version()
-        return self._GMSH_MAJOR
+    def synchronize(self):
+        gmsh.model.geo.synchronize()
 
     # All of the add_* method below could be replaced by
     #
@@ -693,7 +689,7 @@ class Geometry:
             previous = top
             all_volumes.append(vol)
 
-        assert self._gmsh_major() == 4
+        assert int(gmsh.__version__.split(".")[0])
         self._COMPOUND_ENTITIES.append((3, [v._ID for v in all_volumes]))
 
     def add_pipe(
