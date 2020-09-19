@@ -17,9 +17,9 @@ class Point(PointBase):
     def __init__(self, x, mesh_size=None):
         assert len(x) == 3
         self.x = x
-        args = x
+        args = list(x)
         if mesh_size is not None:
-            args += [mesh_size]
+            args.append(mesh_size)
         id0 = gmsh.model.geo.addPoint(*args)
         super().__init__(id0)
 

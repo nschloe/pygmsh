@@ -14,7 +14,7 @@ def test():
     R = np.array([0.1, 0.2, 0.1, 0.14])
 
     holes = [
-        geom.add_ball(x0, r, with_volume=False, lcar=0.2 * r).surface_loop
+        geom.add_ball(x0, r, with_volume=False, mesh_size=0.2 * r).surface_loop
         for x0, r in zip(X0, R)
     ]
 
@@ -22,21 +22,19 @@ def test():
     #         -1, 1,
     #         -1, 1,
     #         -1, 1,
-    #         lcar=0.2,
+    #         mesh_size=0.2,
     #         holes=holes
     #         )
 
-    geom.add_ball([0, 0, 0], 1.0, lcar=0.2, holes=holes)
+    geom.add_ball([0, 0, 0], 1.0, mesh_size=0.2, holes=holes)
 
     # geom.add_physical_volume(ball, label="cheese")
+    mesh = pygmsh.generate_mesh(geom)
 
     ref = 4.07064892966291
-    mesh = pygmsh.generate_mesh(geom)
     assert abs(compute_volume(mesh) - ref) < 2.0e-2 * ref
     return mesh
 
 
 if __name__ == "__main__":
-    import meshio
-
-    meshio.write("swiss_cheese.vtu", test())
+    test().write("swiss_cheese.vtu")

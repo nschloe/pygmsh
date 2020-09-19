@@ -7,7 +7,8 @@ def test():
     geom = pygmsh.built_in.Geometry()
 
     poly = geom.add_polygon(
-        [[0.0, 0.5, 0.0], [1.0, 0.5, 0.0], [1.0, 1.0, 0.0], [0.0, 1.0, 0.0]], lcar=0.05
+        [[0.0, 0.5, 0.0], [1.0, 0.5, 0.0], [1.0, 1.0, 0.0], [0.0, 1.0, 0.0]],
+        mesh_size=0.05,
     )
 
     cp = geom.copy(poly.surface)
@@ -20,6 +21,4 @@ def test():
 
 
 if __name__ == "__main__":
-    import meshio
-
-    meshio.write("symmetry.vtk", test())
+    test().write("symmetry.vtk")

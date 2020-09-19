@@ -9,20 +9,22 @@ def test(irad=0.05, orad=0.6):
     geom = pygmsh.built_in.Geometry()
 
     R = pygmsh.rotation_matrix([1.0, 0.0, 0.0], np.pi / 2)
-    geom.add_torus(irad=irad, orad=orad, lcar=0.03, x0=[0.0, 0.0, -1.0], R=R)
+    geom.add_torus(irad=irad, orad=orad, mesh_size=0.03, x0=[0.0, 0.0, -1.0], R=R)
 
     R = pygmsh.rotation_matrix([0.0, 1.0, 0.0], np.pi / 2)
     geom.add_torus(
-        irad=irad, orad=orad, lcar=0.03, x0=[0.0, 0.0, 1.0], variant="extrude_circle"
+        irad=irad,
+        orad=orad,
+        mesh_size=0.03,
+        x0=[0.0, 0.0, 1.0],
+        variant="extrude_circle",
     )
+    mesh = pygmsh.generate_mesh(geom)
 
     ref = 2 * 2 * np.pi ** 2 * orad * irad ** 2
-    mesh = pygmsh.generate_mesh(geom)
     assert np.isclose(compute_volume(mesh), ref, rtol=5e-2)
     return mesh
 
 
 if __name__ == "__main__":
-    import meshio
-
-    meshio.write("torus.vtu", test())
+    test().write("torus.vtu")

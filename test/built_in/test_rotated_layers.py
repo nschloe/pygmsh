@@ -5,13 +5,13 @@ from helpers import compute_volume
 import pygmsh
 
 
-def test(lcar=0.05):
+def test(mesh_size=0.05):
     geom = pygmsh.built_in.Geometry()
 
     # Draw a square
     poly = geom.add_polygon(
         [[+0.5, +0.0, 0.0], [+0.0, +0.5, 0.0], [-0.5, +0.0, 0.0], [+0.0, -0.5, 0.0]],
-        lcar=lcar,
+        mesh_size=mesh_size,
     )
 
     axis = [0, 0, 1.0]
@@ -33,6 +33,4 @@ def test(lcar=0.05):
 
 
 if __name__ == "__main__":
-    import meshio
-
-    meshio.write("rotated_layers.vtu", test())
+    test().write("rotated_layers.vtu")

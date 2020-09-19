@@ -14,7 +14,7 @@ def test():
             [1.0, 2.0, 0.0],
             [0.0, 1.0, 0.0],
         ],
-        lcar=0.1,
+        mesh_size=0.1,
     )
 
     field0 = geom.add_boundary_layer(
