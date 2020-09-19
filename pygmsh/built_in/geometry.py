@@ -373,15 +373,6 @@ class Geometry:
         setter = SetBackgroundMesh(*args, **kwargs)
         self._AFTER_SYNC_QUEUE.append(setter)
 
-    def add_raw_code(self, string_or_list):
-        """Add raw Gmsh code."""
-        if isinstance(string_or_list, str):
-            self._GMSH_CODE.append(string_or_list)
-        else:
-            assert isinstance(string_or_list, list)
-            for string in string_or_list:
-                self._GMSH_CODE.append(string)
-
     def add_rectangle(
         self, xmin, xmax, ymin, ymax, z, mesh_size=None, holes=None, make_surface=True
     ):
@@ -830,14 +821,7 @@ class Geometry:
 
         Changes the input object.
         """
-        d = {1: "Line", 2: "Surface", 3: "Volume"}
-        self._GMSH_CODE.append(
-            "Translate {{{}}} {{ {}{{{}}}; }}".format(
-                ", ".join([str(co) for co in vector]),
-                d[input_entity.dimension],
-                input_entity.id,
-            )
-        )
+        gmsh.model.geo.rotate([(input_entity.dimension, input_entity._ID)], *vector)
 
     def rotate(self, input_entity, point, angle, axis):
         """Rotate input_entity around a given point with a give angle.
