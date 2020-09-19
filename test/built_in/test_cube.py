@@ -16,6 +16,4 @@ def test():
 
 
 if __name__ == "__main__":
-    import meshio
-
-    meshio.write("cube.vtu", test())
+    test().write("cube.vtu")

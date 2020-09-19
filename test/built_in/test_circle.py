@@ -18,12 +18,10 @@ def test():
     )
 
     mesh = pygmsh.generate_mesh(geom, prune_z_0=True)
-    # ref = 3.1363871677682247
-    # assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
+    ref = 3.1363871677682247
+    assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 
 
 if __name__ == "__main__":
-    import meshio
-
-    meshio.write("circle.vtk", test())
+    test().write("circle.vtk")

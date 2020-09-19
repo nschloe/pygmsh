@@ -22,4 +22,3 @@ def test_volume():
     }
     vol = compute_volume(meshio.Mesh(points, cells))
     assert abs(vol - 3.0) < 1.0e-14
-    return

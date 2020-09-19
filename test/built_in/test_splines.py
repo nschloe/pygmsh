@@ -20,13 +20,11 @@ def test():
     ll = geom.add_curve_loop([s1, s2])
     geom.add_plane_surface(ll)
 
-    ref = 1.0809439490373247
     mesh = pygmsh.generate_mesh(geom)
+    ref = 1.0809439490373247
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 
 
 if __name__ == "__main__":
-    import meshio
-
-    meshio.write("splines.vtu", test())
+    test().write("splines.vtu")

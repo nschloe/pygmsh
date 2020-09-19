@@ -27,6 +27,4 @@ def test():
 
 
 if __name__ == "__main__":
-    import meshio
-
-    meshio.write("bsplines.vtu", test())
+    test().write("bsplines.vtu")

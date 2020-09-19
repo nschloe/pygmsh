@@ -40,6 +40,4 @@ def test(lcar=0.3):
 
 
 if __name__ == "__main__":
-    import meshio
-
-    meshio.write("pacman.vtu", test())
+    test().write("pacman.vtu")

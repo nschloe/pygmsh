@@ -144,6 +144,4 @@ def test():
 
 
 if __name__ == "__main__":
-    import meshio
-
-    meshio.write("airfoil.vtu", test())
+    test().write("airfoil.vtu")

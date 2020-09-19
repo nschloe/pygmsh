@@ -40,6 +40,4 @@ def test():
 
 
 if __name__ == "__main__":
-    import meshio
-
-    meshio.write("boundary_layers.vtu", test())
+    test().write("boundary_layers.vtu")
