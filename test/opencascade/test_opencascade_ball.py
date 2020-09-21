@@ -8,12 +8,10 @@ import pygmsh
 def test():
     geom = pygmsh.opencascade.Geometry()
 
-    geom.add_ball(
-        [0.0, 0.0, 0.0], 1.0, x0=-0.9, x1=+0.9, alpha=0.5 * pi, char_length=0.1
-    )
+    geom.add_ball([0.0, 0.0, 0.0], 1.0, mesh_size=0.1)
 
     mesh = pygmsh.generate_mesh(geom)
-    ref = 0.976088698545
+    ref = 4 / 3 * pi
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 

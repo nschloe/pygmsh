@@ -38,4 +38,3 @@ class Rectangle(SurfaceBase):
             [f"{self.id} = news;", f"Rectangle({self.id}) = {{{args}}};"]
             + self.char_length_code(char_length)
         )
-        return

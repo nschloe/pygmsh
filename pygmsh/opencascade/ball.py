@@ -1,7 +1,9 @@
-from .volume_base import VolumeBase
+from math import pi
+
+import gmsh
 
 
-class Ball(VolumeBase):
+class Ball:
     """
     Creates a sphere.
 
@@ -24,24 +26,14 @@ class Ball(VolumeBase):
         If specified, sets the `Characteristic Length` property.
     """
 
-    def __init__(self, center, radius, x0=None, x1=None, alpha=None, char_length=None):
-        super().__init__()
+    dimension = 3
 
+    def __init__(self, center, radius, angle1=-pi / 2, angle2=pi / 2, angle3=2 * pi):
         self.center = center
         self.radius = radius
-        self.char_length = char_length
-
-        args = list(center) + [radius]
-        if x0 is not None:
-            args.append(x0)
-            if x1 is not None:
-                args.append(x1)
-                if alpha is not None:
-                    args.append(alpha)
-        args = ", ".join([f"{arg}" for arg in args])
-
-        self.code = "\n".join(
-            [f"{self.id} = newv;", f"Sphere({self.id}) = {{{args}}};"]
-            + self.char_length_code(char_length)
+        self._ID = gmsh.model.occ.addSphere(
+            *center, radius, angle1=angle1, angle2=angle2, angle3=angle3
         )
-        return
+
+    def __repr__(self):
+        return "<pygmsh Ball object, ID {self._ID}>"

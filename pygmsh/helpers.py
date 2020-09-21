@@ -180,6 +180,11 @@ def generate_mesh(  # noqa: C901
     for t in geo_object._TRANSFINITE_SURFACE_QUEUE:
         gmsh.model.geo.mesh.setTransfiniteSurface(*t)
 
+    for item, size in geo_object._SIZE_QUEUE:
+        gmsh.model.mesh.setSize(
+            gmsh.model.getBoundary((item.dimension, item._ID), False, False, True), size
+        )
+
     gmsh.model.mesh.generate(dim)
 
     # idx, points, _ = gmsh.model.mesh.getNodes()

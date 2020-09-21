@@ -1,4 +1,5 @@
-from ..__about__ import __version__
+import gmsh
+
 from .ball import Ball
 from .box import Box
 from .cone import Cone
@@ -14,27 +15,28 @@ from .wedge import Wedge
 
 class Geometry:
     def __init__(self, characteristic_length_min=None, characteristic_length_max=None):
-        super().__init__()
-        self._BOOLEAN_ID = 0
-        self._EXTRUDE_ID = 0
-        self._GMSH_CODE = [
-            f"// This code was created by pygmsh v{__version__}.",
-            'SetFactory("OpenCASCADE");',
-        ]
+        self._AFTER_SYNC_QUEUE = []
+        self._EMBED_QUEUE = []
+        self._COMPOUND_ENTITIES = []
+        self._RECOMBINE_ENTITIES = []
+        self._TRANSFINITE_CURVE_QUEUE = []
+        self._TRANSFINITE_SURFACE_QUEUE = []
+        self._SIZE_QUEUE = []
+
+        gmsh.initialize()
 
         if characteristic_length_min is not None:
-            self._GMSH_CODE.append(
-                f"Mesh.CharacteristicLengthMin = {characteristic_length_min};"
+            gmsh.option.setNumber(
+                "Mesh.CharacteristicLengthMin", characteristic_length_min
             )
 
         if characteristic_length_max is not None:
-            self._GMSH_CODE.append(
-                f"Mesh.CharacteristicLengthMax = {characteristic_length_max};"
+            gmsh.option.setNumber(
+                "Mesh.CharacteristicLengthMax", characteristic_length_max
             )
 
-    def get_code(self):
-        """Returns properly formatted Gmsh code."""
-        return "\n".join(self._GMSH_CODE)
+    def synchronize(self):
+        gmsh.model.occ.synchronize()
 
     def add_rectangle(self, *args, **kwargs):
         p = Rectangle(*args, **kwargs)
@@ -46,18 +48,23 @@ class Geometry:
         self._GMSH_CODE.append(p.code)
         return p
 
-    def add_ball(self, *args, **kwargs):
-        return Ball(*args, **kwargs)
+    def add_ball(self, *args, mesh_size=None, **kwargs):
+        cone = Ball(*args, **kwargs)
+        if mesh_size is not None:
+            self._SIZE_QUEUE.append((cone, mesh_size))
+        return cone
 
-    def add_box(self, *args, **kwargs):
-        p = Box(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+    def add_box(self, *args, mesh_size=None, **kwargs):
+        box = Box(*args, **kwargs)
+        if mesh_size is not None:
+            self._SIZE_QUEUE.append((box, mesh_size))
+        return box
 
-    def add_cone(self, *args, **kwargs):
-        p = Cone(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+    def add_cone(self, *args, mesh_size=None, **kwargs):
+        cone = Cone(*args, **kwargs)
+        if mesh_size is not None:
+            self._SIZE_QUEUE.append((cone, mesh_size))
+        return cone
 
     def add_cylinder(self, *args, **kwargs):
         p = Cylinder(*args, **kwargs)

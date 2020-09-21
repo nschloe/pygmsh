@@ -9,7 +9,12 @@ def test():
     geom = pygmsh.opencascade.Geometry()
 
     geom.add_cone(
-        [0.0, 0.0, 0.0], [0.0, 0.0, 1.0], 1.0, 0.3, 1.25 * pi, char_length=0.1
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0, 1.0],
+        1.0,
+        0.3,
+        mesh_size=0.1,
+        angle=1.25 * pi,
     )
 
     mesh = pygmsh.generate_mesh(geom)
