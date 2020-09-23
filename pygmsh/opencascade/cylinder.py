@@ -16,6 +16,7 @@ class Cylinder:
     angle : float
         Angular opening of the cylinder.
     """
+
     dimension = 3
 
     def __init__(self, x0, axis, radius, angle=None):

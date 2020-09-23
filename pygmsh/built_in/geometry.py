@@ -815,35 +815,31 @@ class Geometry:
         )
         return vol
 
-    def translate(self, input_entity, vector):
+    def translate(self, obj, vector):
         """Translates input_entity itself by vector.
 
         Changes the input object.
         """
-        gmsh.model.geo.rotate([(input_entity.dimension, input_entity._ID)], *vector)
+        gmsh.model.geo.rotate(obj.dim_tags, *vector)
 
-    def rotate(self, input_entity, point, angle, axis):
+    def rotate(self, obj, point, angle, axis):
         """Rotate input_entity around a given point with a give angle.
            Rotation axis has to be specified.
 
         Changes the input object.
         """
-        gmsh.model.geo.rotate(
-            [(input_entity.dimension, input_entity._ID)], *point, *axis, angle
-        )
+        gmsh.model.geo.rotate(obj.dim_tags, *point, *axis, angle)
 
-    def copy(self, input_entity):
-        dim_tag = gmsh.model.geo.copy([(input_entity.dimension, input_entity._ID)])
+    def copy(self, obj):
+        dim_tag = gmsh.model.geo.copy(obj.dim_tags)
         assert len(dim_tag) == 1
         return Dummy(*dim_tag[0])
 
-    def symmetrize(self, input_entity, coefficients):
+    def symmetrize(self, obj, coefficients):
         """Transforms all elementary entities symmetrically to a plane. The vector
         should contain four expressions giving the coefficients of the plane's equation.
         """
-        gmsh.model.geo.symmetrize(
-            [(input_entity.dimension, input_entity._ID)], *coefficients
-        )
+        gmsh.model.geo.symmetrize(obj.dim_tags, *coefficients)
 
     def in_surface(self, input_entity, surface):
         """Embed the point(s) or curve(s) in the given surface. The surface mesh will
