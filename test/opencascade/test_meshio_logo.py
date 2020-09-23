@@ -16,9 +16,9 @@ def test():
 
     disk1 = geom.add_disk([6.25, 4.5, 0.0], 2.5)
     disk2 = geom.add_disk([6.25, 4.5, 0.0], 1.5)
-    letter_o = geom.boolean_difference([disk1], [disk2])
+    letter_o = geom.boolean_difference(disk1, disk2)
 
-    geom.boolean_difference([container], [letter_i, i_dot, letter_o])
+    geom.boolean_difference(container, geom.boolean_union([letter_i, i_dot, letter_o]))
 
     mesh = pygmsh.generate_mesh(geom)
     ref = 81.9131851877
