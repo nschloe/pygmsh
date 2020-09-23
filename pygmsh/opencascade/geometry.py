@@ -5,6 +5,7 @@ from .box import Box
 from .cone import Cone
 from .cylinder import Cylinder
 from .disk import Disk
+from .dummy import Dummy
 from .ellipsoid import Ellipsoid
 from .rectangle import Rectangle
 from .surface_base import SurfaceBase
@@ -35,18 +36,23 @@ class Geometry:
                 "Mesh.CharacteristicLengthMax", characteristic_length_max
             )
 
+    def __del__(self):
+        gmsh.finalize()
+
     def synchronize(self):
         gmsh.model.occ.synchronize()
 
-    def add_rectangle(self, *args, **kwargs):
-        p = Rectangle(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+    def add_rectangle(self, *args, mesh_size=None, **kwargs):
+        entity = Rectangle(*args, **kwargs)
+        if mesh_size is not None:
+            self._SIZE_QUEUE.append((entity, mesh_size))
+        return entity
 
-    def add_disk(self, *args, **kwargs):
-        p = Disk(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+    def add_disk(self, *args, mesh_size=None, **kwargs):
+        entity = Disk(*args, **kwargs)
+        if mesh_size is not None:
+            self._SIZE_QUEUE.append((entity, mesh_size))
+        return entity
 
     def add_ball(self, *args, mesh_size=None, **kwargs):
         cone = Ball(*args, **kwargs)
@@ -163,44 +169,50 @@ class Geometry:
         mapping = {"Line": None, "Surface": SurfaceBase, "Volume": VolumeBase}
         return mapping[legal_dim_types[dim]](id0=name, is_list=True)
 
-    def boolean_intersection(self, entities, delete_first=True, delete_other=True):
+    def boolean_intersection(self, entities):
         """Boolean intersection, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
         """
-        assert len(entities) > 1
-        return self._boolean_operation(
-            "BooleanIntersection",
-            [entities[0]],
-            entities[1:],
-            delete_first=delete_first,
-            delete_other=delete_other,
-        )
+        ent = (entities[0].dimension, entities[0]._ID)
+        # form subsequent intersections
+        # https://gitlab.onelab.info/gmsh/gmsh/-/issues/999
+        for e in entities[1:]:
+            out, _ = gmsh.model.occ.intersect(
+                [ent],
+                [(e.dimension, e._ID)],
+                removeObject=True,
+                removeTool=True,
+            )
+            assert all(out[0] == item for item in out)
+            ent = out[0]
+        return Dummy(*ent)
 
     def boolean_union(self, entities, delete_first=True, delete_other=True):
         """Boolean union, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
         """
-        out = self._boolean_operation(
-            "BooleanUnion",
-            [entities[0]],
-            entities[1:],
-            delete_first=delete_first,
-            delete_other=delete_other,
+        out, _ = gmsh.model.occ.fuse(
+            [(entities[0].dimension, entities[0]._ID)],
+            [(item.dimension, item._ID) for item in entities[1:]],
+            removeObject=delete_first,
+            removeTool=delete_other,
         )
-        # Cannot add Compound Surface yet; see
-        # <https://gitlab.onelab.info/gmsh/gmsh/issues/525>.
-        # if compound:
-        #     self._GMSH_CODE.append("Compound Surface {{{}}};".format(out.id))
-        return out
+        # assert len(out) == 1
+        return Dummy(*out[0])
 
-    def boolean_difference(self, *args, **kwargs):
+    def boolean_difference(self, d0, d1):
         """Boolean difference, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
         """
-        return self._boolean_operation("BooleanDifference", *args, **kwargs)
+        out, _ = gmsh.model.occ.cut(
+            [(d0.dimension, d0._ID)],
+            [(d1.dimension, d1._ID)],
+        )
+        # assert len(out) == 1
+        return Dummy(*out[0])
 
     def boolean_fragments(self, *args, **kwargs):
         """Boolean fragments, see

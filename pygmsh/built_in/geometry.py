@@ -37,6 +37,9 @@ class Geometry:
         gmsh.initialize()
         gmsh.model.add("pygmsh model")
 
+    def __del__(self):
+        gmsh.finalize()
+
     def synchronize(self):
         gmsh.model.geo.synchronize()
 
