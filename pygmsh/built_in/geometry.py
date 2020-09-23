@@ -298,11 +298,6 @@ class Geometry:
         the entities is not provided, this method will produce only translation or
         rotation.
         """
-        eid = input_entity._ID
-        dim = input_entity.dimension
-
-        assert dim is not None
-
         if isinstance(num_layers, int):
             num_layers = [num_layers]
         if num_layers is None:
@@ -316,7 +311,7 @@ class Geometry:
 
         if translation_axis is not None and rotation_axis is None:
             out_dim_tags = gmsh.model.geo.extrude(
-                [(dim, eid)],
+                input_entity.dim_tags,
                 translation_axis[0],
                 translation_axis[1],
                 translation_axis[2],
@@ -327,7 +322,7 @@ class Geometry:
         elif translation_axis is None and rotation_axis is not None:
             assert angle < numpy.pi
             out_dim_tags = gmsh.model.geo.revolve(
-                [(dim, eid)],
+                input_entity.dim_tags,
                 point_on_axis[0],
                 point_on_axis[1],
                 point_on_axis[2],
@@ -343,7 +338,7 @@ class Geometry:
             assert translation_axis is not None and rotation_axis is not None
             assert angle < numpy.pi
             out_dim_tags = gmsh.model.geo.twist(
-                [(dim, eid)],
+                input_entity.dim_tags,
                 point_on_axis[0],
                 point_on_axis[1],
                 point_on_axis[2],
