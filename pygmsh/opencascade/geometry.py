@@ -72,10 +72,11 @@ class Geometry:
             self._SIZE_QUEUE.append((cone, mesh_size))
         return cone
 
-    def add_cylinder(self, *args, **kwargs):
-        p = Cylinder(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+    def add_cylinder(self, *args, mesh_size=None, **kwargs):
+        cyl = Cylinder(*args, **kwargs)
+        if mesh_size is not None:
+            self._SIZE_QUEUE.append((cyl, mesh_size))
+        return cyl
 
     def add_ellipsoid(self, *args, **kwargs):
         p = Ellipsoid(*args, **kwargs)

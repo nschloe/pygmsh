@@ -15,6 +15,8 @@ class Box:
         Characteristic length of the mesh elements of this polygon.
     """
 
+    dimension = 3
+
     def __init__(self, x0, extents, char_length=None):
         assert len(x0) == 3
         assert len(extents) == 3

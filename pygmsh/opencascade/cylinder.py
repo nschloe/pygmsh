@@ -1,7 +1,7 @@
-from .volume_base import VolumeBase
+import gmsh
 
 
-class Cylinder(VolumeBase):
+class Cylinder:
     """
     Creates a cylinder.
 
@@ -15,13 +15,10 @@ class Cylinder(VolumeBase):
         Radius value of the cylinder.
     angle : float
         Angular opening of the cylinder.
-    char_length : float
-        Characteristic length of the mesh elements of this polygon.
     """
+    dimension = 3
 
-    def __init__(self, x0, axis, radius, angle=None, char_length=None):
-        super().__init__()
-
+    def __init__(self, x0, axis, radius, angle=None):
         assert len(x0) == 3
         assert len(axis) == 3
 
@@ -29,27 +26,8 @@ class Cylinder(VolumeBase):
         self.axis = axis
         self.radius = radius
         self.angle = angle
-        self.char_length = char_length
 
-        args = list(x0) + list(axis) + [radius]
-        if angle is not None:
-            args.append(angle)
-        args = ", ".join([f"{arg}" for arg in args])
+        self._ID = gmsh.model.occ.addCylinder(*x0, *axis, radius, angle=angle)
 
-        code = [
-            f"{self.id} = newv;",
-            f"Cylinder({self.id}) = {{{args}}};",
-        ]
-
-        if self.char_length:
-            code.extend(
-                [
-                    f"pts_{self.id}[] = PointsOf{{Volume{{{self.id}}};}};",
-                    "Characteristic Length{{pts_{}[]}} = {};".format(
-                        self.id, char_length
-                    ),
-                ]
-            )
-
-        self.code = "\n".join(code)
-        return
+    def __repr__(self):
+        return f"<pygmsh Cylinder object, ID {self._ID}>"
