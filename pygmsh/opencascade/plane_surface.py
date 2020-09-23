@@ -36,8 +36,8 @@ class PlaneSurface:
         if holes is None:
             holes = []
 
-        # The input holes are either line loops or entities that contain line
-        # loops (like polygons).
+        # The input holes are either line loops or entities that contain line loops
+        # (like polygons).
         self.holes = [h if isinstance(h, CurveLoop) else h.curve_loop for h in holes]
 
         curve_loops = [self.curve_loop] + self.holes

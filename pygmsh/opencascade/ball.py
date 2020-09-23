@@ -35,4 +35,4 @@ class Ball:
         self.dim_tags = [(3, self._ID)]
 
     def __repr__(self):
-        return f"<pygmsh Ball object, ID {self._ID}>"
+        return f"<pygmsh Ball object (OCC), ID {self._ID}>"

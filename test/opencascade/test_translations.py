@@ -16,7 +16,6 @@ import pygmsh
 #     translated_mesh = pygmsh.generate_mesh(geom)
 #     points[:, 0] = points[:, 0] + 1.5
 #     assert np.allclose(points, translated_mesh.points)
-#     return
 
 
 def test_translation2d():
@@ -30,7 +29,6 @@ def test_translation2d():
     mesh = pygmsh.generate_mesh(geom)
     surf = np.pi
     assert np.abs(compute_volume(mesh) - surf) < 1e-3 * surf
-    return
 
 
 def test_translation3d():
@@ -43,11 +41,7 @@ def test_translation3d():
 
     mesh = pygmsh.generate_mesh(geom)
     surf = 4 / 3 * np.pi
-    assert isinstance(ball, pygmsh.opencascade.volume_base.VolumeBase)
-    assert isinstance(ball, pygmsh.built_in.volume_base.VolumeBase)
-
     assert np.abs(compute_volume(mesh) - surf) < 2e-2 * surf
-    return
 
 
 if __name__ == "__main__":

@@ -1,12 +1,13 @@
 import math
+
 import gmsh
 
 from .ball import Ball
 from .boolean import Boolean
 from .box import Box
 from .circle_arc import CircleArc
-from .curve_loop import CurveLoop
 from .cone import Cone
+from .curve_loop import CurveLoop
 from .cylinder import Cylinder
 from .disk import Disk
 from .dummy import Dummy
@@ -14,9 +15,7 @@ from .line import Line
 from .plane_surface import PlaneSurface
 from .point import Point
 from .rectangle import Rectangle
-from .surface_base import SurfaceBase
 from .torus import Torus
-from .volume_base import VolumeBase
 from .wedge import Wedge
 
 
@@ -123,83 +122,6 @@ class Geometry:
             self._SIZE_QUEUE.append((obj, mesh_size))
         return obj
 
-    def _boolean_operation(
-        self,
-        operation,
-        input_entities,
-        tool_entities,
-        delete_first=True,
-        delete_other=True,
-    ):
-        """Boolean operations, see
-        https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
-        and tool_entity are called object and tool in gmsh documentation.
-        """
-        self._BOOLEAN_ID += 1
-
-        # assert that all entities are of the same dimensionality
-        dim = None
-        legal_dim_types = {1: "Line", 2: "Surface", 3: "Volume"}
-        for ldt in legal_dim_types:
-            if input_entities[0].dimension == ldt:
-                dim = ldt
-                break
-        assert dim is not None, "Illegal input type '{}' for Boolean operation.".format(
-            type(input_entities[0])
-        )
-        for e in input_entities[1:] + tool_entities:
-            assert (
-                e.dimension == dim
-            ), "Incompatible input type '{}' for Boolean operation.".format(type(e))
-
-        name = f"bo{self._BOOLEAN_ID}"
-
-        input_delete = "Delete;" if delete_first else ""
-
-        tool_delete = "Delete;" if delete_other else ""
-
-        legal_dim_type = legal_dim_types[dim]
-
-        if input_entities:
-            formatted_input_entities = (
-                ";".join([f"{legal_dim_type}{{{e.id}}}" for e in input_entities]) + ";"
-            )
-        else:
-            formatted_input_entities = ""
-
-        if tool_entities:
-            formatted_tool_entities = (
-                ";".join([f"{legal_dim_type}{{{e.id}}}" for e in tool_entities]) + ";"
-            )
-        else:
-            formatted_tool_entities = ""
-
-        self._GMSH_CODE.append(
-            # I wonder what this line does in Lisp. ;)
-            # '{}[] = {}{{{} {{{}}}; {}}} {{{} {{{}}}; {}}};'
-            # .format(
-            #    name,
-            #    operation,
-            #    legal_dim_types[dim],
-            #    ';'.join(e.id for e in input_entities),
-            #    'Delete;' if delete_first else '',
-            #    legal_dim_types[dim],
-            #    ';'.join(e.id for e in tool_entities),
-            #    'Delete;' if delete_other else ''
-            #    ))
-            "%(name)s[] = %(op)s{ %(ientities)s %(idelete)s } { %(tentities)s %(tdelete)s};"
-            % {
-                "name": name,
-                "op": operation,
-                "ientities": formatted_input_entities,
-                "idelete": input_delete,
-                "tentities": formatted_tool_entities,
-                "tdelete": tool_delete,
-            }
-        )
-        mapping = {"Line": None, "Surface": SurfaceBase, "Volume": VolumeBase}
-        return mapping[legal_dim_types[dim]](id0=name, is_list=True)
-
     def boolean_intersection(self, entities):
         """Boolean intersection, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
@@ -252,7 +174,7 @@ class Geometry:
 
         Changes the input object.
         """
-        gmsh.model.occ.rotate(obj.dim_tags, *vector)
+        gmsh.model.occ.translate(obj.dim_tags, *vector)
 
     def rotate(self, obj, point, angle, axis):
         """Rotate input_entity around a given point with a give angle.

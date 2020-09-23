@@ -6,9 +6,7 @@ import pygmsh
 def test():
     geom = pygmsh.opencascade.Geometry(characteristic_length_max=0.05)
 
-    rectangle = geom.add_rectangle(
-        [-1.0, -1.0, 0.0], 2.0, 2.0, corner_radius=0.2
-    )
+    rectangle = geom.add_rectangle([-1.0, -1.0, 0.0], 2.0, 2.0, corner_radius=0.2)
     disk1 = geom.add_disk([-1.2, 0.0, 0.0], 0.5)
     disk2 = geom.add_disk([+1.2, 0.0, 0.0], 0.5, 0.3)
 
@@ -16,7 +14,7 @@ def test():
     disk4 = geom.add_disk([0.0, +0.9, 0.0], 0.5)
     flat = geom.boolean_difference(
         geom.boolean_union([rectangle, disk1, disk2]),
-        geom.boolean_union([disk3, disk4])
+        geom.boolean_union([disk3, disk4]),
     )
 
     geom.extrude(flat, [0, 0, 0.3])
@@ -50,7 +48,7 @@ def test2():
         geom.add_point((x[0], y[2], z[2]), mesh_size=mesh_size),
         geom.add_point((x[0], y[2], z[1]), mesh_size=mesh_size),
         geom.add_point((x[0], y[3], z[1]), mesh_size=mesh_size),
-        geom.add_point((x[0], y[3], z[0]), mesh_size=mesh_size)
+        geom.add_point((x[0], y[3], z[0]), mesh_size=mesh_size),
     ]
 
     lines = [
