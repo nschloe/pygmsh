@@ -29,6 +29,7 @@ class Rectangle:
             corner_radius = 0.0
 
         self._ID = gmsh.model.occ.addRectangle(*x0, a, b, roundedRadius=corner_radius)
+        self.dim_tags = [(self.dimension, self._ID)]
 
     def __repr__(self):
         return f"<pygmsh Rectangle object, ID {self._ID}>"

@@ -1,11 +1,11 @@
 import gmsh
 
 from .ball import Ball
+from .boolean import Boolean
 from .box import Box
 from .cone import Cone
 from .cylinder import Cylinder
 from .disk import Disk
-from .dummy import Dummy
 from .ellipsoid import Ellipsoid
 from .rectangle import Rectangle
 from .surface_base import SurfaceBase
@@ -174,45 +174,43 @@ class Geometry:
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
         """
-        ent = (entities[0].dimension, entities[0]._ID)
+        ent = entities[0].dim_tags
         # form subsequent intersections
         # https://gitlab.onelab.info/gmsh/gmsh/-/issues/999
         for e in entities[1:]:
             out, _ = gmsh.model.occ.intersect(
                 [ent],
-                [(e.dimension, e._ID)],
+                [e.dim_tags],
                 removeObject=True,
                 removeTool=True,
             )
             assert all(out[0] == item for item in out)
             ent = out[0]
-        return Dummy(*ent)
+        return Boolean([ent], "Intersection")
 
-    def boolean_union(self, entities, delete_first=True, delete_other=True):
+    def boolean_union(self, entities):
         """Boolean union, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
         """
         out, _ = gmsh.model.occ.fuse(
-            [(entities[0].dimension, entities[0]._ID)],
-            [(item.dimension, item._ID) for item in entities[1:]],
-            removeObject=delete_first,
-            removeTool=delete_other,
+            [entities[0].dim_tags],
+            [e.dim_tags for e in entities[1:]],
+            removeObject=True,
+            removeTool=True,
         )
-        # assert len(out) == 1
-        return Dummy(*out[0])
+        return Boolean(out, "Union")
 
     def boolean_difference(self, d0, d1):
         """Boolean difference, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
         """
-        out, _ = gmsh.model.occ.cut(
-            [(d0.dimension, d0._ID)],
-            [(d1.dimension, d1._ID)],
-        )
-        # assert len(out) == 1
-        return Dummy(*out[0])
+        print(d0)
+        print(d1)
+        out, _ = gmsh.model.occ.cut(d0.dim_tags, d1.dim_tags)
+        assert len(out) == 1
+        return Boolean(out, "Difference")
 
     def boolean_fragments(self, *args, **kwargs):
         """Boolean fragments, see

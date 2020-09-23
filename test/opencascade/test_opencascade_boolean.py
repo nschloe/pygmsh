@@ -48,11 +48,12 @@ def test_difference():
     rectangle = geom.add_rectangle([-1.0, -1.0, 0.0], 2.0, 2.0)
     disk_w = geom.add_disk([-1.0, 0.0, 0.0], 0.5)
     disk_e = geom.add_disk([+1.0, 0.0, 0.0], 0.5)
+    geom.boolean_union([disk_w, disk_e])
     geom.boolean_difference(rectangle, geom.boolean_union([disk_w, disk_e]))
 
     mesh = pygmsh.generate_mesh(geom)
-    # ref = 3.2196387
-    # assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
+    ref = 3.2196387
+    assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 
 
@@ -68,7 +69,7 @@ def test_all():
 
     disk3 = geom.add_disk([0.0, -1.0, 0.0], 0.5)
     disk4 = geom.add_disk([0.0, +1.0, 0.0], 0.5)
-    geom.boolean_difference([union], [disk3, disk4])
+    geom.boolean_difference(union, geom.boolean_union([disk3, disk4]))
 
     ref = 4.0
     mesh = pygmsh.generate_mesh(geom)
