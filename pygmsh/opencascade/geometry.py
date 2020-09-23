@@ -95,10 +95,11 @@ class Geometry:
             self._SIZE_QUEUE.append((obj, mesh_size))
         return obj
 
-    def add_wedge(self, *args, **kwargs):
-        p = Wedge(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+    def add_wedge(self, *args, mesh_size=None, **kwargs):
+        obj = Wedge(*args, **kwargs)
+        if mesh_size is not None:
+            self._SIZE_QUEUE.append((obj, mesh_size))
+        return obj
 
     def _boolean_operation(
         self,

@@ -6,7 +6,7 @@ import pygmsh
 def test():
     geom = pygmsh.opencascade.Geometry()
 
-    geom.add_wedge([0.0, 0.0, 0.0], [1.0, 1.0, 1.0], top_extent=0.4, char_length=0.1)
+    geom.add_wedge([0.0, 0.0, 0.0], [1.0, 1.0, 1.0], top_extent=0.4, mesh_size=0.1)
 
     ref = 0.7
     mesh = pygmsh.generate_mesh(geom)
