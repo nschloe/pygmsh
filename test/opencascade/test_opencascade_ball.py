@@ -11,6 +11,7 @@ def test():
     geom.add_ball([0.0, 0.0, 0.0], 1.0, mesh_size=0.1)
 
     mesh = pygmsh.generate_mesh(geom)
+    mesh.write("opencascade_ball.vtu")
     ref = 4 / 3 * pi
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh

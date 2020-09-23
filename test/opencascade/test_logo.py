@@ -32,21 +32,14 @@ def test():
     r33 = geom.add_rectangle([20.0, 19.0, 0.0], 11.0, 11.0)
     inter2 = geom.boolean_intersection([diff2, r33])
 
-    out = geom.boolean_union([rect1, rect2])
-    out2 = geom.boolean_union([disk1, disk2, rect3, rect4, inter1, inter2])
-
-    out = geom.boolean_difference(out, out2)
-    # for item in [disk1, disk2, rect3, rect4, inter1, inter2]:
-    #     out = geom.boolean_difference(out, item)
-
-    # geom.boolean_difference(
-    #     geom.boolean_union([rect1, rect2]),
-    #     geom.boolean_union([disk1, disk2, rect3, rect4, inter1, inter2])
-    # )
+    geom.boolean_difference(
+        geom.boolean_union([rect1, rect2]),
+        geom.boolean_union([disk1, disk2, rect3, rect4, inter1, inter2]),
+    )
 
     mesh = pygmsh.generate_mesh(geom)
-    # ref = 1082.4470502181903
-    # assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
+    ref = 1082.4470502181903
+    assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 
 

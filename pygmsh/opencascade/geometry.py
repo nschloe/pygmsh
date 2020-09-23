@@ -37,6 +37,11 @@ class Geometry:
             )
 
     def __del__(self):
+        # TODO reset globally set values.
+        # <https://gitlab.onelab.info/gmsh/gmsh/-/issues/1001>
+        gmsh.option.setNumber("Mesh.CharacteristicLengthMin", 0.0)
+        gmsh.option.setNumber("Mesh.CharacteristicLengthMax", 1.0e22)
+
         gmsh.finalize()
 
     def synchronize(self):
@@ -55,10 +60,10 @@ class Geometry:
         return entity
 
     def add_ball(self, *args, mesh_size=None, **kwargs):
-        cone = Ball(*args, **kwargs)
+        obj = Ball(*args, **kwargs)
         if mesh_size is not None:
-            self._SIZE_QUEUE.append((cone, mesh_size))
-        return cone
+            self._SIZE_QUEUE.append((obj, mesh_size))
+        return obj
 
     def add_box(self, *args, mesh_size=None, **kwargs):
         box = Box(*args, **kwargs)

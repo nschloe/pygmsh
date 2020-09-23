@@ -182,7 +182,7 @@ def generate_mesh(  # noqa: C901
 
     for item, size in geo_object._SIZE_QUEUE:
         gmsh.model.mesh.setSize(
-            gmsh.model.getBoundary((item.dimension, item._ID), False, False, True), size
+            gmsh.model.getBoundary(item.dim_tags, False, False, True), size
         )
 
     gmsh.model.mesh.generate(dim)
@@ -334,7 +334,6 @@ def generate_mesh(  # noqa: C901
     # mesh = meshio.Mesh(points, d)
 
     gmsh.write(msh_filename)
-    print(msh_filename)
     mesh = meshio.read(msh_filename)
 
     if remove_lower_dim_cells:

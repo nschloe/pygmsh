@@ -26,14 +26,13 @@ class Ball:
         If specified, sets the `Characteristic Length` property.
     """
 
-    dimension = 3
-
     def __init__(self, center, radius, angle1=-pi / 2, angle2=pi / 2, angle3=2 * pi):
         self.center = center
         self.radius = radius
         self._ID = gmsh.model.occ.addSphere(
             *center, radius, angle1=angle1, angle2=angle2, angle3=angle3
         )
+        self.dim_tags = [(3, self._ID)]
 
     def __repr__(self):
-        return "<pygmsh Ball object, ID {self._ID}>"
+        return f"<pygmsh Ball object, ID {self._ID}>"
