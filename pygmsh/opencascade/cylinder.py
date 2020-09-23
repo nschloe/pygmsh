@@ -17,8 +17,6 @@ class Cylinder:
         Angular opening of the cylinder.
     """
 
-    dimension = 3
-
     def __init__(self, x0, axis, radius, angle=None):
         assert len(x0) == 3
         assert len(axis) == 3
@@ -29,6 +27,7 @@ class Cylinder:
         self.angle = angle
 
         self._ID = gmsh.model.occ.addCylinder(*x0, *axis, radius, angle=angle)
+        self.dim_tags = [(3, self._ID)]
 
     def __repr__(self):
         return f"<pygmsh Cylinder object, ID {self._ID}>"

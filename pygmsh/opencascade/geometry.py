@@ -6,7 +6,6 @@ from .box import Box
 from .cone import Cone
 from .cylinder import Cylinder
 from .disk import Disk
-from .ellipsoid import Ellipsoid
 from .rectangle import Rectangle
 from .surface_base import SurfaceBase
 from .torus import Torus
@@ -83,10 +82,12 @@ class Geometry:
             self._SIZE_QUEUE.append((cyl, mesh_size))
         return cyl
 
-    def add_ellipsoid(self, *args, **kwargs):
-        p = Ellipsoid(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+    def add_ellipsoid(self, center, radii, mesh_size=None):
+        obj = Ball(center, 1.0)
+        self.dilate(obj, center, radii)
+        if mesh_size is not None:
+            self._SIZE_QUEUE.append((obj, mesh_size))
+        return obj
 
     def add_torus(self, *args, **kwargs):
         p = Torus(*args, **kwargs)
@@ -221,3 +222,27 @@ class Geometry:
         and tool_entity are called object and tool in gmsh documentation.
         """
         return self._boolean_operation("BooleanFragments", *args, **kwargs)
+
+    def translate(self, obj, vector):
+        """Translates input_entity itself by vector.
+
+        Changes the input object.
+        """
+        gmsh.model.occ.rotate(obj.dim_tags, *vector)
+
+    def rotate(self, obj, point, angle, axis):
+        """Rotate input_entity around a given point with a give angle.
+           Rotation axis has to be specified.
+
+        Changes the input object.
+        """
+        gmsh.model.occ.rotate(obj.dim_tags, *point, *axis, angle)
+
+    def symmetrize(self, obj, coefficients):
+        """Transforms all elementary entities symmetrically to a plane. The vector
+        should contain four expressions giving the coefficients of the plane's equation.
+        """
+        gmsh.model.occ.symmetrize(obj.dim_tags, *coefficients)
+
+    def dilate(self, obj, x0, abc):
+        gmsh.model.occ.dilate(obj.dim_tags, *x0, *abc)

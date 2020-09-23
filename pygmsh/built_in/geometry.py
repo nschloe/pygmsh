@@ -820,7 +820,7 @@ class Geometry:
 
         Changes the input object.
         """
-        gmsh.model.geo.rotate(obj.dim_tags, *vector)
+        gmsh.model.geo.translate(obj.dim_tags, *vector)
 
     def rotate(self, obj, point, angle, axis):
         """Rotate input_entity around a given point with a give angle.
