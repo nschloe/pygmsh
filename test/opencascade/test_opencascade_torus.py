@@ -8,7 +8,7 @@ import pygmsh
 def test():
     geom = pygmsh.opencascade.Geometry()
 
-    geom.add_torus([0.0, 0.0, 0.0], 1.0, 0.3, 1.25 * pi, char_length=0.1)
+    geom.add_torus([0.0, 0.0, 0.0], 1.0, 0.3, 1.25 * pi, mesh_size=0.1)
 
     ref = 1.09994740709
     mesh = pygmsh.generate_mesh(geom)
