@@ -74,6 +74,7 @@ def test_square_circle_hole(geo_object):
     assert np.abs((compute_volume(mesh) - surf) / surf) < 1e-3
 
 
+@pytest.mark.skip()
 def test_square_circle_slice():
     """Test planar suface square with circular hole.
 

@@ -147,26 +147,6 @@ class Geometry:
         if label is not None:
             gmsh.model.setPhysicalName(dim, tag, label)
 
-    def add_physical_point(self, points, label=None):
-        warnings.warn("add_physical_point() is deprecated. use add_physical() instead.")
-        self.add_physical(points, label=label)
-
-    def add_physical_line(self, lines, label=None):
-        warnings.warn("add_physical_line() is deprecated. use add_physical() instead.")
-        self.add_physical(lines, label=label)
-
-    def add_physical_surface(self, surfaces, label=None):
-        warnings.warn(
-            "add_physical_surface() is deprecated. use add_physical() instead."
-        )
-        self.add_physical(surfaces, label=label)
-
-    def add_physical_volume(self, volumes, label=None):
-        warnings.warn(
-            "add_physical_volume() is deprecated. use add_physical() instead."
-        )
-        self.add_physical(volumes, label=label)
-
     def set_transfinite_curve(self, curve, num_nodes, mesh_type, coeff):
         assert mesh_type in ["Progression", "Bulk"]
         self._TRANSFINITE_CURVE_QUEUE.append((curve._ID, num_nodes, mesh_type, coeff))
