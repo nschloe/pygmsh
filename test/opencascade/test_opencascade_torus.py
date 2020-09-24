@@ -6,12 +6,11 @@ import pygmsh
 
 
 def test():
-    geom = pygmsh.opencascade.Geometry()
-
-    geom.add_torus([0.0, 0.0, 0.0], 1.0, 0.3, 1.25 * pi, mesh_size=0.1)
+    with pygmsh.opencascade.Geometry() as geom:
+        geom.add_torus([0.0, 0.0, 0.0], 1.0, 0.3, 1.25 * pi, mesh_size=0.1)
+        mesh = pygmsh.generate_mesh(geom)
 
     ref = 1.09994740709
-    mesh = pygmsh.generate_mesh(geom)
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 

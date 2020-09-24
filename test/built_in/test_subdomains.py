@@ -13,7 +13,12 @@ def test():
         rectangle = geom.add_rectangle(4.75, 6.25, -0.24, 1.25, 0.0, lcar)
         # hold all domain
         geom.add_polygon(
-            [[-1.0, -1.0, 0.0], [+7.0, -1.0, 0.0], [+7.0, +2.0, 0.0], [-1.0, +2.0, 0.0]],
+            [
+                [-1.0, -1.0, 0.0],
+                [+7.0, -1.0, 0.0],
+                [+7.0, +2.0, 0.0],
+                [-1.0, +2.0, 0.0],
+            ],
             lcar,
             holes=[circle.curve_loop, triangle.curve_loop, rectangle.curve_loop],
         )

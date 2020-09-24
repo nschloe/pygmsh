@@ -4,12 +4,11 @@ import pygmsh
 
 
 def test():
-    geom = pygmsh.opencascade.Geometry()
-
-    geom.add_box([0.0, 0.0, 0.0], [1, 2, 3], mesh_size=0.1)
+    with pygmsh.opencascade.Geometry() as geom:
+        geom.add_box([0.0, 0.0, 0.0], [1, 2, 3], mesh_size=0.1)
+        mesh = pygmsh.generate_mesh(geom)
 
     ref = 6.0
-    mesh = pygmsh.generate_mesh(geom)
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 

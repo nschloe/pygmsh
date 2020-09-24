@@ -6,12 +6,11 @@ import pygmsh
 
 
 def test():
-    geom = pygmsh.opencascade.Geometry()
-
-    geom.add_ellipsoid([1.0, 1.0, 1.0], [1.0, 2.0, 3.0], mesh_size=0.1)
+    with pygmsh.opencascade.Geometry() as geom:
+        geom.add_ellipsoid([1.0, 1.0, 1.0], [1.0, 2.0, 3.0], mesh_size=0.1)
+        mesh = pygmsh.generate_mesh(geom)
 
     ref = 8.0 * pi
-    mesh = pygmsh.generate_mesh(geom)
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 

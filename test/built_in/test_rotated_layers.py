@@ -9,7 +9,12 @@ def test(mesh_size=0.05):
     with pygmsh.built_in.Geometry() as geom:
         # Draw a square
         poly = geom.add_polygon(
-            [[+0.5, +0.0, 0.0], [+0.0, +0.5, 0.0], [-0.5, +0.0, 0.0], [+0.0, -0.5, 0.0]],
+            [
+                [+0.5, +0.0, 0.0],
+                [+0.0, +0.5, 0.0],
+                [-0.5, +0.0, 0.0],
+                [+0.0, -0.5, 0.0],
+            ],
             mesh_size=mesh_size,
         )
         axis = [0, 0, 1.0]

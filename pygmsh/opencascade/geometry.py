@@ -20,7 +20,7 @@ from .wedge import Wedge
 
 
 class Geometry:
-    def __init__(self, characteristic_length_min=None, characteristic_length_max=None):
+    def __init__(self):
         self._AFTER_SYNC_QUEUE = []
         self._EMBED_QUEUE = []
         self._COMPOUND_ENTITIES = []
@@ -28,16 +28,10 @@ class Geometry:
         self._TRANSFINITE_CURVE_QUEUE = []
         self._TRANSFINITE_SURFACE_QUEUE = []
         self._SIZE_QUEUE = []
-        self.char_len_min = characteristic_length_min
-        self.char_len_max = characteristic_length_max
 
     def __enter__(self):
         gmsh.initialize()
         gmsh.model.add("pygmsh OCC model")
-        if self.char_len_min is not None:
-            gmsh.option.setNumber("Mesh.CharacteristicLengthMin", self.char_len_min)
-        if self.char_len_max is not None:
-            gmsh.option.setNumber("Mesh.CharacteristicLengthMax", self.char_len_max)
         return self
 
     def __exit__(self, *a):
@@ -52,6 +46,22 @@ class Geometry:
 
     def synchronize(self):
         gmsh.model.occ.synchronize()
+
+    @property
+    def characteristic_length_min(self):
+        return gmsh.option.getNumber("Mesh.CharacteristicLengthMin")
+
+    @property
+    def characteristic_length_max(self):
+        return gmsh.option.getNumber("Mesh.CharacteristicLengthMax")
+
+    @characteristic_length_min.setter
+    def characteristic_length_min(self, val):
+        gmsh.option.setNumber("Mesh.CharacteristicLengthMin", val)
+
+    @characteristic_length_max.setter
+    def characteristic_length_max(self, val):
+        gmsh.option.setNumber("Mesh.CharacteristicLengthMax", val)
 
     def add_point(self, *args, **kwargs):
         return Point(*args, **kwargs)
