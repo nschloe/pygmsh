@@ -45,6 +45,7 @@ class PlaneSurface(SurfaceBase):
 
         curve_loops = [self.curve_loop] + self.holes
         id0 = gmsh.model.geo.addPlaneSurface([ll._ID for ll in curve_loops])
+        self.dim_tags = [(2, id0)]
         super().__init__(id0)
         self.num_edges = len(self.curve_loop) + sum(len(h) for h in self.holes)
 

@@ -28,21 +28,19 @@ class Geometry:
         self._TRANSFINITE_CURVE_QUEUE = []
         self._TRANSFINITE_SURFACE_QUEUE = []
         self._SIZE_QUEUE = []
+        self.char_len_min = characteristic_length_min
+        self.char_len_max = characteristic_length_max
 
+    def __enter__(self):
         gmsh.initialize()
         gmsh.model.add("pygmsh OCC model")
+        if self.char_len_min is not None:
+            gmsh.option.setNumber("Mesh.CharacteristicLengthMin", self.char_len_min)
+        if self.char_len_max is not None:
+            gmsh.option.setNumber("Mesh.CharacteristicLengthMax", self.char_len_max)
+        return self
 
-        if characteristic_length_min is not None:
-            gmsh.option.setNumber(
-                "Mesh.CharacteristicLengthMin", characteristic_length_min
-            )
-
-        if characteristic_length_max is not None:
-            gmsh.option.setNumber(
-                "Mesh.CharacteristicLengthMax", characteristic_length_max
-            )
-
-    def __del__(self):
+    def __exit__(self, *a):
         # TODO reset globally set values.
         # <https://gitlab.onelab.info/gmsh/gmsh/-/issues/1001>
         gmsh.option.setNumber("Mesh.CharacteristicLengthMin", 0.0)

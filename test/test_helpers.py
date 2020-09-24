@@ -6,12 +6,11 @@ import pygmsh
 
 
 def test():
-    geom = pygmsh.built_in.Geometry()
-    geom.add_circle([0, 0, 0], 1, 0.1, make_surface=False)
-    mesh = pygmsh.generate_mesh(geom)
-    ref = 2 * np.pi
-    assert np.abs(compute_volume(mesh) - ref) < 1e-2 * ref
-    return
+    with pygmsh.built_in.Geometry() as geom:
+        geom.add_circle([0, 0, 0], 1, 0.1, make_surface=False)
+        mesh = pygmsh.generate_mesh(geom)
+        ref = 2 * np.pi
+        assert np.abs(compute_volume(mesh) - ref) < 1e-2 * ref
 
 
 if __name__ == "__main__":

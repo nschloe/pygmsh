@@ -35,10 +35,12 @@ class Geometry:
         self._AFTER_SYNC_QUEUE = []
         self._SIZE_QUEUE = []
 
+    def __enter__(self):
         gmsh.initialize()
         gmsh.model.add("pygmsh built-in model")
+        return self
 
-    def __del__(self):
+    def __exit__(self, *a):
         gmsh.finalize()
 
     def synchronize(self):

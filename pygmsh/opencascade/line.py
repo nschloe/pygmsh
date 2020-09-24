@@ -26,6 +26,7 @@ class Line:
         assert isinstance(p0, Point)
         assert isinstance(p1, Point)
         self._ID = gmsh.model.occ.addLine(p0._ID, p1._ID)
+        self.dim_tags = [(1, self._ID)]
         self.points = [p0, p1]
 
     def __repr__(self):
