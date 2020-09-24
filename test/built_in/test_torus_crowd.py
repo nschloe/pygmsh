@@ -5,8 +5,6 @@ import pygmsh
 
 
 def test():
-    geom = pygmsh.built_in.Geometry()
-
     # internal radius of torus
     irad = 0.15
     # external radius of torus
@@ -33,27 +31,27 @@ def test():
         )
     )
 
-    for alpha, a1, z in zip(Alpha, A1, Z_pos):
-        # Rotate torus to the y-z-plane.
-        R1 = pygmsh.rotation_matrix([0.0, 1.0, 0.0], 0.5 * np.pi)
-        R2 = pygmsh.rotation_matrix([0.0, 0.0, 1.0], alpha)
-        x0 = np.array([a1, 0.0, 0.0])
-        x1 = np.array([0.0, 0.0, z])
-        # First rotate to y-z-plane, then move out to a1, rotate by angle
-        # alpha, move up by z.
-        #
-        #    xnew = R2*(R1*x+x0) + x1
-        #
-        geom.add_torus(
-            irad=irad,
-            orad=orad,
-            mesh_size=0.1,
-            R=np.dot(R2, R1),
-            x0=np.dot(R2, x0) + x1,
-        )
-
-    geom.add_box(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0, mesh_size=0.3)
-    mesh = pygmsh.generate_mesh(geom)
+    with pygmsh.built_in.Geometry() as geom:
+        for alpha, a1, z in zip(Alpha, A1, Z_pos):
+            # Rotate torus to the y-z-plane.
+            R1 = pygmsh.rotation_matrix([0.0, 1.0, 0.0], 0.5 * np.pi)
+            R2 = pygmsh.rotation_matrix([0.0, 0.0, 1.0], alpha)
+            x0 = np.array([a1, 0.0, 0.0])
+            x1 = np.array([0.0, 0.0, z])
+            # First rotate to y-z-plane, then move out to a1, rotate by angle
+            # alpha, move up by z.
+            #
+            #    xnew = R2*(R1*x+x0) + x1
+            #
+            geom.add_torus(
+                irad=irad,
+                orad=orad,
+                mesh_size=0.1,
+                R=np.dot(R2, R1),
+                x0=np.dot(R2, x0) + x1,
+            )
+        geom.add_box(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0, mesh_size=0.3)
+        mesh = pygmsh.generate_mesh(geom)
 
     ref = len(A1) * 2 * np.pi ** 2 * orad * irad ** 2 + 2.0 ** 3
     assert np.isclose(compute_volume(mesh), ref, rtol=2e-2)

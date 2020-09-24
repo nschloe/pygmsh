@@ -16,16 +16,12 @@ def test():
     # Vertices of a square hole
     squareHoleCoordinates = np.array([[1, 1, 0], [4, 1, 0], [4, 4, 0], [1, 4, 0]])
 
-    # Create geometric object
-    geom = pygmsh.built_in.Geometry()
-
-    # Create square hole
-    squareHole = geom.add_polygon(squareHoleCoordinates, lcar, make_surface=False)
-
-    # Create square domain with square hole
-    geom.add_rectangle(xmin, xmax, ymin, ymax, 0.0, lcar, holes=[squareHole.curve_loop])
-
-    mesh = pygmsh.generate_mesh(geom, extra_gmsh_arguments=["-order", "2"])
+    with pygmsh.built_in.Geometry() as geom:
+        # Create square hole
+        squareHole = geom.add_polygon(squareHoleCoordinates, lcar, make_surface=False)
+        # Create square domain with square hole
+        geom.add_rectangle(xmin, xmax, ymin, ymax, 0.0, lcar, holes=[squareHole.curve_loop])
+        mesh = pygmsh.generate_mesh(geom, extra_gmsh_arguments=["-order", "2"])
     # TODO support for volumes of triangle6
     # ref = 16.0
     # from helpers import compute_volume
@@ -34,6 +30,4 @@ def test():
 
 
 if __name__ == "__main__":
-    import meshio
-
-    meshio.write("hole_in_square.vtu", test())
+    test().write("hole_in_square.vtu")

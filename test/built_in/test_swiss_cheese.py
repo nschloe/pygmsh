@@ -5,31 +5,26 @@ import pygmsh
 
 
 def test():
-    geom = pygmsh.built_in.Geometry()
-
     X0 = np.array(
         [[+0.0, +0.0, 0.0], [+0.5, +0.3, 0.1], [-0.5, +0.3, 0.1], [+0.5, -0.3, 0.1]]
     )
-
     R = np.array([0.1, 0.2, 0.1, 0.14])
 
-    holes = [
-        geom.add_ball(x0, r, with_volume=False, mesh_size=0.2 * r).surface_loop
-        for x0, r in zip(X0, R)
-    ]
-
-    # geom.add_box(
-    #         -1, 1,
-    #         -1, 1,
-    #         -1, 1,
-    #         mesh_size=0.2,
-    #         holes=holes
-    #         )
-
-    geom.add_ball([0, 0, 0], 1.0, mesh_size=0.2, holes=holes)
-
-    # geom.add_physical_volume(ball, label="cheese")
-    mesh = pygmsh.generate_mesh(geom)
+    with pygmsh.built_in.Geometry() as geom:
+        holes = [
+            geom.add_ball(x0, r, with_volume=False, mesh_size=0.2 * r).surface_loop
+            for x0, r in zip(X0, R)
+        ]
+        # geom.add_box(
+        #         -1, 1,
+        #         -1, 1,
+        #         -1, 1,
+        #         mesh_size=0.2,
+        #         holes=holes
+        #         )
+        geom.add_ball([0, 0, 0], 1.0, mesh_size=0.2, holes=holes)
+        # geom.add_physical_volume(ball, label="cheese")
+        mesh = pygmsh.generate_mesh(geom)
 
     ref = 4.07064892966291
     assert abs(compute_volume(mesh) - ref) < 2.0e-2 * ref

@@ -116,29 +116,28 @@ def test():
     airfoil_coordinates *= coord
 
     # Instantiate geometry object
-    geom = pygmsh.built_in.Geometry()
+    with pygmsh.built_in.Geometry() as geom:
+        # Create polygon for airfoil
+        char_length = 1.0e-1
+        airfoil = geom.add_polygon(airfoil_coordinates, char_length, make_surface=False)
 
-    # Create polygon for airfoil
-    char_length = 1.0e-1
-    airfoil = geom.add_polygon(airfoil_coordinates, char_length, make_surface=False)
+        # Create surface for numerical domain with an airfoil-shaped hole
+        left_dist = 1.0
+        right_dist = 3.0
+        top_dist = 1.0
+        bottom_dist = 1.0
+        xmin = airfoil_coordinates[:, 0].min() - left_dist * coord
+        xmax = airfoil_coordinates[:, 0].max() + right_dist * coord
+        ymin = airfoil_coordinates[:, 1].min() - bottom_dist * coord
+        ymax = airfoil_coordinates[:, 1].max() + top_dist * coord
+        domainCoordinates = numpy.array(
+            [[xmin, ymin, 0.0], [xmax, ymin, 0.0], [xmax, ymax, 0.0], [xmin, ymax, 0.0]]
+        )
+        polygon = geom.add_polygon(domainCoordinates, char_length, holes=[airfoil])
+        geom.set_recombined_surfaces([polygon.surface])
 
-    # Create surface for numerical domain with an airfoil-shaped hole
-    left_dist = 1.0
-    right_dist = 3.0
-    top_dist = 1.0
-    bottom_dist = 1.0
-    xmin = airfoil_coordinates[:, 0].min() - left_dist * coord
-    xmax = airfoil_coordinates[:, 0].max() + right_dist * coord
-    ymin = airfoil_coordinates[:, 1].min() - bottom_dist * coord
-    ymax = airfoil_coordinates[:, 1].max() + top_dist * coord
-    domainCoordinates = numpy.array(
-        [[xmin, ymin, 0.0], [xmax, ymin, 0.0], [xmax, ymax, 0.0], [xmin, ymax, 0.0]]
-    )
-    polygon = geom.add_polygon(domainCoordinates, char_length, holes=[airfoil])
-    geom.set_recombined_surfaces([polygon.surface])
-
-    ref = 10.525891646546
-    mesh = pygmsh.generate_mesh(geom, remove_lower_dim_cells=True)
+        ref = 10.525891646546
+        mesh = pygmsh.generate_mesh(geom, remove_lower_dim_cells=True)
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 

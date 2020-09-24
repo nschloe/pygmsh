@@ -4,13 +4,12 @@ import pygmsh
 
 
 def test():
-    geom = pygmsh.built_in.Geometry()
-
-    rectangle = geom.add_rectangle(0.0, 1.0, 0.0, 1.0, 0.0, 0.1)
-    geom.set_recombined_surfaces([rectangle.surface])
+    with pygmsh.built_in.Geometry() as geom:
+        rectangle = geom.add_rectangle(0.0, 1.0, 0.0, 1.0, 0.0, 0.1)
+        geom.set_recombined_surfaces([rectangle.surface])
+        mesh = pygmsh.generate_mesh(geom, dim=2)
 
     ref = 1.0
-    mesh = pygmsh.generate_mesh(geom, dim=2)
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 
