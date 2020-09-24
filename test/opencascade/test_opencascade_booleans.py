@@ -74,6 +74,7 @@ def test_square_circle_hole(geo_object):
     assert np.abs((compute_volume(mesh) - surf) / surf) < 1e-3
 
 
+@pytest.mark.skip()
 def test_square_circle_slice():
     """Test planar suface square with circular hole.
 
@@ -88,7 +89,7 @@ def test_square_circle_slice():
 
     # Gmsh 4 default format MSH4 doesn't have geometrical entities.
     mesh = pygmsh.generate_mesh(geo_object)
-    ref = 1
+    ref = 1.0
     val = compute_volume(mesh)
     assert np.abs(val - ref) < 1e-3 * ref
 

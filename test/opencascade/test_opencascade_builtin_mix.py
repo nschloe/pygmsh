@@ -4,9 +4,7 @@ import pygmsh
 
 
 def test():
-    geom = pygmsh.opencascade.Geometry(
-        characteristic_length_min=0.1, characteristic_length_max=0.1
-    )
+    geom = pygmsh.opencascade.Geometry(characteristic_length_max=0.1)
 
     p0 = geom.add_point([-0.5, -0.5, 0], 0.01)
     p1 = geom.add_point([+0.5, -0.5, 0], 0.01)
@@ -19,7 +17,7 @@ def test():
     ll0 = geom.add_curve_loop([l0, l1, l2, l3])
     square_builtin = geom.add_plane_surface(ll0)
     square_opencascade = geom.add_rectangle([0, 0, 0], 1.0, 1.0)
-    geom.boolean_difference([square_opencascade], [square_builtin])
+    geom.boolean_difference(square_opencascade, square_builtin)
 
     ref = 0.75
     mesh = pygmsh.generate_mesh(geom)
@@ -28,6 +26,4 @@ def test():
 
 
 if __name__ == "__main__":
-    import meshio
-
-    meshio.write("mix.vtu", test())
+    test().write("mix.vtu")
