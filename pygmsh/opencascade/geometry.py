@@ -46,8 +46,10 @@ class Geometry:
         # <https://gitlab.onelab.info/gmsh/gmsh/-/issues/1001>
         gmsh.option.setNumber("Mesh.CharacteristicLengthMin", 0.0)
         gmsh.option.setNumber("Mesh.CharacteristicLengthMax", 1.0e22)
-
         gmsh.finalize()
+
+    def __repr__(self):
+        return "<pygmsh Geometry object (OCC)>"
 
     def synchronize(self):
         gmsh.model.occ.synchronize()
@@ -162,12 +164,13 @@ class Geometry:
         out, _ = gmsh.model.occ.cut(d0.dim_tags, d1.dim_tags)
         return Boolean(out, "Difference")
 
-    def boolean_fragments(self, *args, **kwargs):
+    def boolean_fragments(self, d0, d1):
         """Boolean fragments, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
         """
-        return self._boolean_operation("BooleanFragments", *args, **kwargs)
+        out, _ = gmsh.model.occ.fragment(d0.dim_tags, d1.dim_tags)
+        return Boolean(out, "Fragments")
 
     def translate(self, obj, vector):
         """Translates input_entity itself by vector.
