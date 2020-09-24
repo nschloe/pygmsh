@@ -29,6 +29,7 @@ class PlaneSurface(SurfaceBase):
     in common with another line loop defining a hole in the same
     surface (in which case the two line loops should be combined).
     """
+    dimension = 2
 
     def __init__(self, curve_loop, holes=None):
         assert isinstance(curve_loop, CurveLoop)

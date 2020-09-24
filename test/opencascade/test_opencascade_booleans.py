@@ -74,7 +74,6 @@ def test_square_circle_hole(geo_object):
     assert np.abs((compute_volume(mesh) - surf) / surf) < 1e-3
 
 
-@pytest.mark.skip()
 def test_square_circle_slice():
     """Test planar suface square with circular hole.
 
@@ -89,8 +88,6 @@ def test_square_circle_slice():
 
     # Gmsh 4 default format MSH4 doesn't have geometrical entities.
     mesh = pygmsh.generate_mesh(geo_object)
-    mesh.write("out.vtk")
-    exit(1)
     ref = 1
     val = compute_volume(mesh)
     assert np.abs(val - ref) < 1e-3 * ref
@@ -116,22 +113,23 @@ def test_fragments_diff_union():
     # construct surface using boolean
     geo_object = pygmsh.opencascade.Geometry(0.04, 0.04)
     square = square_loop(geo_object)
-    curve_loop = circle_loop(geo_object)
     surf1 = geo_object.add_plane_surface(square)
+    curve_loop = circle_loop(geo_object)
     surf2 = geo_object.add_plane_surface(curve_loop)
 
-    geo_object.add_physical([surf1], label=1)
-    geo_object.add_physical([surf2], label=2)
-    surf_diff = geo_object.boolean_difference([surf1], [surf2], delete_other=False)
-    geo_object.boolean_union([surf_diff, surf2])
+    geo_object.add_physical([surf1], label="1")
+    geo_object.add_physical([surf2], label="2")
+    geo_object.boolean_difference(surf1, surf2, delete_other=False)
     mesh = pygmsh.generate_mesh(geo_object)
-    assert np.abs((compute_volume(mesh) - 1) / 1) < 1e-3
+    ref = 1.0
+    assert np.abs(compute_volume(mesh) - ref) < 1e-3 * ref
+
     surf = 1 - 0.1 ** 2 * np.pi
-    outer_mask = np.where(mesh.cell_data_dict["gmsh:physical"]["triangle"] == 1)[0]
+    outer_mask = np.where(mesh.cell_data_dict["gmsh:geometrical"]["triangle"] == 1)[0]
     outer_cells = {}
     outer_cells["triangle"] = mesh.cells_dict["triangle"][outer_mask]
 
-    inner_mask = np.where(mesh.cell_data_dict["gmsh:physical"]["triangle"] == 2)[0]
+    inner_mask = np.where(mesh.cell_data_dict["gmsh:geometrical"]["triangle"] == 2)[0]
     inner_cells = {}
     inner_cells["triangle"] = mesh.cells_dict["triangle"][inner_mask]
 
@@ -150,11 +148,11 @@ def test_diff_physical_assignment():
     curve_loop2 = circle_loop(geo_object2)
     surf1 = geo_object2.add_plane_surface(square2)
     surf2 = geo_object2.add_plane_surface(curve_loop2)
-    geo_object2.add_physical([surf1], label=1)
-    geo_object2.boolean_difference([surf1], [surf2])
+    geo_object2.add_physical(surf1, label="1")
+    geo_object2.boolean_difference(surf1, surf2)
     mesh = pygmsh.generate_mesh(geo_object2)
     assert np.allclose(
-        mesh.cell_data_dict["gmsh:physical"]["triangle"],
+        mesh.cell_data_dict["gmsh:geometrical"]["triangle"],
         np.ones(mesh.cells_dict["triangle"].shape[0]),
     )
     surf = 1 - 0.1 ** 2 * np.pi
@@ -165,7 +163,7 @@ def test_polygon_diff():
     geom = pygmsh.opencascade.Geometry()
     poly = geom.add_polygon([[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]])
     disk = geom.add_disk([0, 0, 0], 0.5)
-    geom.boolean_difference([poly], [disk])
+    geom.boolean_difference(poly.surface, disk)
 
 
 if __name__ == "__main__":

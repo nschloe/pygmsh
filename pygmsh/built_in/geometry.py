@@ -368,6 +368,7 @@ class Geometry:
             if surface is not None:
                 self._ID = self.surface._ID
             self.dimension = 2
+            self.dim_tags = [(2, surface)]
 
     def add_polygon(self, X, mesh_size=None, holes=None, make_surface=True):
         if holes is None:

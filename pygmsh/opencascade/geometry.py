@@ -156,12 +156,17 @@ class Geometry:
         )
         return Boolean(out, "Union")
 
-    def boolean_difference(self, d0, d1):
+    def boolean_difference(self, d0, d1, delete_first=True, delete_other=True):
         """Boolean difference, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
         """
-        out, _ = gmsh.model.occ.cut(d0.dim_tags, d1.dim_tags)
+        out, _ = gmsh.model.occ.cut(
+            d0.dim_tags,
+            d1.dim_tags,
+            removeObject=delete_first,
+            removeTool=delete_other,
+        )
         return Boolean(out, "Difference")
 
     def boolean_fragments(self, d0, d1):
@@ -308,3 +313,49 @@ class Geometry:
         extruded = Dummy(*out_dim_tags[1])
         lateral = [Dummy(*e) for e in out_dim_tags[2:]]
         return top, extruded, lateral
+
+    def add_physical(self, entities, label=None):
+        if not isinstance(entities, list):
+            entities = [entities]
+
+        dim = entities[0].dimension
+        for e in entities:
+            assert e.dimension == dim
+
+        tag = gmsh.model.addPhysicalGroup(dim, [e._ID for e in entities])
+        if label is not None:
+            assert isinstance(label, str)
+            gmsh.model.setPhysicalName(dim, tag, label)
+
+    def add_polygon(self, X, mesh_size=None, holes=None, make_surface=True):
+        class Polygon:
+            def __init__(self, points, lines, curve_loop, surface, mesh_size=None):
+                self.points = points
+                self.lines = lines
+                self.num_edges = len(lines)
+                self.curve_loop = curve_loop
+                self.surface = surface
+                self.mesh_size = mesh_size
+                if surface is not None:
+                    self._ID = self.surface._ID
+                self.dimension = 2
+                self.dim_tags = [(2, surface)]
+
+        if holes is None:
+            holes = []
+        else:
+            assert make_surface
+
+        if isinstance(mesh_size, list):
+            assert len(X) == len(mesh_size)
+        else:
+            mesh_size = len(X) * [mesh_size]
+
+        # Create points.
+        p = [self.add_point(x, mesh_size=l) for x, l in zip(X, mesh_size)]
+        # Create lines
+        lines = [self.add_line(p[k], p[k + 1]) for k in range(len(p) - 1)]
+        lines.append(self.add_line(p[-1], p[0]))
+        ll = self.add_curve_loop(lines)
+        surface = self.add_plane_surface(ll, holes) if make_surface else None
+        return Polygon(p, lines, ll, surface, mesh_size=mesh_size)
