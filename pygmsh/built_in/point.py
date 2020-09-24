@@ -21,6 +21,7 @@ class Point(PointBase):
         if mesh_size is not None:
             args.append(mesh_size)
         id0 = gmsh.model.geo.addPoint(*args)
+        self.dim_tags = [(0, id0)]
         super().__init__(id0)
 
     def __repr__(self):

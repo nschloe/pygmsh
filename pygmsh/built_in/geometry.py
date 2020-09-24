@@ -33,9 +33,10 @@ class Geometry:
         self._TRANSFINITE_CURVE_QUEUE = []
         self._TRANSFINITE_SURFACE_QUEUE = []
         self._AFTER_SYNC_QUEUE = []
+        self._SIZE_QUEUE = []
 
         gmsh.initialize()
-        gmsh.model.add("pygmsh model")
+        gmsh.model.add("pygmsh built-in model")
 
     def __del__(self):
         gmsh.finalize()

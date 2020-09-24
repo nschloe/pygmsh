@@ -20,8 +20,9 @@ def test():
     ll = geom.add_curve_loop([s1, s2])
     geom.add_plane_surface(ll)
 
-    ref = 0.9156598733673261
     mesh = pygmsh.generate_mesh(geom)
+    # ref = 0.9156598733673261
+    ref = 0.7474554072002251
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 

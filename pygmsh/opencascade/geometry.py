@@ -30,6 +30,7 @@ class Geometry:
         self._SIZE_QUEUE = []
 
         gmsh.initialize()
+        gmsh.model.add("pygmsh OCC model")
 
         if characteristic_length_min is not None:
             gmsh.option.setNumber(
