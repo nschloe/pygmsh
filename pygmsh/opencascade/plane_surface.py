@@ -40,12 +40,14 @@ class PlaneSurface:
         # (like polygons).
         self.holes = [h if isinstance(h, CurveLoop) else h.curve_loop for h in holes]
 
+        self.num_edges = len(self.curve_loop) + sum(len(h) for h in self.holes)
+
         curve_loops = [self.curve_loop] + self.holes
         self._ID = gmsh.model.occ.addPlaneSurface([ll._ID for ll in curve_loops])
-        self.num_edges = len(self.curve_loop) + sum(len(h) for h in self.holes)
+        self.dim_tags = [(2, self._ID)]
 
     def __repr__(self):
         return (
-            "<pygmsh PlaneSurface object, "
+            "<pygmsh PlaneSurface object (OCC), "
             f"ID {self._ID}, curve loop {self.curve_loop._ID}>"
         )

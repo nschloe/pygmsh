@@ -62,7 +62,7 @@ def built_in_opencascade_geos():
     geo_object2, curve_loop2 = circle_loop(geo_object2)
     surf1 = geo_object2.add_plane_surface(square2)
     surf2 = geo_object2.add_plane_surface(curve_loop2)
-    geo_object2.boolean_difference([surf1], [surf2])
+    geo_object2.boolean_difference(surf1, surf2)
 
     return geo_object, geo_object2
 

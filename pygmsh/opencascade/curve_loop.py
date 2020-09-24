@@ -27,7 +27,7 @@ class CurveLoop:
         for k in range(len(curves) - 1):
             assert curves[k].points[-1] == curves[k + 1].points[0]
         assert curves[-1].points[-1] == curves[0].points[0]
-        self._ID = gmsh.model.geo.addCurveLoop([c._ID for c in curves])
+        self._ID = gmsh.model.occ.addCurveLoop([c._ID for c in curves])
 
         self.curves = curves
 
