@@ -18,12 +18,9 @@
 [![LGTM](https://img.shields.io/lgtm/grade/python/github/nschloe/pygmsh.svg?style=flat-square)](https://lgtm.com/projects/g/nschloe/pygmsh)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)](https://github.com/psf/black)
 
-[Gmsh](https://gmsh.info/) is a powerful mesh generation tool with a scripting language
-that is notoriously hard to write.
-
-The goal of pygmsh is to combine the power of Gmsh with the versatility of Python and to
-provide useful abstractions from the Gmsh scripting language so you can create complex
-geometries more easily.
+pygmsh combines the power of [Gmsh](https://gmsh.info/) with the versatility of Python.
+It provides useful abstractions from Gmsh's own Python interface so you can create
+complex geometries more easily.
 
 See [here](https://pygmsh.readthedocs.io/en/latest/index.html) for the full
 documentation.
@@ -65,7 +62,7 @@ with pygmsh.built_in.Geometry() as geom:
 
 # mesh.points, mesh.cells, ...
 ```
-to retrieve all points and cells of the mesh for the specified geometry.  To store the
+to retrieve all points and cells of the mesh for the specified geometry. To store the
 mesh, you can use [meshio](https://pypi.org/project/meshio); for example
 <!--exdown-skip-->
 ```python
@@ -81,7 +78,6 @@ You will find the above mesh in the directory
 examples.
 
 #### OpenCASCADE
-
 ![](https://nschloe.github.io/pygmsh/puzzle.png)
 
 As of version 3.0, Gmsh supports OpenCASCADE, allowing for a CAD-style geometry
@@ -114,14 +110,13 @@ with pygmsh.opencascade.Geometry() as geom:
 ### Installation
 
 pygmsh is [available from the Python Package Index](https://pypi.org/project/pygmsh/),
-so simply type
+so simply do
 ```
 pip install pygmsh
 ```
-to install. Also make sure to have [gmsh](http://gmsh.info/) installed.
+to install. Also, make sure to have [gmsh](http://gmsh.info/) installed.
 
 ### Usage
-
 Just
 ```
 import pygmsh as pg
