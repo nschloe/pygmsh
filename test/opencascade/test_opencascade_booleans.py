@@ -173,7 +173,7 @@ def test_polygon_diff():
     with pygmsh.opencascade.Geometry() as geom:
         poly = geom.add_polygon([[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]])
         disk = geom.add_disk([0, 0, 0], 0.5)
-        geom.boolean_difference(poly.surface, disk)
+        geom.boolean_difference(poly, disk)
 
 
 if __name__ == "__main__":

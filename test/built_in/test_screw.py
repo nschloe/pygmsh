@@ -24,7 +24,7 @@ def test(mesh_size=0.05):
         )
 
         geom.twist(
-            poly.surface,
+            poly,
             translation_axis=[0.0, 0.0, 1.0],
             rotation_axis=[0.0, 0.0, 1.0],
             point_on_axis=[0.0, 0.0, 0.0],

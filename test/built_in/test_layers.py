@@ -24,7 +24,7 @@ def test(mesh_size=0.05):
             holes=[circ],
         )
         axis = [0, 0, 1.0]
-        geom.extrude(poly.surface, translation_axis=axis, num_layers=1)
+        geom.extrude(poly, translation_axis=axis, num_layers=1)
         mesh = pygmsh.generate_mesh(geom)
 
     ref = 0.16951514066385628

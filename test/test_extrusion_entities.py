@@ -46,7 +46,7 @@ def test(kernel):
         poly = geom.add_polygon(
             [[5.0, 0.0, 0.0], [6.0, 0.0, 0.0], [5.0, 1.0, 0.0]], mesh_size=1e20
         )
-        a, b, poly_lat = geom.extrude(poly.surface, [0.0, 0.0, 1.0], num_layers=1)
+        a, b, poly_lat = geom.extrude(poly, [0.0, 0.0, 1.0], num_layers=1)
         mesh = pygmsh.generate_mesh(geom)
         assert len(mesh.points) == 8 + 6
         assert len(poly_lat) == 3
