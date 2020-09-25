@@ -4,7 +4,6 @@ import numpy
 from .bspline import BSpline
 from .circle_arc import CircleArc
 from .curve_loop import CurveLoop
-from .dummy import Dummy
 from .ellipse_arc import EllipseArc
 from .line import Line
 from .line_base import LineBase
@@ -17,6 +16,8 @@ from .surface_base import SurfaceBase
 from .surface_loop import SurfaceLoop
 from .volume import Volume
 from .volume_base import VolumeBase
+
+from .. import common
 
 
 class Geometry:
@@ -136,7 +137,7 @@ class Geometry:
                     SurfaceBase,
                     Volume,
                     VolumeBase,
-                    Dummy,
+                    common.Dummy,
                 ),
             ), "Can add physical groups only for Points, Lines, Surfaces, Volumes, not {}.".format(
                 type(e)
@@ -262,119 +263,14 @@ class Geometry:
             mesh_size=mesh_size,
         )
 
-    def extrude(
-        self,
-        input_entity,
-        translation_axis,
-        num_layers=None,
-        heights=None,
-        recombine=False,
-    ):
-        """Extrusion of any entity along a given translation_axis."""
-        if isinstance(num_layers, int):
-            num_layers = [num_layers]
-        if num_layers is None:
-            num_layers = []
-            heights = []
-        else:
-            if heights is None:
-                heights = []
-            else:
-                assert len(num_layers) == len(heights)
+    def extrude(self, *args, **kwargs):
+        return common._extrude(gmsh.model.geo, *args, **kwargs)
 
-        out_dim_tags = gmsh.model.geo.extrude(
-            input_entity.dim_tags,
-            translation_axis[0],
-            translation_axis[1],
-            translation_axis[2],
-            numElements=num_layers,
-            heights=heights,
-            recombine=recombine,
-        )
-        top = Dummy(*out_dim_tags[0])
-        extruded = Dummy(*out_dim_tags[1])
-        lateral = [Dummy(*e) for e in out_dim_tags[2:]]
-        return top, extruded, lateral
+    def revolve(self, *args, **kwargs):
+        return common._revolve(gmsh.model.geo, *args, **kwargs)
 
-    def revolve(
-        self,
-        input_entity,
-        rotation_axis,
-        point_on_axis,
-        angle,
-        num_layers=None,
-        heights=None,
-        recombine=False,
-    ):
-        """Rotation of any entity around a given rotation_axis, about a given angle."""
-        if isinstance(num_layers, int):
-            num_layers = [num_layers]
-        if num_layers is None:
-            num_layers = []
-            heights = []
-        else:
-            if heights is None:
-                heights = []
-            else:
-                assert len(num_layers) == len(heights)
-
-        assert angle < numpy.pi
-        out_dim_tags = gmsh.model.geo.revolve(
-            input_entity.dim_tags,
-            *point_on_axis,
-            *rotation_axis,
-            angle,
-            numElements=num_layers,
-            heights=heights,
-            recombine=recombine,
-        )
-
-        top = Dummy(*out_dim_tags[0])
-        extruded = Dummy(*out_dim_tags[1])
-        lateral = [Dummy(*e) for e in out_dim_tags[2:]]
-        return top, extruded, lateral
-
-    def twist(
-        self,
-        input_entity,
-        translation_axis,
-        rotation_axis,
-        point_on_axis,
-        angle,
-        num_layers=None,
-        heights=None,
-        recombine=False,
-    ):
-        """Twist (translation + rotation) of any entity along a given translation_axis,
-        around a given rotation_axis, about a given angle.
-        """
-        if isinstance(num_layers, int):
-            num_layers = [num_layers]
-        if num_layers is None:
-            num_layers = []
-            heights = []
-        else:
-            if heights is None:
-                heights = []
-            else:
-                assert len(num_layers) == len(heights)
-
-        assert angle < numpy.pi
-        out_dim_tags = gmsh.model.geo.twist(
-            input_entity.dim_tags,
-            *point_on_axis,
-            *translation_axis,
-            *rotation_axis,
-            angle,
-            numElements=num_layers,
-            heights=heights,
-            recombine=recombine,
-        )
-
-        top = Dummy(*out_dim_tags[0])
-        extruded = Dummy(*out_dim_tags[1])
-        lateral = [Dummy(*e) for e in out_dim_tags[2:]]
-        return top, extruded, lateral
+    def twist(self, *args, **kwargs):
+        return common._twist(gmsh.model.geo, *args, **kwargs)
 
     def add_boundary_layer(self, *args, **kwargs):
         layer = BoundaryLayer(*args, **kwargs)
@@ -847,7 +743,7 @@ class Geometry:
     def copy(self, obj):
         dim_tag = gmsh.model.geo.copy(obj.dim_tags)
         assert len(dim_tag) == 1
-        return Dummy(*dim_tag[0])
+        return common.Dummy(*dim_tag[0])
 
     def symmetrize(self, obj, coefficients):
         """Transforms all elementary entities symmetrically to a plane. The vector
