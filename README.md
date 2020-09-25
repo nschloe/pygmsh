@@ -38,31 +38,32 @@ import pygmsh
 import numpy as np
 
 with pygmsh.built_in.Geometry() as geom:
-  # Draw a cross.
-  poly = geom.add_polygon([
-      [ 0.0,  0.5, 0.0],
-      [-0.1,  0.1, 0.0],
-      [-0.5,  0.0, 0.0],
-      [-0.1, -0.1, 0.0],
-      [ 0.0, -0.5, 0.0],
-      [ 0.1, -0.1, 0.0],
-      [ 0.5,  0.0, 0.0],
-      [ 0.1,  0.1, 0.0]
-      ],
-      mesh_size=0.05
-  )
+    # Draw a cross.
+    poly = geom.add_polygon(
+        [
+            [+0.0, +0.5, 0.0],
+            [-0.1, +0.1, 0.0],
+            [-0.5, +0.0, 0.0],
+            [-0.1, -0.1, 0.0],
+            [+0.0, -0.5, 0.0],
+            [+0.1, -0.1, 0.0],
+            [+0.5, +0.0, 0.0],
+            [+0.1, +0.1, 0.0],
+        ],
+        mesh_size=0.05,
+    )
 
-  axis = [0, 0, 1]
+    axis = [0, 0, 1]
 
-  geom.twist(
-      poly.surface,
-      translation_axis=axis,
-      rotation_axis=axis,
-      point_on_axis=[0, 0, 0],
-      angle=2.0 / 6.0 * np.pi
-  )
+    geom.twist(
+        poly.surface,
+        translation_axis=axis,
+        rotation_axis=axis,
+        point_on_axis=[0, 0, 0],
+        angle=2.0 / 6.0 * np.pi,
+    )
 
-  mesh = pygmsh.generate_mesh(geom)
+    mesh = pygmsh.generate_mesh(geom)
 
 # mesh.points, mesh.cells, ...
 ```
@@ -71,6 +72,7 @@ mesh, you can use [meshio](https://pypi.org/project/meshio); for example
 <!--exdown-skip-->
 ```python
 import meshio
+
 meshio.write("test.vtk", mesh)
 ```
 The output file can be visualized with various tools, e.g.,
@@ -103,7 +105,7 @@ with pygmsh.opencascade.Geometry() as geom:
     disk4 = geom.add_disk([0.0, +0.9, 0.0], 0.5)
     flat = geom.boolean_difference(
         geom.boolean_union([rectangle, disk1, disk2]),
-        geom.boolean_union([disk3, disk4])
+        geom.boolean_union([disk3, disk4]),
     )
 
     geom.extrude(flat, [0, 0, 0.3])
