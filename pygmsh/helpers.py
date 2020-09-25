@@ -67,6 +67,7 @@ def generate_mesh(  # noqa: C901
     geo_object,
     verbose=True,
     dim=3,
+    order=None,
     prune_vertices=True,
     prune_z_0=False,
     remove_lower_dim_cells=False,
@@ -110,13 +111,16 @@ def generate_mesh(  # noqa: C901
             gmsh.model.getBoundary(item.dim_tags, False, False, True), size
         )
 
+    if order is not None:
+        gmsh.model.mesh.setOrder(order)
+
     gmsh.model.mesh.generate(dim)
 
     # extract point coords
     idx, points, _ = gmsh.model.mesh.getNodes()
     assert numpy.all(idx == numpy.arange(len(idx)) + 1)
     points = points.reshape(-1, 3)
-    if prune_z_0 and numpy.all(numpy.abs(points[:, 3]) < 1.0e-13):
+    if prune_z_0 and numpy.all(numpy.abs(points[:, 2]) < 1.0e-13):
         points = points[:, :2]
 
     # extract cells

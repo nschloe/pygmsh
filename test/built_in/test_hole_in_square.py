@@ -23,7 +23,7 @@ def test():
         geom.add_rectangle(
             xmin, xmax, ymin, ymax, 0.0, lcar, holes=[squareHole.curve_loop]
         )
-        mesh = pygmsh.generate_mesh(geom, extra_gmsh_arguments=["-order", "2"])
+        mesh = pygmsh.generate_mesh(geom, order=2)
     # TODO support for volumes of triangle6
     # ref = 16.0
     # from helpers import compute_volume
