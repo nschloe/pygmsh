@@ -24,7 +24,7 @@ jobs:
     strategy:
       matrix:
         # python-version: [3.6, 3.7, 3.8]
-        python-version: [3.8]
+        python-version: [3.6]
     steps:
     - uses: actions/setup-python@v2
       with:
@@ -33,6 +33,7 @@ jobs:
     - name: Install gmsh
       run: |
         sudo apt-get install -y python3-gmsh
+        ls /usr/lib/python3/dist-packages/gmsh.py
     # - name: Work around tox bug
     #   # https://github.com/tox-dev/tox/issues/1679
     #   run: |
