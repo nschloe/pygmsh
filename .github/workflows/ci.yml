@@ -36,7 +36,7 @@ jobs:
       # https://github.com/tox-dev/tox/issues/1679
       run: |
         echo ${{ matrix.python-version }}
-        sudo cp /usr/lib/python3/dist-packages/gmsh.py /usr/lib/python${{ matrix.python-version}}/
+        sudo cp /usr/lib/python3/dist-packages/gmsh.py /usr/local/lib/python${{ matrix.python-version}}/dist-packages/
     - name: Test with tox
       run: |
         pip install tox
