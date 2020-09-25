@@ -1,4 +1,3 @@
-import pytest
 from helpers import compute_volume
 
 import pygmsh

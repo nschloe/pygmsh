@@ -82,7 +82,7 @@ def test_square_circle_slice():
 
     Also test for surface area of fragments.
     """
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.opencascade.Geometry() as geo_object:
         square = square_loop(geo_object)
         curve_loop = circle_loop(geo_object)
         surf1 = geo_object.add_plane_surface(square)

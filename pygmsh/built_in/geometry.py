@@ -1,5 +1,3 @@
-import warnings
-
 import gmsh
 import numpy
 
