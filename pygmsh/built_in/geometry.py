@@ -637,27 +637,6 @@ class Geometry(common.CommonGeometry):
         )
         return vol
 
-    def translate(self, obj, vector):
-        """Translates input_entity itself by vector.
-
-        Changes the input object.
-        """
-        gmsh.model.geo.translate(obj.dim_tags, *vector)
-
-    def rotate(self, obj, point, angle, axis):
-        """Rotate input_entity around a given point with a give angle.
-           Rotation axis has to be specified.
-
-        Changes the input object.
-        """
-        gmsh.model.geo.rotate(obj.dim_tags, *point, *axis, angle)
-
-    def symmetrize(self, obj, coefficients):
-        """Transforms all elementary entities symmetrically to a plane. The vector
-        should contain four expressions giving the coefficients of the plane's equation.
-        """
-        gmsh.model.geo.symmetrize(obj.dim_tags, *coefficients)
-
     def in_surface(self, input_entity, surface):
         """Embed the point(s) or curve(s) in the given surface. The surface mesh will
         conform to the mesh of the point(s) or curves(s).

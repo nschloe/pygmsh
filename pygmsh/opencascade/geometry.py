@@ -154,30 +154,6 @@ class Geometry(common.CommonGeometry):
         out, _ = gmsh.model.occ.fragment(d0.dim_tags, d1.dim_tags)
         return Boolean(out, "Fragments")
 
-    def translate(self, obj, vector):
-        """Translates input_entity itself by vector.
-
-        Changes the input object.
-        """
-        gmsh.model.occ.translate(obj.dim_tags, *vector)
-
-    def rotate(self, obj, point, angle, axis):
-        """Rotate input_entity around a given point with a give angle.
-           Rotation axis has to be specified.
-
-        Changes the input object.
-        """
-        gmsh.model.occ.rotate(obj.dim_tags, *point, *axis, angle)
-
-    def symmetrize(self, obj, coefficients):
-        """Transforms all elementary entities symmetrically to a plane. The vector
-        should contain four expressions giving the coefficients of the plane's equation.
-        """
-        gmsh.model.occ.symmetrize(obj.dim_tags, *coefficients)
-
-    def dilate(self, obj, x0, abc):
-        gmsh.model.occ.dilate(obj.dim_tags, *x0, *abc)
-
     def add_physical(self, entities, label=None):
         if not isinstance(entities, list):
             entities = [entities]
