@@ -1,20 +1,13 @@
-import warnings
-
+import gmsh
 import numpy
 
-from ..__about__ import __version__
-from ..helpers import get_gmsh_major_version
-from .bspline import Bspline
+from .bspline import BSpline
 from .circle_arc import CircleArc
-from .compound_line import CompoundLine
-from .compound_surface import CompoundSurface
-from .compound_volume import CompoundVolume
-from .define_constant import DefineConstant
+from .curve_loop import CurveLoop
 from .dummy import Dummy
 from .ellipse_arc import EllipseArc
 from .line import Line
 from .line_base import LineBase
-from .line_loop import LineLoop
 from .plane_surface import PlaneSurface
 from .point import Point
 from .point_base import PointBase
@@ -27,24 +20,29 @@ from .volume_base import VolumeBase
 
 
 class Geometry:
-    def __init__(self, gmsh_major_version=None):
-        self._EXTRUDE_ID = 0
+    def __init__(self):
         self._BOOLEAN_ID = 0
         self._ARRAY_ID = 0
         self._FIELD_ID = 0
-        self._GMSH_MAJOR = gmsh_major_version
         self._TAKEN_PHYSICALGROUP_IDS = []
-        self._GMSH_CODE = [f"// This code was created by pygmsh v{__version__}."]
-        return
+        self._COMPOUND_ENTITIES = []
+        self._RECOMBINE_ENTITIES = []
+        self._EMBED_QUEUE = []
+        self._TRANSFINITE_CURVE_QUEUE = []
+        self._TRANSFINITE_SURFACE_QUEUE = []
+        self._AFTER_SYNC_QUEUE = []
+        self._SIZE_QUEUE = []
 
-    def _gmsh_major(self):
-        if self._GMSH_MAJOR is None:
-            self._GMSH_MAJOR = get_gmsh_major_version()
-        return self._GMSH_MAJOR
+    def __enter__(self):
+        gmsh.initialize()
+        gmsh.model.add("pygmsh built-in model")
+        return self
 
-    def get_code(self):
-        """Returns properly formatted Gmsh code."""
-        return "\n".join(self._GMSH_CODE)
+    def __exit__(self, *a):
+        gmsh.finalize()
+
+    def synchronize(self):
+        gmsh.model.geo.synchronize()
 
     # All of the add_* method below could be replaced by
     #
@@ -65,82 +63,37 @@ class Geometry:
     # in which case the circle code never gets added to geom.
 
     def add_bspline(self, *args, **kwargs):
-        p = Bspline(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+        return BSpline(*args, **kwargs)
 
     def add_circle_arc(self, *args, **kwargs):
-        p = CircleArc(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
-
-    def add_compound_line(self, *args, **kwargs):
-        assert self._gmsh_major() == 3
-        e = CompoundLine(*args, **kwargs)
-        self._GMSH_CODE.append(e.code)
-        return e
-
-    def add_compound_surface(self, *args, **kwargs):
-        assert self._gmsh_major() == 3
-        e = CompoundSurface(*args, **kwargs)
-        self._GMSH_CODE.append(e.code)
-        return e
-
-    def add_compound_volume(self, *args, **kwargs):
-        assert self._gmsh_major() == 3
-        e = CompoundVolume(*args, **kwargs)
-        self._GMSH_CODE.append(e.code)
-        return e
+        return CircleArc(*args, **kwargs)
 
     def add_ellipse_arc(self, *args, **kwargs):
-        p = EllipseArc(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+        return EllipseArc(*args, **kwargs)
 
     def add_line(self, *args, **kwargs):
-        p = Line(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+        return Line(*args, **kwargs)
 
-    def add_line_loop(self, *args, **kwargs):
-        p = LineLoop(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+    def add_curve_loop(self, *args, **kwargs):
+        return CurveLoop(*args, **kwargs)
 
     def add_plane_surface(self, *args, **kwargs):
-        p = PlaneSurface(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+        return PlaneSurface(*args, **kwargs)
 
     def add_point(self, *args, **kwargs):
-        p = Point(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+        return Point(*args, **kwargs)
 
     def add_spline(self, *args, **kwargs):
-        p = Spline(*args, **kwargs)
-        self._GMSH_CODE.append(p.code)
-        return p
+        return Spline(*args, **kwargs)
 
     def add_surface(self, *args, **kwargs):
-        s = Surface(*args, api_level=self._gmsh_major(), **kwargs)
-        self._GMSH_CODE.append(s.code)
-        return s
+        return Surface(*args, **kwargs)
 
     def add_surface_loop(self, *args, **kwargs):
-        e = SurfaceLoop(*args, **kwargs)
-        self._GMSH_CODE.append(e.code)
-        return e
+        return SurfaceLoop(*args, **kwargs)
 
     def add_volume(self, *args, **kwargs):
-        e = Volume(*args, **kwargs)
-        self._GMSH_CODE.append(e.code)
-        return e
-
-    def define_constant(self, *args, **kwargs):
-        e = DefineConstant(*args, **kwargs)
-        self._GMSH_CODE.append(e.code)
-        return e
+        return Volume(*args, **kwargs)
 
     def _new_physical_group(self, label=None):
         # See
@@ -170,9 +123,7 @@ class Geometry:
         if not isinstance(entities, list):
             entities = [entities]
 
-        d = {0: "Point", 1: "Line", 2: "Surface", 3: "Volume"}
-        tpe = d[entities[0].dimension]
-
+        dim = entities[0].dimension
         for e in entities:
             assert isinstance(
                 e,
@@ -185,94 +136,38 @@ class Geometry:
                     SurfaceBase,
                     Volume,
                     VolumeBase,
+                    Dummy,
                 ),
             ), "Can add physical groups only for Points, Lines, Surfaces, Volumes, not {}.".format(
                 type(e)
             )
-            assert d[e.dimension] == tpe
+            assert e.dimension == dim
 
         label = self._new_physical_group(label)
-        self._GMSH_CODE.append(
-            "Physical {}({}) = {{{}}};".format(
-                tpe, label, ", ".join([e.id for e in entities])
-            )
-        )
-        return
+        tag = gmsh.model.addPhysicalGroup(dim, [e._ID for e in entities])
+        if label is not None:
+            gmsh.model.setPhysicalName(dim, tag, label)
 
-    def add_physical_point(self, points, label=None):
-        warnings.warn("add_physical_point() is deprecated. use add_physical() instead.")
-        self.add_physical(points, label=label)
-        return
+    def set_transfinite_curve(self, curve, num_nodes, mesh_type, coeff):
+        assert mesh_type in ["Progression", "Bulk"]
+        self._TRANSFINITE_CURVE_QUEUE.append((curve._ID, num_nodes, mesh_type, coeff))
 
-    def add_physical_line(self, lines, label=None):
-        warnings.warn("add_physical_line() is deprecated. use add_physical() instead.")
-        self.add_physical(lines, label=label)
-        return
-
-    def add_physical_surface(self, surfaces, label=None):
-        warnings.warn(
-            "add_physical_surface() is deprecated. use add_physical() instead."
-        )
-        self.add_physical(surfaces, label=label)
-        return
-
-    def add_physical_volume(self, volumes, label=None):
-        warnings.warn(
-            "add_physical_volume() is deprecated. use add_physical() instead."
-        )
-        self.add_physical(volumes, label=label)
-        return
-
-    def set_transfinite_lines(self, lines, size, progression=None, bump=None):
-        code = "Transfinite Line {{{0}}} = {1}".format(
-            ", ".join([l.id for l in lines]), size
-        )
-        if progression is not None and bump is not None:
-            raise ValueError("only one optional argument possible", progression, bump)
-        elif progression is not None:
-            code += " Using Progression " + str(progression)
-        elif bump is not None:
-            code += " Using Bump " + str(bump)
-        self._GMSH_CODE.append(code + ";")
-        return
-
-    def set_transfinite_surface(self, surface, size=None, orientation=None):
-        assert surface.num_edges == 4, "a transfinite surface can only have 4 sides"
-        # size is not mandatory because in general a user can create it's own
-        # transfinite lines and then just tell gmsh that the surface is
-        # transfinite too
-        if size is not None:
-            assert isinstance(
-                surface, (PlaneSurface, Surface, self.Polygon)
-            ), "we can create transfinite lines only if we have a line loop"
-            self.set_transfinite_lines(
-                [surface.line_loop.lines[0], surface.line_loop.lines[2]], size[0]
-            )
-            self.set_transfinite_lines(
-                [surface.line_loop.lines[1], surface.line_loop.lines[3]], size[1]
-            )
-        code = f"Transfinite Surface {{{surface.id}}}"
-        if orientation is not None:
-            code += " " + orientation
-        self._GMSH_CODE.append(code + ";")
-        return
+    def set_transfinite_surface(self, surface, arrangement, corner_tags):
+        self._TRANSFINITE_SURFACE_QUEUE.append((surface._ID, arrangement, corner_tags))
 
     def set_recombined_surfaces(self, surfaces):
         for i, surface in enumerate(surfaces):
             assert isinstance(
                 surface, (PlaneSurface, Surface)
             ), f"item {i} is not a surface"
-        code = "Recombine Surface {{{}}}".format(
-            ", ".join([surface.id for surface in surfaces])
-        )
-        self._GMSH_CODE.append(code + ";")
-        return
+        for surface in surfaces:
+            self._RECOMBINE_ENTITIES.append((2, surface._ID))
 
     def add_circle(
         self,
         x0,
         radius,
-        lcar=None,
+        mesh_size=None,
         R=None,
         compound=False,
         num_sections=3,
@@ -313,26 +208,22 @@ class Geometry:
         X += x0
 
         # Add Gmsh Points.
-        p = [self.add_point(x, lcar=lcar) for x in X]
+        p = [self.add_point(x, mesh_size=mesh_size) for x in X]
 
         # Define the circle arcs.
-        arcs = [self.add_circle_arc(p[k], p[0], p[k + 1]) for k in range(1, len(p) - 1)]
-        arcs.append(self.add_circle_arc(p[-1], p[0], p[1]))
+        arcs = [
+            self.add_circle_arc(p[k], p[0], p[k + 1]) for k in range(1, len(p) - 1)
+        ] + [self.add_circle_arc(p[-1], p[0], p[1])]
 
         if compound:
-            if self._gmsh_major() == 3:
-                arcs = [self.add_compound_line(arcs)]
-            elif self._gmsh_major() == 4:
-                self.add_raw_code(
-                    "Compound Curve{{{}}};".format(",".join([arc.id for arc in arcs]))
-                )
+            self._COMPOUND_ENTITIES.append((1, [arc._ID for arc in arcs]))
 
-        line_loop = self.add_line_loop(arcs)
+        curve_loop = self.add_curve_loop(arcs)
 
         if make_surface:
-            plane_surface = self.add_plane_surface(line_loop, holes)
-            if compound and self._gmsh_major() == 4:
-                self.add_raw_code(f"Compound Surface{{{plane_surface.id}}};")
+            plane_surface = self.add_plane_surface(curve_loop, holes)
+            if compound:
+                self._COMPOUND_ENTITIES.append((2, [plane_surface._ID]))
         else:
             plane_surface = None
 
@@ -345,18 +236,18 @@ class Geometry:
                 compound,
                 num_sections,
                 holes,
-                line_loop,
+                curve_loop,
                 plane_surface,
-                lcar=None,
+                mesh_size=None,
             ):
                 self.x0 = x0
                 self.radius = radius
-                self.lcar = lcar
+                self.mesh_size = mesh_size
                 self.R = R
                 self.compound = compound
                 self.num_sections = num_sections
                 self.holes = holes
-                self.line_loop = line_loop
+                self.curve_loop = curve_loop
                 self.plane_surface = plane_surface
                 return
 
@@ -367,247 +258,178 @@ class Geometry:
             compound,
             num_sections,
             holes,
-            line_loop,
+            curve_loop,
             plane_surface,
-            lcar=lcar,
+            mesh_size=mesh_size,
         )
 
     def extrude(
         self,
         input_entity,
-        translation_axis=None,
-        rotation_axis=None,
-        point_on_axis=None,
-        angle=None,
+        translation_axis,
         num_layers=None,
+        heights=None,
         recombine=False,
     ):
-        """Extrusion (translation + rotation) of any entity along a given
-        translation_axis, around a given rotation_axis, about a given angle. If
-        one of the entities is not provided, this method will produce only
-        translation or rotation.
-        """
-        self._EXTRUDE_ID += 1
-
-        if isinstance(input_entity, str):
-            entity = Dummy(input_entity)
-        elif isinstance(input_entity, PointBase):
-            entity = Dummy(f"Point{{{input_entity.id}}}")
-        elif isinstance(input_entity, SurfaceBase):
-            entity = Dummy(f"Surface{{{input_entity.id}}}")
-        elif hasattr(input_entity, "surface"):
-            entity = Dummy(f"Surface{{{input_entity.surface.id}}}")
+        """Extrusion of any entity along a given translation_axis."""
+        if isinstance(num_layers, int):
+            num_layers = [num_layers]
+        if num_layers is None:
+            num_layers = []
+            heights = []
         else:
-            assert isinstance(input_entity, LineBase), "Illegal extrude entity."
-            entity = Dummy(f"Line{{{input_entity.id}}}")
-
-        extrusion_string = ""
-
-        # out[] = Extrude{0,1,0}{ Line{1}; };
-        name = f"ex{self._EXTRUDE_ID}"
-        if translation_axis is not None:
-            if rotation_axis is not None:
-                extrusion_string += (
-                    "{}[] = Extrude{{{{{}}}, {{{}}}, {{{}}}, {}}}{{{};".format(
-                        name,
-                        ",".join(repr(x) for x in translation_axis),
-                        ",".join(repr(x) for x in rotation_axis),
-                        ",".join(repr(x) for x in point_on_axis),
-                        angle,
-                        entity.id,
-                    )
-                )
+            if heights is None:
+                heights = []
             else:
-                # Only translation
-                extrusion_string += "{}[] = Extrude {{{}}} {{{};".format(
-                    name, ",".join(repr(x) for x in translation_axis), entity.id
-                )
-        else:
-            assert (
-                rotation_axis is not None
-            ), "Specify at least translation or rotation."
-            # Only rotation
-            extrusion_string += "{}[] = Extrude{{{{{}}}, {{{}}}, {}}}{{{};".format(
-                name,
-                ",".join(repr(x) for x in rotation_axis),
-                ",".join(repr(x) for x in point_on_axis),
-                angle,
-                entity.id,
-            )
+                assert len(num_layers) == len(heights)
 
-        if num_layers is not None:
-            extrusion_string += " Layers{{{}}}; {}".format(
-                num_layers, "Recombine;" if recombine else ""
-            )
+        out_dim_tags = gmsh.model.geo.extrude(
+            input_entity.dim_tags,
+            translation_axis[0],
+            translation_axis[1],
+            translation_axis[2],
+            numElements=num_layers,
+            heights=heights,
+            recombine=recombine,
+        )
+        top = Dummy(*out_dim_tags[0])
+        extruded = Dummy(*out_dim_tags[1])
+        lateral = [Dummy(*e) for e in out_dim_tags[2:]]
+        return top, extruded, lateral
 
-        # close command
-        extrusion_string += "};"
-        self._GMSH_CODE.append(extrusion_string)
-
-        # From <https://www.manpagez.com/info/gmsh/gmsh-2.4.0/gmsh_66.php>:
-        #
-        # > In this last extrusion command we retrieved the volume number
-        # > programatically by saving the output of the command into a
-        # > list. This list will contain the "top" of the extruded surface (in
-        # > out[0]) as well as the newly created volume (in out[1]).
-        #
-        top = f"{name}[0]"
-        extruded = f"{name}[1]"
-
-        if isinstance(input_entity, LineBase):
-            top = LineBase(top)
-            # A surface extruded from a single line has always 4 edges
-            extruded = SurfaceBase(extruded, 4)
-        elif isinstance(input_entity, (SurfaceBase, self.Polygon)):
-            top = SurfaceBase(top, input_entity.num_edges)
-            extruded = VolumeBase(extruded)
-        elif isinstance(input_entity, PointBase):
-            top = PointBase(top)
-            extruded = LineBase(extruded)
-        else:
-            top = Dummy(top)
-            extruded = Dummy(extruded)
-
-        lat = []
-        # lateral surfaces can be deduced only if we start from a SurfaceBase
-        # or a Polygon
-        if isinstance(input_entity, (SurfaceBase, self.Polygon)):
-            # out[0]` is the surface, out[1] the top, and everything after that
-            # the sides, cf.
-            # <https://gmsh.info/doc/texinfo/gmsh.html#Extrusions>. Each
-            # lateral surface has 4 edges: the one from input_entity, the one
-            # from top, and the two lines (or splines) connecting their extreme
-            # points.
-            lat = [
-                SurfaceBase("{}[{}]".format(name, i + 2), 4)
-                for i in range(input_entity.num_edges)
-            ]
-
-        return top, extruded, lat
-
-    def add_boundary_layer(
+    def revolve(
         self,
-        edges_list=None,
-        faces_list=None,
-        nodes_list=None,
-        anisomax=None,
-        hfar=None,
-        hwall_n=None,
-        ratio=None,
-        thickness=None,
+        input_entity,
+        rotation_axis,
+        point_on_axis,
+        angle,
+        num_layers=None,
+        heights=None,
+        recombine=False,
     ):
-        # Don't use [] as default argument, cf.
-        # <https://stackoverflow.com/a/113198/353337>
-        if edges_list is None:
-            edges_list = []
-        if faces_list is None:
-            faces_list = []
-        if nodes_list is None:
-            nodes_list = []
-
-        self._FIELD_ID += 1
-        name = f"field{self._FIELD_ID}"
-
-        self._GMSH_CODE.append(f"{name} = newf;")
-
-        self._GMSH_CODE.append(f"Field[{name}] = BoundaryLayer;")
-        if edges_list:
-            self._GMSH_CODE.append(
-                "Field[{}].EdgesList = {{{}}};".format(
-                    name, ",".join([e.id for e in edges_list])
-                )
-            )
-            # edge nodes must be specified, too, cf.
-            # <https://gitlab.onelab.info/gmsh/gmsh/-/issues/812#note_9454>
-            nodes = list(set([p.id for e in edges_list for p in e.points]))
-            self._GMSH_CODE.append(
-                "Field[{}].NodesList = {{{}}};".format(name, ",".join(nodes))
-            )
-        if faces_list:
-            self._GMSH_CODE.append(
-                "Field[{}].FacesList = {{{}}};".format(name, ",".join(faces_list))
-            )
-        if nodes_list:
-            self._GMSH_CODE.append(
-                "Field[{}].NodesList = {{{}}};".format(
-                    name, ",".join([n.id for n in nodes_list])
-                )
-            )
-        if hfar:
-            self._GMSH_CODE.append(f"Field[{name}].hfar= {hfar!r};")
-        if hwall_n:
-            self._GMSH_CODE.append(f"Field[{name}].hwall_n= {hwall_n!r};")
-        if ratio:
-            self._GMSH_CODE.append(f"Field[{name}].ratio= {ratio!r};")
-        if thickness:
-            self._GMSH_CODE.append(f"Field[{name}].thickness= {thickness!r};")
-        if anisomax:
-            self._GMSH_CODE.append(f"Field[{name}].AnisoMax= {anisomax!r};")
-        return name
-
-    def set_boundary_layers(self, fields):
-        fields_string = ",".join(fields)
-        self._GMSH_CODE.append(f"BoundaryLayer Field = {{{fields_string}}};")
-        return
-
-    def add_comment(self, string):
-        self._GMSH_CODE.append("// " + string)
-        return
-
-    def add_raw_code(self, string_or_list):
-        """Add raw Gmsh code."""
-        if isinstance(string_or_list, str):
-            self._GMSH_CODE.append(string_or_list)
+        """Rotation of any entity around a given rotation_axis, about a given angle."""
+        if isinstance(num_layers, int):
+            num_layers = [num_layers]
+        if num_layers is None:
+            num_layers = []
+            heights = []
         else:
-            assert isinstance(string_or_list, list)
-            for string in string_or_list:
-                self._GMSH_CODE.append(string)
-        return
+            if heights is None:
+                heights = []
+            else:
+                assert len(num_layers) == len(heights)
+
+        assert angle < numpy.pi
+        out_dim_tags = gmsh.model.geo.revolve(
+            input_entity.dim_tags,
+            *point_on_axis,
+            *rotation_axis,
+            angle,
+            numElements=num_layers,
+            heights=heights,
+            recombine=recombine,
+        )
+
+        top = Dummy(*out_dim_tags[0])
+        extruded = Dummy(*out_dim_tags[1])
+        lateral = [Dummy(*e) for e in out_dim_tags[2:]]
+        return top, extruded, lateral
+
+    def twist(
+        self,
+        input_entity,
+        translation_axis,
+        rotation_axis,
+        point_on_axis,
+        angle,
+        num_layers=None,
+        heights=None,
+        recombine=False,
+    ):
+        """Twist (translation + rotation) of any entity along a given translation_axis,
+        around a given rotation_axis, about a given angle.
+        """
+        if isinstance(num_layers, int):
+            num_layers = [num_layers]
+        if num_layers is None:
+            num_layers = []
+            heights = []
+        else:
+            if heights is None:
+                heights = []
+            else:
+                assert len(num_layers) == len(heights)
+
+        assert angle < numpy.pi
+        out_dim_tags = gmsh.model.geo.twist(
+            input_entity.dim_tags,
+            *point_on_axis,
+            *translation_axis,
+            *rotation_axis,
+            angle,
+            numElements=num_layers,
+            heights=heights,
+            recombine=recombine,
+        )
+
+        top = Dummy(*out_dim_tags[0])
+        extruded = Dummy(*out_dim_tags[1])
+        lateral = [Dummy(*e) for e in out_dim_tags[2:]]
+        return top, extruded, lateral
+
+    def add_boundary_layer(self, *args, **kwargs):
+        layer = BoundaryLayer(*args, **kwargs)
+        self._AFTER_SYNC_QUEUE.append(layer)
+        return layer
+
+    def set_background_mesh(self, *args, **kwargs):
+        setter = SetBackgroundMesh(*args, **kwargs)
+        self._AFTER_SYNC_QUEUE.append(setter)
 
     def add_rectangle(
-        self, xmin, xmax, ymin, ymax, z, lcar=None, holes=None, make_surface=True
+        self, xmin, xmax, ymin, ymax, z, mesh_size=None, holes=None, make_surface=True
     ):
         return self.add_polygon(
             [[xmin, ymin, z], [xmax, ymin, z], [xmax, ymax, z], [xmin, ymax, z]],
-            lcar=lcar,
+            mesh_size=mesh_size,
             holes=holes,
             make_surface=make_surface,
         )
 
     class Polygon:
-        def __init__(self, points, lines, line_loop, surface, lcar=None):
+        def __init__(self, points, lines, curve_loop, surface, mesh_size=None):
             self.points = points
             self.lines = lines
             self.num_edges = len(lines)
-            self.line_loop = line_loop
+            self.curve_loop = curve_loop
             self.surface = surface
-            self.lcar = lcar
+            self.mesh_size = mesh_size
             if surface is not None:
-                self.id = self.surface.id
+                self._ID = self.surface._ID
             self.dimension = 2
-            return
+            self.dim_tags = [(2, surface)]
 
-    def add_polygon(self, X, lcar=None, holes=None, make_surface=True):
+    def add_polygon(self, X, mesh_size=None, holes=None, make_surface=True):
         if holes is None:
             holes = []
         else:
             assert make_surface
 
-        if isinstance(lcar, list):
-            assert len(X) == len(lcar)
+        if isinstance(mesh_size, list):
+            assert len(X) == len(mesh_size)
         else:
-            lcar = len(X) * [lcar]
+            mesh_size = len(X) * [mesh_size]
 
         # Create points.
-        p = [self.add_point(x, lcar=l) for x, l in zip(X, lcar)]
+        p = [self.add_point(x, mesh_size=l) for x, l in zip(X, mesh_size)]
         # Create lines
         lines = [self.add_line(p[k], p[k + 1]) for k in range(len(p) - 1)]
         lines.append(self.add_line(p[-1], p[0]))
-        ll = self.add_line_loop(lines)
+        ll = self.add_curve_loop(lines)
         surface = self.add_plane_surface(ll, holes) if make_surface else None
-        return self.Polygon(p, lines, ll, surface, lcar=lcar)
+        return self.Polygon(p, lines, ll, surface, mesh_size=mesh_size)
 
-    def add_ellipsoid(self, x0, radii, lcar=None, with_volume=True, holes=None):
+    def add_ellipsoid(self, x0, radii, mesh_size=None, with_volume=True, holes=None):
         """Creates an ellipsoid with radii around a given midpoint
         :math:`x_0`.
         """
@@ -619,13 +441,13 @@ class Geometry:
 
         # Add points.
         p = [
-            self.add_point(x0, lcar=lcar),
-            self.add_point([x0[0] + radii[0], x0[1], x0[2]], lcar=lcar),
-            self.add_point([x0[0], x0[1] + radii[1], x0[2]], lcar=lcar),
-            self.add_point([x0[0], x0[1], x0[2] + radii[2]], lcar=lcar),
-            self.add_point([x0[0] - radii[0], x0[1], x0[2]], lcar=lcar),
-            self.add_point([x0[0], x0[1] - radii[1], x0[2]], lcar=lcar),
-            self.add_point([x0[0], x0[1], x0[2] - radii[2]], lcar=lcar),
+            self.add_point(x0, mesh_size=mesh_size),
+            self.add_point([x0[0] + radii[0], x0[1], x0[2]], mesh_size=mesh_size),
+            self.add_point([x0[0], x0[1] + radii[1], x0[2]], mesh_size=mesh_size),
+            self.add_point([x0[0], x0[1], x0[2] + radii[2]], mesh_size=mesh_size),
+            self.add_point([x0[0] - radii[0], x0[1], x0[2]], mesh_size=mesh_size),
+            self.add_point([x0[0], x0[1] - radii[1], x0[2]], mesh_size=mesh_size),
+            self.add_point([x0[0], x0[1], x0[2] - radii[2]], mesh_size=mesh_size),
         ]
         # Add skeleton.
         # Alternative for circles:
@@ -644,34 +466,30 @@ class Geometry:
             self.add_ellipse_arc(p[3], p[0], p[5], p[5]),
             self.add_ellipse_arc(p[5], p[0], p[6], p[6]),
         ]
+
         # Add surfaces (1/8th of the ball surface).
+        # Make sure the loops are oriented outwards!
         ll = [
             # one half
-            self.add_line_loop([c[4], c[9], c[3]]),
-            self.add_line_loop([c[8], -c[4], c[0]]),
-            self.add_line_loop([-c[9], c[5], c[2]]),
-            self.add_line_loop([-c[5], -c[8], c[1]]),
+            self.add_curve_loop([c[4], c[9], c[3]]),
+            self.add_curve_loop([c[8], -c[4], c[0]]),
+            self.add_curve_loop([-c[9], c[5], c[2]]),
+            self.add_curve_loop([-c[5], -c[8], c[1]]),
             # the other half
-            self.add_line_loop([c[7], -c[3], c[10]]),
-            self.add_line_loop([c[11], -c[7], -c[0]]),
-            self.add_line_loop([-c[10], -c[2], c[6]]),
-            self.add_line_loop([-c[1], -c[6], -c[11]]),
+            self.add_curve_loop([c[7], -c[3], c[10]]),
+            self.add_curve_loop([c[11], -c[0], -c[7]]),
+            self.add_curve_loop([-c[10], -c[2], c[6]]),
+            self.add_curve_loop([-c[1], -c[11], -c[6]]),
         ]
+
         # Create a surface for each line loop.
         s = [self.add_surface(l) for l in ll]
 
         # Combine the surfaces to avoid seams
-        if self._gmsh_major() == 3:
-            s = [self.add_compound_surface(s[:4]), self.add_compound_surface(s[4:])]
-        else:
-            assert self._gmsh_major() == 4
-            # <https://gitlab.onelab.info/gmsh/gmsh/issues/507>
-            self.add_raw_code(
-                "Compound Surface{{{}}};".format(",".join([surf.id for surf in s[:4]]))
-            )
-            self.add_raw_code(
-                "Compound Surface{{{}}};".format(",".join([surf.id for surf in s[4:]]))
-            )
+        # <https://gitlab.onelab.info/gmsh/gmsh/issues/507>
+        # Cannot enable those yet, <https://gitlab.onelab.info/gmsh/gmsh/-/issues/995>
+        self._COMPOUND_ENTITIES.append((2, [surf._ID for surf in s[:4]]))
+        self._COMPOUND_ENTITIES.append((2, [surf._ID for surf in s[4:]]))
 
         # Create the surface loop.
         surface_loop = self.add_surface_loop(s)
@@ -685,21 +503,22 @@ class Geometry:
         class Ellipsoid:
             dimension = 3
 
-            def __init__(self, x0, radii, surface_loop, volume, lcar=None):
+            def __init__(self, x0, radii, surface_loop, volume, mesh_size=None):
                 self.x0 = x0
-                self.lcar = lcar
+                self.mesh_size = mesh_size
                 self.radii = radii
                 self.surface_loop = surface_loop
                 self.volume = volume
                 return
 
-        return Ellipsoid(x0, radii, surface_loop, volume, lcar=lcar)
+        return Ellipsoid(x0, radii, surface_loop, volume, mesh_size=mesh_size)
 
     def add_ball(self, x0, radius, **kwargs):
         return self.add_ellipsoid(x0, [radius, radius, radius], **kwargs)
 
-    def add_box(self, x0, x1, y0, y1, z0, z1, lcar=None, with_volume=True, holes=None):
-
+    def add_box(
+        self, x0, x1, y0, y1, z0, z1, mesh_size=None, with_volume=True, holes=None
+    ):
         if holes is None:
             holes = []
 
@@ -708,14 +527,14 @@ class Geometry:
 
         # Define corner points.
         p = [
-            self.add_point([x1, y1, z1], lcar=lcar),
-            self.add_point([x1, y1, z0], lcar=lcar),
-            self.add_point([x1, y0, z1], lcar=lcar),
-            self.add_point([x1, y0, z0], lcar=lcar),
-            self.add_point([x0, y1, z1], lcar=lcar),
-            self.add_point([x0, y1, z0], lcar=lcar),
-            self.add_point([x0, y0, z1], lcar=lcar),
-            self.add_point([x0, y0, z0], lcar=lcar),
+            self.add_point([x1, y1, z1], mesh_size=mesh_size),
+            self.add_point([x1, y1, z0], mesh_size=mesh_size),
+            self.add_point([x1, y0, z1], mesh_size=mesh_size),
+            self.add_point([x1, y0, z0], mesh_size=mesh_size),
+            self.add_point([x0, y1, z1], mesh_size=mesh_size),
+            self.add_point([x0, y1, z0], mesh_size=mesh_size),
+            self.add_point([x0, y0, z1], mesh_size=mesh_size),
+            self.add_point([x0, y0, z0], mesh_size=mesh_size),
         ]
         # Define edges.
         e = [
@@ -732,15 +551,17 @@ class Geometry:
             self.add_line(p[5], p[7]),
             self.add_line(p[6], p[7]),
         ]
+
         # Define the six line loops.
         ll = [
-            self.add_line_loop([e[0], e[3], -e[5], -e[1]]),
-            self.add_line_loop([e[0], e[4], -e[8], -e[2]]),
-            self.add_line_loop([e[1], e[6], -e[9], -e[2]]),
-            self.add_line_loop([e[3], e[7], -e[10], -e[4]]),
-            self.add_line_loop([e[5], e[7], -e[11], -e[6]]),
-            self.add_line_loop([e[8], e[10], -e[11], -e[9]]),
+            self.add_curve_loop([e[0], e[3], -e[5], -e[1]]),
+            self.add_curve_loop([e[0], e[4], -e[8], -e[2]]),
+            self.add_curve_loop([e[1], e[6], -e[9], -e[2]]),
+            self.add_curve_loop([e[3], e[7], -e[10], -e[4]]),
+            self.add_curve_loop([e[5], e[7], -e[11], -e[6]]),
+            self.add_curve_loop([e[8], e[10], -e[11], -e[9]]),
         ]
+
         # Create a surface for each line loop.
         s = [self.add_surface(l) for l in ll]
         # Create the surface loop.
@@ -750,37 +571,47 @@ class Geometry:
         vol = self.add_volume(surface_loop, holes) if with_volume else None
 
         class Box:
-            def __init__(self, x0, x1, y0, y1, z0, z1, surface_loop, volume, lcar=None):
+            def __init__(
+                self, x0, x1, y0, y1, z0, z1, surface_loop, volume, mesh_size=None
+            ):
                 self.x0 = x0
                 self.x1 = x1
                 self.y0 = y0
                 self.y1 = y1
                 self.z0 = z0
                 self.z1 = z1
-                self.lcar = lcar
+                self.mesh_size = mesh_size
                 self.surface_loop = surface_loop
                 self.volume = volume
-                return
 
-        return Box(x0, x1, y0, y1, z0, z1, surface_loop, vol, lcar=lcar)
+        return Box(x0, x1, y0, y1, z0, z1, surface_loop, vol, mesh_size=mesh_size)
 
     def add_torus(
         self,
         irad,
         orad,
-        lcar=None,
+        mesh_size=None,
         R=numpy.eye(3),
         x0=numpy.array([0.0, 0.0, 0.0]),
         variant="extrude_lines",
     ):
 
         if variant == "extrude_lines":
-            return self._add_torus_extrude_lines(irad, orad, lcar=lcar, R=R, x0=x0)
+            return self._add_torus_extrude_lines(
+                irad, orad, mesh_size=mesh_size, R=R, x0=x0
+            )
         assert variant == "extrude_circle"
-        return self._add_torus_extrude_circle(irad, orad, lcar=lcar, R=R, x0=x0)
+        return self._add_torus_extrude_circle(
+            irad, orad, mesh_size=mesh_size, R=R, x0=x0
+        )
 
     def _add_torus_extrude_lines(
-        self, irad, orad, lcar=None, R=numpy.eye(3), x0=numpy.array([0.0, 0.0, 0.0])
+        self,
+        irad,
+        orad,
+        mesh_size=None,
+        R=numpy.eye(3),
+        x0=numpy.array([0.0, 0.0, 0.0]),
     ):
         """Create Gmsh code for the torus in the x-y plane under the coordinate
         transformation
@@ -791,13 +622,11 @@ class Geometry:
         :param irad: inner radius of the torus
         :param orad: outer radius of the torus
         """
-        self.add_comment("Torus")
-
         # Add circle
         x0t = numpy.dot(R, numpy.array([0.0, orad, 0.0]))
         # Get circles in y-z plane
         Rc = numpy.array([[0.0, 0.0, 1.0], [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]])
-        c = self.add_circle(x0 + x0t, irad, lcar=lcar, R=numpy.dot(R, Rc))
+        c = self.add_circle(x0 + x0t, irad, mesh_size=mesh_size, R=numpy.dot(R, Rc))
 
         rot_axis = [0.0, 0.0, 1.0]
         rot_axis = numpy.dot(R, rot_axis)
@@ -810,15 +639,14 @@ class Geometry:
         # the entity that has been extruded at the far end. This can be used
         # for the following Extrude() step.  The second [1] entry of the array
         # is the surface that was created by the extrusion.
-        previous = c.line_loop.lines
-        angle = "2*Pi/3"
+        previous = c.curve_loop.curves
+        angle = 2 * numpy.pi / 3
         all_surfaces = []
         for i in range(3):
-            self.add_comment("Round no. {}".format(i + 1))
             for k, p in enumerate(previous):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
                 # ...
-                top, surf, _ = self.extrude(
+                top, surf, _ = self.revolve(
                     p,
                     rotation_axis=rot_axis,
                     point_on_axis=point_on_rot_axis,
@@ -831,15 +659,15 @@ class Geometry:
 
         surface_loop = self.add_surface_loop(all_surfaces)
         vol = self.add_volume(surface_loop)
-
-        # The newline at the end is essential:
-        # If a GEO file doesn't end in a newline, Gmsh will report a syntax
-        # error.
-        self.add_comment("\n")
         return vol
 
     def _add_torus_extrude_circle(
-        self, irad, orad, lcar=None, R=numpy.eye(3), x0=numpy.array([0.0, 0.0, 0.0])
+        self,
+        irad,
+        orad,
+        mesh_size=None,
+        R=numpy.eye(3),
+        x0=numpy.array([0.0, 0.0, 0.0]),
     ):
         """Create Gmsh code for the torus under the coordinate transformation
 
@@ -849,13 +677,10 @@ class Geometry:
         :param irad: inner radius of the torus
         :param orad: outer radius of the torus
         """
-        self.add_comment(76 * "-")
-        self.add_comment("Torus")
-
         # Add circle
         x0t = numpy.dot(R, numpy.array([0.0, orad, 0.0]))
         Rc = numpy.array([[0.0, 0.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
-        c = self.add_circle(x0 + x0t, irad, lcar=lcar, R=numpy.dot(R, Rc))
+        c = self.add_circle(x0 + x0t, irad, mesh_size=mesh_size, R=numpy.dot(R, Rc))
 
         rot_axis = [0.0, 0.0, 1.0]
         rot_axis = numpy.dot(R, rot_axis)
@@ -873,27 +698,17 @@ class Geometry:
         all_volumes = []
         num_steps = 3
         for _ in range(num_steps):
-            top, vol, _ = self.extrude(
+            top, vol, _ = self.revolve(
                 previous,
                 rotation_axis=rot_axis,
                 point_on_axis=point_on_rot_axis,
-                angle=f"2*Pi/{num_steps}",
+                angle=2 * numpy.pi / num_steps,
             )
             previous = top
             all_volumes.append(vol)
 
-        if self._gmsh_major() == 3:
-            # This actually returns the volume, but the gmsh 4 version doesn't have that
-            # feature. Hence, for compatibility, also ditch it here.
-            self.add_compound_volume(all_volumes)
-        else:
-            assert self._gmsh_major() == 4
-            self.add_raw_code(
-                "Compound Volume{{{}}};".format(",".join(v.id for v in all_volumes))
-            )
-
-        self.add_comment(76 * "-" + "\n")
-        return
+        assert int(gmsh.__version__.split(".")[0])
+        self._COMPOUND_ENTITIES.append((3, [v._ID for v in all_volumes]))
 
     def add_pipe(
         self,
@@ -902,16 +717,16 @@ class Geometry:
         length,
         R=numpy.eye(3),
         x0=numpy.array([0.0, 0.0, 0.0]),
-        lcar=None,
+        mesh_size=None,
         variant="rectangle_rotation",
     ):
         if variant == "rectangle_rotation":
             return self._add_pipe_by_rectangle_rotation(
-                outer_radius, inner_radius, length, R=R, x0=x0, lcar=lcar
+                outer_radius, inner_radius, length, R=R, x0=x0, mesh_size=mesh_size
             )
         assert variant == "circle_extrusion"
         return self._add_pipe_by_circle_extrusion(
-            outer_radius, inner_radius, length, R=R, x0=x0, lcar=lcar
+            outer_radius, inner_radius, length, R=R, x0=x0, mesh_size=mesh_size
         )
 
     def _add_pipe_by_rectangle_rotation(
@@ -921,12 +736,11 @@ class Geometry:
         length,
         R=numpy.eye(3),
         x0=numpy.array([0.0, 0.0, 0.0]),
-        lcar=None,
+        mesh_size=None,
     ):
         """Hollow cylinder.
         Define a rectangle, extrude it by rotation.
         """
-        self.add_comment("Define rectangle.")
         X = numpy.array(
             [
                 [0.0, outer_radius, -0.5 * length],
@@ -938,7 +752,7 @@ class Geometry:
         # Apply transformation.
         X = [numpy.dot(R, x) + x0 for x in X]
         # Create points set.
-        p = [self.add_point(x, lcar=lcar) for x in X]
+        p = [self.add_point(x, mesh_size=mesh_size) for x in X]
 
         # Define edges.
         e = [
@@ -955,15 +769,13 @@ class Geometry:
 
         # Extrude all edges three times by 2*Pi/3.
         previous = e
-        angle = "2*Pi/3"
+        angle = 2 * numpy.pi / 3
         all_surfaces = []
         # com = []
-        self.add_comment("Extrude in 3 steps.")
         for i in range(3):
-            self.add_comment("Step {}".format(i + 1))
             for k, p in enumerate(previous):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
-                top, surf, _ = self.extrude(
+                top, surf, _ = self.revolve(
                     p,
                     rotation_axis=rot_axis,
                     point_on_axis=point_on_rot_axis,
@@ -990,7 +802,7 @@ class Geometry:
         length,
         R=numpy.eye(3),
         x0=numpy.array([0.0, 0.0, 0.0]),
-        lcar=None,
+        mesh_size=None,
     ):
         """Hollow cylinder.
         Define a ring, extrude it by translation.
@@ -998,10 +810,18 @@ class Geometry:
         # Define ring which to Extrude by translation.
         Rc = numpy.array([[0.0, 0.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
         c_inner = self.add_circle(
-            x0, inner_radius, lcar=lcar, R=numpy.dot(R, Rc), make_surface=False
+            x0,
+            inner_radius,
+            mesh_size=mesh_size,
+            R=numpy.dot(R, Rc),
+            make_surface=False,
         )
         circ = self.add_circle(
-            x0, outer_radius, lcar=lcar, R=numpy.dot(R, Rc), holes=[c_inner.line_loop]
+            x0,
+            outer_radius,
+            mesh_size=mesh_size,
+            R=numpy.dot(R, Rc),
+            holes=[c_inner.curve_loop],
         )
 
         # Now Extrude the ring surface.
@@ -1010,73 +830,103 @@ class Geometry:
         )
         return vol
 
-    def translate(self, input_entity, vector):
+    def translate(self, obj, vector):
         """Translates input_entity itself by vector.
 
         Changes the input object.
         """
-        d = {1: "Line", 2: "Surface", 3: "Volume"}
-        self._GMSH_CODE.append(
-            "Translate {{{}}} {{ {}{{{}}}; }}".format(
-                ", ".join([str(co) for co in vector]),
-                d[input_entity.dimension],
-                input_entity.id,
-            )
-        )
-        return
+        gmsh.model.geo.translate(obj.dim_tags, *vector)
 
-    def rotate(self, input_entity, point, angle, axis):
+    def rotate(self, obj, point, angle, axis):
         """Rotate input_entity around a given point with a give angle.
            Rotation axis has to be specified.
 
         Changes the input object.
         """
-        d = {1: "Line", 2: "Surface", 3: "Volume"}
-        self._GMSH_CODE.append(
-            "Rotate {{ {{{}}},  {{{}}}, {}  }} {{{}{{{}}}; }}".format(
-                ", ".join([str(ax) for ax in axis]),
-                ", ".join([str(p) for p in point]),
-                angle,
-                d[input_entity.dimension],
-                input_entity.id,
-            )
-        )
+        gmsh.model.geo.rotate(obj.dim_tags, *point, *axis, angle)
 
-        return
+    def copy(self, obj):
+        dim_tag = gmsh.model.geo.copy(obj.dim_tags)
+        assert len(dim_tag) == 1
+        return Dummy(*dim_tag[0])
 
-    def symmetry(self, input_entity, coefficients, duplicate=True):
+    def symmetrize(self, obj, coefficients):
         """Transforms all elementary entities symmetrically to a plane. The vector
         should contain four expressions giving the coefficients of the plane's equation.
         """
-        d = {1: "Line", 2: "Surface", 3: "Volume"}
-        entity = "{}{{{}}};".format(d[input_entity.dimension], input_entity.id)
-
-        if duplicate:
-            entity = f"Duplicata{{{entity}}}"
-
-        self._GMSH_CODE.append(
-            "Symmetry {{{}}} {{{}}}".format(
-                ", ".join([str(co) for co in coefficients]), entity
-            )
-        )
-        return
+        gmsh.model.geo.symmetrize(obj.dim_tags, *coefficients)
 
     def in_surface(self, input_entity, surface):
-        """Embed the point(s) or curve(s) in the given surface. The surface mesh
-        will conform to the mesh of the point(s) or curves(s).
+        """Embed the point(s) or curve(s) in the given surface. The surface mesh will
+        conform to the mesh of the point(s) or curves(s).
         """
-        d = {0: "Point", 1: "Line"}
-        entity = "{}{{{}}}".format(d[input_entity.dimension], input_entity.id)
-
-        self._GMSH_CODE.append(f"{entity} In Surface{{{surface.id}}};")
-        return
+        self._EMBED_QUEUE.append((input_entity, surface))
 
     def in_volume(self, input_entity, volume):
         """Embed the point(s)/curve(s)/surface(s) in the given volume. The volume mesh
         will conform to the mesh of the input entities.
         """
-        d = {0: "Point", 1: "Line", 2: "Surface"}
-        entity = "{}{{{}}}".format(d[input_entity.dimension], input_entity.id)
+        self._EMBED_QUEUE.append((input_entity, volume))
 
-        self._GMSH_CODE.append(f"{entity} In Volume{{{volume.id}}};")
-        return
+
+class BoundaryLayer:
+    def __init__(
+        self,
+        lcmin,
+        lcmax,
+        distmin,
+        distmax,
+        edges_list=None,
+        faces_list=None,
+        nodes_list=None,
+    ):
+        self.lcmin = lcmin
+        self.lcmax = lcmax
+        self.distmin = distmin
+        self.distmax = distmax
+        # Don't use [] as default argument, cf.
+        # <https://stackoverflow.com/a/113198/353337>
+        self.edges_list = edges_list if edges_list else []
+        self.faces_list = faces_list if faces_list else []
+        self.nodes_list = nodes_list if nodes_list else []
+
+    def exec(self):
+        tag1 = gmsh.model.mesh.field.add("Distance")
+
+        if self.edges_list:
+            gmsh.model.mesh.field.setNumbers(
+                tag1, "EdgesList", [e._ID for e in self.edges_list]
+            )
+            # edge nodes must be specified, too, cf.
+            # <https://gitlab.onelab.info/gmsh/gmsh/-/issues/812#note_9454>
+            nodes = list(set([p for e in self.edges_list for p in e.points]))
+            gmsh.model.mesh.field.setNumbers(tag1, "NodesList", [n._ID for n in nodes])
+        if self.faces_list:
+            gmsh.model.mesh.field.setNumbers(
+                tag1, "FacesList", [f._ID for f in self.faces_list]
+            )
+        if self.nodes_list:
+            gmsh.model.mesh.field.setNumbers(
+                tag1, "NodesList", [n._ID for n in self.nodes_list]
+            )
+
+        tag2 = gmsh.model.mesh.field.add("Threshold")
+        gmsh.model.mesh.field.setNumber(tag2, "IField", tag1)
+        gmsh.model.mesh.field.setNumber(tag2, "LcMin", self.lcmin)
+        gmsh.model.mesh.field.setNumber(tag2, "LcMax", self.lcmax)
+        gmsh.model.mesh.field.setNumber(tag2, "DistMin", self.distmin)
+        gmsh.model.mesh.field.setNumber(tag2, "DistMax", self.distmax)
+        self.tag = tag2
+
+
+class SetBackgroundMesh:
+    def __init__(self, fields, operator="Min"):
+        self.fields = fields
+        self.operator = operator
+
+    def exec(self):
+        tag = gmsh.model.mesh.field.add(self.operator)
+        gmsh.model.mesh.field.setNumbers(
+            tag, "FieldsList", [f.tag for f in self.fields]
+        )
+        gmsh.model.mesh.field.setAsBackgroundMesh(tag)

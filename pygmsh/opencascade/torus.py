@@ -1,7 +1,9 @@
-from .volume_base import VolumeBase
+from math import pi
+
+import gmsh
 
 
-class Torus(VolumeBase):
+class Torus:
     """
     Creates a torus.
 
@@ -13,28 +15,21 @@ class Torus(VolumeBase):
         Outer radius.
     alpha : float
         Defines the angular opening.
-    char_length : float
-        Characteristic length of the mesh elements of this polygon.
     """
 
-    def __init__(self, center, radius0, radius1, alpha=None, char_length=None):
-        super().__init__()
-
+    def __init__(self, center, radius0, radius1, alpha=None):
         assert len(center) == 3
+
+        if alpha is None:
+            alpha = 2 * pi
 
         self.center = center
         self.radius0 = radius0
         self.radius1 = radius1
         self.alpha = alpha
-        self.char_length = char_length
 
-        args = list(center) + [radius0] + [radius1]
-        if alpha is not None:
-            args.append(alpha)
-        args = ", ".join([f"{arg}" for arg in args])
+        self._ID = gmsh.model.occ.addTorus(*center, radius0, radius1, angle=alpha)
+        self.dim_tags = [(3, self._ID)]
 
-        self.code = "\n".join(
-            [f"{self.id} = newv;", f"Torus({self.id}) = {{{args}}};"]
-            + self.char_length_code(char_length)
-        )
-        return
+    def __repr__(self):
+        return f"<pygmsh Torus object, ID {self._ID}>"

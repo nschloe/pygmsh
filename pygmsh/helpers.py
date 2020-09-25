@@ -1,8 +1,8 @@
 import shutil
-import subprocess
 import tempfile
 from pathlib import Path
 
+import gmsh
 import meshio
 import numpy
 
@@ -33,7 +33,7 @@ def orient_lines(lines):
     """
     # Categorise graph edges by their vertex pair ids
     point_pair_ids = numpy.array(
-        [[line.points[0].id, line.points[1].id] for line in lines]
+        [[line.points[0]._ID, line.points[1]._ID] for line in lines]
     )
 
     # Indices of reordering
@@ -71,21 +71,6 @@ def _get_gmsh_exe():
     )
 
 
-def get_gmsh_version(gmsh_exe=_get_gmsh_exe()):
-    gmsh_exe = Path(gmsh_exe)
-    return (
-        subprocess.check_output(
-            [gmsh_exe.as_posix(), "--version"], stderr=subprocess.STDOUT
-        )
-        .strip()
-        .decode("utf8")
-    )
-
-
-def get_gmsh_major_version(gmsh_exe=_get_gmsh_exe()):
-    return int(get_gmsh_version(gmsh_exe=gmsh_exe).split(".")[0])
-
-
 def generate_mesh(  # noqa: C901
     geo_object,
     verbose=True,
@@ -96,7 +81,6 @@ def generate_mesh(  # noqa: C901
     gmsh_path=None,
     extra_gmsh_arguments=None,
     # for debugging purposes:
-    geo_filename=None,
     msh_filename=None,
     mesh_file_type="msh",
 ):
@@ -113,21 +97,21 @@ def generate_mesh(  # noqa: C901
       "quad", "tetra", "hexahedron" - and doesn't preserve the `$PhysicalNames`, just
       the `int` tags.
     """
-    if extra_gmsh_arguments is None:
-        extra_gmsh_arguments = []
+    # if extra_gmsh_arguments is None:
+    #     extra_gmsh_arguments = []
 
-    # For format "mesh", ask Gmsh to save the physical tags
-    # http://gmsh.info/doc/texinfo/gmsh.html#index-Mesh_002eSaveElementTagType
-    if mesh_file_type == "mesh":
-        extra_gmsh_arguments += ["-string", "Mesh.SaveElementTagType=2;"]
+    # # For format "mesh", ask Gmsh to save the physical tags
+    # # http://gmsh.info/doc/texinfo/gmsh.html#index-Mesh_002eSaveElementTagType
+    # if mesh_file_type == "mesh":
+    #     extra_gmsh_arguments += ["-string", "Mesh.SaveElementTagType=2;"]
 
-    preserve_geo = geo_filename is not None
-    if geo_filename is None:
-        with tempfile.NamedTemporaryFile(suffix=".geo") as f:
-            geo_filename = f.name
+    # preserve_geo = geo_filename is not None
+    # if geo_filename is None:
+    #     with tempfile.NamedTemporaryFile(suffix=".geo") as f:
+    #         geo_filename = f.name
 
-    with open(geo_filename, "w") as f:
-        f.write(geo_object.get_code())
+    # with open(geo_filename, "w") as f:
+    #     f.write(geo_object.get_code())
 
     # As of Gmsh 4.1.3, the mesh format options are
     # ```
@@ -142,39 +126,214 @@ def generate_mesh(  # noqa: C901
         with tempfile.NamedTemporaryFile(suffix="." + filename_suffix) as handle:
             msh_filename = handle.name
 
-    gmsh_executable = gmsh_path if gmsh_path is not None else _get_gmsh_exe()
+    # gmsh_executable = gmsh_path if gmsh_path is not None else _get_gmsh_exe()
 
-    args = [
-        f"-{dim}",
-        geo_filename,
-        "-format",
-        mesh_file_type,
-        "-bin",
-        "-o",
-        msh_filename,
-    ] + extra_gmsh_arguments
+    # args = [
+    #     f"-{dim}",
+    #     geo_filename,
+    #     "-format",
+    #     mesh_file_type,
+    #     "-bin",
+    #     "-o",
+    #     msh_filename,
+    # ] + extra_gmsh_arguments
 
-    # https://stackoverflow.com/a/803421/353337
-    try:
-        p = subprocess.Popen(
-            [gmsh_executable] + args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    # # https://stackoverflow.com/a/803421/353337
+    # try:
+    #     p = subprocess.Popen(
+    #         [gmsh_executable] + args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    #     )
+    # except FileNotFoundError:
+    #     print("Is gmsh installed?")
+    #     raise
+
+    # if verbose:
+    #     while True:
+    #         line = p.stdout.readline()
+    #         if not line:
+    #             break
+    #         print(line.decode("utf-8"), end="")
+
+    # p.communicate()
+    # assert p.returncode == 0, "Gmsh exited with error (return code {}).".format(
+    #     p.returncode
+    # )
+
+    geo_object.synchronize()
+
+    for item in geo_object._AFTER_SYNC_QUEUE:
+        item.exec()
+
+    for item, host in geo_object._EMBED_QUEUE:
+        gmsh.model.mesh.embed(item.dimension, [item._ID], host.dimension, host._ID)
+
+    # set compound entities after sync
+    for c in geo_object._COMPOUND_ENTITIES:
+        gmsh.model.mesh.setCompound(*c)
+
+    for s in geo_object._RECOMBINE_ENTITIES:
+        gmsh.model.mesh.setRecombine(*s)
+
+    for t in geo_object._TRANSFINITE_CURVE_QUEUE:
+        gmsh.model.geo.mesh.setTransfiniteCurve(*t)
+
+    for t in geo_object._TRANSFINITE_SURFACE_QUEUE:
+        gmsh.model.geo.mesh.setTransfiniteSurface(*t)
+
+    for item, size in geo_object._SIZE_QUEUE:
+        gmsh.model.mesh.setSize(
+            gmsh.model.getBoundary(item.dim_tags, False, False, True), size
         )
-    except FileNotFoundError:
-        print("Is gmsh installed?")
-        raise
 
-    if verbose:
-        while True:
-            line = p.stdout.readline()
-            if not line:
-                break
-            print(line.decode("utf-8"), end="")
+    gmsh.model.mesh.generate(dim)
 
-    p.communicate()
-    assert p.returncode == 0, "Gmsh exited with error (return code {}).".format(
-        p.returncode
-    )
+    # idx, points, _ = gmsh.model.mesh.getNodes()
+    # assert numpy.all(idx == numpy.arange(len(idx)) + 1)
+    # points = points.reshape(-1, 3)
 
+    # elem_types, elems, _ = gmsh.model.mesh.getElements()
+
+    # _gmsh_to_meshio_type = {
+    #     1: "line",
+    #     2: "triangle",
+    #     3: "quad",
+    #     4: "tetra",
+    #     5: "hexahedron",
+    #     6: "wedge",
+    #     7: "pyramid",
+    #     8: "line3",
+    #     9: "triangle6",
+    #     10: "quad9",
+    #     11: "tetra10",
+    #     12: "hexahedron27",
+    #     13: "wedge18",
+    #     14: "pyramid14",
+    #     15: "vertex",
+    #     16: "quad8",
+    #     17: "hexahedron20",
+    #     18: "wedge15",
+    #     19: "pyramid13",
+    #     21: "triangle10",
+    #     23: "triangle15",
+    #     25: "triangle21",
+    #     26: "line4",
+    #     27: "line5",
+    #     28: "line6",
+    #     29: "tetra20",
+    #     30: "tetra35",
+    #     31: "tetra56",
+    #     36: "quad16",
+    #     37: "quad25",
+    #     38: "quad36",
+    #     42: "triangle28",
+    #     43: "triangle36",
+    #     44: "triangle45",
+    #     45: "triangle55",
+    #     46: "triangle66",
+    #     47: "quad49",
+    #     48: "quad64",
+    #     49: "quad81",
+    #     50: "quad100",
+    #     51: "quad121",
+    #     62: "line7",
+    #     63: "line8",
+    #     64: "line9",
+    #     65: "line10",
+    #     66: "line11",
+    #     71: "tetra84",
+    #     72: "tetra120",
+    #     73: "tetra165",
+    #     74: "tetra220",
+    #     75: "tetra286",
+    #     90: "wedge40",
+    #     91: "wedge75",
+    #     92: "hexahedron64",
+    #     93: "hexahedron125",
+    #     94: "hexahedron216",
+    #     95: "hexahedron343",
+    #     96: "hexahedron512",
+    #     97: "hexahedron729",
+    #     98: "hexahedron1000",
+    #     106: "wedge126",
+    #     107: "wedge196",
+    #     108: "wedge288",
+    #     109: "wedge405",
+    #     110: "wedge550",
+    # }
+    # _num_nodes = {
+    #     1: 2,  # "line",
+    #     2: 3,  # "triangle",
+    #     3: 4,  # "quad",
+    #     4: 4,  # "tetra",
+    #     5: 6,  # "hexahedron",
+    #     6: 6,  # "wedge",
+    #     7: 5,  # "pyramid",
+    #     8: 3,  # "line3",
+    #     9: 6,  # "triangle6",
+    #     10: 9,  # "quad9",
+    #     11: 10,   # "tetra10",
+    #     12: 27,   # "hexahedron27",
+    #     13: 18,   # "wedge18",
+    #     14: 14,   # "pyramid14",
+    #     15: 1,    # "vertex",
+    #     16: 8,  # "quad8",
+    #     17: 20,  # "hexahedron20",
+    #     18: 15,   # "wedge15",
+    #     19: 13,   # "pyramid13",
+    #     21: 10,   # "triangle10",
+    #     23: 15,   # "triangle15",
+    #     25: 21,   # "triangle21",
+    #     26: 4,   # "line4",
+    #     27: 5,   # "line5",
+    #     28: "line6",
+    #     29: "tetra20",
+    #     30: "tetra35",
+    #     31: "tetra56",
+    #     36: "quad16",
+    #     37: "quad25",
+    #     38: "quad36",
+    #     42: "triangle28",
+    #     43: "triangle36",
+    #     44: "triangle45",
+    #     45: "triangle55",
+    #     46: "triangle66",
+    #     47: "quad49",
+    #     48: "quad64",
+    #     49: "quad81",
+    #     50: "quad100",
+    #     51: "quad121",
+    #     62: "line7",
+    #     63: "line8",
+    #     64: "line9",
+    #     65: "line10",
+    #     66: "line11",
+    #     71: "tetra84",
+    #     72: "tetra120",
+    #     73: "tetra165",
+    #     74: "tetra220",
+    #     75: "tetra286",
+    #     90: "wedge40",
+    #     91: "wedge75",
+    #     92: "hexahedron64",
+    #     93: "hexahedron125",
+    #     94: "hexahedron216",
+    #     95: "hexahedron343",
+    #     96: "hexahedron512",
+    #     97: "hexahedron729",
+    #     98: "hexahedron1000",
+    #     106: "wedge126",
+    #     107: "wedge196",
+    #     108: "wedge288",
+    #     109: "wedge405",
+    #     110: "wedge550",
+    # }
+    # d = {
+    #     _gmsh_to_meshio_type[elem_type]: (idx - 1).reshape(-1, _num_nodes[elem_type])
+    #     for elem_type, idx in zip(elem_types, elems)
+    # }
+    # mesh = meshio.Mesh(points, d)
+
+    gmsh.write(msh_filename)
     mesh = meshio.read(msh_filename)
 
     if remove_lower_dim_cells:
@@ -225,10 +384,10 @@ def generate_mesh(  # noqa: C901
         print(f"\nmsh file: {msh_filename}")
     else:
         Path(msh_filename).unlink()
-    if preserve_geo:
-        print(f"\ngeo file: {geo_filename}")
-    else:
-        Path(geo_filename).unlink()
+    # if preserve_geo:
+    #     print(f"\ngeo file: {geo_filename}")
+    # else:
+    #     Path(geo_filename).unlink()
 
     if (
         prune_z_0

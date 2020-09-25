@@ -1,46 +1,34 @@
-from .line_loop import LineLoop
+import gmsh
+
+from .curve_loop import CurveLoop
 
 
 class Surface:
     """
-    Generates a Surface or Rules Surfaces.
+    Generates a Surface from a CurveLoop.
 
     Parameters
     ----------
-    line_loop : Object
-        LineLoop object that contains all the Line objects for the
-        loop construction.
-    api_level : integer
-        If larger than 2 a Surface will be constructed, otherwise
-        a Ruled Surface will be constructed instead.
+    curve_loop : Object
+        CurveLoop object that contains all the Line objects for the loop construction.
 
     Notes
     -----
-    With the built-in kernel, the first line loop should be composed of
-    either three or four elementary lines.
+    With the built-in kernel, the first line loop should be composed of either three or
+    four elementary lines.
 
-    With the built-in kernel, the optional In Sphere argument forces the
-    surface to be a spherical patch (the extra parameter gives the
-    identification number of the center of the sphere).
+    With the built-in kernel, the optional In Sphere argument forces the surface to be a
+    spherical patch (the extra parameter gives the identification number of the center
+    of the sphere).
     """
 
-    _ID = 0
-    num_edges = 0
     dimension = 2
 
-    def __init__(self, line_loop, api_level=2):
-        assert isinstance(line_loop, LineLoop)
+    def __init__(self, curve_loop):
+        assert isinstance(curve_loop, CurveLoop)
+        self.curve_loop = curve_loop
+        self.num_edges = len(curve_loop)
+        self._ID = gmsh.model.geo.addSurfaceFilling([self.curve_loop._ID])
 
-        self.line_loop = line_loop
-
-        self.id = f"rs{Surface._ID}"
-        Surface._ID += 1
-
-        # `Ruled Surface` was deprecated in Gmsh 3 in favor of `Surface`.
-        name = "Surface" if api_level > 2 else "Ruled Surface"
-
-        self.code = "\n".join(
-            [f"{self.id} = news;", f"{name}({self.id}) = {{{self.line_loop.id}}};"]
-        )
-        self.num_edges = len(line_loop)
-        return
+    def __repr__(self):
+        return f"<pygmsh Surface object, ID {self._ID}>"

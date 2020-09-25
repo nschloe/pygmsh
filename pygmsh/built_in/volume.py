@@ -1,3 +1,5 @@
+import gmsh
+
 from .volume_base import VolumeBase
 
 
@@ -37,13 +39,4 @@ class Volume(VolumeBase):
         self.holes = holes
 
         surface_loops = [surface_loop] + holes
-
-        self.code = "\n".join(
-            [
-                f"{self.id} = newv;",
-                "Volume({}) = {{{}}};".format(
-                    self.id, ", ".join([s.id for s in surface_loops])
-                ),
-            ]
-        )
-        return
+        self._ID = gmsh.model.geo.addVolume([s.id for s in surface_loops])

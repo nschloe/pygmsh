@@ -37,33 +37,34 @@ To create the above mesh, simply do
 import pygmsh
 import numpy as np
 
-geom = pygmsh.built_in.Geometry()
+with pygmsh.built_in.Geometry() as geom:
+    # Draw a cross.
+    poly = geom.add_polygon(
+        [
+            [+0.0, +0.5, 0.0],
+            [-0.1, +0.1, 0.0],
+            [-0.5, +0.0, 0.0],
+            [-0.1, -0.1, 0.0],
+            [+0.0, -0.5, 0.0],
+            [+0.1, -0.1, 0.0],
+            [+0.5, +0.0, 0.0],
+            [+0.1, +0.1, 0.0],
+        ],
+        mesh_size=0.05,
+    )
 
-# Draw a cross.
-poly = geom.add_polygon([
-    [ 0.0,  0.5, 0.0],
-    [-0.1,  0.1, 0.0],
-    [-0.5,  0.0, 0.0],
-    [-0.1, -0.1, 0.0],
-    [ 0.0, -0.5, 0.0],
-    [ 0.1, -0.1, 0.0],
-    [ 0.5,  0.0, 0.0],
-    [ 0.1,  0.1, 0.0]
-    ],
-    lcar=0.05
-)
+    axis = [0, 0, 1]
 
-axis = [0, 0, 1]
+    geom.twist(
+        poly.surface,
+        translation_axis=axis,
+        rotation_axis=axis,
+        point_on_axis=[0, 0, 0],
+        angle=2.0 / 6.0 * np.pi,
+    )
 
-geom.extrude(
-    poly,
-    translation_axis=axis,
-    rotation_axis=axis,
-    point_on_axis=[0, 0, 0],
-    angle=2.0 / 6.0 * np.pi
-)
+    mesh = pygmsh.generate_mesh(geom)
 
-mesh = pygmsh.generate_mesh(geom)
 # mesh.points, mesh.cells, ...
 ```
 to retrieve all points and cells of the mesh for the specified geometry.  To store the
@@ -71,6 +72,7 @@ mesh, you can use [meshio](https://pypi.org/project/meshio); for example
 <!--exdown-skip-->
 ```python
 import meshio
+
 meshio.write("test.vtk", mesh)
 ```
 The output file can be visualized with various tools, e.g.,
@@ -91,23 +93,24 @@ Example:
 ```python
 import pygmsh
 
-geom = pygmsh.opencascade.Geometry(
-  characteristic_length_min=0.1,
-  characteristic_length_max=0.1,
-  )
+with pygmsh.opencascade.Geometry() as geom:
+    geom.characteristic_length_min = 0.1
+    geom.characteristic_length_max = 0.1
 
-rectangle = geom.add_rectangle([-1.0, -1.0, 0.0], 2.0, 2.0)
-disk1 = geom.add_disk([-1.2, 0.0, 0.0], 0.5)
-disk2 = geom.add_disk([+1.2, 0.0, 0.0], 0.5)
-union = geom.boolean_union([rectangle, disk1, disk2])
+    rectangle = geom.add_rectangle([-1.0, -1.0, 0.0], 2.0, 2.0)
+    disk1 = geom.add_disk([-1.2, 0.0, 0.0], 0.5)
+    disk2 = geom.add_disk([+1.2, 0.0, 0.0], 0.5)
 
-disk3 = geom.add_disk([0.0, -0.9, 0.0], 0.5)
-disk4 = geom.add_disk([0.0, +0.9, 0.0], 0.5)
-flat = geom.boolean_difference([union], [disk3, disk4])
+    disk3 = geom.add_disk([0.0, -0.9, 0.0], 0.5)
+    disk4 = geom.add_disk([0.0, +0.9, 0.0], 0.5)
+    flat = geom.boolean_difference(
+        geom.boolean_union([rectangle, disk1, disk2]),
+        geom.boolean_union([disk3, disk4]),
+    )
 
-geom.extrude(flat, [0, 0, 0.3])
+    geom.extrude(flat, [0, 0, 0.3])
 
-mesh = pygmsh.generate_mesh(geom)
+    mesh = pygmsh.generate_mesh(geom)
 ```
 
 ### Installation

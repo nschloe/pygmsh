@@ -1,7 +1,7 @@
-from .volume_base import VolumeBase
+import gmsh
 
 
-class Box(VolumeBase):
+class Box:
     """
     Creates a box.
 
@@ -15,21 +15,12 @@ class Box(VolumeBase):
         Characteristic length of the mesh elements of this polygon.
     """
 
-    def __init__(self, x0, extents, char_length=None):
-        super().__init__()
+    dimension = 3
 
+    def __init__(self, x0, extents, char_length=None):
         assert len(x0) == 3
         assert len(extents) == 3
-
         self.x0 = x0
         self.extents = extents
-        self.char_length = char_length
-
-        args = list(x0) + list(extents)
-        args = ", ".join([f"{arg}" for arg in args])
-
-        self.code = "\n".join(
-            [f"{self.id} = newv;", f"Box({self.id}) = {{{args}}};"]
-            + self.char_length_code(char_length)
-        )
-        return
+        self._ID = gmsh.model.occ.addBox(*x0, *extents)
+        self.dim_tags = [(3, self._ID)]

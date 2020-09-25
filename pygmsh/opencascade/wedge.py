@@ -1,7 +1,7 @@
-from .volume_base import VolumeBase
+import gmsh
 
 
-class Wedge(VolumeBase):
+class Wedge:
     """
     Creates a right angular wedge.
 
@@ -11,25 +11,15 @@ class Wedge(VolumeBase):
         List of the 3 extends of the box edges.
     top_extend : float
         Defines the top X extent.
-    char_length : float
-        Characteristic length of the mesh elements of this polygon.
     """
 
-    def __init__(self, x0, extents, top_extent=None, char_length=None):
-        super().__init__()
-
+    def __init__(self, x0, extents, top_extent=None):
         self.x0 = x0
         self.extents = extents
         self.top_extent = top_extent
-        self.char_length = char_length
 
-        args = list(x0) + list(extents)
-        if top_extent is not None:
-            args.append(top_extent)
-        args = ", ".join([f"{arg}" for arg in args])
+        self._ID = gmsh.model.occ.addWedge(*x0, *extents, ltx=top_extent)
+        self.dim_tags = [(3, self._ID)]
 
-        self.code = "\n".join(
-            [f"{self.id} = newv;", f"Wedge({self.id}) = {{{args}}};"]
-            + self.char_length_code(char_length)
-        )
-        return
+    def __repr__(self):
+        return f"<pygmsh Torus object, ID {self._ID}>"

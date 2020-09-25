@@ -1,3 +1,5 @@
+import gmsh
+
 from .point_base import PointBase
 
 
@@ -12,20 +14,16 @@ class Point(PointBase):
         The prescribed mesh element size at this point.
     """
 
-    def __init__(self, x, lcar=None):
-        super().__init__()
-
+    def __init__(self, x, mesh_size=None):
+        assert len(x) == 3
         self.x = x
-        self.lcar = lcar
+        args = list(x)
+        if mesh_size is not None:
+            args.append(mesh_size)
+        id0 = gmsh.model.geo.addPoint(*args)
+        self.dim_tags = [(0, id0)]
+        super().__init__(id0)
 
-        # Points are always 3D in gmsh
-        args = (x[0], x[1], x[2]) if lcar is None else (x[0], x[1], x[2], lcar)
-        fmt = ", ".join(len(args) * ["{!r}"])
-
-        self.code = "\n".join(
-            [
-                f"{self.id} = newp;",
-                ("Point({}) = {{" + fmt + "}};").format(self.id, *args),
-            ]
-        )
-        return
+    def __repr__(self):
+        X = ", ".join(str(x) for x in self.x)
+        return f"<pygmsh Point object, ID {self._ID}, x = [{X}]>"

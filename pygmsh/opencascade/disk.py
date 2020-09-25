@@ -1,7 +1,7 @@
-from .surface_base import SurfaceBase
+import gmsh
 
 
-class Disk(SurfaceBase):
+class Disk:
     """
     Creates a disk.
 
@@ -13,30 +13,23 @@ class Disk(SurfaceBase):
         Radius value of the disk.
     radius1 : float
         Radius along Y, leading to an ellipse.
-    char_length : float
-        Characteristic length of the mesh elements of this polygon.
     """
 
-    def __init__(self, x0, radius0, radius1=None, char_length=None):
-        super().__init__()
+    dimension = 2
 
+    def __init__(self, x0, radius0, radius1=None):
         assert len(x0) == 3
-        if radius1 is not None:
-            assert radius0 >= radius1
+
+        if radius1 is None:
+            radius1 = radius0
+        assert radius0 >= radius1
 
         self.x0 = x0
         self.radius0 = radius0
         self.radius1 = radius1
-        self.char_length = char_length
 
-        args = list(x0) + [radius0]
-        if radius1 is not None:
-            args.append(radius1)
+        self._ID = gmsh.model.occ.addDisk(*x0, radius0, radius1)
+        self.dim_tags = [(self.dimension, self._ID)]
 
-        args = ", ".join([f"{arg}" for arg in args])
-
-        self.code = "\n".join(
-            [f"{self.id} = news;", f"Disk({self.id}) = {{{args}}};"]
-            + self.char_length_code(char_length)
-        )
-        return
+    def __repr__(self):
+        return f"<pygmsh Disk object, ID {self._ID}>"

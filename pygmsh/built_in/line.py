@@ -1,3 +1,5 @@
+import gmsh
+
 from .line_base import LineBase
 from .point import Point
 
@@ -22,13 +24,12 @@ class Line(LineBase):
     dimension = 1
 
     def __init__(self, p0, p1):
-        super().__init__()
-
         assert isinstance(p0, Point)
         assert isinstance(p1, Point)
-        self.points = [p0, p1]
+        id0 = gmsh.model.geo.addLine(p0._ID, p1._ID)
+        self.dim_tags = [(1, id0)]
+        super().__init__(id0, [p0, p1])
 
-        self.code = "\n".join(
-            [f"{self.id} = newl;", f"Line({self.id}) = {{{p0.id}, {p1.id}}};"]
-        )
-        return
+    def __repr__(self):
+        pts = ", ".join(str(p._ID) for p in self.points)
+        return f"<pygmsh Line object, ID {self._ID}, points ({pts})>"
