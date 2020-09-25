@@ -32,7 +32,12 @@ jobs:
     - name: Install gmsh
       run: |
         sudo apt-get install -y python3-gmsh
-    - run: ls /usr/lib/python3/dist-packages/gmsh.py
+    - name: Work around tox bug
+      # https://github.com/tox-dev/tox/issues/1679
+      run: |
+        sudo cp /usr/lib/python3/dist-packages/gmsh.py /usr/lib/python3.6/
+        sudo cp /usr/lib/python3/dist-packages/gmsh.py /usr/lib/python3.7/
+        sudo cp /usr/lib/python3/dist-packages/gmsh.py /usr/lib/python3.8/
     - name: Test with tox
       run: |
         pip install tox
