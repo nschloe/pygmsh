@@ -13,7 +13,7 @@
 [![Slack](https://img.shields.io/static/v1?logo=slack&label=chat&message=on%20slack&color=4a154b&style=flat-square)](https://join.slack.com/t/nschloe/shared_invite/zt-cofhrwm8-BgdrXAtVkOjnDmADROKD7A
 )
 
-[![CircleCI](https://img.shields.io/circleci/project/github/nschloe/pygmsh/master.svg?style=flat-square)](https://circleci.com/gh/nschloe/pygmsh)
+[![gh-actions](https://img.shields.io/github/workflow/status/nschloe/pygmsh/ci?style=flat-square)](https://github.com/nschloe/pygmsh/actions?query=workflow%3Aci)
 [![codecov](https://img.shields.io/codecov/c/github/nschloe/pygmsh.svg?style=flat-square)](https://codecov.io/gh/nschloe/pygmsh)
 [![LGTM](https://img.shields.io/lgtm/grade/python/github/nschloe/pygmsh.svg?style=flat-square)](https://lgtm.com/projects/g/nschloe/pygmsh)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)](https://github.com/psf/black)
@@ -62,13 +62,12 @@ with pygmsh.built_in.Geometry() as geom:
 
 # mesh.points, mesh.cells, ...
 ```
-to retrieve all points and cells of the mesh for the specified geometry. To store the
-mesh, you can use [meshio](https://pypi.org/project/meshio); for example
+to retrieve all points and cells of the mesh for the specified geometry.
+The return value is a [meshio](https://pypi.org/project/meshio) mesh, so to store it
+to a file you can
 <!--exdown-skip-->
 ```python
-import meshio
-
-meshio.write("test.vtk", mesh)
+mesh.write("test.vtk")
 ```
 The output file can be visualized with various tools, e.g.,
 [ParaView](https://www.paraview.org/).
