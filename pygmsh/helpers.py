@@ -1,6 +1,3 @@
-import tempfile
-from pathlib import Path
-
 import gmsh
 import meshio
 import numpy
@@ -118,8 +115,11 @@ def generate_mesh(  # noqa: C901
 
     # extract point coords
     idx, points, _ = gmsh.model.mesh.getNodes()
-    assert numpy.all(idx == numpy.arange(len(idx)) + 1)
     points = points.reshape(-1, 3)
+    idx -= 1
+    srt = numpy.argsort(idx)
+    assert numpy.all(idx[srt] == numpy.arange(len(idx)))
+    points = points[srt]
     if prune_z_0 and numpy.all(numpy.abs(points[:, 2]) < 1.0e-13):
         points = points[:, :2]
 
@@ -136,6 +136,16 @@ def generate_mesh(  # noqa: C901
                 node_tags.reshape(-1, num_nodes_per_cell) - 1,
             )
         )
+
+    # print("a", gmsh.model.getEntities())
+    # grps = gmsh.model.getPhysicalGroups()
+    # print("a", grps)
+    # for dim, tag in grps:
+    #     print("a", gmsh.model.getPhysicalName(dim, tag))
+    #     ent = gmsh.model.getEntitiesForPhysicalGroup(dim, tag)
+    #     print("a", ent)
+    #     assert len(ent) == 1
+    #     print("a", gmsh.model.mesh.getElements(dim, ent[0]))
 
     # make meshio mesh
     mesh = meshio.Mesh(points, cells)

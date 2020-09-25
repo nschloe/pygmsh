@@ -1,6 +1,7 @@
 import gmsh
 import numpy
 
+from .. import common
 from .bspline import BSpline
 from .circle_arc import CircleArc
 from .curve_loop import CurveLoop
@@ -16,8 +17,6 @@ from .surface_base import SurfaceBase
 from .surface_loop import SurfaceLoop
 from .volume import Volume
 from .volume_base import VolumeBase
-
-from .. import common
 
 
 class Geometry:
@@ -249,7 +248,6 @@ class Geometry:
                 self.holes = holes
                 self.curve_loop = curve_loop
                 self.plane_surface = plane_surface
-                return
 
         return Circle(
             x0,

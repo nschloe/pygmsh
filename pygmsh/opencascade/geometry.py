@@ -2,6 +2,7 @@ import math
 
 import gmsh
 
+from .. import common
 from .ball import Ball
 from .boolean import Boolean
 from .box import Box
@@ -17,8 +18,6 @@ from .point import Point
 from .rectangle import Rectangle
 from .torus import Torus
 from .wedge import Wedge
-
-from .. import common
 
 
 class Geometry:

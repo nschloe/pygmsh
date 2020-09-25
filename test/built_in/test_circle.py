@@ -15,6 +15,7 @@ def test():
             # choose by itself where to point the circle points.
             compound=True,
         )
+        # geom.add_physical(c.plane_surface, "super disk")
         mesh = pygmsh.generate_mesh(geom, prune_z_0=True)
 
     ref = 3.1363871677682247
