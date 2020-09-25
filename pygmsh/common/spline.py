@@ -1,5 +1,3 @@
-import gmsh
-
 from .line_base import LineBase
 from .point import Point
 
@@ -14,10 +12,10 @@ class Spline(LineBase):
         List containing Point objects
     """
 
-    def __init__(self, points):
+    def __init__(self, env, points):
         for c in points:
             assert isinstance(c, Point)
         assert len(points) > 1
 
-        id0 = gmsh.model.geo.addSpline([c._ID for c in points])
+        id0 = env.addSpline([c._ID for c in points])
         super().__init__(id0, points)

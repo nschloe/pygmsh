@@ -178,15 +178,6 @@ class Geometry(common.CommonGeometry):
     def dilate(self, obj, x0, abc):
         gmsh.model.occ.dilate(obj.dim_tags, *x0, *abc)
 
-    def extrude(self, *args, **kwargs):
-        return common._extrude(gmsh.model.occ, *args, **kwargs)
-
-    def revolve(self, *args, **kwargs):
-        return common._revolve(gmsh.model.occ, *args, **kwargs)
-
-    def twist(self, *args, **kwargs):
-        return common._twist(gmsh.model.occ, *args, **kwargs)
-
     def add_physical(self, entities, label=None):
         if not isinstance(entities, list):
             entities = [entities]

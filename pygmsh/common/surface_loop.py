@@ -1,6 +1,3 @@
-import gmsh
-
-
 class SurfaceLoop:
     """
     Creates a surface loop (a shell).
@@ -20,6 +17,6 @@ class SurfaceLoop:
 
     dimension = 2
 
-    def __init__(self, surfaces):
+    def __init__(self, env, surfaces):
         self.surfaces = surfaces
-        self._ID = gmsh.model.geo.addSurfaceLoop([s._ID for s in surfaces])
+        self._ID = env.addSurfaceLoop([s._ID for s in surfaces])

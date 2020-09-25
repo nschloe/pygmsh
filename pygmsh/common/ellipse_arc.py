@@ -1,5 +1,3 @@
-import gmsh
-
 from .line_base import LineBase
 from .point import Point
 
@@ -20,15 +18,13 @@ class EllipseArc(LineBase):
         Coordinates of end point needed to construct elliptic arc.
     """
 
-    def __init__(self, start, center, point_on_major_axis, end):
+    def __init__(self, env, start, center, point_on_major_axis, end):
         assert isinstance(start, Point)
         assert isinstance(center, Point)
         assert isinstance(point_on_major_axis, Point)
         assert isinstance(end, Point)
 
-        id0 = gmsh.model.geo.addEllipseArc(
-            start._ID, center._ID, point_on_major_axis._ID, end._ID
-        )
+        id0 = env.addEllipseArc(start._ID, center._ID, point_on_major_axis._ID, end._ID)
         super().__init__(id0, [start, center, end])
 
         self.points = [start, center, end]

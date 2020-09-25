@@ -3,7 +3,6 @@ import math
 import gmsh
 import numpy
 
-from .. import common
 from .bspline import BSpline
 from .circle_arc import CircleArc
 from .curve_loop import CurveLoop
@@ -22,6 +21,7 @@ class CommonGeometry:
     """Geometry base class containing all methods that can be shared between built-in
     and opencascade.
     """
+
     def __init__(self, env):
         self.env = env
         self._BOOLEAN_ID = 0
@@ -69,37 +69,37 @@ class CommonGeometry:
     # in which case the circle code never gets added to geom.
 
     def add_bspline(self, *args, **kwargs):
-        return BSpline(*args, **kwargs)
+        return BSpline(self.env, *args, **kwargs)
 
     def add_circle_arc(self, *args, **kwargs):
-        return CircleArc(*args, **kwargs)
+        return CircleArc(self.env, *args, **kwargs)
 
     def add_ellipse_arc(self, *args, **kwargs):
-        return EllipseArc(*args, **kwargs)
+        return EllipseArc(self.env, *args, **kwargs)
 
     def add_line(self, *args, **kwargs):
-        return Line(*args, **kwargs)
+        return Line(self.env, *args, **kwargs)
 
     def add_curve_loop(self, *args, **kwargs):
-        return CurveLoop(*args, **kwargs)
+        return CurveLoop(self.env, *args, **kwargs)
 
     def add_plane_surface(self, *args, **kwargs):
-        return PlaneSurface(*args, **kwargs)
+        return PlaneSurface(self.env, *args, **kwargs)
 
     def add_point(self, *args, **kwargs):
-        return Point(*args, **kwargs)
+        return Point(self.env, *args, **kwargs)
 
     def add_spline(self, *args, **kwargs):
-        return Spline(*args, **kwargs)
+        return Spline(self.env, *args, **kwargs)
 
     def add_surface(self, *args, **kwargs):
-        return Surface(*args, **kwargs)
+        return Surface(self.env, *args, **kwargs)
 
     def add_surface_loop(self, *args, **kwargs):
-        return SurfaceLoop(*args, **kwargs)
+        return SurfaceLoop(self.env, *args, **kwargs)
 
     def add_volume(self, *args, **kwargs):
-        return Volume(*args, **kwargs)
+        return Volume(self.env, *args, **kwargs)
 
     def _new_physical_group(self, label=None):
         # See
@@ -839,9 +839,9 @@ class CommonGeometry:
         gmsh.model.geo.rotate(obj.dim_tags, *point, *axis, angle)
 
     def copy(self, obj):
-        dim_tag = gmsh.model.geo.copy(obj.dim_tags)
+        dim_tag = self.env.copy(obj.dim_tags)
         assert len(dim_tag) == 1
-        return common.Dummy(*dim_tag[0])
+        return Dummy(*dim_tag[0])
 
     def symmetrize(self, obj, coefficients):
         """Transforms all elementary entities symmetrically to a plane. The vector

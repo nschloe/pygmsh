@@ -1,5 +1,3 @@
-import gmsh
-
 from .curve_loop import CurveLoop
 
 
@@ -31,7 +29,7 @@ class PlaneSurface:
 
     dimension = 2
 
-    def __init__(self, curve_loop, holes=None):
+    def __init__(self, env, curve_loop, holes=None):
         assert isinstance(curve_loop, CurveLoop)
         self.curve_loop = curve_loop
 
@@ -45,7 +43,7 @@ class PlaneSurface:
         self.num_edges = len(self.curve_loop) + sum(len(h) for h in self.holes)
 
         curve_loops = [self.curve_loop] + self.holes
-        self._ID = gmsh.model.occ.addPlaneSurface([ll._ID for ll in curve_loops])
+        self._ID = env.addPlaneSurface([ll._ID for ll in curve_loops])
         self.dim_tags = [(2, self._ID)]
 
     def __repr__(self):

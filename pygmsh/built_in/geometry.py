@@ -652,11 +652,6 @@ class Geometry(common.CommonGeometry):
         """
         gmsh.model.geo.rotate(obj.dim_tags, *point, *axis, angle)
 
-    def copy(self, obj):
-        dim_tag = gmsh.model.geo.copy(obj.dim_tags)
-        assert len(dim_tag) == 1
-        return common.Dummy(*dim_tag[0])
-
     def symmetrize(self, obj, coefficients):
         """Transforms all elementary entities symmetrically to a plane. The vector
         should contain four expressions giving the coefficients of the plane's equation.

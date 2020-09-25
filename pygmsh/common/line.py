@@ -1,9 +1,8 @@
-import gmsh
-
+from .line_base import LineBase
 from .point import Point
 
 
-class Line:
+class Line(LineBase):
     """
     Creates a straight line segment.
 
@@ -22,12 +21,12 @@ class Line:
 
     dimension = 1
 
-    def __init__(self, p0, p1):
+    def __init__(self, env, p0, p1):
         assert isinstance(p0, Point)
         assert isinstance(p1, Point)
-        self._ID = gmsh.model.occ.addLine(p0._ID, p1._ID)
-        self.dim_tags = [(1, self._ID)]
-        self.points = [p0, p1]
+        id0 = env.addLine(p0._ID, p1._ID)
+        self.dim_tags = [(1, id0)]
+        super().__init__(id0, [p0, p1])
 
     def __repr__(self):
         pts = ", ".join(str(p._ID) for p in self.points)

@@ -1,6 +1,3 @@
-import gmsh
-
-
 class Volume:
     """
     Creates a volume.
@@ -27,7 +24,9 @@ class Volume:
     (in which case the two surface loops should be combined).
     """
 
-    def __init__(self, surface_loop, holes=None):
+    dimension = 3
+
+    def __init__(self, env, surface_loop, holes=None):
         if holes is None:
             holes = []
 
@@ -35,4 +34,4 @@ class Volume:
         self.holes = holes
 
         surface_loops = [surface_loop] + holes
-        self._ID = gmsh.model.geo.addVolume([s.id for s in surface_loops])
+        self._ID = env.addVolume([s._ID for s in surface_loops])

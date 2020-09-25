@@ -1,6 +1,3 @@
-import gmsh
-
-
 class Point:
     """
     Creates an elementary point.
@@ -12,13 +9,15 @@ class Point:
         The prescribed mesh element size at this point.
     """
 
-    def __init__(self, x, mesh_size=None):
+    dimension = 0
+
+    def __init__(self, env, x, mesh_size=None):
         assert len(x) == 3
         self.x = x
         args = list(x)
         if mesh_size is not None:
             args.append(mesh_size)
-        self._ID = gmsh.model.occ.addPoint(*args)
+        self._ID = env.addPoint(*args)
         self.dim_tags = [(0, self._ID)]
 
     def __repr__(self):

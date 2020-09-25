@@ -1,5 +1,3 @@
-import gmsh
-
 from .curve_loop import CurveLoop
 
 
@@ -24,11 +22,11 @@ class Surface:
 
     dimension = 2
 
-    def __init__(self, curve_loop):
+    def __init__(self, env, curve_loop):
         assert isinstance(curve_loop, CurveLoop)
         self.curve_loop = curve_loop
         self.num_edges = len(curve_loop)
-        self._ID = gmsh.model.geo.addSurfaceFilling([self.curve_loop._ID])
+        self._ID = env.addSurfaceFilling([self.curve_loop._ID])
 
     def __repr__(self):
         return f"<pygmsh Surface object, ID {self._ID}>"
