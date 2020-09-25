@@ -268,18 +268,88 @@ class Geometry:
     def extrude(
         self,
         input_entity,
-        translation_axis=None,
-        rotation_axis=None,
-        point_on_axis=None,
-        angle=None,
+        translation_axis,
         num_layers=None,
         heights=None,
         recombine=False,
     ):
-        """Extrusion (translation + rotation) of any entity along a given
-        translation_axis, around a given rotation_axis, about a given angle. If one of
-        the entities is not provided, this method will produce only translation or
-        rotation.
+        """Extrusion of any entity along a given translation_axis."""
+        if isinstance(num_layers, int):
+            num_layers = [num_layers]
+        if num_layers is None:
+            num_layers = []
+            heights = []
+        else:
+            if heights is None:
+                heights = []
+            else:
+                assert len(num_layers) == len(heights)
+
+        out_dim_tags = gmsh.model.geo.extrude(
+            input_entity.dim_tags,
+            translation_axis[0],
+            translation_axis[1],
+            translation_axis[2],
+            numElements=num_layers,
+            heights=heights,
+            recombine=recombine,
+        )
+        top = Dummy(*out_dim_tags[0])
+        extruded = Dummy(*out_dim_tags[1])
+        lateral = [Dummy(*e) for e in out_dim_tags[2:]]
+        return top, extruded, lateral
+
+    def revolve(
+        self,
+        input_entity,
+        rotation_axis,
+        point_on_axis,
+        angle,
+        num_layers=None,
+        heights=None,
+        recombine=False,
+    ):
+        """Rotation of any entity around a given rotation_axis, about a given angle."""
+        if isinstance(num_layers, int):
+            num_layers = [num_layers]
+        if num_layers is None:
+            num_layers = []
+            heights = []
+        else:
+            if heights is None:
+                heights = []
+            else:
+                assert len(num_layers) == len(heights)
+
+        assert angle < numpy.pi
+        out_dim_tags = gmsh.model.geo.revolve(
+            input_entity.dim_tags,
+            *point_on_axis,
+            *rotation_axis,
+            angle,
+            numElements=num_layers,
+            heights=heights,
+            recombine=recombine,
+        )
+
+        top = Dummy(*out_dim_tags[0])
+        extruded = Dummy(*out_dim_tags[1])
+        lateral = [Dummy(*e) for e in out_dim_tags[2:]]
+        return top, extruded, lateral
+
+    def twist(
+        self,
+        input_entity,
+        translation_axis,
+        rotation_axis,
+        point_on_axis,
+        angle,
+        num_layers=None,
+        heights=None,
+        recombine=False,
+    ):
+        """Twist (translation + rotation) of any entity along a given translation_axis,
+        around a given rotation_axis, about a given angle.
         """
         if isinstance(num_layers, int):
             num_layers = [num_layers]
@@ -292,50 +362,18 @@ class Geometry:
             else:
                 assert len(num_layers) == len(heights)
 
-        if translation_axis is not None and rotation_axis is None:
-            out_dim_tags = gmsh.model.geo.extrude(
-                input_entity.dim_tags,
-                translation_axis[0],
-                translation_axis[1],
-                translation_axis[2],
-                numElements=num_layers,
-                heights=heights,
-                recombine=recombine,
-            )
-        elif translation_axis is None and rotation_axis is not None:
-            assert angle < numpy.pi
-            out_dim_tags = gmsh.model.geo.revolve(
-                input_entity.dim_tags,
-                point_on_axis[0],
-                point_on_axis[1],
-                point_on_axis[2],
-                rotation_axis[0],
-                rotation_axis[1],
-                rotation_axis[2],
-                angle,
-                numElements=num_layers,
-                heights=heights,
-                recombine=recombine,
-            )
-        else:
-            assert translation_axis is not None and rotation_axis is not None
-            assert angle < numpy.pi
-            out_dim_tags = gmsh.model.geo.twist(
-                input_entity.dim_tags,
-                point_on_axis[0],
-                point_on_axis[1],
-                point_on_axis[2],
-                translation_axis[0],
-                translation_axis[1],
-                translation_axis[2],
-                rotation_axis[0],
-                rotation_axis[1],
-                rotation_axis[2],
-                angle,
-                numElements=num_layers,
-                heights=heights,
-                recombine=recombine,
-            )
+        assert angle < numpy.pi
+        out_dim_tags = gmsh.model.geo.twist(
+            input_entity.dim_tags,
+            *point_on_axis,
+            *translation_axis,
+            *rotation_axis,
+            angle,
+            numElements=num_layers,
+            heights=heights,
+            recombine=recombine,
+        )
+
         top = Dummy(*out_dim_tags[0])
         extruded = Dummy(*out_dim_tags[1])
         lateral = [Dummy(*e) for e in out_dim_tags[2:]]
@@ -610,7 +648,7 @@ class Geometry:
             for k, p in enumerate(previous):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
                 # ...
-                top, surf, _ = self.extrude(
+                top, surf, _ = self.revolve(
                     p,
                     rotation_axis=rot_axis,
                     point_on_axis=point_on_rot_axis,
@@ -662,7 +700,7 @@ class Geometry:
         all_volumes = []
         num_steps = 3
         for _ in range(num_steps):
-            top, vol, _ = self.extrude(
+            top, vol, _ = self.revolve(
                 previous,
                 rotation_axis=rot_axis,
                 point_on_axis=point_on_rot_axis,
@@ -739,7 +777,7 @@ class Geometry:
         for i in range(3):
             for k, p in enumerate(previous):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
-                top, surf, _ = self.extrude(
+                top, surf, _ = self.revolve(
                     p,
                     rotation_axis=rot_axis,
                     point_on_axis=point_on_rot_axis,

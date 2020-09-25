@@ -23,13 +23,11 @@ def test(mesh_size=0.05):
             holes=[circ],
         )
 
-        axis = [0, 0, 1.0]
-
-        geom.extrude(
-            poly,
-            translation_axis=axis,
-            rotation_axis=axis,
-            point_on_axis=[0, 0, 0],
+        geom.twist(
+            poly.surface,
+            translation_axis=[0.0, 0.0, 1.0],
+            rotation_axis=[0.0, 0.0, 1.0],
+            point_on_axis=[0.0, 0.0, 0.0],
             angle=2.0 / 6.0 * np.pi,
         )
         mesh = pygmsh.generate_mesh(geom)

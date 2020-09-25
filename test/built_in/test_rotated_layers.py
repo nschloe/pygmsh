@@ -18,7 +18,7 @@ def test(mesh_size=0.05):
             mesh_size=mesh_size,
         )
         axis = [0, 0, 1.0]
-        geom.extrude(
+        geom.twist(
             poly.surface,
             translation_axis=axis,
             rotation_axis=axis,
