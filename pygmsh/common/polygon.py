@@ -1,3 +1,6 @@
+import numpy
+
+
 class Polygon:
     dimension = 2
 
@@ -11,6 +14,10 @@ class Polygon:
             assert len(points) == len(mesh_size)
         else:
             mesh_size = len(points) * [mesh_size]
+
+        points = numpy.asarray(points)
+        if points.shape[1] == 2:
+            points = numpy.column_stack([points, numpy.zeros_like(points[:, 0])])
 
         # Create points.
         self.points = [

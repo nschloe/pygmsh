@@ -25,27 +25,52 @@ complex geometries more easily.
 See [here](https://pygmsh.readthedocs.io/en/latest/index.html) for the full
 documentation.
 
+#### Flat shapes
+
+<img src="https://nschloe.github.io/pygmsh/polygon.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/chebyshev1.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/chebyshev2.svg" width="100%">
+:------------------:|:------------------:|:-------------:|
+Polygon             |  Chebyshev 1       |  Chebyshev 2  |
+
+Codes:
+```python
+import pygmsh
+
+with pygmsh.built_in.Geometry() as geom:
+    geom.add_polygon(
+        [
+            [0.0, 0.0],
+            [1.0, -0.2],
+            [1.1, 1.2],
+            [0.1, 0.7],
+        ],
+        mesh_size=0.1,
+    )
+    mesh = pygmsh.generate_mesh(geom)
+
+mesh.write("out.vtk")
+```
+
 #### Built-in
 
 ![](https://nschloe.github.io/pygmsh/screw.png)
 
 To create the above mesh, simply do
 ```python
+from math import pi
 import pygmsh
-import numpy as np
 
 with pygmsh.built_in.Geometry() as geom:
     # Draw a cross.
     poly = geom.add_polygon(
         [
-            [+0.0, +0.5, 0.0],
-            [-0.1, +0.1, 0.0],
-            [-0.5, +0.0, 0.0],
-            [-0.1, -0.1, 0.0],
-            [+0.0, -0.5, 0.0],
-            [+0.1, -0.1, 0.0],
-            [+0.5, +0.0, 0.0],
-            [+0.1, +0.1, 0.0],
+            [+0.0, +0.5],
+            [-0.1, +0.1],
+            [-0.5, +0.0],
+            [-0.1, -0.1],
+            [+0.0, -0.5],
+            [+0.1, -0.1],
+            [+0.5, +0.0],
+            [+0.1, +0.1],
         ],
         mesh_size=0.05,
     )
@@ -55,7 +80,7 @@ with pygmsh.built_in.Geometry() as geom:
         translation_axis=[0, 0, 1],
         rotation_axis=[0, 0, 1],
         point_on_axis=[0, 0, 0],
-        angle=2.0 / 6.0 * np.pi,
+        angle=pi / 3,
     )
 
     mesh = pygmsh.generate_mesh(geom)
@@ -118,7 +143,7 @@ to install. Also, make sure to have [gmsh](http://gmsh.info/) installed.
 ### Usage
 Just
 ```
-import pygmsh as pg
+import pygmsh
 ```
 and make use of all the goodies the module provides. The
 [documentation](https://pygmsh.readthedocs.org/) and the examples under
