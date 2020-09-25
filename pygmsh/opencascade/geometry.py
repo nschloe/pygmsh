@@ -1,27 +1,20 @@
-import math
-
 import gmsh
 
 from .. import common
 from .ball import Ball
 from .boolean import Boolean
 from .box import Box
-from .circle_arc import CircleArc
 from .cone import Cone
-from .curve_loop import CurveLoop
 from .cylinder import Cylinder
 from .disk import Disk
-from .dummy import Dummy
-from .line import Line
-from .plane_surface import PlaneSurface
-from .point import Point
 from .rectangle import Rectangle
 from .torus import Torus
 from .wedge import Wedge
 
 
-class Geometry:
+class Geometry(common.CommonGeometry):
     def __init__(self):
+        super().__init__(gmsh.model.occ)
         self._AFTER_SYNC_QUEUE = []
         self._EMBED_QUEUE = []
         self._COMPOUND_ENTITIES = []
@@ -30,23 +23,12 @@ class Geometry:
         self._TRANSFINITE_SURFACE_QUEUE = []
         self._SIZE_QUEUE = []
 
-    def __enter__(self):
-        gmsh.initialize()
-        gmsh.model.add("pygmsh OCC model")
-        return self
-
     def __exit__(self, *a):
-        # TODO reset globally set values.
+        # TODO remove once gmsh 4.7.0 is out
         # <https://gitlab.onelab.info/gmsh/gmsh/-/issues/1001>
         gmsh.option.setNumber("Mesh.CharacteristicLengthMin", 0.0)
         gmsh.option.setNumber("Mesh.CharacteristicLengthMax", 1.0e22)
         gmsh.finalize()
-
-    def __repr__(self):
-        return "<pygmsh Geometry object (OCC)>"
-
-    def synchronize(self):
-        gmsh.model.occ.synchronize()
 
     @property
     def characteristic_length_min(self):
@@ -63,21 +45,6 @@ class Geometry:
     @characteristic_length_max.setter
     def characteristic_length_max(self, val):
         gmsh.option.setNumber("Mesh.CharacteristicLengthMax", val)
-
-    def add_point(self, *args, **kwargs):
-        return Point(*args, **kwargs)
-
-    def add_line(self, *args, **kwargs):
-        return Line(*args, **kwargs)
-
-    def add_circle_arc(self, *args, **kwargs):
-        return CircleArc(*args, **kwargs)
-
-    def add_curve_loop(self, *args, **kwargs):
-        return CurveLoop(*args, **kwargs)
-
-    def add_plane_surface(self, *args, **kwargs):
-        return PlaneSurface(*args, **kwargs)
 
     def add_rectangle(self, *args, mesh_size=None, **kwargs):
         entity = Rectangle(*args, **kwargs)

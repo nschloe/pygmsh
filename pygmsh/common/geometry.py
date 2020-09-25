@@ -1,13 +1,29 @@
+import math
+
 import gmsh
 import numpy
 
 from .. import common
+from .bspline import BSpline
+from .circle_arc import CircleArc
+from .curve_loop import CurveLoop
+from .dummy import Dummy
+from .ellipse_arc import EllipseArc
+from .line import Line
+from .plane_surface import PlaneSurface
+from .point import Point
+from .spline import Spline
+from .surface import Surface
+from .surface_loop import SurfaceLoop
+from .volume import Volume
 
 
-class Geometry(common.CommonGeometry):
-    def __init__(self):
-        super().__init__(gmsh.model.geo)
-
+class CommonGeometry:
+    """Geometry base class containing all methods that can be shared between built-in
+    and opencascade.
+    """
+    def __init__(self, env):
+        self.env = env
         self._BOOLEAN_ID = 0
         self._ARRAY_ID = 0
         self._FIELD_ID = 0
@@ -19,6 +35,20 @@ class Geometry(common.CommonGeometry):
         self._TRANSFINITE_SURFACE_QUEUE = []
         self._AFTER_SYNC_QUEUE = []
         self._SIZE_QUEUE = []
+
+    def __enter__(self):
+        gmsh.initialize()
+        gmsh.model.add("pygmsh model")
+        return self
+
+    def __exit__(self, *a):
+        gmsh.finalize()
+
+    def synchronize(self):
+        self.env.synchronize()
+
+    def __repr__(self):
+        return "<pygmsh Geometry object>"
 
     # All of the add_* method below could be replaced by
     #
@@ -37,6 +67,39 @@ class Geometry(common.CommonGeometry):
     #    # ... use c
     #
     # in which case the circle code never gets added to geom.
+
+    def add_bspline(self, *args, **kwargs):
+        return BSpline(*args, **kwargs)
+
+    def add_circle_arc(self, *args, **kwargs):
+        return CircleArc(*args, **kwargs)
+
+    def add_ellipse_arc(self, *args, **kwargs):
+        return EllipseArc(*args, **kwargs)
+
+    def add_line(self, *args, **kwargs):
+        return Line(*args, **kwargs)
+
+    def add_curve_loop(self, *args, **kwargs):
+        return CurveLoop(*args, **kwargs)
+
+    def add_plane_surface(self, *args, **kwargs):
+        return PlaneSurface(*args, **kwargs)
+
+    def add_point(self, *args, **kwargs):
+        return Point(*args, **kwargs)
+
+    def add_spline(self, *args, **kwargs):
+        return Spline(*args, **kwargs)
+
+    def add_surface(self, *args, **kwargs):
+        return Surface(*args, **kwargs)
+
+    def add_surface_loop(self, *args, **kwargs):
+        return SurfaceLoop(*args, **kwargs)
+
+    def add_volume(self, *args, **kwargs):
+        return Volume(*args, **kwargs)
 
     def _new_physical_group(self, label=None):
         # See
@@ -83,6 +146,10 @@ class Geometry(common.CommonGeometry):
         self._TRANSFINITE_SURFACE_QUEUE.append((surface._ID, arrangement, corner_tags))
 
     def set_recombined_surfaces(self, surfaces):
+        for i, surface in enumerate(surfaces):
+            assert isinstance(
+                surface, (PlaneSurface, Surface)
+            ), f"item {i} is not a surface"
         self._RECOMBINE_ENTITIES += [s.dim_tags[0] for s in surfaces]
 
     def add_circle(
@@ -183,6 +250,125 @@ class Geometry(common.CommonGeometry):
             plane_surface,
             mesh_size=mesh_size,
         )
+
+    def extrude(
+        self,
+        input_entity,
+        translation_axis,
+        num_layers=None,
+        heights=None,
+        recombine=False,
+    ):
+        """Extrusion of any entity along a given translation_axis."""
+        if isinstance(num_layers, int):
+            num_layers = [num_layers]
+        if num_layers is None:
+            num_layers = []
+            heights = []
+        else:
+            if heights is None:
+                heights = []
+            else:
+                assert len(num_layers) == len(heights)
+
+        out_dim_tags = self.env.extrude(
+            input_entity.dim_tags,
+            translation_axis[0],
+            translation_axis[1],
+            translation_axis[2],
+            numElements=num_layers,
+            heights=heights,
+            recombine=recombine,
+        )
+        top = Dummy(*out_dim_tags[0])
+        extruded = Dummy(*out_dim_tags[1])
+        lateral = [Dummy(*e) for e in out_dim_tags[2:]]
+        return top, extruded, lateral
+
+    def revolve(
+        self,
+        input_entity,
+        rotation_axis,
+        point_on_axis,
+        angle,
+        num_layers=None,
+        heights=None,
+        recombine=False,
+    ):
+        """Rotation of any entity around a given rotation_axis, about a given angle."""
+        if isinstance(num_layers, int):
+            num_layers = [num_layers]
+        if num_layers is None:
+            num_layers = []
+            heights = []
+        else:
+            if heights is None:
+                heights = []
+            else:
+                assert len(num_layers) == len(heights)
+
+        assert angle < math.pi
+        out_dim_tags = self.env.revolve(
+            input_entity.dim_tags,
+            *point_on_axis,
+            *rotation_axis,
+            angle,
+            numElements=num_layers,
+            heights=heights,
+            recombine=recombine,
+        )
+
+        top = Dummy(*out_dim_tags[0])
+        extruded = Dummy(*out_dim_tags[1])
+        lateral = [Dummy(*e) for e in out_dim_tags[2:]]
+        return top, extruded, lateral
+
+    def twist(
+        self,
+        input_entity,
+        translation_axis,
+        rotation_axis,
+        point_on_axis,
+        angle,
+        num_layers=None,
+        heights=None,
+        recombine=False,
+    ):
+        """Twist (translation + rotation) of any entity along a given translation_axis,
+        around a given rotation_axis, about a given angle.
+        """
+        if isinstance(num_layers, int):
+            num_layers = [num_layers]
+        if num_layers is None:
+            num_layers = []
+            heights = []
+        else:
+            if heights is None:
+                heights = []
+            else:
+                assert len(num_layers) == len(heights)
+
+        assert angle < math.pi
+        out_dim_tags = self.env.twist(
+            input_entity.dim_tags,
+            point_on_axis[0],
+            point_on_axis[1],
+            point_on_axis[2],
+            translation_axis[0],
+            translation_axis[1],
+            translation_axis[2],
+            rotation_axis[0],
+            rotation_axis[1],
+            rotation_axis[2],
+            angle,
+            numElements=num_layers,
+            heights=heights,
+            recombine=recombine,
+        )
+        top = Dummy(*out_dim_tags[0])
+        extruded = Dummy(*out_dim_tags[1])
+        lateral = [Dummy(*e) for e in out_dim_tags[2:]]
+        return top, extruded, lateral
 
     def add_boundary_layer(self, *args, **kwargs):
         layer = BoundaryLayer(*args, **kwargs)

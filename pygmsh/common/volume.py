@@ -1,9 +1,7 @@
 import gmsh
 
-from .volume_base import VolumeBase
 
-
-class Volume(VolumeBase):
+class Volume:
     """
     Creates a volume.
 
@@ -37,5 +35,4 @@ class Volume(VolumeBase):
         self.holes = holes
 
         surface_loops = [surface_loop] + holes
-        id0 = gmsh.model.geo.addVolume([s.id for s in surface_loops])
-        super().__init__(id0)
+        self._ID = gmsh.model.geo.addVolume([s.id for s in surface_loops])
