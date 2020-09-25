@@ -9,6 +9,9 @@ import pygmsh
 )
 def test():
     with pygmsh.opencascade.Geometry() as geom:
+        # test setters, getters
+        print(geom.characteristic_length_min)
+        print(geom.characteristic_length_max)
         geom.characteristic_length_min = 2.0
         geom.characteristic_length_max = 2.0
 

@@ -17,7 +17,13 @@ def test():
         s2 = geom.add_bspline([p4, p3, p2, p1])
 
         ll = geom.add_curve_loop([s1, s2])
-        geom.add_plane_surface(ll)
+        pl = geom.add_plane_surface(ll)
+
+        # test some __repr__
+        print(p1)
+        print(ll)
+        print(s1)
+        print(pl)
 
         mesh = pygmsh.generate_mesh(geom)
     # ref = 0.9156598733673261

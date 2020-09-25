@@ -6,7 +6,7 @@ import pygmsh
 def test():
     with pygmsh.built_in.Geometry() as geom:
         geom.add_rectangle(0.0, 1.0, 0.0, 1.0, 0.0, 0.1)
-        mesh = pygmsh.generate_mesh(geom, mesh_file_type="vtk")
+        mesh = pygmsh.generate_mesh(geom)
 
     ref = 1.0
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref

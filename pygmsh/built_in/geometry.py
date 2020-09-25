@@ -1,48 +1,12 @@
 import gmsh
 import numpy
 
-from .bspline import BSpline
-from .circle_arc import CircleArc
-from .curve_loop import CurveLoop
-from .dummy import Dummy
-from .ellipse_arc import EllipseArc
-from .line import Line
-from .line_base import LineBase
-from .plane_surface import PlaneSurface
-from .point import Point
-from .point_base import PointBase
-from .spline import Spline
-from .surface import Surface
-from .surface_base import SurfaceBase
-from .surface_loop import SurfaceLoop
-from .volume import Volume
-from .volume_base import VolumeBase
+from .. import common
 
 
-class Geometry:
+class Geometry(common.CommonGeometry):
     def __init__(self):
-        self._BOOLEAN_ID = 0
-        self._ARRAY_ID = 0
-        self._FIELD_ID = 0
-        self._TAKEN_PHYSICALGROUP_IDS = []
-        self._COMPOUND_ENTITIES = []
-        self._RECOMBINE_ENTITIES = []
-        self._EMBED_QUEUE = []
-        self._TRANSFINITE_CURVE_QUEUE = []
-        self._TRANSFINITE_SURFACE_QUEUE = []
-        self._AFTER_SYNC_QUEUE = []
-        self._SIZE_QUEUE = []
-
-    def __enter__(self):
-        gmsh.initialize()
-        gmsh.model.add("pygmsh built-in model")
-        return self
-
-    def __exit__(self, *a):
-        gmsh.finalize()
-
-    def synchronize(self):
-        gmsh.model.geo.synchronize()
+        super().__init__(gmsh.model.geo)
 
     # All of the add_* method below could be replaced by
     #
@@ -61,39 +25,6 @@ class Geometry:
     #    # ... use c
     #
     # in which case the circle code never gets added to geom.
-
-    def add_bspline(self, *args, **kwargs):
-        return BSpline(*args, **kwargs)
-
-    def add_circle_arc(self, *args, **kwargs):
-        return CircleArc(*args, **kwargs)
-
-    def add_ellipse_arc(self, *args, **kwargs):
-        return EllipseArc(*args, **kwargs)
-
-    def add_line(self, *args, **kwargs):
-        return Line(*args, **kwargs)
-
-    def add_curve_loop(self, *args, **kwargs):
-        return CurveLoop(*args, **kwargs)
-
-    def add_plane_surface(self, *args, **kwargs):
-        return PlaneSurface(*args, **kwargs)
-
-    def add_point(self, *args, **kwargs):
-        return Point(*args, **kwargs)
-
-    def add_spline(self, *args, **kwargs):
-        return Spline(*args, **kwargs)
-
-    def add_surface(self, *args, **kwargs):
-        return Surface(*args, **kwargs)
-
-    def add_surface_loop(self, *args, **kwargs):
-        return SurfaceLoop(*args, **kwargs)
-
-    def add_volume(self, *args, **kwargs):
-        return Volume(*args, **kwargs)
 
     def _new_physical_group(self, label=None):
         # See
@@ -125,22 +56,6 @@ class Geometry:
 
         dim = entities[0].dimension
         for e in entities:
-            assert isinstance(
-                e,
-                (
-                    Point,
-                    PointBase,
-                    LineBase,
-                    Surface,
-                    PlaneSurface,
-                    SurfaceBase,
-                    Volume,
-                    VolumeBase,
-                    Dummy,
-                ),
-            ), "Can add physical groups only for Points, Lines, Surfaces, Volumes, not {}.".format(
-                type(e)
-            )
             assert e.dimension == dim
 
         label = self._new_physical_group(label)
@@ -156,12 +71,7 @@ class Geometry:
         self._TRANSFINITE_SURFACE_QUEUE.append((surface._ID, arrangement, corner_tags))
 
     def set_recombined_surfaces(self, surfaces):
-        for i, surface in enumerate(surfaces):
-            assert isinstance(
-                surface, (PlaneSurface, Surface)
-            ), f"item {i} is not a surface"
-        for surface in surfaces:
-            self._RECOMBINE_ENTITIES.append((2, surface._ID))
+        self._RECOMBINE_ENTITIES += [s.dim_tags[0] for s in surfaces]
 
     def add_circle(
         self,
@@ -249,7 +159,6 @@ class Geometry:
                 self.holes = holes
                 self.curve_loop = curve_loop
                 self.plane_surface = plane_surface
-                return
 
         return Circle(
             x0,
@@ -262,120 +171,6 @@ class Geometry:
             plane_surface,
             mesh_size=mesh_size,
         )
-
-    def extrude(
-        self,
-        input_entity,
-        translation_axis,
-        num_layers=None,
-        heights=None,
-        recombine=False,
-    ):
-        """Extrusion of any entity along a given translation_axis."""
-        if isinstance(num_layers, int):
-            num_layers = [num_layers]
-        if num_layers is None:
-            num_layers = []
-            heights = []
-        else:
-            if heights is None:
-                heights = []
-            else:
-                assert len(num_layers) == len(heights)
-
-        out_dim_tags = gmsh.model.geo.extrude(
-            input_entity.dim_tags,
-            translation_axis[0],
-            translation_axis[1],
-            translation_axis[2],
-            numElements=num_layers,
-            heights=heights,
-            recombine=recombine,
-        )
-        top = Dummy(*out_dim_tags[0])
-        extruded = Dummy(*out_dim_tags[1])
-        lateral = [Dummy(*e) for e in out_dim_tags[2:]]
-        return top, extruded, lateral
-
-    def revolve(
-        self,
-        input_entity,
-        rotation_axis,
-        point_on_axis,
-        angle,
-        num_layers=None,
-        heights=None,
-        recombine=False,
-    ):
-        """Rotation of any entity around a given rotation_axis, about a given angle."""
-        if isinstance(num_layers, int):
-            num_layers = [num_layers]
-        if num_layers is None:
-            num_layers = []
-            heights = []
-        else:
-            if heights is None:
-                heights = []
-            else:
-                assert len(num_layers) == len(heights)
-
-        assert angle < numpy.pi
-        out_dim_tags = gmsh.model.geo.revolve(
-            input_entity.dim_tags,
-            *point_on_axis,
-            *rotation_axis,
-            angle,
-            numElements=num_layers,
-            heights=heights,
-            recombine=recombine,
-        )
-
-        top = Dummy(*out_dim_tags[0])
-        extruded = Dummy(*out_dim_tags[1])
-        lateral = [Dummy(*e) for e in out_dim_tags[2:]]
-        return top, extruded, lateral
-
-    def twist(
-        self,
-        input_entity,
-        translation_axis,
-        rotation_axis,
-        point_on_axis,
-        angle,
-        num_layers=None,
-        heights=None,
-        recombine=False,
-    ):
-        """Twist (translation + rotation) of any entity along a given translation_axis,
-        around a given rotation_axis, about a given angle.
-        """
-        if isinstance(num_layers, int):
-            num_layers = [num_layers]
-        if num_layers is None:
-            num_layers = []
-            heights = []
-        else:
-            if heights is None:
-                heights = []
-            else:
-                assert len(num_layers) == len(heights)
-
-        assert angle < numpy.pi
-        out_dim_tags = gmsh.model.geo.twist(
-            input_entity.dim_tags,
-            *point_on_axis,
-            *translation_axis,
-            *rotation_axis,
-            angle,
-            numElements=num_layers,
-            heights=heights,
-            recombine=recombine,
-        )
-
-        top = Dummy(*out_dim_tags[0])
-        extruded = Dummy(*out_dim_tags[1])
-        lateral = [Dummy(*e) for e in out_dim_tags[2:]]
-        return top, extruded, lateral
 
     def add_boundary_layer(self, *args, **kwargs):
         layer = BoundaryLayer(*args, **kwargs)
@@ -395,39 +190,6 @@ class Geometry:
             holes=holes,
             make_surface=make_surface,
         )
-
-    class Polygon:
-        def __init__(self, points, lines, curve_loop, surface, mesh_size=None):
-            self.points = points
-            self.lines = lines
-            self.num_edges = len(lines)
-            self.curve_loop = curve_loop
-            self.surface = surface
-            self.mesh_size = mesh_size
-            if surface is not None:
-                self._ID = self.surface._ID
-            self.dimension = 2
-            self.dim_tags = [(2, surface)]
-
-    def add_polygon(self, X, mesh_size=None, holes=None, make_surface=True):
-        if holes is None:
-            holes = []
-        else:
-            assert make_surface
-
-        if isinstance(mesh_size, list):
-            assert len(X) == len(mesh_size)
-        else:
-            mesh_size = len(X) * [mesh_size]
-
-        # Create points.
-        p = [self.add_point(x, mesh_size=l) for x, l in zip(X, mesh_size)]
-        # Create lines
-        lines = [self.add_line(p[k], p[k + 1]) for k in range(len(p) - 1)]
-        lines.append(self.add_line(p[-1], p[0]))
-        ll = self.add_curve_loop(lines)
-        surface = self.add_plane_surface(ll, holes) if make_surface else None
-        return self.Polygon(p, lines, ll, surface, mesh_size=mesh_size)
 
     def add_ellipsoid(self, x0, radii, mesh_size=None, with_volume=True, holes=None):
         """Creates an ellipsoid with radii around a given midpoint
@@ -829,32 +591,6 @@ class Geometry:
             circ.plane_surface, translation_axis=numpy.dot(R, [length, 0, 0])
         )
         return vol
-
-    def translate(self, obj, vector):
-        """Translates input_entity itself by vector.
-
-        Changes the input object.
-        """
-        gmsh.model.geo.translate(obj.dim_tags, *vector)
-
-    def rotate(self, obj, point, angle, axis):
-        """Rotate input_entity around a given point with a give angle.
-           Rotation axis has to be specified.
-
-        Changes the input object.
-        """
-        gmsh.model.geo.rotate(obj.dim_tags, *point, *axis, angle)
-
-    def copy(self, obj):
-        dim_tag = gmsh.model.geo.copy(obj.dim_tags)
-        assert len(dim_tag) == 1
-        return Dummy(*dim_tag[0])
-
-    def symmetrize(self, obj, coefficients):
-        """Transforms all elementary entities symmetrically to a plane. The vector
-        should contain four expressions giving the coefficients of the plane's equation.
-        """
-        gmsh.model.geo.symmetrize(obj.dim_tags, *coefficients)
 
     def in_surface(self, input_entity, surface):
         """Embed the point(s) or curve(s) in the given surface. The surface mesh will

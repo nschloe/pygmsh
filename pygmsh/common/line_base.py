@@ -6,6 +6,7 @@ class LineBase:
     Parameters
     ----------
     id0 : int
+    points: list of int
     """
 
     dimension = 1

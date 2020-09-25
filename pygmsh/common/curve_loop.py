@@ -1,6 +1,3 @@
-import gmsh
-
-
 class CurveLoop:
     """
     Increments the Line ID every time a new object is created that inherits
@@ -23,11 +20,11 @@ class CurveLoop:
 
     dimension = 1
 
-    def __init__(self, curves):
+    def __init__(self, env, curves):
         for k in range(len(curves) - 1):
             assert curves[k].points[-1] == curves[k + 1].points[0]
         assert curves[-1].points[-1] == curves[0].points[0]
-        self._ID = gmsh.model.occ.addCurveLoop([c._ID for c in curves])
+        self._ID = env.addCurveLoop([c._ID for c in curves])
 
         self.curves = curves
 

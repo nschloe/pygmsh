@@ -1,10 +1,7 @@
-import gmsh
-
 from .curve_loop import CurveLoop
-from .surface_base import SurfaceBase
 
 
-class PlaneSurface(SurfaceBase):
+class PlaneSurface:
     """
     Creates a plane surface.
 
@@ -32,25 +29,25 @@ class PlaneSurface(SurfaceBase):
 
     dimension = 2
 
-    def __init__(self, curve_loop, holes=None):
+    def __init__(self, env, curve_loop, holes=None):
         assert isinstance(curve_loop, CurveLoop)
         self.curve_loop = curve_loop
 
         if holes is None:
             holes = []
 
-        # The input holes are either line loops or entities that contain line
-        # loops (like polygons).
+        # The input holes are either line loops or entities that contain line loops
+        # (like polygons).
         self.holes = [h if isinstance(h, CurveLoop) else h.curve_loop for h in holes]
 
-        curve_loops = [self.curve_loop] + self.holes
-        id0 = gmsh.model.geo.addPlaneSurface([ll._ID for ll in curve_loops])
-        self.dim_tags = [(2, id0)]
-        super().__init__(id0)
         self.num_edges = len(self.curve_loop) + sum(len(h) for h in self.holes)
+
+        curve_loops = [self.curve_loop] + self.holes
+        self._ID = env.addPlaneSurface([ll._ID for ll in curve_loops])
+        self.dim_tags = [(2, self._ID)]
 
     def __repr__(self):
         return (
-            "<pygmsh PlaneSurface object, "
+            "<pygmsh PlaneSurface object (OCC), "
             f"ID {self._ID}, curve loop {self.curve_loop._ID}>"
         )

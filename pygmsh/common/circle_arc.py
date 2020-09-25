@@ -1,9 +1,8 @@
-import gmsh
-
+from .line_base import LineBase
 from .point import Point
 
 
-class CircleArc:
+class CircleArc(LineBase):
     """
     Creates a circle arc.
 
@@ -17,9 +16,10 @@ class CircleArc:
         Coordinates of end point needed to construct circle-arc.
     """
 
-    def __init__(self, start, center, end):
+    def __init__(self, env, start, center, end):
         assert isinstance(start, Point)
         assert isinstance(center, Point)
         assert isinstance(end, Point)
-        self._ID = gmsh.model.occ.addCircleArc(start._ID, center._ID, end._ID)
-        self.points = [start, center, end]
+        id0 = env.addCircleArc(start._ID, center._ID, end._ID)
+        self.dim_tags = [(1, id0)]
+        super().__init__(id0, [start, center, end])

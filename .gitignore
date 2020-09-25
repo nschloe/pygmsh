@@ -6,6 +6,8 @@
 *.vtu
 .DS_Store
 .cache/
+.tox/
+*.xml
 MANIFEST
 README.rst
 build/
