@@ -154,19 +154,6 @@ class Geometry(common.CommonGeometry):
         out, _ = gmsh.model.occ.fragment(d0.dim_tags, d1.dim_tags)
         return Boolean(out, "Fragments")
 
-    def add_physical(self, entities, label=None):
-        if not isinstance(entities, list):
-            entities = [entities]
-
-        dim = entities[0].dimension
-        for e in entities:
-            assert e.dimension == dim
-
-        tag = gmsh.model.addPhysicalGroup(dim, [e._ID for e in entities])
-        if label is not None:
-            assert isinstance(label, str)
-            gmsh.model.setPhysicalName(dim, tag, label)
-
     def add_polygon(self, X, mesh_size=None, holes=None, make_surface=True):
         class Polygon:
             def __init__(self, points, lines, curve_loop, surface, mesh_size=None):
