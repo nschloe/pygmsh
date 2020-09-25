@@ -160,7 +160,7 @@ class Geometry:
             assert isinstance(
                 surface, (PlaneSurface, Surface)
             ), f"item {i} is not a surface"
-        self._RECOMBINE_ENTITIES += [s.dim_tags for s in surfaces]
+        self._RECOMBINE_ENTITIES += [s.dim_tags[0] for s in surfaces]
 
     def add_circle(
         self,

@@ -30,8 +30,6 @@ class Volume(VolumeBase):
     """
 
     def __init__(self, surface_loop, holes=None):
-        super().__init__()
-
         if holes is None:
             holes = []
 
@@ -39,4 +37,5 @@ class Volume(VolumeBase):
         self.holes = holes
 
         surface_loops = [surface_loop] + holes
-        self._ID = gmsh.model.geo.addVolume([s.id for s in surface_loops])
+        id0 = gmsh.model.geo.addVolume([s.id for s in surface_loops])
+        super().__init__(id0)
