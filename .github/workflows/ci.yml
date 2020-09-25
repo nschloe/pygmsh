@@ -33,24 +33,21 @@ jobs:
     - name: Install gmsh
       run: |
         sudo apt-get install -y python3-gmsh
-        # ls /usr/lib/python3/dist-packages/gmsh.py
-        # echo $PYTHONPATH
-        # python3 -c "import gmsh; print(gmsh.__file__)"
     # - name: Work around tox bug
     #   # https://github.com/tox-dev/tox/issues/1679
     #   run: |
     #     sudo mkdir -p /usr/lib/python${{ matrix.python-version}}/
     #     sudo cp /usr/lib/python3/dist-packages/gmsh.py /usr/lib/python${{ matrix.python-version}}/
     #     ls /usr/lib/python${{ matrix.python-version}}/gmsh.py
-    # - name: Test with tox
-    #   run: |
-    #     pip install tox
-    #     tox
-    - name: Test with pytest
+    - name: Test with tox
       run: |
-        pip install pytest pytest-cov
-        pip install .
-        cd test/ && pytest --cov pygmsh
+        pip install tox
+        tox
+    # - name: Test with pytest
+    #   run: |
+    #     pip install pytest pytest-cov
+    #     pip install .
+    #     cd test/ && pytest --cov pygmsh
     - name: Submit to codecov
       if: ${{ matrix.python-version == '3.8' }}
       run: bash <(curl -s https://codecov.io/bash)
