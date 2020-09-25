@@ -35,9 +35,8 @@ jobs:
     - name: Work around tox bug
       # https://github.com/tox-dev/tox/issues/1679
       run: |
-        sudo cp /usr/lib/python3/dist-packages/gmsh.py /usr/lib/python3.6/
-        sudo cp /usr/lib/python3/dist-packages/gmsh.py /usr/lib/python3.7/
-        sudo cp /usr/lib/python3/dist-packages/gmsh.py /usr/lib/python3.8/
+        echo ${{ matrix.python-version }}
+        sudo cp /usr/lib/python3/dist-packages/gmsh.py /usr/lib/python${{ matrix.python-version}}/
     - name: Test with tox
       run: |
         pip install tox
