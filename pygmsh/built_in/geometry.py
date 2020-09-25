@@ -8,18 +8,6 @@ class Geometry(common.CommonGeometry):
     def __init__(self):
         super().__init__(gmsh.model.geo)
 
-        self._BOOLEAN_ID = 0
-        self._ARRAY_ID = 0
-        self._FIELD_ID = 0
-        self._TAKEN_PHYSICALGROUP_IDS = []
-        self._COMPOUND_ENTITIES = []
-        self._RECOMBINE_ENTITIES = []
-        self._EMBED_QUEUE = []
-        self._TRANSFINITE_CURVE_QUEUE = []
-        self._TRANSFINITE_SURFACE_QUEUE = []
-        self._AFTER_SYNC_QUEUE = []
-        self._SIZE_QUEUE = []
-
     # All of the add_* method below could be replaced by
     #
     #   def add(self, entity):
@@ -202,39 +190,6 @@ class Geometry(common.CommonGeometry):
             holes=holes,
             make_surface=make_surface,
         )
-
-    class Polygon:
-        def __init__(self, points, lines, curve_loop, surface, mesh_size=None):
-            self.points = points
-            self.lines = lines
-            self.num_edges = len(lines)
-            self.curve_loop = curve_loop
-            self.surface = surface
-            self.mesh_size = mesh_size
-            if surface is not None:
-                self._ID = self.surface._ID
-            self.dimension = 2
-            self.dim_tags = [(2, surface)]
-
-    def add_polygon(self, X, mesh_size=None, holes=None, make_surface=True):
-        if holes is None:
-            holes = []
-        else:
-            assert make_surface
-
-        if isinstance(mesh_size, list):
-            assert len(X) == len(mesh_size)
-        else:
-            mesh_size = len(X) * [mesh_size]
-
-        # Create points.
-        p = [self.add_point(x, mesh_size=l) for x, l in zip(X, mesh_size)]
-        # Create lines
-        lines = [self.add_line(p[k], p[k + 1]) for k in range(len(p) - 1)]
-        lines.append(self.add_line(p[-1], p[0]))
-        ll = self.add_curve_loop(lines)
-        surface = self.add_plane_surface(ll, holes) if make_surface else None
-        return self.Polygon(p, lines, ll, surface, mesh_size=mesh_size)
 
     def add_ellipsoid(self, x0, radii, mesh_size=None, with_volume=True, holes=None):
         """Creates an ellipsoid with radii around a given midpoint

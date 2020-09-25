@@ -15,13 +15,6 @@ from .wedge import Wedge
 class Geometry(common.CommonGeometry):
     def __init__(self):
         super().__init__(gmsh.model.occ)
-        self._AFTER_SYNC_QUEUE = []
-        self._EMBED_QUEUE = []
-        self._COMPOUND_ENTITIES = []
-        self._RECOMBINE_ENTITIES = []
-        self._TRANSFINITE_CURVE_QUEUE = []
-        self._TRANSFINITE_SURFACE_QUEUE = []
-        self._SIZE_QUEUE = []
 
     def __exit__(self, *a):
         # TODO remove once gmsh 4.7.0 is out
@@ -153,36 +146,3 @@ class Geometry(common.CommonGeometry):
         """
         out, _ = gmsh.model.occ.fragment(d0.dim_tags, d1.dim_tags)
         return Boolean(out, "Fragments")
-
-    def add_polygon(self, X, mesh_size=None, holes=None, make_surface=True):
-        class Polygon:
-            def __init__(self, points, lines, curve_loop, surface, mesh_size=None):
-                self.points = points
-                self.lines = lines
-                self.num_edges = len(lines)
-                self.curve_loop = curve_loop
-                self.surface = surface
-                self.mesh_size = mesh_size
-                if surface is not None:
-                    self._ID = self.surface._ID
-                self.dimension = 2
-                self.dim_tags = [(2, surface)]
-
-        if holes is None:
-            holes = []
-        else:
-            assert make_surface
-
-        if isinstance(mesh_size, list):
-            assert len(X) == len(mesh_size)
-        else:
-            mesh_size = len(X) * [mesh_size]
-
-        # Create points.
-        p = [self.add_point(x, mesh_size=l) for x, l in zip(X, mesh_size)]
-        # Create lines
-        lines = [self.add_line(p[k], p[k + 1]) for k in range(len(p) - 1)]
-        lines.append(self.add_line(p[-1], p[0]))
-        ll = self.add_curve_loop(lines)
-        surface = self.add_plane_surface(ll, holes) if make_surface else None
-        return Polygon(p, lines, ll, surface, mesh_size=mesh_size)
