@@ -10,6 +10,7 @@ from .ellipse_arc import EllipseArc
 from .line import Line
 from .plane_surface import PlaneSurface
 from .point import Point
+from .polygon import Polygon
 from .spline import Spline
 from .surface import Surface
 from .surface_loop import SurfaceLoop
@@ -82,6 +83,9 @@ class CommonGeometry:
     def add_volume(self, *args, **kwargs):
         return Volume(self.env, *args, **kwargs)
 
+    def add_polygon(self, *args, **kwargs):
+        return Polygon(self, *args, **kwargs)
+
     def _new_physical_group(self, label=None):
         # See
         # https://github.com/nschloe/pygmsh/issues/46#issuecomment-286684321
@@ -153,11 +157,11 @@ class CommonGeometry:
             else:
                 assert len(num_layers) == len(heights)
 
+        assert len(translation_axis) == 3
+
         out_dim_tags = self.env.extrude(
             input_entity.dim_tags,
-            translation_axis[0],
-            translation_axis[1],
-            translation_axis[2],
+            *translation_axis,
             numElements=num_layers,
             heights=heights,
             recombine=recombine,
@@ -190,6 +194,8 @@ class CommonGeometry:
                 assert len(num_layers) == len(heights)
 
         assert angle < math.pi
+        assert len(point_on_axis) == 3
+        assert len(rotation_axis) == 3
         out_dim_tags = self.env.revolve(
             input_entity.dim_tags,
             *point_on_axis,
@@ -230,18 +236,15 @@ class CommonGeometry:
             else:
                 assert len(num_layers) == len(heights)
 
+        assert len(point_on_axis) == 3
+        assert len(rotation_axis) == 3
+        assert len(translation_axis) == 3
         assert angle < math.pi
         out_dim_tags = self.env.twist(
             input_entity.dim_tags,
-            point_on_axis[0],
-            point_on_axis[1],
-            point_on_axis[2],
-            translation_axis[0],
-            translation_axis[1],
-            translation_axis[2],
-            rotation_axis[0],
-            rotation_axis[1],
-            rotation_axis[2],
+            *point_on_axis,
+            *translation_axis,
+            *rotation_axis,
             angle,
             numElements=num_layers,
             heights=heights,
@@ -295,36 +298,3 @@ class CommonGeometry:
         will conform to the mesh of the input entities.
         """
         self._EMBED_QUEUE.append((input_entity, volume))
-
-    def add_polygon(self, X, mesh_size=None, holes=None, make_surface=True):
-        class Polygon:
-            def __init__(self, points, lines, curve_loop, surface, mesh_size=None):
-                self.points = points
-                self.lines = lines
-                self.num_edges = len(lines)
-                self.curve_loop = curve_loop
-                self.surface = surface
-                self.mesh_size = mesh_size
-                if surface is not None:
-                    self._ID = self.surface._ID
-                self.dimension = 2
-                self.dim_tags = [(2, surface)]
-
-        if holes is None:
-            holes = []
-        else:
-            assert make_surface
-
-        if isinstance(mesh_size, list):
-            assert len(X) == len(mesh_size)
-        else:
-            mesh_size = len(X) * [mesh_size]
-
-        # Create points.
-        p = [self.add_point(x, mesh_size=l) for x, l in zip(X, mesh_size)]
-        # Create lines
-        lines = [self.add_line(p[k], p[k + 1]) for k in range(len(p) - 1)]
-        lines.append(self.add_line(p[-1], p[0]))
-        ll = self.add_curve_loop(lines)
-        surface = self.add_plane_surface(ll, holes) if make_surface else None
-        return Polygon(p, lines, ll, surface, mesh_size=mesh_size)

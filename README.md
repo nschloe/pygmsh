@@ -53,12 +53,10 @@ with pygmsh.built_in.Geometry() as geom:
         mesh_size=0.05,
     )
 
-    axis = [0, 0, 1]
-
     geom.twist(
-        poly.surface,
-        translation_axis=axis,
-        rotation_axis=axis,
+        poly,
+        translation_axis=[0, 0, 1],
+        rotation_axis=[0, 0, 1],
         point_on_axis=[0, 0, 0],
         angle=2.0 / 6.0 * np.pi,
     )

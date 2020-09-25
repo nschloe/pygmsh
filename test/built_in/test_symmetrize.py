@@ -9,7 +9,7 @@ def test():
             [[0.0, 0.5, 0.0], [1.0, 0.5, 0.0], [1.0, 1.0, 0.0], [0.0, 1.0, 0.0]],
             mesh_size=0.05,
         )
-        cp = geom.copy(poly.surface)
+        cp = geom.copy(poly)
         geom.symmetrize(cp, [0.0, 1.0, 0.0, -0.5])
         mesh = pygmsh.generate_mesh(geom)
 

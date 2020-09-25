@@ -19,7 +19,7 @@ def test(mesh_size=0.05):
         )
         axis = [0, 0, 1.0]
         geom.twist(
-            poly.surface,
+            poly,
             translation_axis=axis,
             rotation_axis=axis,
             point_on_axis=[0.0, 0.0, 0.0],

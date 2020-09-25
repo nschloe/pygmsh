@@ -17,8 +17,8 @@ def test_in_surface():
             ],
             mesh_size=[0.2, 0.2, 0.2, 0.2, 0.03, 0.03, 0.01],
         )
-        geom.in_surface(poly.lines[4], poly.surface)
-        geom.in_surface(poly.points[6], poly.surface)
+        geom.in_surface(poly.lines[4], poly)
+        geom.in_surface(poly.points[6], poly)
         mesh = pygmsh.generate_mesh(geom, prune_z_0=True)
 
     ref = 0.505
@@ -43,7 +43,7 @@ def test_in_volume():
         )
         geom.in_volume(poly.lines[4], box.volume)
         geom.in_volume(poly.points[6], box.volume)
-        geom.in_volume(poly.surface, box.volume)
+        geom.in_volume(poly, box.volume)
 
         mesh = pygmsh.generate_mesh(geom)
     ref = 30.505
