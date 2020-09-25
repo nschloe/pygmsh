@@ -34,6 +34,8 @@ jobs:
       run: |
         sudo apt-get install -y python3-gmsh
         ls /usr/lib/python3/dist-packages/gmsh.py
+        echo $PYTHONPATH
+        python3 -c "import gmsh; print(gmsh.__file__)"
     # - name: Work around tox bug
     #   # https://github.com/tox-dev/tox/issues/1679
     #   run: |
