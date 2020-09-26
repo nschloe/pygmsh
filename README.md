@@ -27,9 +27,9 @@ documentation.
 
 #### Flat shapes
 
-<img src="https://nschloe.github.io/pygmsh/polygon.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/chebyshev1.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/chebyshev2.svg" width="100%">
-:------------------:|:------------------:|:-------------:|
-Polygon             |  Chebyshev 1       |  Chebyshev 2  |
+<img src="https://nschloe.github.io/pygmsh/polygon.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/circle.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/splines.svg" width="100%">
+:------------------:|:-------------:|:-------------:|
+Polygon             |  Circle       |  (B-)Splines  |
 
 Codes:
 ```python
@@ -47,7 +47,34 @@ with pygmsh.built_in.Geometry() as geom:
     )
     mesh = pygmsh.generate_mesh(geom)
 
-mesh.write("out.vtk")
+# mesh.write("out.vtk")
+```
+```python
+import pygmsh
+
+with pygmsh.built_in.Geometry() as geom:
+    geom.add_circle([0.0, 0.0], 1.0, mesh_size=0.2)
+    mesh = pygmsh.generate_mesh(geom)
+```
+```python
+import pygmsh
+
+with pygmsh.built_in.Geometry() as geom:
+    lcar = 0.1
+    p1 = geom.add_point([0.0, 0.0, 0.0], lcar)
+    p2 = geom.add_point([1.0, 0.0, 0.0], lcar)
+    p3 = geom.add_point([1.0, 0.5, 0.0], lcar)
+    p4 = geom.add_point([1.0, 1.0, 0.0], lcar)
+    s1 = geom.add_bspline([p1, p2, p3, p4])
+
+    p2 = geom.add_point([0.0, 1.0, 0.0], lcar)
+    p3 = geom.add_point([0.5, 1.0, 0.0], lcar)
+    s2 = geom.add_spline([p4, p3, p2, p1])
+
+    ll = geom.add_curve_loop([s1, s2])
+    pl = geom.add_plane_surface(ll)
+
+    mesh = pygmsh.generate_mesh(geom)
 ```
 
 #### Built-in
