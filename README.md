@@ -47,6 +47,7 @@ with pygmsh.built_in.Geometry() as geom:
     )
     mesh = pygmsh.generate_mesh(geom)
 
+# mesh.points, mesh.cells, ...
 # mesh.write("out.vtk")
 ```
 ```python
@@ -77,11 +78,44 @@ with pygmsh.built_in.Geometry() as geom:
     mesh = pygmsh.generate_mesh(geom)
 ```
 
-#### Built-in
+#### Extrusions
 
-![](https://nschloe.github.io/pygmsh/screw.png)
+<img src="https://nschloe.github.io/pygmsh/extrude.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/revolve.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/twist.png" width="100%">
+:------------------:|:-------------:|:--------:|
+`extrude`           |  `revolve`    |  `twist` |
 
-To create the above mesh, simply do
+```python
+import pygmsh
+
+with pygmsh.built_in.Geometry() as geom:
+    poly = geom.add_polygon(
+        [
+            [0.0, 0.0],
+            [1.0, -0.2],
+            [1.1, 1.2],
+            [0.1, 0.7],
+        ],
+        mesh_size=0.1,
+    )
+    geom.extrude(poly, [0.0, 0.3, 1.0], num_layers=5)
+    mesh = pygmsh.generate_mesh(geom)
+```
+```python
+from math import pi
+import pygmsh
+
+with pygmsh.built_in.Geometry() as geom:
+    poly = geom.add_polygon(
+        [
+            [0.0, 0.2, 0.0],
+            [0.0, 1.2, 0.0],
+            [0.0, 1.2, 1.0],
+        ],
+        mesh_size=0.1,
+    )
+    geom.revolve(poly, [0.0, 0.0, 1.0], [0.0, 0.0, 0.0], 0.8 * pi)
+    mesh = pygmsh.generate_mesh(geom)
+```
 ```python
 from math import pi
 import pygmsh
@@ -111,8 +145,6 @@ with pygmsh.built_in.Geometry() as geom:
     )
 
     mesh = pygmsh.generate_mesh(geom)
-
-# mesh.points, mesh.cells, ...
 ```
 to retrieve all points and cells of the mesh for the specified geometry.
 The return value is a [meshio](https://pypi.org/project/meshio) mesh, so to store it
