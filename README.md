@@ -22,7 +22,9 @@ pygmsh combines the power of [Gmsh](https://gmsh.info/) with the versatility of 
 It provides useful abstractions from Gmsh's own Python interface so you can create
 complex geometries more easily.
 
-See [here](https://pygmsh.readthedocs.io/en/latest/index.html) for the full
+This document and the directory
+[`test/`](https://github.com/nschloe/pygmsh/tree/master/test/) contain many small
+examples. See [here](https://pygmsh.readthedocs.io/en/latest/index.html) for the full
 documentation.
 
 #### Flat shapes
@@ -78,6 +80,15 @@ with pygmsh.built_in.Geometry() as geom:
     mesh = pygmsh.generate_mesh(geom)
 ```
 
+The return value is always a [meshio](https://pypi.org/project/meshio) mesh, so to store
+it to a file you can
+<!--exdown-skip-->
+```python
+mesh.write("test.vtk")
+```
+The output file can be visualized with various tools, e.g.,
+[ParaView](https://www.paraview.org/).
+
 #### Extrusions
 
 <img src="https://nschloe.github.io/pygmsh/extrude.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/revolve.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/twist.png" width="100%">
@@ -121,7 +132,6 @@ from math import pi
 import pygmsh
 
 with pygmsh.built_in.Geometry() as geom:
-    # Draw a cross.
     poly = geom.add_polygon(
         [
             [+0.0, +0.5],
@@ -146,19 +156,6 @@ with pygmsh.built_in.Geometry() as geom:
 
     mesh = pygmsh.generate_mesh(geom)
 ```
-to retrieve all points and cells of the mesh for the specified geometry.
-The return value is a [meshio](https://pypi.org/project/meshio) mesh, so to store it
-to a file you can
-<!--exdown-skip-->
-```python
-mesh.write("test.vtk")
-```
-The output file can be visualized with various tools, e.g.,
-[ParaView](https://www.paraview.org/).
-
-You will find the above mesh in the directory
-[`test/`](https://github.com/nschloe/pygmsh/tree/master/test/) along with other small
-examples.
 
 #### OpenCASCADE
 ![](https://nschloe.github.io/pygmsh/puzzle.png)
