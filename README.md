@@ -157,6 +157,44 @@ with pygmsh.built_in.Geometry() as geom:
     mesh = pygmsh.generate_mesh(geom)
 ```
 
+#### Mesh refinement/boundary layers
+<img src="https://nschloe.github.io/pygmsh/boundary1.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/revolve.png" width="100%"> |
+:------------------:|:-------------:|:--------:|
+
+```python
+import pygmsh
+
+with pygmsh.built_in.Geometry() as geom:
+    poly = geom.add_polygon(
+        [
+            [0.0, 0.0, 0.0],
+            [2.0, 0.0, 0.0],
+            [3.0, 1.0, 0.0],
+            [1.0, 2.0, 0.0],
+            [0.0, 1.0, 0.0],
+        ],
+        mesh_size=0.3,
+    )
+
+    field0 = geom.add_boundary_layer(
+        edges_list=[poly.curves[0]],
+        lcmin=0.05,
+        lcmax=0.2,
+        distmin=0.0,
+        distmax=0.2,
+    )
+    field1 = geom.add_boundary_layer(
+        nodes_list=[poly.points[2]],
+        lcmin=0.05,
+        lcmax=0.2,
+        distmin=0.1,
+        distmax=0.4,
+    )
+    geom.set_background_mesh([field0, field1], operator="Min")
+
+    mesh = pygmsh.generate_mesh(geom)
+```
+
 #### OpenCASCADE
 ![](https://nschloe.github.io/pygmsh/puzzle.png)
 

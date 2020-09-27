@@ -656,7 +656,7 @@ class BoundaryLayer:
 
 
 class SetBackgroundMesh:
-    def __init__(self, fields, operator="Min"):
+    def __init__(self, fields, operator):
         self.fields = fields
         self.operator = operator
 

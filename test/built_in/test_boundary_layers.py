@@ -30,7 +30,7 @@ def test():
             distmin=0.0,
             distmax=0.2,
         )
-        geom.set_background_mesh([field0, field1])
+        geom.set_background_mesh([field0, field1], operator="Min")
 
         ref = 4.0
         mesh = pygmsh.generate_mesh(geom)
