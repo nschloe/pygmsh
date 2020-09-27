@@ -158,7 +158,7 @@ with pygmsh.built_in.Geometry() as geom:
 ```
 
 #### Mesh refinement/boundary layers
-<img src="https://nschloe.github.io/pygmsh/boundary1.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/revolve.png" width="100%"> |
+<img src="https://nschloe.github.io/pygmsh/boundary0.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/revolve.png" width="100%"> |
 :------------------:|:-------------:|:--------:|
 
 ```python
