@@ -162,7 +162,7 @@ with pygmsh.geo.Geometry() as geom:
 :------------------:|:-------------:|:--------:|
  |    |   |
 
-As of version 3.0, Gmsh supports OpenCASCADE, allowing for a CAD-style geometry
+As of version 3.0, Gmsh supports OpenCASCADE (`occ`), allowing for a CAD-style geometry
 specification.
 ```python
 from math import pi, cos
