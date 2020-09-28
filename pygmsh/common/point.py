@@ -9,7 +9,7 @@ class Point:
         The prescribed mesh element size at this point.
     """
 
-    dimension = 0
+    dim = 0
 
     def __init__(self, env, x, mesh_size=None):
         if len(x) == 2:

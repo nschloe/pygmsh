@@ -20,7 +20,7 @@ class Surface:
     of the sphere).
     """
 
-    dimension = 2
+    dim = 2
 
     def __init__(self, env, curve_loop):
         assert isinstance(curve_loop, CurveLoop)

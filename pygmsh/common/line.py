@@ -19,7 +19,7 @@ class Line(LineBase):
         List containing the begin and end points of the line.
     """
 
-    dimension = 1
+    dim = 1
 
     def __init__(self, env, p0, p1):
         assert isinstance(p0, Point)

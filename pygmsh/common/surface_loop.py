@@ -15,7 +15,7 @@ class SurfaceLoop:
     reverse orientation).
     """
 
-    dimension = 2
+    dim = 2
 
     def __init__(self, env, surfaces):
         self.surfaces = surfaces

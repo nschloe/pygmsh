@@ -198,7 +198,7 @@ class Geometry(common.CommonGeometry):
         volume = self.add_volume(surface_loop, holes) if with_volume else None
 
         class Ellipsoid:
-            dimension = 3
+            dim = 3
 
             def __init__(self, x0, radii, surface_loop, volume, mesh_size=None):
                 self.x0 = x0

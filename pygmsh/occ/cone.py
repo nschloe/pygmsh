@@ -19,7 +19,7 @@ class Cone:
         Angular opening of the the Cone.
     """
 
-    dimension = 3
+    dim = 3
 
     def __init__(self, center, axis, radius0, radius1, angle=2 * pi):
         assert len(center) == 3

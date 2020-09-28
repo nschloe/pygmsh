@@ -27,7 +27,7 @@ class PlaneSurface:
     surface (in which case the two line loops should be combined).
     """
 
-    dimension = 2
+    dim = 2
 
     def __init__(self, env, curve_loop, holes=None):
         assert isinstance(curve_loop, CurveLoop)
