@@ -1,3 +1,4 @@
+from math import pi
 import gmsh
 
 
@@ -17,7 +18,7 @@ class Cylinder:
         Angular opening of the cylinder.
     """
 
-    def __init__(self, x0, axis, radius, angle=None):
+    def __init__(self, x0, axis, radius, angle=2 * pi):
         assert len(x0) == 3
         assert len(axis) == 3
 

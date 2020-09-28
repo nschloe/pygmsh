@@ -157,6 +157,59 @@ with pygmsh.built_in.Geometry() as geom:
     mesh = pygmsh.generate_mesh(geom)
 ```
 
+#### OpenCASCADE
+<img src="https://nschloe.github.io/pygmsh/extrude.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/ellipsoid-holes.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/puzzle.png" width="100%">
+:------------------:|:-------------:|:--------:|
+ |    |   |
+
+As of version 3.0, Gmsh supports OpenCASCADE, allowing for a CAD-style geometry
+specification.
+
+```python
+# ellpsoid with holes
+import pygmsh
+
+with pygmsh.opencascade.Geometry() as geom:
+    geom.characteristic_length_max = 0.1
+    ellipsoid = geom.add_ellipsoid([0.0, 0.0, 0.0], [1.0, 0.7, 0.5])
+
+    cylinders = [
+        geom.add_cylinder([-1.0, 0.0, 0.0], [2.0, 0.0, 0.0], 0.3),
+        geom.add_cylinder([0.0, -1.0, 0.0], [0.0, 2.0, 0.0], 0.3),
+        geom.add_cylinder([0.0, 0.0, -1.0], [0.0, 0.0, 2.0], 0.3),
+    ]
+    geom.boolean_difference(
+        ellipsoid,
+        geom.boolean_union(cylinders)
+    )
+
+    mesh = pygmsh.generate_mesh(geom)
+```
+```python
+# puzzle piece
+import pygmsh
+
+with pygmsh.opencascade.Geometry() as geom:
+    geom.characteristic_length_min = 0.1
+    geom.characteristic_length_max = 0.1
+
+    rectangle = geom.add_rectangle([-1.0, -1.0, 0.0], 2.0, 2.0)
+    disk1 = geom.add_disk([-1.2, 0.0, 0.0], 0.5)
+    disk2 = geom.add_disk([+1.2, 0.0, 0.0], 0.5)
+
+    disk3 = geom.add_disk([0.0, -0.9, 0.0], 0.5)
+    disk4 = geom.add_disk([0.0, +0.9, 0.0], 0.5)
+    flat = geom.boolean_difference(
+        geom.boolean_union([rectangle, disk1, disk2]),
+        geom.boolean_union([disk3, disk4]),
+    )
+
+    geom.extrude(flat, [0, 0, 0.3])
+
+    mesh = pygmsh.generate_mesh(geom)
+```
+
+
 #### Mesh refinement/boundary layers
 <img src="https://nschloe.github.io/pygmsh/boundary0.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/revolve.png" width="100%"> |
 :------------------:|:-------------:|:--------:|
@@ -191,36 +244,6 @@ with pygmsh.built_in.Geometry() as geom:
         distmax=0.4,
     )
     geom.set_background_mesh([field0, field1], operator="Min")
-
-    mesh = pygmsh.generate_mesh(geom)
-```
-
-#### OpenCASCADE
-![](https://nschloe.github.io/pygmsh/puzzle.png)
-
-As of version 3.0, Gmsh supports OpenCASCADE, allowing for a CAD-style geometry
-specification.
-
-Example:
-```python
-import pygmsh
-
-with pygmsh.opencascade.Geometry() as geom:
-    geom.characteristic_length_min = 0.1
-    geom.characteristic_length_max = 0.1
-
-    rectangle = geom.add_rectangle([-1.0, -1.0, 0.0], 2.0, 2.0)
-    disk1 = geom.add_disk([-1.2, 0.0, 0.0], 0.5)
-    disk2 = geom.add_disk([+1.2, 0.0, 0.0], 0.5)
-
-    disk3 = geom.add_disk([0.0, -0.9, 0.0], 0.5)
-    disk4 = geom.add_disk([0.0, +0.9, 0.0], 0.5)
-    flat = geom.boolean_difference(
-        geom.boolean_union([rectangle, disk1, disk2]),
-        geom.boolean_union([disk3, disk4]),
-    )
-
-    geom.extrude(flat, [0, 0, 0.3])
 
     mesh = pygmsh.generate_mesh(geom)
 ```
