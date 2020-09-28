@@ -6,7 +6,7 @@ import pygmsh
 
 
 def test():
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         geom.add_box(0, 1, 0, 1, 0, 1, 1.0)
         mesh = geom.generate_mesh()
 

@@ -6,7 +6,7 @@ import pygmsh
 
 
 def test_union():
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         geom.characteristic_length_min = 0.1
         geom.characteristic_length_max = 0.1
         rectangle = geom.add_rectangle([-1.0, -1.0, 0.0], 2.0, 2.0)
@@ -21,7 +21,7 @@ def test_union():
 
 
 def test_intersection():
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         angles = [math.pi * 3 / 6, math.pi * 7 / 6, math.pi * 11 / 6]
         disks = [
             geom.add_disk([math.cos(angles[0]), math.sin(angles[0]), 0.0], 1.5),
@@ -37,7 +37,7 @@ def test_intersection():
 
 
 def test_difference():
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         geom.characteristic_length_min = 0.1
         geom.characteristic_length_max = 0.1
         rectangle = geom.add_rectangle([-1.0, -1.0, 0.0], 2.0, 2.0)
@@ -53,7 +53,7 @@ def test_difference():
 
 
 def test_all():
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         geom.characteristic_length_min = 0.1
         geom.characteristic_length_max = 0.1
 

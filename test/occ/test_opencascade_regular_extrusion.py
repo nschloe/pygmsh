@@ -12,7 +12,7 @@ def test():
     x_layers = 10
     y_layers = 5
     z_layers = 3
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         p = geom.add_point([0, 0, 0], 1)
         _, l, _ = geom.extrude(p, [x, 0, 0], num_layers=x_layers)
         _, s, _ = geom.extrude(l, [0, y, 0], num_layers=y_layers)

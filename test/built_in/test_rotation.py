@@ -9,15 +9,15 @@ def test_rotation2d():
     angle = np.pi / 5
 
     # Generate reference geometry
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         rect = geom.add_rectangle(0.0, 2.0, 0.0, 1.0, 0.0, 0.1)
         mesh_unrot = geom.generate_mesh()
     vertex_index = mesh_unrot.cells_dict["vertex"]
     vertex_index = vertex_index.reshape((vertex_index.shape[0],))
 
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         # Generate rotated geometry
-        geom = pygmsh.built_in.Geometry()
+        geom = pygmsh.geo.Geometry()
         rect = geom.add_rectangle(0.0, 2.0, 0.0, 1.0, 0.0, 0.1)
         geom.rotate(rect.surface, [0, 0, 0], angle, [0, 0, 1])
         mesh = geom.generate_mesh()

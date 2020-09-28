@@ -4,7 +4,7 @@ import pygmsh
 
 
 def test():
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         geom.characteristic_length_max = 0.1
         p0 = geom.add_point([-0.5, -0.5, 0], 0.01)
         p1 = geom.add_point([+0.5, -0.5, 0], 0.01)
@@ -16,8 +16,8 @@ def test():
         l3 = geom.add_line(p3, p0)
         ll0 = geom.add_curve_loop([l0, l1, l2, l3])
         square_builtin = geom.add_plane_surface(ll0)
-        square_opencascade = geom.add_rectangle([0, 0, 0], 1.0, 1.0)
-        geom.boolean_difference(square_opencascade, square_builtin)
+        square_occ = geom.add_rectangle([0, 0, 0], 1.0, 1.0)
+        geom.boolean_difference(square_occ, square_builtin)
         mesh = geom.generate_mesh()
 
     ref = 0.75

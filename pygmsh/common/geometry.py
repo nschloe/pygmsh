@@ -21,7 +21,7 @@ from .volume import Volume
 
 class CommonGeometry:
     """Geometry base class containing all methods that can be shared between built-in
-    and opencascade.
+    and occ.
     """
 
     def __init__(self, env):

@@ -6,14 +6,14 @@ import pygmsh
 
 
 def test():
-    with pygmsh.opencascade.Geometry() as geom:
-        geom.add_torus([0.0, 0.0, 0.0], 1.0, 0.3, 1.25 * pi, mesh_size=0.1)
+    with pygmsh.occ.Geometry() as geom:
+        geom.add_ellipsoid([1.0, 1.0, 1.0], [1.0, 2.0, 3.0], mesh_size=0.1)
         mesh = geom.generate_mesh()
 
-    ref = 1.09994740709
+    ref = 8.0 * pi
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 
 
 if __name__ == "__main__":
-    test().write("opencascade_torus.vtu")
+    test().write("occ_ellipsoid.vtu")

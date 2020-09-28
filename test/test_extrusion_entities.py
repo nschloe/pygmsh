@@ -7,7 +7,7 @@ import pytest
 import pygmsh
 
 
-@pytest.mark.parametrize("kernel", [pygmsh.built_in, pygmsh.opencascade])
+@pytest.mark.parametrize("kernel", [pygmsh.geo, pygmsh.occ])
 def test(kernel):
     with kernel.Geometry() as geom:
         p = geom.add_point([0, 0, 0], 1)
@@ -53,5 +53,5 @@ def test(kernel):
 
 
 if __name__ == "__main__":
-    test(pygmsh.built_in)
-    # test(pygmsh.opencascade)
+    test(pygmsh.geo)
+    # test(pygmsh.occ)

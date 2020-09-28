@@ -7,7 +7,7 @@ import pygmsh
 
 
 def test():
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         # Generate an approximation of a circle
         t = numpy.arange(0, 2.0 * numpy.pi, 0.05)
         x = numpy.column_stack([numpy.cos(t), numpy.sin(t), numpy.zeros_like(t)])

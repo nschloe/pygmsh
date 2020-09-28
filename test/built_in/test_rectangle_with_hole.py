@@ -7,7 +7,7 @@ import pygmsh
 
 
 def test():
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         circle = geom.add_circle(
             x0=[0.5, 0.5, 0.0],
             radius=0.25,

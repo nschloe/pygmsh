@@ -25,7 +25,7 @@ def square_loop(geom):
 
 
 def circle_loop(geom):
-    """construct circle using built_in geometry module."""
+    """construct circle using geo geometry module."""
     points = [
         geom.add_point([+0.0, +0.0, 0.0], 0.05),
         geom.add_point([+0.0, +0.1, 0.0], 0.05),
@@ -69,7 +69,7 @@ def test_square_circle_hole(fun):
 
     Construct it with boolean operations and verify that it is the same.
     """
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         fun(geom)
         mesh = geom.generate_mesh()
     surf = 1 - 0.1 ** 2 * np.pi
@@ -82,7 +82,7 @@ def test_square_circle_slice():
 
     Also test for surface area of fragments.
     """
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         square = square_loop(geom)
         curve_loop = circle_loop(geom)
         surf1 = geom.add_plane_surface(square)
@@ -115,7 +115,7 @@ def test_fragments_diff_union():
     Construct it with boolean operations and verify that it is the same.
     """
     # construct surface using boolean
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         geom.characteristic_length_min = 0.04
         geom.characteristic_length_max = 0.04
         square = square_loop(geom)
@@ -151,7 +151,7 @@ def test_diff_physical_assignment():
     Ensure that after a difference operation the initial volume physical label
     is kept for the operated geometry.
     """
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         geom.characteristic_length_min = 0.05
         geom.characteristic_length_max = 0.05
         square2 = square_loop(geom)
@@ -170,7 +170,7 @@ def test_diff_physical_assignment():
 
 
 def test_polygon_diff():
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         poly = geom.add_polygon([[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]])
         disk = geom.add_disk([0, 0, 0], 0.5)
         geom.boolean_difference(poly, disk)

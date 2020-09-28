@@ -10,7 +10,7 @@ def test():
     )
     R = np.array([0.1, 0.2, 0.1, 0.14])
 
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         holes = [
             geom.add_ball(x0, r, with_volume=False, mesh_size=0.2 * r).surface_loop
             for x0, r in zip(X0, R)

@@ -4,7 +4,7 @@ import pygmsh
 
 
 def test():
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         lcar = 0.1
         p1 = geom.add_point([0.0, 0.0, 0.0], lcar)
         p2 = geom.add_point([1.0, 0.0, 0.0], lcar)

@@ -6,7 +6,7 @@ import pygmsh
 
 
 def test():
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         geom.add_cone(
             [0.0, 0.0, 0.0],
             [0.0, 0.0, 1.0],
@@ -23,4 +23,4 @@ def test():
 
 
 if __name__ == "__main__":
-    test().write("opencascade_cone.vtu")
+    test().write("occ_cone.vtu")

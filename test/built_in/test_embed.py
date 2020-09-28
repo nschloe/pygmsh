@@ -4,7 +4,7 @@ import pygmsh
 
 
 def test_in_surface():
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         poly = geom.add_polygon(
             [
                 [0, 0.3, 0],
@@ -27,7 +27,7 @@ def test_in_surface():
 
 
 def test_in_volume():
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         box = geom.add_box(-1, 2, -1, 2, 0, 1, mesh_size=0.5)
         poly = geom.add_polygon(
             [

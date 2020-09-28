@@ -4,7 +4,7 @@ import pygmsh
 
 
 def test(mesh_size=0.05):
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         # Draw a cross with a circular hole
         circ = geom.add_circle(
             [0.0, 0.0, 0.0], 0.1, mesh_size=mesh_size, make_surface=False

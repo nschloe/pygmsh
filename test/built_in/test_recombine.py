@@ -6,7 +6,7 @@ import pygmsh
 
 @pytest.mark.skip()
 def test():
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         p = [
             geom.add_point((0.0, 0.0, 0.0), lcar=1.0),
             geom.add_point((2.0, 0.0, 0.0), lcar=1.0),

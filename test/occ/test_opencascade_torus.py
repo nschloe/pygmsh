@@ -1,17 +1,19 @@
+from math import pi
+
 from helpers import compute_volume
 
 import pygmsh
 
 
 def test():
-    with pygmsh.opencascade.Geometry() as geom:
-        geom.add_wedge([0.0, 0.0, 0.0], [1.0, 1.0, 1.0], top_extent=0.4, mesh_size=0.1)
+    with pygmsh.occ.Geometry() as geom:
+        geom.add_torus([0.0, 0.0, 0.0], 1.0, 0.3, 1.25 * pi, mesh_size=0.1)
         mesh = geom.generate_mesh()
 
-    ref = 0.7
+    ref = 1.09994740709
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 
 
 if __name__ == "__main__":
-    test().write("opencascade_wedge.vtu")
+    test().write("occ_torus.vtu")

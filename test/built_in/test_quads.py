@@ -4,7 +4,7 @@ import pygmsh
 
 
 def test():
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         rectangle = geom.add_rectangle(0.0, 1.0, 0.0, 1.0, 0.0, 0.1)
         geom.set_recombined_surfaces([rectangle.surface])
         mesh = geom.generate_mesh(dim=2)

@@ -4,7 +4,7 @@ import pygmsh
 
 
 def test():
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         container = geom.add_rectangle([0.0, 0.0, 0.0], 10.0, 10.0)
 
         letter_i = geom.add_rectangle([2.0, 2.0, 0.0], 1.0, 4.5)

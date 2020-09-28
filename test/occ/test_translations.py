@@ -6,7 +6,7 @@ import pygmsh
 
 # def test_translation1d():
 #     """Translation of a line."""
-#     geom = pygmsh.built_in.Geometry()
+#     geom = pygmsh.geo.Geometry()
 #     points = []
 #     for array in [[1, 0, 0], [0, 0, 0], [0, 1, 0]]:
 #         points.append(geom.add_point(array, 0.5))
@@ -20,7 +20,7 @@ import pygmsh
 
 def test_translation2d():
     """Translation of a surface object."""
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         geom.characteristic_length_min = 0.05
         geom.characteristic_length_max = 0.05
         disk = geom.add_disk([0, 0, 0], 1)
@@ -34,7 +34,7 @@ def test_translation2d():
 
 def test_translation3d():
     """Translation of a volume object."""
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         geom.characteristic_length_min = 0.2
         geom.characteristic_length_max = 0.2
         ball = geom.add_ball([0, 0, 0], 1)

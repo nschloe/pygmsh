@@ -16,7 +16,7 @@ def test():
     # Vertices of a square hole
     squareHoleCoordinates = np.array([[1, 1, 0], [4, 1, 0], [4, 4, 0], [1, 4, 0]])
 
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         # Create square hole
         squareHole = geom.add_polygon(squareHoleCoordinates, lcar, make_surface=False)
         # Create square domain with square hole

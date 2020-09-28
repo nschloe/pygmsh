@@ -8,7 +8,7 @@ import pygmsh
     int(pygmsh.__gmsh_version__.split(".")[0]) < 3, reason="requires Gmsh >= 3"
 )
 def test():
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         # test setters, getters
         print(geom.characteristic_length_min)
         print(geom.characteristic_length_max)

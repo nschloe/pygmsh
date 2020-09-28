@@ -7,7 +7,7 @@ import pygmsh
 
 
 def test():
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         geom.add_ellipsoid([0.0, 0.0, 0.0], [1.0, 0.5, 0.75], 0.05)
         mesh = geom.generate_mesh()
     ref = 1.5676038497587947

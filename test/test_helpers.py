@@ -6,7 +6,7 @@ import pygmsh
 
 
 def test():
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         geom.add_circle([0, 0, 0], 1, 0.1, make_surface=False)
         mesh = geom.generate_mesh()
         ref = 2 * np.pi

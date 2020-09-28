@@ -7,7 +7,7 @@ import pygmsh
 
 
 def test(lcar=1.0):
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         lbw = [2, 3, 5]
         points = [geom.add_point([x, 0.0, 0.0], lcar) for x in [0.0, lbw[0]]]
         line = geom.add_line(*points)

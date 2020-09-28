@@ -6,7 +6,7 @@ import pygmsh
 
 def test():
     """Pipe with double-ring enclosure, rotated in space."""
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         sqrt2on2 = 0.5 * np.sqrt(2.0)
         R = pygmsh.rotation_matrix([sqrt2on2, sqrt2on2, 0], np.pi / 6.0)
         geom.add_pipe(

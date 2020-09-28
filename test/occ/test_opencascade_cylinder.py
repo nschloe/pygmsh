@@ -6,14 +6,16 @@ import pygmsh
 
 
 def test():
-    with pygmsh.opencascade.Geometry() as geom:
-        geom.add_ellipsoid([1.0, 1.0, 1.0], [1.0, 2.0, 3.0], mesh_size=0.1)
+    with pygmsh.occ.Geometry() as geom:
+        geom.add_cylinder(
+            [0.0, 0.0, 0.0], [0.0, 0.0, 1.0], 0.5, 0.25 * pi, mesh_size=0.1
+        )
         mesh = geom.generate_mesh()
 
-    ref = 8.0 * pi
+    ref = 0.097625512963
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 
 
 if __name__ == "__main__":
-    test().write("opencascade_ellipsoid.vtu")
+    test().write("occ_cylinder.vtu")

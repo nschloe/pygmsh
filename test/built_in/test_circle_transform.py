@@ -5,7 +5,7 @@ import pygmsh
 
 
 def test(radius=1.0):
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         R = [
             pygmsh.rotation_matrix(np.eye(1, 3, d)[0], theta)
             for d, theta in enumerate(np.pi / np.array([2.0, 3.0, 5]))

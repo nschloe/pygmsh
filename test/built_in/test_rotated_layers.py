@@ -6,7 +6,7 @@ import pygmsh
 
 
 def test(mesh_size=0.05):
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         # Draw a square
         poly = geom.add_polygon(
             [

@@ -13,7 +13,7 @@ def test():
     y_layers = 5
     z_layers = 3
 
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         p = geom.add_point([0, 0, 0], 1)
         _, l, _ = geom.extrude(p, [x, 0, 0], num_layers=x_layers)
 

@@ -4,7 +4,7 @@ import pygmsh
 
 
 def test():
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         geom.characteristic_length_max = 0.05
 
         rectangle = geom.add_rectangle([-1.0, -1.0, 0.0], 2.0, 2.0, corner_radius=0.2)
@@ -26,7 +26,7 @@ def test():
 
 
 def test2():
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         geom.characteristic_length_max = 1.0
 
         mesh_size = 1
@@ -73,4 +73,4 @@ def test2():
 
 
 if __name__ == "__main__":
-    test().write("opencascade_extrude.vtu")
+    test().write("occ_extrude.vtu")

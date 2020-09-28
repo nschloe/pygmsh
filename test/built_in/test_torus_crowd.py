@@ -31,7 +31,7 @@ def test():
         )
     )
 
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         for alpha, a1, z in zip(Alpha, A1, Z_pos):
             # Rotate torus to the y-z-plane.
             R1 = pygmsh.rotation_matrix([0.0, 1.0, 0.0], 0.5 * np.pi)

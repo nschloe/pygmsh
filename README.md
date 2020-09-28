@@ -37,7 +37,7 @@ Codes:
 ```python
 import pygmsh
 
-with pygmsh.built_in.Geometry() as geom:
+with pygmsh.geo.Geometry() as geom:
     geom.add_polygon(
         [
             [0.0, 0.0],
@@ -55,14 +55,14 @@ with pygmsh.built_in.Geometry() as geom:
 ```python
 import pygmsh
 
-with pygmsh.built_in.Geometry() as geom:
+with pygmsh.geo.Geometry() as geom:
     geom.add_circle([0.0, 0.0], 1.0, mesh_size=0.2)
     mesh = geom.generate_mesh()
 ```
 ```python
 import pygmsh
 
-with pygmsh.built_in.Geometry() as geom:
+with pygmsh.geo.Geometry() as geom:
     lcar = 0.1
     p1 = geom.add_point([0.0, 0.0, 0.0], lcar)
     p2 = geom.add_point([1.0, 0.0, 0.0], lcar)
@@ -98,7 +98,7 @@ The output file can be visualized with various tools, e.g.,
 ```python
 import pygmsh
 
-with pygmsh.built_in.Geometry() as geom:
+with pygmsh.geo.Geometry() as geom:
     poly = geom.add_polygon(
         [
             [0.0, 0.0],
@@ -115,7 +115,7 @@ with pygmsh.built_in.Geometry() as geom:
 from math import pi
 import pygmsh
 
-with pygmsh.built_in.Geometry() as geom:
+with pygmsh.geo.Geometry() as geom:
     poly = geom.add_polygon(
         [
             [0.0, 0.2, 0.0],
@@ -131,7 +131,7 @@ with pygmsh.built_in.Geometry() as geom:
 from math import pi
 import pygmsh
 
-with pygmsh.built_in.Geometry() as geom:
+with pygmsh.geo.Geometry() as geom:
     poly = geom.add_polygon(
         [
             [+0.0, +0.5],
@@ -168,7 +168,7 @@ specification.
 from math import pi, cos
 import pygmsh
 
-with pygmsh.opencascade.Geometry() as geom:
+with pygmsh.occ.Geometry() as geom:
     geom.characteristic_length_max = 0.1
     r = 0.5
     disks = [
@@ -184,7 +184,7 @@ with pygmsh.opencascade.Geometry() as geom:
 # ellpsoid with holes
 import pygmsh
 
-with pygmsh.opencascade.Geometry() as geom:
+with pygmsh.occ.Geometry() as geom:
     geom.characteristic_length_max = 0.1
     ellipsoid = geom.add_ellipsoid([0.0, 0.0, 0.0], [1.0, 0.7, 0.5])
 
@@ -201,7 +201,7 @@ with pygmsh.opencascade.Geometry() as geom:
 # puzzle piece
 import pygmsh
 
-with pygmsh.opencascade.Geometry() as geom:
+with pygmsh.occ.Geometry() as geom:
     geom.characteristic_length_min = 0.1
     geom.characteristic_length_max = 0.1
 
@@ -231,7 +231,7 @@ with pygmsh.opencascade.Geometry() as geom:
 # boundary refinement
 import pygmsh
 
-with pygmsh.built_in.Geometry() as geom:
+with pygmsh.geo.Geometry() as geom:
     poly = geom.add_polygon(
         [
             [0.0, 0.0, 0.0],
@@ -266,7 +266,7 @@ with pygmsh.built_in.Geometry() as geom:
 # mesh refinement with callback
 import pygmsh
 
-with pygmsh.built_in.Geometry() as geom:
+with pygmsh.geo.Geometry() as geom:
     geom.add_polygon(
         [
             [-1.0, -1.0],
@@ -288,7 +288,7 @@ from math import sqrt
 import pygmsh
 
 
-with pygmsh.opencascade.Geometry() as geom:
+with pygmsh.occ.Geometry() as geom:
     geom.add_ball([0.0, 0.0, 0.0], 1.0)
 
     geom.set_mesh_size_callback(
