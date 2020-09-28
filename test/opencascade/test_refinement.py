@@ -2,6 +2,7 @@ from math import sqrt
 import pygmsh
 
 
+@pytest.mark.skip("Only works in Gmsh 4.7.0+")
 def test():
     with pygmsh.opencascade.Geometry() as geom:
         geom.add_ball([0.0, 0.0, 0.0], 1.0)

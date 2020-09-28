@@ -261,6 +261,7 @@ with pygmsh.built_in.Geometry() as geom:
 
     mesh = pygmsh.generate_mesh(geom)
 ```
+<!--exdown-skip-->
 ```python
 # mesh refinement with callback
 import pygmsh
