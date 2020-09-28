@@ -151,16 +151,16 @@ def test_diff_physical_assignment():
     Ensure that after a difference operation the initial volume physical label
     is kept for the operated geometry.
     """
-    with pygmsh.opencascade.Geometry() as geom2:
-        geom2.characteristic_length_min = 0.05
-        geom2.characteristic_length_max = 0.05
-        square2 = square_loop(geom2)
-        curve_loop2 = circle_loop(geom2)
-        surf1 = geom2.add_plane_surface(square2)
-        surf2 = geom2.add_plane_surface(curve_loop2)
-        geom2.add_physical(surf1, label="1")
-        geom2.boolean_difference(surf1, surf2)
-        mesh = geom2.generate_mesh()
+    with pygmsh.opencascade.Geometry() as geom:
+        geom.characteristic_length_min = 0.05
+        geom.characteristic_length_max = 0.05
+        square2 = square_loop(geom)
+        curve_loop2 = circle_loop(geom)
+        surf1 = geom.add_plane_surface(square2)
+        surf2 = geom.add_plane_surface(curve_loop2)
+        geom.add_physical(surf1, label="1")
+        geom.boolean_difference(surf1, surf2)
+        mesh = geom.generate_mesh()
     assert np.allclose(
         mesh.cell_data_dict["gmsh:geometrical"]["triangle"],
         np.ones(mesh.cells_dict["triangle"].shape[0]),
