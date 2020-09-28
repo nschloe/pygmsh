@@ -24,7 +24,7 @@ class Volume:
     (in which case the two surface loops should be combined).
     """
 
-    dimension = 3
+    dim = 3
 
     def __init__(self, env, surface_loop, holes=None):
         if holes is None:

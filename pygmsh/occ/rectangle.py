@@ -15,7 +15,7 @@ class Rectangle:
         Defines a radius to round the rectangle corners.
     """
 
-    dimension = 2
+    dim = 2
 
     def __init__(self, x0, a, b, corner_radius=None):
         assert len(x0) == 3
@@ -29,7 +29,7 @@ class Rectangle:
             corner_radius = 0.0
 
         self._ID = gmsh.model.occ.addRectangle(*x0, a, b, roundedRadius=corner_radius)
-        self.dim_tags = [(self.dimension, self._ID)]
+        self.dim_tags = [(self.dim, self._ID)]
 
     def __repr__(self):
         return f"<pygmsh Rectangle object, ID {self._ID}>"

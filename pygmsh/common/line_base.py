@@ -9,7 +9,7 @@ class LineBase:
     points: list of int
     """
 
-    dimension = 1
+    dim = 1
 
     def __init__(self, id0, points):
         self._ID = id0

@@ -2,7 +2,7 @@ import numpy
 
 
 class Polygon:
-    dimension = 2
+    dim = 2
 
     def __init__(self, host, points, mesh_size=None, holes=None, make_surface=True):
         if holes is None:

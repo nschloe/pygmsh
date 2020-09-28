@@ -117,9 +117,9 @@ class CommonGeometry:
         if not isinstance(entities, list):
             entities = [entities]
 
-        dim = entities[0].dimension
+        dim = entities[0].dim
         for e in entities:
-            assert e.dimension == dim
+            assert e.dim == dim
 
         label = self._new_physical_group(label)
         tag = gmsh.model.addPhysicalGroup(dim, [e._ID for e in entities])
@@ -325,7 +325,7 @@ class CommonGeometry:
             item.exec()
 
         for item, host in self._EMBED_QUEUE:
-            gmsh.model.mesh.embed(item.dimension, [item._ID], host.dimension, host._ID)
+            gmsh.model.mesh.embed(item.dim, [item._ID], host.dim, host._ID)
 
         # set compound entities after sync
         for c in self._COMPOUND_ENTITIES:

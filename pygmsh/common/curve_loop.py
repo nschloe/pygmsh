@@ -18,7 +18,7 @@ class CurveLoop:
     a consistent loop.
     """
 
-    dimension = 1
+    dim = 1
 
     def __init__(self, env, curves):
         for k in range(len(curves) - 1):

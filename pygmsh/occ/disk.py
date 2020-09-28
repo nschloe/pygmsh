@@ -15,7 +15,7 @@ class Disk:
         Radius along Y, leading to an ellipse.
     """
 
-    dimension = 2
+    dim = 2
 
     def __init__(self, x0, radius0, radius1=None):
         if len(x0) == 2:
@@ -31,7 +31,7 @@ class Disk:
         self.radius1 = radius1
 
         self._ID = gmsh.model.occ.addDisk(*x0, radius0, radius1)
-        self.dim_tags = [(self.dimension, self._ID)]
+        self.dim_tags = [(self.dim, self._ID)]
 
     def __repr__(self):
         return f"<pygmsh Disk object, ID {self._ID}>"
