@@ -6,7 +6,7 @@ import pygmsh
 
 
 def test():
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         geom.add_cone(
             [0.0, 0.0, 0.0],
             [0.0, 0.0, 1.0],
@@ -15,7 +15,7 @@ def test():
             mesh_size=0.1,
             angle=1.25 * pi,
         )
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     ref = 0.90779252263
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
@@ -23,4 +23,4 @@ def test():
 
 
 if __name__ == "__main__":
-    test().write("opencascade_cone.vtu")
+    test().write("occ_cone.vtu")

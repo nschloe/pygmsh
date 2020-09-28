@@ -2,7 +2,7 @@ import pygmsh
 
 
 def test(lcar=0.5):
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         poly = geom.add_polygon(
             [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [0.0, 1.0, 0.0]], lcar
         )
@@ -15,7 +15,7 @@ def test(lcar=0.5):
         geom.add_physical(lat, label="lat")
         geom.add_physical(poly.lines[0], label="line")
 
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
     return mesh
 
 

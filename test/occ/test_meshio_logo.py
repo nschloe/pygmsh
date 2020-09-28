@@ -4,7 +4,7 @@ import pygmsh
 
 
 def test():
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         container = geom.add_rectangle([0.0, 0.0, 0.0], 10.0, 10.0)
 
         letter_i = geom.add_rectangle([2.0, 2.0, 0.0], 1.0, 4.5)
@@ -18,7 +18,7 @@ def test():
             container, geom.boolean_union([letter_i, i_dot, letter_o])
         )
 
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     ref = 81.9131851877
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref

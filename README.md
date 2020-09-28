@@ -37,7 +37,7 @@ Codes:
 ```python
 import pygmsh
 
-with pygmsh.built_in.Geometry() as geom:
+with pygmsh.geo.Geometry() as geom:
     geom.add_polygon(
         [
             [0.0, 0.0],
@@ -47,7 +47,7 @@ with pygmsh.built_in.Geometry() as geom:
         ],
         mesh_size=0.1,
     )
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 
 # mesh.points, mesh.cells, ...
 # mesh.write("out.vtk")
@@ -55,14 +55,14 @@ with pygmsh.built_in.Geometry() as geom:
 ```python
 import pygmsh
 
-with pygmsh.built_in.Geometry() as geom:
+with pygmsh.geo.Geometry() as geom:
     geom.add_circle([0.0, 0.0], 1.0, mesh_size=0.2)
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 ```python
 import pygmsh
 
-with pygmsh.built_in.Geometry() as geom:
+with pygmsh.geo.Geometry() as geom:
     lcar = 0.1
     p1 = geom.add_point([0.0, 0.0, 0.0], lcar)
     p2 = geom.add_point([1.0, 0.0, 0.0], lcar)
@@ -77,7 +77,7 @@ with pygmsh.built_in.Geometry() as geom:
     ll = geom.add_curve_loop([s1, s2])
     pl = geom.add_plane_surface(ll)
 
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 
 The return value is always a [meshio](https://pypi.org/project/meshio) mesh, so to store
@@ -98,7 +98,7 @@ The output file can be visualized with various tools, e.g.,
 ```python
 import pygmsh
 
-with pygmsh.built_in.Geometry() as geom:
+with pygmsh.geo.Geometry() as geom:
     poly = geom.add_polygon(
         [
             [0.0, 0.0],
@@ -109,13 +109,13 @@ with pygmsh.built_in.Geometry() as geom:
         mesh_size=0.1,
     )
     geom.extrude(poly, [0.0, 0.3, 1.0], num_layers=5)
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 ```python
 from math import pi
 import pygmsh
 
-with pygmsh.built_in.Geometry() as geom:
+with pygmsh.geo.Geometry() as geom:
     poly = geom.add_polygon(
         [
             [0.0, 0.2, 0.0],
@@ -125,13 +125,13 @@ with pygmsh.built_in.Geometry() as geom:
         mesh_size=0.1,
     )
     geom.revolve(poly, [0.0, 0.0, 1.0], [0.0, 0.0, 0.0], 0.8 * pi)
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 ```python
 from math import pi
 import pygmsh
 
-with pygmsh.built_in.Geometry() as geom:
+with pygmsh.geo.Geometry() as geom:
     poly = geom.add_polygon(
         [
             [+0.0, +0.5],
@@ -154,7 +154,7 @@ with pygmsh.built_in.Geometry() as geom:
         angle=pi / 3,
     )
 
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 
 #### OpenCASCADE
@@ -162,13 +162,13 @@ with pygmsh.built_in.Geometry() as geom:
 :------------------:|:-------------:|:--------:|
  |    |   |
 
-As of version 3.0, Gmsh supports OpenCASCADE, allowing for a CAD-style geometry
+As of version 3.0, Gmsh supports OpenCASCADE (`occ`), allowing for a CAD-style geometry
 specification.
 ```python
 from math import pi, cos
 import pygmsh
 
-with pygmsh.opencascade.Geometry() as geom:
+with pygmsh.occ.Geometry() as geom:
     geom.characteristic_length_max = 0.1
     r = 0.5
     disks = [
@@ -178,13 +178,13 @@ with pygmsh.opencascade.Geometry() as geom:
     ]
     geom.boolean_intersection(disks)
 
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 ```python
 # ellpsoid with holes
 import pygmsh
 
-with pygmsh.opencascade.Geometry() as geom:
+with pygmsh.occ.Geometry() as geom:
     geom.characteristic_length_max = 0.1
     ellipsoid = geom.add_ellipsoid([0.0, 0.0, 0.0], [1.0, 0.7, 0.5])
 
@@ -195,13 +195,13 @@ with pygmsh.opencascade.Geometry() as geom:
     ]
     geom.boolean_difference(ellipsoid, geom.boolean_union(cylinders))
 
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 ```python
 # puzzle piece
 import pygmsh
 
-with pygmsh.opencascade.Geometry() as geom:
+with pygmsh.occ.Geometry() as geom:
     geom.characteristic_length_min = 0.1
     geom.characteristic_length_max = 0.1
 
@@ -218,7 +218,7 @@ with pygmsh.opencascade.Geometry() as geom:
 
     geom.extrude(flat, [0, 0, 0.3])
 
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 
 
@@ -231,7 +231,7 @@ with pygmsh.opencascade.Geometry() as geom:
 # boundary refinement
 import pygmsh
 
-with pygmsh.built_in.Geometry() as geom:
+with pygmsh.geo.Geometry() as geom:
     poly = geom.add_polygon(
         [
             [0.0, 0.0, 0.0],
@@ -259,14 +259,14 @@ with pygmsh.built_in.Geometry() as geom:
     )
     geom.set_background_mesh([field0, field1], operator="Min")
 
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 <!--exdown-skip-->
 ```python
 # mesh refinement with callback
 import pygmsh
 
-with pygmsh.built_in.Geometry() as geom:
+with pygmsh.geo.Geometry() as geom:
     geom.add_polygon(
         [
             [-1.0, -1.0],
@@ -279,7 +279,7 @@ with pygmsh.built_in.Geometry() as geom:
         lambda dim, tag, x, y, z: 6.0e-2 + 2.0e-1 * (x ** 2 + y ** 2)
     )
 
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 <!--exdown-skip-->
 ```python
@@ -288,7 +288,7 @@ from math import sqrt
 import pygmsh
 
 
-with pygmsh.opencascade.Geometry() as geom:
+with pygmsh.occ.Geometry() as geom:
     geom.add_ball([0.0, 0.0, 0.0], 1.0)
 
     geom.set_mesh_size_callback(

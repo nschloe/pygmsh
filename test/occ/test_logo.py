@@ -8,7 +8,7 @@ import pygmsh
     int(pygmsh.__gmsh_version__.split(".")[0]) < 3, reason="requires Gmsh >= 3"
 )
 def test():
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         # test setters, getters
         print(geom.characteristic_length_min)
         print(geom.characteristic_length_max)
@@ -40,7 +40,7 @@ def test():
             geom.boolean_union([disk1, disk2, rect3, rect4, inter1, inter2]),
         )
 
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
     ref = 1082.4470502181903
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh

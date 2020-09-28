@@ -4,7 +4,7 @@ import pygmsh
 
 
 def test():
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         geom.add_circle(
             [0.0, 0.0, 0.0],
             1.0,
@@ -16,7 +16,7 @@ def test():
             compound=True,
         )
         # geom.add_physical(c.plane_surface, "super disk")
-        mesh = pygmsh.generate_mesh(geom, prune_z_0=True)
+        mesh = geom.generate_mesh(prune_z_0=True)
 
     ref = 3.1363871677682247
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref

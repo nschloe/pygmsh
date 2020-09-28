@@ -7,7 +7,7 @@ import pygmsh
 
 
 def test():
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         # Generate an approximation of a circle
         t = numpy.arange(0, 2.0 * numpy.pi, 0.05)
         x = numpy.column_stack([numpy.cos(t), numpy.sin(t), numpy.zeros_like(t)])
@@ -30,7 +30,7 @@ def test():
         ll = geom.add_curve_loop(oriented_lines)
         geom.add_plane_surface(ll)
 
-        mesh = pygmsh.generate_mesh(geom, prune_z_0=True)
+        mesh = geom.generate_mesh(prune_z_0=True)
 
     ref = numpy.pi
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref

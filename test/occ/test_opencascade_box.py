@@ -4,9 +4,9 @@ import pygmsh
 
 
 def test():
-    with pygmsh.opencascade.Geometry() as geom:
+    with pygmsh.occ.Geometry() as geom:
         geom.add_box([0.0, 0.0, 0.0], [1, 2, 3], mesh_size=0.1)
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     ref = 6.0
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
@@ -14,4 +14,4 @@ def test():
 
 
 if __name__ == "__main__":
-    test().write("opencascade_box.vtu")
+    test().write("occ_box.vtu")

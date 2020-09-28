@@ -7,7 +7,7 @@ import pygmsh
 
 
 def test(lcar=1.0):
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         lbw = [2, 3, 5]
         points = [geom.add_point([x, 0.0, 0.0], lcar) for x in [0.0, lbw[0]]]
         line = geom.add_line(*points)
@@ -23,7 +23,7 @@ def test(lcar=1.0):
         )
         # compute_volume only supports 3D for tetras, but does return surface area for
         # quads
-        mesh = pygmsh.generate_mesh(geom, prune_vertices=False)
+        mesh = geom.generate_mesh(prune_vertices=False)
 
     ref = sum(l * w for l, w in permutations(lbw, 2))  # surface area
     # TODO compute hex volumes

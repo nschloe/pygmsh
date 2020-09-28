@@ -116,7 +116,7 @@ def test():
     airfoil_coordinates *= coord
 
     # Instantiate geometry object
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         # Create polygon for airfoil
         char_length = 1.0e-1
         airfoil = geom.add_polygon(airfoil_coordinates, char_length, make_surface=False)
@@ -137,7 +137,7 @@ def test():
         geom.set_recombined_surfaces([polygon.surface])
 
         ref = 10.525891646546
-        mesh = pygmsh.generate_mesh(geom, remove_lower_dim_cells=True)
+        mesh = geom.generate_mesh(remove_lower_dim_cells=True)
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 

@@ -4,7 +4,7 @@ import pygmsh
 
 
 def test():
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         lcar = 0.1
         circle = geom.add_circle([0.5, 0.5, 0.0], 1.0, lcar)
         triangle = geom.add_polygon(
@@ -22,7 +22,7 @@ def test():
             lcar,
             holes=[circle.curve_loop, triangle.curve_loop, rectangle.curve_loop],
         )
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     ref = 24.0
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref

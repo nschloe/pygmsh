@@ -5,7 +5,7 @@ import pygmsh
 
 
 def test(lcar=0.3):
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         r = 1.25 * 3.4
         p1 = geom.add_point([0.0, 0.0, 0.0], lcar)
         # p2 = geom.add_point([+r, 0.0, 0.0], lcar)
@@ -32,7 +32,7 @@ def test(lcar=0.3):
         geom.add_physical(pacman)
         geom.add_physical(pacman, label=77)
 
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     ref = 54.312974717523744
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref

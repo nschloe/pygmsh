@@ -4,7 +4,7 @@ import pygmsh
 
 
 def test():
-    with pygmsh.built_in.Geometry() as geom:
+    with pygmsh.geo.Geometry() as geom:
         lcar = 0.1
         p1 = geom.add_point([0.0, 0.0, 0.0], lcar)
         p2 = geom.add_point([1.0, 0.0, 0.0], lcar)
@@ -19,7 +19,7 @@ def test():
         ll = geom.add_curve_loop([s1, s2])
         geom.add_plane_surface(ll)
 
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
     ref = 1.0809439490373247
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
