@@ -22,6 +22,12 @@ pygmsh combines the power of [Gmsh](https://gmsh.info/) with the versatility of 
 It provides useful abstractions from Gmsh's own Python interface so you can create
 complex geometries more easily.
 
+To use, install Gmsh itself and pygmsh from [pypi](https://pypi.org/project/pygmsh/):
+```
+[sudo] apt install python3-gmsh
+pip install pygmsh
+```
+
 This document and the directory
 [`test/`](https://github.com/nschloe/pygmsh/tree/master/test/) contain many small
 examples. See [here](https://pygmsh.readthedocs.io/en/latest/index.html) for the full
@@ -297,37 +303,16 @@ with pygmsh.occ.Geometry() as geom:
     mesh = pygmsh.generate_mesh(geom)
 ```
 
-### Installation
-
-pygmsh is [available from the Python Package Index](https://pypi.org/project/pygmsh/),
-so simply do
-```
-pip install pygmsh
-```
-to install. Also, make sure to have [gmsh](http://gmsh.info/) installed.
-
-### Usage
-Just
-```
-import pygmsh
-```
-and make use of all the goodies the module provides. The
-[documentation](https://pygmsh.readthedocs.org/) and the examples under
-[`test/`](https://github.com/nschloe/pygmsh/tree/master/test/) might inspire you.
-
-
 ### Testing
-
 To run the pygmsh unit tests, check out this repository and type
 ```
 pytest
 ```
 
 ### Building Documentation
-
 Docs are built using [Sphinx](http://www.sphinx-doc.org/en/stable/).
 
-To build run
+To build, run
 ```
 sphinx-build -b html doc doc/_build
 ```
