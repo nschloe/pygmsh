@@ -1,5 +1,7 @@
 from math import sqrt
 
+import pytest
+
 import pygmsh
 
 
