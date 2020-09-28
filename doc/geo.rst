@@ -4,130 +4,130 @@ Built-in Engine
 The default Gmsh kernel with basic geometry construction functions.
 For advanced geometries it is recommended to use the openCASCADE kernel.
 
-.. automodule:: pygmsh.built_in
+.. automodule:: pygmsh.geo
 
 Geometry
 --------
-.. automodule:: pygmsh.built_in.geometry
+.. automodule:: pygmsh.geo.geometry
     :members:
     :undoc-members:
     :show-inheritance:
 
 Bspline
 -------
-.. automodule:: pygmsh.built_in.bspline
+.. automodule:: pygmsh.geo.bspline
     :members:
     :undoc-members:
     :show-inheritance:
 
 CircleArc
 ---------
-.. automodule:: pygmsh.built_in.circle_arc
+.. automodule:: pygmsh.geo.circle_arc
     :members:
     :undoc-members:
     :show-inheritance:
 
 CompoundLine
 ------------
-.. automodule:: pygmsh.built_in.compound_line
+.. automodule:: pygmsh.geo.compound_line
     :members:
     :undoc-members:
     :show-inheritance:
 
 CompoundSurface
 ---------------
-.. automodule:: pygmsh.built_in.compound_surface
+.. automodule:: pygmsh.geo.compound_surface
     :members:
     :undoc-members:
     :show-inheritance:
 
 CompoundVolume
 --------------
-.. automodule:: pygmsh.built_in.compound_volume
+.. automodule:: pygmsh.geo.compound_volume
     :members:
     :undoc-members:
     :show-inheritance:
 
 EllipseArc
 ----------
-.. automodule:: pygmsh.built_in.ellipse_arc
+.. automodule:: pygmsh.geo.ellipse_arc
     :members:
     :undoc-members:
     :show-inheritance:
 
 LineBase
 --------
-.. automodule:: pygmsh.built_in.line_base
+.. automodule:: pygmsh.geo.line_base
     :members:
     :undoc-members:
     :show-inheritance:
 
 CurveLoop
 --------
-.. automodule:: pygmsh.built_in.curve_loop
+.. automodule:: pygmsh.geo.curve_loop
     :members:
     :undoc-members:
     :show-inheritance:
 
 Line
 ----
-.. automodule:: pygmsh.built_in.line
+.. automodule:: pygmsh.geo.line
     :members:
     :undoc-members:
     :show-inheritance:
 
 PlaneSurface
 ------------
-.. automodule:: pygmsh.built_in.plane_surface
+.. automodule:: pygmsh.geo.plane_surface
     :members:
     :undoc-members:
     :show-inheritance:
 
 Point
 -----
-.. automodule:: pygmsh.built_in.point
+.. automodule:: pygmsh.geo.point
     :members:
     :undoc-members:
     :show-inheritance:
 
 Spline
 ------
-.. automodule:: pygmsh.built_in.spline
+.. automodule:: pygmsh.geo.spline
     :members:
     :undoc-members:
     :show-inheritance:
 
 SurfaceBase
 -----------
-.. automodule:: pygmsh.built_in.surface_base
+.. automodule:: pygmsh.geo.surface_base
     :members:
     :undoc-members:
     :show-inheritance:
 
 SurfaceLoop
 -----------
-.. automodule:: pygmsh.built_in.surface_loop
+.. automodule:: pygmsh.geo.surface_loop
     :members:
     :undoc-members:
     :show-inheritance:
 
 Surface
 -------
-.. automodule:: pygmsh.built_in.surface
+.. automodule:: pygmsh.geo.surface
     :members:
     :undoc-members:
     :show-inheritance:
 
 VolumeBase
 ----------
-.. automodule:: pygmsh.built_in.volume_base
+.. automodule:: pygmsh.geo.volume_base
     :members:
     :undoc-members:
     :show-inheritance:
 
 Volume
 ------
-.. automodule:: pygmsh.built_in.volume
+.. automodule:: pygmsh.geo.volume
     :members:
     :undoc-members:
     :show-inheritance:

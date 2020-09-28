@@ -5,81 +5,81 @@ Using the openCASCADE kernel instead of the built-in geometry kernel.  Models
 can be built using constructive solid geometry, allowing for 2D and 3D polygon
 boolean operations.
 
-.. automodule:: pygmsh.built_in
+.. automodule:: pygmsh.geo
 
 Geometry
 --------
-.. automodule:: pygmsh.opencascade.geometry
+.. automodule:: pygmsh.occ.geometry
     :members:
     :undoc-members:
     :show-inheritance:
 
 Ball
 ----
-.. automodule:: pygmsh.opencascade.ball
+.. automodule:: pygmsh.occ.ball
     :members:
     :undoc-members:
     :show-inheritance:
 
 Box
 ---
-.. automodule:: pygmsh.opencascade.box
+.. automodule:: pygmsh.occ.box
     :members:
     :undoc-members:
     :show-inheritance:
 
 Cone
 ----
-.. automodule:: pygmsh.opencascade.cone
+.. automodule:: pygmsh.occ.cone
     :members:
     :undoc-members:
     :show-inheritance:
 
 Cylinder
 --------
-.. automodule:: pygmsh.opencascade.cylinder
+.. automodule:: pygmsh.occ.cylinder
     :members:
     :undoc-members:
     :show-inheritance:
 
 Disk
 ----
-.. automodule:: pygmsh.opencascade.disk
+.. automodule:: pygmsh.occ.disk
     :members:
     :undoc-members:
     :show-inheritance:
 
 Rectangle
 ---------
-.. automodule:: pygmsh.opencascade.rectangle
+.. automodule:: pygmsh.occ.rectangle
     :members:
     :undoc-members:
     :show-inheritance:
 
 SurfaceBase
 -----------
-.. automodule:: pygmsh.opencascade.surface_base
+.. automodule:: pygmsh.occ.surface_base
     :members:
     :undoc-members:
     :show-inheritance:
 
 Torus
 -----
-.. automodule:: pygmsh.opencascade.torus
+.. automodule:: pygmsh.occ.torus
     :members:
     :undoc-members:
     :show-inheritance:
 
 VolumeBase
 ----------
-.. automodule:: pygmsh.opencascade.volume_base
+.. automodule:: pygmsh.occ.volume_base
     :members:
     :undoc-members:
     :show-inheritance:
 
 Wedge
 -----
-.. automodule:: pygmsh.opencascade.wedge
+.. automodule:: pygmsh.occ.wedge
     :members:
     :undoc-members:
     :show-inheritance:

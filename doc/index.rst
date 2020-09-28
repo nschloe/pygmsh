@@ -23,13 +23,13 @@ points, c1, c2, etc. for circles and so on.
 Geometry Overview
 -----------------
 
-Gmsh’s geometry module provides a simple CAD engine, using a boundary representation 
-(“BRep”) approach: you need to first define points (using the Point command: see below), 
-then lines (using Line, Circle, Spline, …, commands or by extruding points), then surfaces 
-(using for example the Plane Surface or Surface commands, or by extruding lines), 
+Gmsh’s geometry module provides a simple CAD engine, using a boundary representation
+(“BRep”) approach: you need to first define points (using the Point command: see below),
+then lines (using Line, Circle, Spline, …, commands or by extruding points), then surfaces
+(using for example the Plane Surface or Surface commands, or by extruding lines),
 and finally volumes (using the Volume command or by extruding surfaces).
 
-These geometrical entities are called “elementary” in Gmsh’s jargon, and 
+These geometrical entities are called “elementary” in Gmsh’s jargon, and
 are assigned identification numbers (stricly positive) when they are created:
 
 1. Each elementary point must possess a unique identification number;
@@ -37,17 +37,17 @@ are assigned identification numbers (stricly positive) when they are created:
 3. Each elementary surface must possess a unique identification number;
 4. Each elementary volume must possess a unique identification number.
 
-Elementary geometrical entities can then be manipulated in various ways, for 
-example using the Translate, Rotate, Scale or Symmetry commands. 
-They can be deleted with the Delete command, provided that no 
-higher-dimension entity references them. Zero or negative identification 
+Elementary geometrical entities can then be manipulated in various ways, for
+example using the Translate, Rotate, Scale or Symmetry commands.
+They can be deleted with the Delete command, provided that no
+higher-dimension entity references them. Zero or negative identification
 numbers are reserved by the system for special uses: do not use them in your scripts.
 
-Groups of elementary geometrical entities can also be defined and are called 
-“physical” entities. These physical entities cannot be modified by geometry 
-commands: their only purpose is to assemble elementary entities into larger 
-groups so that they can be referred to by the mesh module as single entities. 
-As is the case with elementary entities, each physical point, physical line, 
+Groups of elementary geometrical entities can also be defined and are called
+“physical” entities. These physical entities cannot be modified by geometry
+commands: their only purpose is to assemble elementary entities into larger
+groups so that they can be referred to by the mesh module as single entities.
+As is the case with elementary entities, each physical point, physical line,
 physical surface or physical volume must be assigned a unique identification number.
 
 Contents:
@@ -56,5 +56,5 @@ Contents:
     :maxdepth: 1
     :caption: Table of Contents
 
-    built_in
-    opencascade
+    geo
+    occ
