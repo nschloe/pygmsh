@@ -10,7 +10,7 @@ import pygmsh
 @pytest.mark.parametrize("kernel", [pygmsh.geo, pygmsh.occ])
 def test(kernel):
     with kernel.Geometry() as geom:
-        p = geom.add_point([0, 0, 0], 1)
+        p = geom.add_point([0, 0], 1)
         p_top, _, _ = geom.extrude(p, translation_axis=[1, 0, 0])
 
         # The mesh should now contain exactly two points, the second one should be where
@@ -27,8 +27,8 @@ def test(kernel):
 
     # Set up new geometry with one line.
     with kernel.Geometry() as geom:
-        p1 = geom.add_point([0, 0, 0], 1.0)
-        p2 = geom.add_point([1, 0, 0], 1.0)
+        p1 = geom.add_point([0, 0], 1.0)
+        p2 = geom.add_point([1, 0], 1.0)
         line = geom.add_line(p1, p2)
 
         l_top, _, _ = geom.extrude(line, [0, 1, 0])
@@ -43,9 +43,7 @@ def test(kernel):
         assert np.array_equal(mesh.points[-3], [1, 2, 0])
 
         # Check that extrusion works on a Polygon
-        poly = geom.add_polygon(
-            [[5.0, 0.0, 0.0], [6.0, 0.0, 0.0], [5.0, 1.0, 0.0]], mesh_size=1e20
-        )
+        poly = geom.add_polygon([[5.0, 0.0], [6.0, 0.0], [5.0, 1.0]], mesh_size=1e20)
         a, b, poly_lat = geom.extrude(poly, [0.0, 0.0, 1.0], num_layers=1)
         mesh = geom.generate_mesh()
         assert len(mesh.points) == 8 + 6

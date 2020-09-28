@@ -7,17 +7,17 @@ import pygmsh
 def test(mesh_size=0.05):
     with pygmsh.geo.Geometry() as geom:
         # Draw a cross with a circular hole
-        circ = geom.add_circle([0.0, 0.0, 0.0], 0.1, mesh_size=mesh_size)
+        circ = geom.add_circle([0.0, 0.0], 0.1, mesh_size=mesh_size)
         poly = geom.add_polygon(
             [
-                [+0.0, +0.5, 0.0],
-                [-0.1, +0.1, 0.0],
-                [-0.5, +0.0, 0.0],
-                [-0.1, -0.1, 0.0],
-                [+0.0, -0.5, 0.0],
-                [+0.1, -0.1, 0.0],
-                [+0.5, +0.0, 0.0],
-                [+0.1, +0.1, 0.0],
+                [+0.0, +0.5],
+                [-0.1, +0.1],
+                [-0.5, +0.0],
+                [-0.1, -0.1],
+                [+0.0, -0.5],
+                [+0.1, -0.1],
+                [+0.5, +0.0],
+                [+0.1, +0.1],
             ],
             mesh_size=mesh_size,
             holes=[circ],

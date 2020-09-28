@@ -3,9 +3,7 @@ import pygmsh
 
 def test(lcar=0.5):
     with pygmsh.geo.Geometry() as geom:
-        poly = geom.add_polygon(
-            [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [0.0, 1.0, 0.0]], lcar
-        )
+        poly = geom.add_polygon([[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]], lcar)
 
         top, volume, lat = geom.extrude(poly, [0, 0, 2])
 
