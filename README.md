@@ -223,7 +223,7 @@ with pygmsh.opencascade.Geometry() as geom:
 
 
 #### Mesh refinement/boundary layers
-<img src="https://nschloe.github.io/pygmsh/boundary0.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/mesh-refinement-2d.svg" width="100%"> |
+<img src="https://nschloe.github.io/pygmsh/boundary0.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/mesh-refinement-2d.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/ball-mesh-refinement.png" width="100%">
 :------------------:|:-------------:|:--------:|
  |    |   |
 
@@ -266,16 +266,32 @@ with pygmsh.built_in.Geometry() as geom:
 import pygmsh
 
 with pygmsh.built_in.Geometry() as geom:
-    geom.add_polygon([
-        [-1.0, -1.0],
-        [+1.0, -1.0],
-        [+1.0, +1.0],
-        [-1.0, +1.0],
-        ])
+    geom.add_polygon(
+        [
+            [-1.0, -1.0],
+            [+1.0, -1.0],
+            [+1.0, +1.0],
+            [-1.0, +1.0],
+        ]
+    )
     geom.set_mesh_size_callback(
         lambda dim, tag, x, y, z: 6.0e-2 + 2.0e-1 * (x ** 2 + y ** 2)
     )
 
+    mesh = pygmsh.generate_mesh(geom)
+```
+```python
+# ball with mesh refinement
+from math import sqrt
+import pygmsh
+
+
+with pygmsh.opencascade.Geometry() as geom:
+    geom.add_ball([0.0, 0.0, 0.0], 1.0)
+
+    geom.set_mesh_size_callback(
+        lambda dim, tag, x, y, z: abs(sqrt(x ** 2 + y ** 2 + z ** 2) - 0.5) / 5 + 0.025
+    )
     mesh = pygmsh.generate_mesh(geom)
 ```
 
