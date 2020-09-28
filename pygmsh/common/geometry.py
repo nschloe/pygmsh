@@ -35,6 +35,7 @@ class CommonGeometry:
         self._EMBED_QUEUE = []
         self._TRANSFINITE_CURVE_QUEUE = []
         self._TRANSFINITE_SURFACE_QUEUE = []
+        self._TRANSFINITE_VOLUME_QUEUE = []
         self._AFTER_SYNC_QUEUE = []
         self._SIZE_QUEUE = []
 
@@ -131,6 +132,9 @@ class CommonGeometry:
 
     def set_transfinite_surface(self, surface, arrangement, corner_tags):
         self._TRANSFINITE_SURFACE_QUEUE.append((surface._ID, arrangement, corner_tags))
+
+    def set_transfinite_volume(self, volume, arrangement, corner_tags):
+        self._TRANSFINITE_VOLUME_QUEUE.append((volume._ID, corner_tags))
 
     def set_recombined_surfaces(self, surfaces):
         for i, surface in enumerate(surfaces):
@@ -341,10 +345,13 @@ class CommonGeometry:
             gmsh.model.mesh.setRecombine(*s)
 
         for t in self._TRANSFINITE_CURVE_QUEUE:
-            gmsh.model.geo.mesh.setTransfiniteCurve(*t)
+            gmsh.model.mesh.setTransfiniteCurve(*t)
 
         for t in self._TRANSFINITE_SURFACE_QUEUE:
-            gmsh.model.geo.mesh.setTransfiniteSurface(*t)
+            gmsh.model.mesh.setTransfiniteSurface(*t)
+
+        for e in self._TRANSFINITE_VOLUME_QUEUE:
+            gmsh.model.mesh.setTransfiniteVolume(*e)
 
         for item, size in self._SIZE_QUEUE:
             gmsh.model.mesh.setSize(

@@ -8,34 +8,6 @@ class Geometry(common.CommonGeometry):
     def __init__(self):
         super().__init__(gmsh.model.geo)
 
-    # All of the add_* method below could be replaced by
-    #
-    #   def add(self, entity):
-    #       self._GMSH_CODE.append(entity.code)
-    #       return entity
-    #
-    # to be used like
-    #
-    #    geom.add(pg.Circle(...))
-    #
-    # However, this would break backwards compatibility and perhaps encourage
-    # users to do
-    #
-    #    c = pg.Circle(...)
-    #    # ... use c
-    #
-    # in which case the circle code never gets added to geom.
-
-    def set_transfinite_curve(self, curve, num_nodes, mesh_type, coeff):
-        assert mesh_type in ["Progression", "Bulk"]
-        self._TRANSFINITE_CURVE_QUEUE.append((curve._ID, num_nodes, mesh_type, coeff))
-
-    def set_transfinite_surface(self, surface, arrangement, corner_tags):
-        self._TRANSFINITE_SURFACE_QUEUE.append((surface._ID, arrangement, corner_tags))
-
-    def set_recombined_surfaces(self, surfaces):
-        self._RECOMBINE_ENTITIES += [s.dim_tags[0] for s in surfaces]
-
     def add_circle(
         self,
         x0,
