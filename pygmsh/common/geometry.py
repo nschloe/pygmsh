@@ -370,7 +370,8 @@ class CommonGeometry:
         elem_types, elem_tags, node_tags = gmsh.model.mesh.getElements()
         cells = []
         for elem_type, node_tags in zip(elem_types, node_tags):
-            # `elementName', `dim', `order', `numNodes', `localNodeCoord', `numPrimaryNodes'
+            # `elementName', `dim', `order', `numNodes', `localNodeCoord',
+            # `numPrimaryNodes'
             num_nodes_per_cell = gmsh.model.mesh.getElementProperties(elem_type)[3]
             meshio.gmsh.gmsh_to_meshio_type
             cells.append(
@@ -394,7 +395,8 @@ class CommonGeometry:
         mesh = meshio.Mesh(points, cells)
 
         if remove_lower_dim_cells:
-            # Only keep the cells of highest topological dimension; discard faces and such.
+            # Only keep the cells of highest topological dimension; discard faces and
+            # such.
             cells_2d = {"triangle", "quad"}
             cells_3d = {
                 "tetra",

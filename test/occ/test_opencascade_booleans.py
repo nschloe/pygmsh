@@ -10,10 +10,10 @@ import pygmsh
 def square_loop(geom):
     """Construct square using built in geometry."""
     points = [
-        geom.add_point([-0.5, -0.5, 0], 0.05),
-        geom.add_point([-0.5, 0.5, 0], 0.05),
-        geom.add_point([0.5, 0.5, 0], 0.05),
-        geom.add_point([0.5, -0.5, 0], 0.05),
+        geom.add_point([-0.5, -0.5], 0.05),
+        geom.add_point([-0.5, 0.5], 0.05),
+        geom.add_point([0.5, 0.5], 0.05),
+        geom.add_point([0.5, -0.5], 0.05),
     ]
     lines = [
         geom.add_line(points[0], points[1]),
@@ -27,11 +27,11 @@ def square_loop(geom):
 def circle_loop(geom):
     """construct circle using geo geometry module."""
     points = [
-        geom.add_point([+0.0, +0.0, 0.0], 0.05),
-        geom.add_point([+0.0, +0.1, 0.0], 0.05),
-        geom.add_point([-0.1, +0.0, 0.0], 0.05),
-        geom.add_point([+0.0, -0.1, 0.0], 0.05),
-        geom.add_point([+0.1, +0.0, 0.0], 0.05),
+        geom.add_point([+0.0, +0.0], 0.05),
+        geom.add_point([+0.0, +0.1], 0.05),
+        geom.add_point([-0.1, +0.0], 0.05),
+        geom.add_point([+0.0, -0.1], 0.05),
+        geom.add_point([+0.1, +0.0], 0.05),
     ]
     quarter_circles = [
         geom.add_circle_arc(points[1], points[0], points[2]),
@@ -171,7 +171,7 @@ def test_diff_physical_assignment():
 
 def test_polygon_diff():
     with pygmsh.occ.Geometry() as geom:
-        poly = geom.add_polygon([[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]])
+        poly = geom.add_polygon([[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]])
         disk = geom.add_disk([0, 0, 0], 0.5)
         geom.boolean_difference(poly, disk)
 

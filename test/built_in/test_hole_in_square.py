@@ -14,7 +14,7 @@ def test():
     ymax = 5.0
 
     # Vertices of a square hole
-    squareHoleCoordinates = np.array([[1, 1, 0], [4, 1, 0], [4, 4, 0], [1, 4, 0]])
+    squareHoleCoordinates = np.array([[1.0, 1.0], [4.0, 1.0], [4.0, 4.0], [1.0, 4.0]])
 
     with pygmsh.geo.Geometry() as geom:
         # Create square hole
