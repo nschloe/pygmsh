@@ -172,8 +172,8 @@ with pygmsh.opencascade.Geometry() as geom:
     geom.characteristic_length_max = 0.1
     r = 0.5
     disks = [
-        geom.add_disk([-0.5 * cos(7/6*pi), -0.25], 1.0),
-        geom.add_disk([+0.5 * cos(7/6*pi), -0.25], 1.0),
+        geom.add_disk([-0.5 * cos(7 / 6 * pi), -0.25], 1.0),
+        geom.add_disk([+0.5 * cos(7 / 6 * pi), -0.25], 1.0),
         geom.add_disk([0.0, 0.5], 1.0),
     ]
     geom.boolean_intersection(disks)
@@ -193,10 +193,7 @@ with pygmsh.opencascade.Geometry() as geom:
         geom.add_cylinder([0.0, -1.0, 0.0], [0.0, 2.0, 0.0], 0.3),
         geom.add_cylinder([0.0, 0.0, -1.0], [0.0, 0.0, 2.0], 0.3),
     ]
-    geom.boolean_difference(
-        ellipsoid,
-        geom.boolean_union(cylinders)
-    )
+    geom.boolean_difference(ellipsoid, geom.boolean_union(cylinders))
 
     mesh = pygmsh.generate_mesh(geom)
 ```

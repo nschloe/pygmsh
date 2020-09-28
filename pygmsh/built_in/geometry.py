@@ -26,43 +26,6 @@ class Geometry(common.CommonGeometry):
     #
     # in which case the circle code never gets added to geom.
 
-    def _new_physical_group(self, label=None):
-        # See
-        # https://github.com/nschloe/pygmsh/issues/46#issuecomment-286684321
-        # for context.
-        max_id = (
-            0
-            if not self._TAKEN_PHYSICALGROUP_IDS
-            else max(self._TAKEN_PHYSICALGROUP_IDS)
-        )
-
-        if label is None:
-            label = max_id + 1
-
-        if isinstance(label, int):
-            assert (
-                label not in self._TAKEN_PHYSICALGROUP_IDS
-            ), f"Physical group label {label} already taken."
-            self._TAKEN_PHYSICALGROUP_IDS += [label]
-            return str(label)
-
-        assert isinstance(label, str)
-        self._TAKEN_PHYSICALGROUP_IDS += [max_id + 1]
-        return f'"{label}"'
-
-    def add_physical(self, entities, label=None):
-        if not isinstance(entities, list):
-            entities = [entities]
-
-        dim = entities[0].dimension
-        for e in entities:
-            assert e.dimension == dim
-
-        label = self._new_physical_group(label)
-        tag = gmsh.model.addPhysicalGroup(dim, [e._ID for e in entities])
-        if label is not None:
-            gmsh.model.setPhysicalName(dim, tag, label)
-
     def set_transfinite_curve(self, curve, num_nodes, mesh_type, coeff):
         assert mesh_type in ["Progression", "Bulk"]
         self._TRANSFINITE_CURVE_QUEUE.append((curve._ID, num_nodes, mesh_type, coeff))
