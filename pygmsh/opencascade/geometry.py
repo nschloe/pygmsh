@@ -109,6 +109,8 @@ class Geometry(common.CommonGeometry):
                 removeObject=True,
                 removeTool=True,
             )
+            if len(out) == 0:
+                raise RuntimeError("Empty intersection.")
             assert all(out[0] == item for item in out)
             ent = out[0]
         return Boolean([ent], "Intersection")

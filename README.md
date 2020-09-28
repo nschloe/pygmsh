@@ -158,13 +158,28 @@ with pygmsh.built_in.Geometry() as geom:
 ```
 
 #### OpenCASCADE
-<img src="https://nschloe.github.io/pygmsh/extrude.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/ellipsoid-holes.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/puzzle.png" width="100%">
+<img src="https://nschloe.github.io/pygmsh/intersection.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/ellipsoid-holes.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/puzzle.png" width="100%">
 :------------------:|:-------------:|:--------:|
  |    |   |
 
 As of version 3.0, Gmsh supports OpenCASCADE, allowing for a CAD-style geometry
 specification.
+```python
+from math import pi, cos
+import pygmsh
 
+with pygmsh.opencascade.Geometry() as geom:
+    geom.characteristic_length_max = 0.1
+    r = 0.5
+    disks = [
+        geom.add_disk([-0.5 * cos(7/6*pi), -0.25], 1.0),
+        geom.add_disk([+0.5 * cos(7/6*pi), -0.25], 1.0),
+        geom.add_disk([0.0, 0.5], 1.0),
+    ]
+    geom.boolean_intersection(disks)
+
+    mesh = pygmsh.generate_mesh(geom)
+```
 ```python
 # ellpsoid with holes
 import pygmsh
