@@ -13,7 +13,7 @@
 [![Slack](https://img.shields.io/static/v1?logo=slack&label=chat&message=on%20slack&color=4a154b&style=flat-square)](https://join.slack.com/t/nschloe/shared_invite/zt-cofhrwm8-BgdrXAtVkOjnDmADROKD7A
 )
 
-[![CircleCI](https://img.shields.io/circleci/project/github/nschloe/pygmsh/master.svg?style=flat-square)](https://circleci.com/gh/nschloe/pygmsh)
+[![gh-actions](https://img.shields.io/github/workflow/status/nschloe/pygmsh/ci?style=flat-square)](https://github.com/nschloe/pygmsh/actions?query=workflow%3Aci)
 [![codecov](https://img.shields.io/codecov/c/github/nschloe/pygmsh.svg?style=flat-square)](https://codecov.io/gh/nschloe/pygmsh)
 [![LGTM](https://img.shields.io/lgtm/grade/python/github/nschloe/pygmsh.svg?style=flat-square)](https://lgtm.com/projects/g/nschloe/pygmsh)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)](https://github.com/psf/black)
@@ -22,30 +22,126 @@ pygmsh combines the power of [Gmsh](https://gmsh.info/) with the versatility of 
 It provides useful abstractions from Gmsh's own Python interface so you can create
 complex geometries more easily.
 
-See [here](https://pygmsh.readthedocs.io/en/latest/index.html) for the full
+This document and the directory
+[`test/`](https://github.com/nschloe/pygmsh/tree/master/test/) contain many small
+examples. See [here](https://pygmsh.readthedocs.io/en/latest/index.html) for the full
 documentation.
 
-#### Built-in
+#### Flat shapes
 
-![](https://nschloe.github.io/pygmsh/screw.png)
+<img src="https://nschloe.github.io/pygmsh/polygon.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/circle.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/splines.svg" width="100%">
+:------------------:|:-------------:|:-------------:|
+Polygon             |  Circle       |  (B-)Splines  |
 
-To create the above mesh, simply do
+Codes:
 ```python
 import pygmsh
-import numpy as np
 
 with pygmsh.built_in.Geometry() as geom:
-    # Draw a cross.
+    geom.add_polygon(
+        [
+            [0.0, 0.0],
+            [1.0, -0.2],
+            [1.1, 1.2],
+            [0.1, 0.7],
+        ],
+        mesh_size=0.1,
+    )
+    mesh = pygmsh.generate_mesh(geom)
+
+# mesh.points, mesh.cells, ...
+# mesh.write("out.vtk")
+```
+```python
+import pygmsh
+
+with pygmsh.built_in.Geometry() as geom:
+    geom.add_circle([0.0, 0.0], 1.0, mesh_size=0.2)
+    mesh = pygmsh.generate_mesh(geom)
+```
+```python
+import pygmsh
+
+with pygmsh.built_in.Geometry() as geom:
+    lcar = 0.1
+    p1 = geom.add_point([0.0, 0.0, 0.0], lcar)
+    p2 = geom.add_point([1.0, 0.0, 0.0], lcar)
+    p3 = geom.add_point([1.0, 0.5, 0.0], lcar)
+    p4 = geom.add_point([1.0, 1.0, 0.0], lcar)
+    s1 = geom.add_bspline([p1, p2, p3, p4])
+
+    p2 = geom.add_point([0.0, 1.0, 0.0], lcar)
+    p3 = geom.add_point([0.5, 1.0, 0.0], lcar)
+    s2 = geom.add_spline([p4, p3, p2, p1])
+
+    ll = geom.add_curve_loop([s1, s2])
+    pl = geom.add_plane_surface(ll)
+
+    mesh = pygmsh.generate_mesh(geom)
+```
+
+The return value is always a [meshio](https://pypi.org/project/meshio) mesh, so to store
+it to a file you can
+<!--exdown-skip-->
+```python
+mesh.write("test.vtk")
+```
+The output file can be visualized with various tools, e.g.,
+[ParaView](https://www.paraview.org/).
+
+#### Extrusions
+
+<img src="https://nschloe.github.io/pygmsh/extrude.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/revolve.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/twist.png" width="100%">
+:------------------:|:-------------:|:--------:|
+`extrude`           |  `revolve`    |  `twist` |
+
+```python
+import pygmsh
+
+with pygmsh.built_in.Geometry() as geom:
     poly = geom.add_polygon(
         [
-            [+0.0, +0.5, 0.0],
-            [-0.1, +0.1, 0.0],
-            [-0.5, +0.0, 0.0],
-            [-0.1, -0.1, 0.0],
-            [+0.0, -0.5, 0.0],
-            [+0.1, -0.1, 0.0],
-            [+0.5, +0.0, 0.0],
-            [+0.1, +0.1, 0.0],
+            [0.0, 0.0],
+            [1.0, -0.2],
+            [1.1, 1.2],
+            [0.1, 0.7],
+        ],
+        mesh_size=0.1,
+    )
+    geom.extrude(poly, [0.0, 0.3, 1.0], num_layers=5)
+    mesh = pygmsh.generate_mesh(geom)
+```
+```python
+from math import pi
+import pygmsh
+
+with pygmsh.built_in.Geometry() as geom:
+    poly = geom.add_polygon(
+        [
+            [0.0, 0.2, 0.0],
+            [0.0, 1.2, 0.0],
+            [0.0, 1.2, 1.0],
+        ],
+        mesh_size=0.1,
+    )
+    geom.revolve(poly, [0.0, 0.0, 1.0], [0.0, 0.0, 0.0], 0.8 * pi)
+    mesh = pygmsh.generate_mesh(geom)
+```
+```python
+from math import pi
+import pygmsh
+
+with pygmsh.built_in.Geometry() as geom:
+    poly = geom.add_polygon(
+        [
+            [+0.0, +0.5],
+            [-0.1, +0.1],
+            [-0.5, +0.0],
+            [-0.1, -0.1],
+            [+0.0, -0.5],
+            [+0.1, -0.1],
+            [+0.5, +0.0],
+            [+0.1, +0.1],
         ],
         mesh_size=0.05,
     )
@@ -55,36 +151,54 @@ with pygmsh.built_in.Geometry() as geom:
         translation_axis=[0, 0, 1],
         rotation_axis=[0, 0, 1],
         point_on_axis=[0, 0, 0],
-        angle=2.0 / 6.0 * np.pi,
+        angle=pi / 3,
     )
 
     mesh = pygmsh.generate_mesh(geom)
-
-# mesh.points, mesh.cells, ...
 ```
-to retrieve all points and cells of the mesh for the specified geometry. To store the
-mesh, you can use [meshio](https://pypi.org/project/meshio); for example
-<!--exdown-skip-->
-```python
-import meshio
-
-meshio.write("test.vtk", mesh)
-```
-The output file can be visualized with various tools, e.g.,
-[ParaView](https://www.paraview.org/).
-
-You will find the above mesh in the directory
-[`test/`](https://github.com/nschloe/pygmsh/tree/master/test/) along with other small
-examples.
 
 #### OpenCASCADE
-![](https://nschloe.github.io/pygmsh/puzzle.png)
+<img src="https://nschloe.github.io/pygmsh/intersection.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/ellipsoid-holes.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/puzzle.png" width="100%">
+:------------------:|:-------------:|:--------:|
+ |    |   |
 
 As of version 3.0, Gmsh supports OpenCASCADE, allowing for a CAD-style geometry
 specification.
-
-Example:
 ```python
+from math import pi, cos
+import pygmsh
+
+with pygmsh.opencascade.Geometry() as geom:
+    geom.characteristic_length_max = 0.1
+    r = 0.5
+    disks = [
+        geom.add_disk([-0.5 * cos(7 / 6 * pi), -0.25], 1.0),
+        geom.add_disk([+0.5 * cos(7 / 6 * pi), -0.25], 1.0),
+        geom.add_disk([0.0, 0.5], 1.0),
+    ]
+    geom.boolean_intersection(disks)
+
+    mesh = pygmsh.generate_mesh(geom)
+```
+```python
+# ellpsoid with holes
+import pygmsh
+
+with pygmsh.opencascade.Geometry() as geom:
+    geom.characteristic_length_max = 0.1
+    ellipsoid = geom.add_ellipsoid([0.0, 0.0, 0.0], [1.0, 0.7, 0.5])
+
+    cylinders = [
+        geom.add_cylinder([-1.0, 0.0, 0.0], [2.0, 0.0, 0.0], 0.3),
+        geom.add_cylinder([0.0, -1.0, 0.0], [0.0, 2.0, 0.0], 0.3),
+        geom.add_cylinder([0.0, 0.0, -1.0], [0.0, 0.0, 2.0], 0.3),
+    ]
+    geom.boolean_difference(ellipsoid, geom.boolean_union(cylinders))
+
+    mesh = pygmsh.generate_mesh(geom)
+```
+```python
+# puzzle piece
 import pygmsh
 
 with pygmsh.opencascade.Geometry() as geom:
@@ -107,6 +221,82 @@ with pygmsh.opencascade.Geometry() as geom:
     mesh = pygmsh.generate_mesh(geom)
 ```
 
+
+#### Mesh refinement/boundary layers
+<img src="https://nschloe.github.io/pygmsh/boundary0.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/mesh-refinement-2d.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/ball-mesh-refinement.png" width="70%">
+:------------------:|:-------------:|:--------:|
+ |    |   |
+
+```python
+# boundary refinement
+import pygmsh
+
+with pygmsh.built_in.Geometry() as geom:
+    poly = geom.add_polygon(
+        [
+            [0.0, 0.0, 0.0],
+            [2.0, 0.0, 0.0],
+            [3.0, 1.0, 0.0],
+            [1.0, 2.0, 0.0],
+            [0.0, 1.0, 0.0],
+        ],
+        mesh_size=0.3,
+    )
+
+    field0 = geom.add_boundary_layer(
+        edges_list=[poly.curves[0]],
+        lcmin=0.05,
+        lcmax=0.2,
+        distmin=0.0,
+        distmax=0.2,
+    )
+    field1 = geom.add_boundary_layer(
+        nodes_list=[poly.points[2]],
+        lcmin=0.05,
+        lcmax=0.2,
+        distmin=0.1,
+        distmax=0.4,
+    )
+    geom.set_background_mesh([field0, field1], operator="Min")
+
+    mesh = pygmsh.generate_mesh(geom)
+```
+<!--exdown-skip-->
+```python
+# mesh refinement with callback
+import pygmsh
+
+with pygmsh.built_in.Geometry() as geom:
+    geom.add_polygon(
+        [
+            [-1.0, -1.0],
+            [+1.0, -1.0],
+            [+1.0, +1.0],
+            [-1.0, +1.0],
+        ]
+    )
+    geom.set_mesh_size_callback(
+        lambda dim, tag, x, y, z: 6.0e-2 + 2.0e-1 * (x ** 2 + y ** 2)
+    )
+
+    mesh = pygmsh.generate_mesh(geom)
+```
+<!--exdown-skip-->
+```python
+# ball with mesh refinement
+from math import sqrt
+import pygmsh
+
+
+with pygmsh.opencascade.Geometry() as geom:
+    geom.add_ball([0.0, 0.0, 0.0], 1.0)
+
+    geom.set_mesh_size_callback(
+        lambda dim, tag, x, y, z: abs(sqrt(x ** 2 + y ** 2 + z ** 2) - 0.5) + 0.1
+    )
+    mesh = pygmsh.generate_mesh(geom)
+```
+
 ### Installation
 
 pygmsh is [available from the Python Package Index](https://pypi.org/project/pygmsh/),
@@ -119,7 +309,7 @@ to install. Also, make sure to have [gmsh](http://gmsh.info/) installed.
 ### Usage
 Just
 ```
-import pygmsh as pg
+import pygmsh
 ```
 and make use of all the goodies the module provides. The
 [documentation](https://pygmsh.readthedocs.org/) and the examples under

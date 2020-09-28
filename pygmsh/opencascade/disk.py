@@ -18,6 +18,8 @@ class Disk:
     dimension = 2
 
     def __init__(self, x0, radius0, radius1=None):
+        if len(x0) == 2:
+            x0 = [x0[0], x0[1], 0.0]
         assert len(x0) == 3
 
         if radius1 is None:
