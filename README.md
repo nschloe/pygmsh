@@ -280,6 +280,7 @@ with pygmsh.built_in.Geometry() as geom:
 
     mesh = pygmsh.generate_mesh(geom)
 ```
+<!--exdown-skip-->
 ```python
 # ball with mesh refinement
 from math import sqrt
@@ -290,7 +291,7 @@ with pygmsh.opencascade.Geometry() as geom:
     geom.add_ball([0.0, 0.0, 0.0], 1.0)
 
     geom.set_mesh_size_callback(
-        lambda dim, tag, x, y, z: abs(sqrt(x ** 2 + y ** 2 + z ** 2) - 0.5) / 5 + 0.025
+        lambda dim, tag, x, y, z: abs(sqrt(x ** 2 + y ** 2 + z ** 2) - 0.5) + 0.1
     )
     mesh = pygmsh.generate_mesh(geom)
 ```
