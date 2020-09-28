@@ -104,16 +104,16 @@ class Geometry(common.CommonGeometry):
         # https://gitlab.onelab.info/gmsh/gmsh/-/issues/999
         for e in entities[1:]:
             out, _ = gmsh.model.occ.intersect(
-                [ent],
-                [e.dim_tags],
+                ent,
+                e.dim_tags,
                 removeObject=True,
                 removeTool=True,
             )
             if len(out) == 0:
                 raise RuntimeError("Empty intersection.")
             assert all(out[0] == item for item in out)
-            ent = out[0]
-        return Boolean([ent], "Intersection")
+            ent = [out[0]]
+        return Boolean(ent, "Intersection")
 
     def boolean_union(self, entities):
         """Boolean union, see
@@ -121,8 +121,8 @@ class Geometry(common.CommonGeometry):
         and tool_entity are called object and tool in gmsh documentation.
         """
         out, _ = gmsh.model.occ.fuse(
-            [entities[0].dim_tags],
-            [e.dim_tags for e in entities[1:]],
+            entities[0].dim_tags,
+            [dt for e in entities[1:] for dt in e.dim_tags],
             removeObject=True,
             removeTool=True,
         )
