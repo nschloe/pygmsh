@@ -298,3 +298,6 @@ class CommonGeometry:
         will conform to the mesh of the input entities.
         """
         self._EMBED_QUEUE.append((input_entity, volume))
+
+    def set_mesh_size_callback(self, fun):
+        gmsh.model.mesh.setSizeCallback(fun)

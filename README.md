@@ -223,10 +223,12 @@ with pygmsh.opencascade.Geometry() as geom:
 
 
 #### Mesh refinement/boundary layers
-<img src="https://nschloe.github.io/pygmsh/boundary0.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/revolve.png" width="100%"> |
+<img src="https://nschloe.github.io/pygmsh/boundary0.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/mesh-refinement-2d.svg" width="100%"> |
 :------------------:|:-------------:|:--------:|
+ |    |   |
 
 ```python
+# boundary refinement
 import pygmsh
 
 with pygmsh.built_in.Geometry() as geom:
@@ -256,6 +258,23 @@ with pygmsh.built_in.Geometry() as geom:
         distmax=0.4,
     )
     geom.set_background_mesh([field0, field1], operator="Min")
+
+    mesh = pygmsh.generate_mesh(geom)
+```
+```python
+# mesh refinement with callback
+import pygmsh
+
+with pygmsh.built_in.Geometry() as geom:
+    geom.add_polygon([
+        [-1.0, -1.0],
+        [+1.0, -1.0],
+        [+1.0, +1.0],
+        [-1.0, +1.0],
+        ])
+    geom.set_mesh_size_callback(
+        lambda dim, tag, x, y, z: 6.0e-2 + 2.0e-1 * (x ** 2 + y ** 2)
+    )
 
     mesh = pygmsh.generate_mesh(geom)
 ```
