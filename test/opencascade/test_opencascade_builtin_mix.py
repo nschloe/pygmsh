@@ -18,7 +18,7 @@ def test():
         square_builtin = geom.add_plane_surface(ll0)
         square_opencascade = geom.add_rectangle([0, 0, 0], 1.0, 1.0)
         geom.boolean_difference(square_opencascade, square_builtin)
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     ref = 0.75
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref

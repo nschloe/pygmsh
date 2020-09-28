@@ -18,7 +18,7 @@ def test():
             container, geom.boolean_union([letter_i, i_dot, letter_o])
         )
 
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     ref = 81.9131851877
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref

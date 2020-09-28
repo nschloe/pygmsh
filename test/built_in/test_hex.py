@@ -23,7 +23,7 @@ def test(lcar=1.0):
         )
         # compute_volume only supports 3D for tetras, but does return surface area for
         # quads
-        mesh = pygmsh.generate_mesh(geom, prune_vertices=False)
+        mesh = geom.generate_mesh(prune_vertices=False)
 
     ref = sum(l * w for l, w in permutations(lbw, 2))  # surface area
     # TODO compute hex volumes

@@ -19,7 +19,7 @@ def test_in_surface():
         )
         geom.in_surface(poly.lines[4], poly)
         geom.in_surface(poly.points[6], poly)
-        mesh = pygmsh.generate_mesh(geom, prune_z_0=True)
+        mesh = geom.generate_mesh(prune_z_0=True)
 
     ref = 0.505
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
@@ -45,7 +45,7 @@ def test_in_volume():
         geom.in_volume(poly.points[6], box.volume)
         geom.in_volume(poly, box.volume)
 
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
     ref = 30.505
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh

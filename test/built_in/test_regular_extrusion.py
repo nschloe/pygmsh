@@ -19,7 +19,7 @@ def test():
 
         _, s, _ = geom.extrude(l, [0, y, 0], num_layers=y_layers)
         geom.extrude(s, [0, 0, z], num_layers=z_layers)
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     ref_vol = x * y * z
     assert abs(compute_volume(mesh) - ref_vol) < 1.0e-2 * ref_vol

@@ -22,7 +22,7 @@ def test():
             R=R,
             variant="circle_extrusion",
         )
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     ref = 0.43988203517453256
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref

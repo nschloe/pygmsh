@@ -30,7 +30,7 @@ def test():
         ll = geom.add_curve_loop(oriented_lines)
         geom.add_plane_surface(ll)
 
-        mesh = pygmsh.generate_mesh(geom, prune_z_0=True)
+        mesh = geom.generate_mesh(prune_z_0=True)
 
     ref = numpy.pi
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref

@@ -33,7 +33,7 @@ def test():
         geom.set_background_mesh([field0, field1], operator="Min")
 
         ref = 4.0
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 

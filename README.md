@@ -47,7 +47,7 @@ with pygmsh.built_in.Geometry() as geom:
         ],
         mesh_size=0.1,
     )
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 
 # mesh.points, mesh.cells, ...
 # mesh.write("out.vtk")
@@ -57,7 +57,7 @@ import pygmsh
 
 with pygmsh.built_in.Geometry() as geom:
     geom.add_circle([0.0, 0.0], 1.0, mesh_size=0.2)
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 ```python
 import pygmsh
@@ -77,7 +77,7 @@ with pygmsh.built_in.Geometry() as geom:
     ll = geom.add_curve_loop([s1, s2])
     pl = geom.add_plane_surface(ll)
 
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 
 The return value is always a [meshio](https://pypi.org/project/meshio) mesh, so to store
@@ -109,7 +109,7 @@ with pygmsh.built_in.Geometry() as geom:
         mesh_size=0.1,
     )
     geom.extrude(poly, [0.0, 0.3, 1.0], num_layers=5)
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 ```python
 from math import pi
@@ -125,7 +125,7 @@ with pygmsh.built_in.Geometry() as geom:
         mesh_size=0.1,
     )
     geom.revolve(poly, [0.0, 0.0, 1.0], [0.0, 0.0, 0.0], 0.8 * pi)
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 ```python
 from math import pi
@@ -154,7 +154,7 @@ with pygmsh.built_in.Geometry() as geom:
         angle=pi / 3,
     )
 
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 
 #### OpenCASCADE
@@ -178,7 +178,7 @@ with pygmsh.opencascade.Geometry() as geom:
     ]
     geom.boolean_intersection(disks)
 
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 ```python
 # ellpsoid with holes
@@ -195,7 +195,7 @@ with pygmsh.opencascade.Geometry() as geom:
     ]
     geom.boolean_difference(ellipsoid, geom.boolean_union(cylinders))
 
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 ```python
 # puzzle piece
@@ -218,7 +218,7 @@ with pygmsh.opencascade.Geometry() as geom:
 
     geom.extrude(flat, [0, 0, 0.3])
 
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 
 
@@ -259,7 +259,7 @@ with pygmsh.built_in.Geometry() as geom:
     )
     geom.set_background_mesh([field0, field1], operator="Min")
 
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 <!--exdown-skip-->
 ```python
@@ -279,7 +279,7 @@ with pygmsh.built_in.Geometry() as geom:
         lambda dim, tag, x, y, z: 6.0e-2 + 2.0e-1 * (x ** 2 + y ** 2)
     )
 
-    mesh = pygmsh.generate_mesh(geom)
+    mesh = geom.generate_mesh()
 ```
 <!--exdown-skip-->
 ```python

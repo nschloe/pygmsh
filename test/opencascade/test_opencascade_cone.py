@@ -15,7 +15,7 @@ def test():
             mesh_size=0.1,
             angle=1.25 * pi,
         )
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     ref = 0.90779252263
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref

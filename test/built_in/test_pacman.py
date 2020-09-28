@@ -32,7 +32,7 @@ def test(lcar=0.3):
         geom.add_physical(pacman)
         geom.add_physical(pacman, label=77)
 
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     ref = 54.312974717523744
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref

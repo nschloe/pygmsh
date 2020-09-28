@@ -27,7 +27,7 @@ def test(mesh_size=0.05):
             num_layers=5,
             recombine=True,
         )
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     ref = 3.98156496566
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref

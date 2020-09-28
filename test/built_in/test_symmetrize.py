@@ -11,7 +11,7 @@ def test():
         )
         cp = geom.copy(poly)
         geom.symmetrize(cp, [0.0, 1.0, 0.0, -0.5])
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     ref = 1.0
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref

@@ -18,7 +18,7 @@ def test(irad=0.05, orad=0.6):
             x0=[0.0, 0.0, 1.0],
             variant="extrude_circle",
         )
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     ref = 2 * 2 * np.pi ** 2 * orad * irad ** 2
     assert np.isclose(compute_volume(mesh), ref, rtol=5e-2)

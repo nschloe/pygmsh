@@ -18,7 +18,7 @@ def test():
             geom.boolean_union([disk3, disk4]),
         )
         geom.extrude(flat, [0, 0, 0.3])
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     ref = 1.1742114942
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
@@ -65,7 +65,7 @@ def test2():
         surface = geom.add_plane_surface(curve_loop)
         geom.extrude(surface, translation_axis=[length, 0, 0])
 
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     ref = 24941.503891355664
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref

@@ -24,7 +24,7 @@ def test():
         #         )
         geom.add_ball([0, 0, 0], 1.0, mesh_size=0.2, holes=holes)
         # geom.add_physical_volume(ball, label="cheese")
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     ref = 4.07064892966291
     assert abs(compute_volume(mesh) - ref) < 2.0e-2 * ref

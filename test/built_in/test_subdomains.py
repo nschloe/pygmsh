@@ -22,7 +22,7 @@ def test():
             lcar,
             holes=[circle.curve_loop, triangle.curve_loop, rectangle.curve_loop],
         )
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     ref = 24.0
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref

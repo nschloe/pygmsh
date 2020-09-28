@@ -8,7 +8,7 @@ import pygmsh
 def test():
     with pygmsh.built_in.Geometry() as geom:
         geom.add_circle([0, 0, 0], 1, 0.1, make_surface=False)
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
         ref = 2 * np.pi
         assert np.abs(compute_volume(mesh) - ref) < 1e-2 * ref
 

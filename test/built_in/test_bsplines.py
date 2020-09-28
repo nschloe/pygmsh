@@ -25,7 +25,7 @@ def test():
         print(s1)
         print(pl)
 
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
     # ref = 0.9156598733673261
     ref = 0.7474554072002251
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref

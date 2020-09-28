@@ -7,60 +7,60 @@ from helpers import compute_volume
 import pygmsh
 
 
-def square_loop(geo_object):
+def square_loop(geom):
     """Construct square using built in geometry."""
     points = [
-        geo_object.add_point([-0.5, -0.5, 0], 0.05),
-        geo_object.add_point([-0.5, 0.5, 0], 0.05),
-        geo_object.add_point([0.5, 0.5, 0], 0.05),
-        geo_object.add_point([0.5, -0.5, 0], 0.05),
+        geom.add_point([-0.5, -0.5, 0], 0.05),
+        geom.add_point([-0.5, 0.5, 0], 0.05),
+        geom.add_point([0.5, 0.5, 0], 0.05),
+        geom.add_point([0.5, -0.5, 0], 0.05),
     ]
     lines = [
-        geo_object.add_line(points[0], points[1]),
-        geo_object.add_line(points[1], points[2]),
-        geo_object.add_line(points[2], points[3]),
-        geo_object.add_line(points[3], points[0]),
+        geom.add_line(points[0], points[1]),
+        geom.add_line(points[1], points[2]),
+        geom.add_line(points[2], points[3]),
+        geom.add_line(points[3], points[0]),
     ]
-    return geo_object.add_curve_loop(lines)
+    return geom.add_curve_loop(lines)
 
 
-def circle_loop(geo_object):
+def circle_loop(geom):
     """construct circle using built_in geometry module."""
     points = [
-        geo_object.add_point([+0.0, +0.0, 0.0], 0.05),
-        geo_object.add_point([+0.0, +0.1, 0.0], 0.05),
-        geo_object.add_point([-0.1, +0.0, 0.0], 0.05),
-        geo_object.add_point([+0.0, -0.1, 0.0], 0.05),
-        geo_object.add_point([+0.1, +0.0, 0.0], 0.05),
+        geom.add_point([+0.0, +0.0, 0.0], 0.05),
+        geom.add_point([+0.0, +0.1, 0.0], 0.05),
+        geom.add_point([-0.1, +0.0, 0.0], 0.05),
+        geom.add_point([+0.0, -0.1, 0.0], 0.05),
+        geom.add_point([+0.1, +0.0, 0.0], 0.05),
     ]
     quarter_circles = [
-        geo_object.add_circle_arc(points[1], points[0], points[2]),
-        geo_object.add_circle_arc(points[2], points[0], points[3]),
-        geo_object.add_circle_arc(points[3], points[0], points[4]),
-        geo_object.add_circle_arc(points[4], points[0], points[1]),
+        geom.add_circle_arc(points[1], points[0], points[2]),
+        geom.add_circle_arc(points[2], points[0], points[3]),
+        geom.add_circle_arc(points[3], points[0], points[4]),
+        geom.add_circle_arc(points[4], points[0], points[1]),
     ]
-    return geo_object.add_curve_loop(quarter_circles)
+    return geom.add_curve_loop(quarter_circles)
 
 
-def _square_hole_classical(geo_object):
+def _square_hole_classical(geom):
     """Construct surface using builtin and boolean methods."""
     # construct surface with hole using standard built in
-    geo_object.characteristic_length_min = 0.05
-    geo_object.characteristic_length_max = 0.05
-    square = square_loop(geo_object)
-    circle = circle_loop(geo_object)
-    geo_object.add_plane_surface(square, [circle])
+    geom.characteristic_length_min = 0.05
+    geom.characteristic_length_max = 0.05
+    square = square_loop(geom)
+    circle = circle_loop(geom)
+    geom.add_plane_surface(square, [circle])
 
 
-def _square_hole_cad(geo_object):
+def _square_hole_cad(geom):
     # construct surface using boolean
-    geo_object.characteristic_length_min = 0.05
-    geo_object.characteristic_length_max = 0.05
-    square2 = square_loop(geo_object)
-    curve_loop2 = circle_loop(geo_object)
-    surf1 = geo_object.add_plane_surface(square2)
-    surf2 = geo_object.add_plane_surface(curve_loop2)
-    geo_object.boolean_difference(surf1, surf2)
+    geom.characteristic_length_min = 0.05
+    geom.characteristic_length_max = 0.05
+    square2 = square_loop(geom)
+    curve_loop2 = circle_loop(geom)
+    surf1 = geom.add_plane_surface(square2)
+    surf2 = geom.add_plane_surface(curve_loop2)
+    geom.boolean_difference(surf1, surf2)
 
 
 @pytest.mark.parametrize("fun", [_square_hole_classical, _square_hole_cad])
@@ -69,9 +69,9 @@ def test_square_circle_hole(fun):
 
     Construct it with boolean operations and verify that it is the same.
     """
-    with pygmsh.opencascade.Geometry() as geo_object:
-        fun(geo_object)
-        mesh = pygmsh.generate_mesh(geo_object)
+    with pygmsh.opencascade.Geometry() as geom:
+        fun(geom)
+        mesh = geom.generate_mesh()
     surf = 1 - 0.1 ** 2 * np.pi
     assert np.abs((compute_volume(mesh) - surf) / surf) < 1e-3
 
@@ -82,14 +82,14 @@ def test_square_circle_slice():
 
     Also test for surface area of fragments.
     """
-    with pygmsh.opencascade.Geometry() as geo_object:
-        square = square_loop(geo_object)
-        curve_loop = circle_loop(geo_object)
-        surf1 = geo_object.add_plane_surface(square)
-        surf2 = geo_object.add_plane_surface(curve_loop)
-        geo_object.boolean_fragments(surf1, surf2)
+    with pygmsh.opencascade.Geometry() as geom:
+        square = square_loop(geom)
+        curve_loop = circle_loop(geom)
+        surf1 = geom.add_plane_surface(square)
+        surf2 = geom.add_plane_surface(curve_loop)
+        geom.boolean_fragments(surf1, surf2)
         # Gmsh 4 default format MSH4 doesn't have geometrical entities.
-        mesh = pygmsh.generate_mesh(geo_object)
+        mesh = geom.generate_mesh()
 
     ref = 1.0
     val = compute_volume(mesh)
@@ -115,18 +115,18 @@ def test_fragments_diff_union():
     Construct it with boolean operations and verify that it is the same.
     """
     # construct surface using boolean
-    with pygmsh.opencascade.Geometry() as geo_object:
-        geo_object.characteristic_length_min = 0.04
-        geo_object.characteristic_length_max = 0.04
-        square = square_loop(geo_object)
-        surf1 = geo_object.add_plane_surface(square)
-        curve_loop = circle_loop(geo_object)
-        surf2 = geo_object.add_plane_surface(curve_loop)
+    with pygmsh.opencascade.Geometry() as geom:
+        geom.characteristic_length_min = 0.04
+        geom.characteristic_length_max = 0.04
+        square = square_loop(geom)
+        surf1 = geom.add_plane_surface(square)
+        curve_loop = circle_loop(geom)
+        surf2 = geom.add_plane_surface(curve_loop)
 
-        geo_object.add_physical([surf1], label="1")
-        geo_object.add_physical([surf2], label="2")
-        geo_object.boolean_difference(surf1, surf2, delete_other=False)
-        mesh = pygmsh.generate_mesh(geo_object)
+        geom.add_physical([surf1], label="1")
+        geom.add_physical([surf2], label="2")
+        geom.boolean_difference(surf1, surf2, delete_other=False)
+        mesh = geom.generate_mesh()
 
     ref = 1.0
     assert np.abs(compute_volume(mesh) - ref) < 1e-3 * ref
@@ -151,16 +151,16 @@ def test_diff_physical_assignment():
     Ensure that after a difference operation the initial volume physical label
     is kept for the operated geometry.
     """
-    with pygmsh.opencascade.Geometry() as geo_object2:
-        geo_object2.characteristic_length_min = 0.05
-        geo_object2.characteristic_length_max = 0.05
-        square2 = square_loop(geo_object2)
-        curve_loop2 = circle_loop(geo_object2)
-        surf1 = geo_object2.add_plane_surface(square2)
-        surf2 = geo_object2.add_plane_surface(curve_loop2)
-        geo_object2.add_physical(surf1, label="1")
-        geo_object2.boolean_difference(surf1, surf2)
-        mesh = pygmsh.generate_mesh(geo_object2)
+    with pygmsh.opencascade.Geometry() as geom2:
+        geom2.characteristic_length_min = 0.05
+        geom2.characteristic_length_max = 0.05
+        square2 = square_loop(geom2)
+        curve_loop2 = circle_loop(geom2)
+        surf1 = geom2.add_plane_surface(square2)
+        surf2 = geom2.add_plane_surface(curve_loop2)
+        geom2.add_physical(surf1, label="1")
+        geom2.boolean_difference(surf1, surf2)
+        mesh = geom2.generate_mesh()
     assert np.allclose(
         mesh.cell_data_dict["gmsh:geometrical"]["triangle"],
         np.ones(mesh.cells_dict["triangle"].shape[0]),

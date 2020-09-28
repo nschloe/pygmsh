@@ -28,7 +28,7 @@ def test():
         geom.set_transfinite_curve(l[0], 3, "Progression", 1.0)
         geom.set_recombined_surfaces([rs0])
 
-        mesh = pygmsh.generate_mesh(geom)
+        mesh = geom.generate_mesh()
 
     assert "quad" in mesh.cells_dict.keys()
     ref = np.array([[0, 4, 8, 7], [7, 8, 6, 2], [4, 1, 5, 8], [8, 5, 3, 6]])
