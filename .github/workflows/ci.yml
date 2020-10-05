@@ -38,6 +38,7 @@ jobs:
     - name: Install gmsh
       run: |
         sudo apt-get install -y python3-gmsh
+        pip install gmsh
     - name: Test with tox
       run: |
         pip install tox
