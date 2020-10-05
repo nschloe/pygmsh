@@ -307,6 +307,33 @@ class CommonGeometry:
 
     def set_mesh_size_callback(self, fun):
         gmsh.model.mesh.setSizeCallback(fun)
+        #
+        # If a mesh size is set from a function, ignore the mesh sizes from the
+        # entities.
+        #
+        # From <http://gmsh.info/doc/texinfo/gmsh.html#t10>:
+        # ```
+        # To determine the size of mesh elements, Gmsh locally computes the minimum of
+        #
+        # 1) the size of the model bounding box;
+        # 2) if `Mesh.CharacteristicLengthFromPoints' is set, the mesh size specified at
+        #    geometrical points;
+        # 3) if `Mesh.CharacteristicLengthFromCurvature' is set, the mesh size based on
+        #    the curvature and `Mesh.MinimumElementsPerTwoPi';
+        # 4) the background mesh field;
+        # 5) any per-entity mesh size constraint.
+        #
+        # This value is then constrained in the interval
+        # [`Mesh.CharacteristicLengthMin', `Mesh.CharacteristicLengthMax'] and
+        # multiplied by `Mesh.CharacteristicLengthFactor'.  In addition, boundary mesh
+        # sizes (on curves or surfaces) are interpolated inside the enclosed entity
+        # (surface or volume, respectively) if the option
+        # `Mesh.CharacteristicLengthExtendFromBoundary' is set (which is the case by
+        # default).
+        # ```
+        gmsh.option.setNumber("Mesh.CharacteristicLengthExtendFromBoundary", 0)
+        gmsh.option.setNumber("Mesh.CharacteristicLengthFromPoints", 0)
+        gmsh.option.setNumber("Mesh.CharacteristicLengthFromCurvature", 0)
 
     def generate_mesh(  # noqa: C901
         self,
