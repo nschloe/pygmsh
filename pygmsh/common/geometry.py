@@ -305,7 +305,7 @@ class CommonGeometry:
         """
         self._EMBED_QUEUE.append((input_entity, volume))
 
-    def set_mesh_size_callback(self, fun):
+    def set_mesh_size_callback(self, fun, ignore_other_mesh_sizes=True):
         gmsh.model.mesh.setSizeCallback(fun)
         #
         # If a mesh size is set from a function, ignore the mesh sizes from the
@@ -331,9 +331,10 @@ class CommonGeometry:
         # `Mesh.CharacteristicLengthExtendFromBoundary' is set (which is the case by
         # default).
         # ```
-        gmsh.option.setNumber("Mesh.CharacteristicLengthExtendFromBoundary", 0)
-        gmsh.option.setNumber("Mesh.CharacteristicLengthFromPoints", 0)
-        gmsh.option.setNumber("Mesh.CharacteristicLengthFromCurvature", 0)
+        if ignore_other_mesh_sizes:
+            gmsh.option.setNumber("Mesh.CharacteristicLengthExtendFromBoundary", 0)
+            gmsh.option.setNumber("Mesh.CharacteristicLengthFromPoints", 0)
+            gmsh.option.setNumber("Mesh.CharacteristicLengthFromCurvature", 0)
 
     def generate_mesh(  # noqa: C901
         self,
