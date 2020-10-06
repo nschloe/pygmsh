@@ -161,5 +161,4 @@ class Geometry(common.CommonGeometry):
             [d.dim_tag for d in d0],
             [d.dim_tag for d in d1],
         )
-        print("out", dim_tags)
         return [Dummy(*dim_tag) for dim_tag in dim_tags]

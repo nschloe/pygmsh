@@ -29,7 +29,6 @@ class CommonGeometry:
         self._BOOLEAN_ID = 0
         self._ARRAY_ID = 0
         self._FIELD_ID = 0
-        self._TAKEN_PHYSICALGROUP_IDS = []
         self._COMPOUND_ENTITIES = []
         self._RECOMBINE_ENTITIES = []
         self._EMBED_QUEUE = []
@@ -38,6 +37,7 @@ class CommonGeometry:
         self._TRANSFINITE_VOLUME_QUEUE = []
         self._AFTER_SYNC_QUEUE = []
         self._SIZE_QUEUE = []
+        self._PHYSICAL_QUEUE = []
 
     def __enter__(self):
         gmsh.initialize()
@@ -93,16 +93,16 @@ class CommonGeometry:
         if not isinstance(entities, list):
             entities = [entities]
 
+        # make sure the dimensionality is the same for all entities
         dim = entities[0].dim
         for e in entities:
             assert e.dim == dim
 
-        # label = self._new_physical_group(label)
-        tag = gmsh.model.addPhysicalGroup(dim, [e._ID for e in entities])
         if label is not None:
             if not isinstance(label, str):
                 raise ValueError(f"Physical label must be string, not {type(label)}.")
-            gmsh.model.setPhysicalName(dim, tag, label)
+
+        self._PHYSICAL_QUEUE.append((entities, label))
 
     def set_transfinite_curve(self, curve, num_nodes, mesh_type, coeff):
         assert mesh_type in ["Progression", "Bulk"]
@@ -361,6 +361,11 @@ class CommonGeometry:
                 gmsh.model.getBoundary(item.dim_tags, False, False, True), size
             )
 
+        for entities, label in self._PHYSICAL_QUEUE:
+            tag = gmsh.model.addPhysicalGroup(dim, [e._ID for e in entities])
+            if label is not None:
+                gmsh.model.setPhysicalName(dim, tag, label)
+
         if order is not None:
             gmsh.model.mesh.setOrder(order)
 
@@ -396,13 +401,13 @@ class CommonGeometry:
                 )
             )
 
-        # print(gmsh.model.getPhysicalGroups())
-        # for dim_tag in gmsh.model.getPhysicalGroups():
-        #     name = gmsh.model.getPhysicalName(*dim_tag)
-        #     print(name)
-        #     ent = gmsh.model.getEntitiesForPhysicalGroup(*dim_tag)
-        #     print(ent)
-        # exit(1)
+        print(gmsh.model.getPhysicalGroups())
+        for dim_tag in gmsh.model.getPhysicalGroups():
+            name = gmsh.model.getPhysicalName(*dim_tag)
+            print(name)
+            ent = gmsh.model.getEntitiesForPhysicalGroup(*dim_tag)
+            print(ent)
+        exit(1)
 
         # print("a", gmsh.model.getEntities())
         # grps = gmsh.model.getPhysicalGroups()
