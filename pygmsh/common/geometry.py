@@ -89,30 +89,6 @@ class CommonGeometry:
     def add_polygon(self, *args, **kwargs):
         return Polygon(self, *args, **kwargs)
 
-    def _new_physical_group(self, label=None):
-        # See
-        # https://github.com/nschloe/pygmsh/issues/46#issuecomment-286684321
-        # for context.
-        max_id = (
-            0
-            if not self._TAKEN_PHYSICALGROUP_IDS
-            else max(self._TAKEN_PHYSICALGROUP_IDS)
-        )
-
-        if label is None:
-            label = max_id + 1
-
-        if isinstance(label, int):
-            assert (
-                label not in self._TAKEN_PHYSICALGROUP_IDS
-            ), f"Physical group label {label} already taken."
-            self._TAKEN_PHYSICALGROUP_IDS += [label]
-            return str(label)
-
-        assert isinstance(label, str)
-        self._TAKEN_PHYSICALGROUP_IDS += [max_id + 1]
-        return f'"{label}"'
-
     def add_physical(self, entities, label=None):
         if not isinstance(entities, list):
             entities = [entities]
@@ -121,9 +97,11 @@ class CommonGeometry:
         for e in entities:
             assert e.dim == dim
 
-        label = self._new_physical_group(label)
+        # label = self._new_physical_group(label)
         tag = gmsh.model.addPhysicalGroup(dim, [e._ID for e in entities])
         if label is not None:
+            if not isinstance(label, str):
+                raise ValueError(f"Physical label must be string, not {type(label)}.")
             gmsh.model.setPhysicalName(dim, tag, label)
 
     def set_transfinite_curve(self, curve, num_nodes, mesh_type, coeff):
@@ -165,8 +143,10 @@ class CommonGeometry:
 
         assert len(translation_axis) == 3
 
+        ie_list = input_entity if isinstance(input_entity, list) else [input_entity]
+
         out_dim_tags = self.env.extrude(
-            input_entity.dim_tags,
+            [e.dim_tag for e in ie_list],
             *translation_axis,
             numElements=num_layers,
             heights=heights,
@@ -293,6 +273,9 @@ class CommonGeometry:
     def mirror(self, obj, abcd):
         self.env.mirror(obj.dim_tags, *abcd)
 
+    def remove(self, obj, recursive=False):
+        self.env.remove(obj.dim_tags, recursive=recursive)
+
     def in_surface(self, input_entity, surface):
         """Embed the point(s) or curve(s) in the given surface. The surface mesh will
         conform to the mesh of the point(s) or curves(s).
@@ -412,6 +395,14 @@ class CommonGeometry:
                     node_tags.reshape(-1, num_nodes_per_cell) - 1,
                 )
             )
+
+        # print(gmsh.model.getPhysicalGroups())
+        # for dim_tag in gmsh.model.getPhysicalGroups():
+        #     name = gmsh.model.getPhysicalName(*dim_tag)
+        #     print(name)
+        #     ent = gmsh.model.getEntitiesForPhysicalGroup(*dim_tag)
+        #     print(ent)
+        # exit(1)
 
         # print("a", gmsh.model.getEntities())
         # grps = gmsh.model.getPhysicalGroups()

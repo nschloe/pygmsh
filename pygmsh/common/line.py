@@ -25,7 +25,8 @@ class Line(LineBase):
         assert isinstance(p0, Point)
         assert isinstance(p1, Point)
         id0 = env.addLine(p0._ID, p1._ID)
-        self.dim_tags = [(1, id0)]
+        self.dim_tag = (1, id0)
+        self.dim_tags = [self.dim_tag]
         super().__init__(id0, [p0, p1])
 
     def __repr__(self):

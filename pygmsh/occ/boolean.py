@@ -6,4 +6,10 @@ class Boolean:
         self.boolean_type = boolean_type
 
     def __repr__(self):
-        return f"<pygmsh Boolean {self.boolean_type} object, dim={self.dim}>"
+        return (
+            "<"
+            f"pygmsh Boolean {self.boolean_type} object, "
+            f"dim={self.dim}, "
+            f"len(dim_tags)={len(self.dim_tags)}"
+            ">"
+        )

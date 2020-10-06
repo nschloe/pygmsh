@@ -29,7 +29,8 @@ class Cylinder:
         self.angle = angle
 
         self._ID = gmsh.model.occ.addCylinder(*x0, *axis, radius, angle=angle)
-        self.dim_tags = [(3, self._ID)]
+        self.dim_tag = (3, self._ID)
+        self.dim_tags = [self.dim_tag]
 
     def __repr__(self):
         return f"<pygmsh Cylinder object, ID {self._ID}>"

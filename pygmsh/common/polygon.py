@@ -35,6 +35,7 @@ class Polygon:
         # self.surface = host.add_plane_surface(ll, holes) if make_surface else None
         if make_surface:
             self.surface = host.add_plane_surface(self.curve_loop, holes)
+            self.dim_tag = self.surface.dim_tag
             self.dim_tags = self.surface.dim_tags
             self._ID = self.surface._ID
 

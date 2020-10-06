@@ -32,7 +32,8 @@ class Ball:
         self._ID = gmsh.model.occ.addSphere(
             *center, radius, angle1=angle1, angle2=angle2, angle3=angle3
         )
-        self.dim_tags = [(3, self._ID)]
+        self.dim_tag = (3, self._ID)
+        self.dim_tags = [self.dim_tag]
 
     def __repr__(self):
         return f"<pygmsh Ball object (OCC), ID {self._ID}>"

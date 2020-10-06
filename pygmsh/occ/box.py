@@ -23,4 +23,5 @@ class Box:
         self.x0 = x0
         self.extents = extents
         self._ID = gmsh.model.occ.addBox(*x0, *extents)
-        self.dim_tags = [(3, self._ID)]
+        self.dim_tag = (3, self._ID)
+        self.dim_tags = [self.dim_tag]

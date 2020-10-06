@@ -2,11 +2,13 @@ import gmsh
 
 from .. import common
 from .ball import Ball
-from .boolean import Boolean
+
+# from .boolean import Boolean
 from .box import Box
 from .cone import Cone
 from .cylinder import Cylinder
 from .disk import Disk
+from .dummy import Dummy
 from .rectangle import Rectangle
 from .torus import Torus
 from .wedge import Wedge
@@ -99,13 +101,15 @@ class Geometry(common.CommonGeometry):
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
         """
-        ent = entities[0].dim_tags
+        entities = [e if isinstance(e, list) else [e] for e in entities]
+
+        ent = [e.dim_tag for e in entities[0]]
         # form subsequent intersections
         # https://gitlab.onelab.info/gmsh/gmsh/-/issues/999
         for e in entities[1:]:
             out, _ = gmsh.model.occ.intersect(
                 ent,
-                e.dim_tags,
+                [ee.dim_tag for ee in e],
                 removeObject=True,
                 removeTool=True,
             )
@@ -113,38 +117,49 @@ class Geometry(common.CommonGeometry):
                 raise RuntimeError("Empty intersection.")
             assert all(out[0] == item for item in out)
             ent = [out[0]]
-        return Boolean(ent, "Intersection")
+
+        return [Dummy(*ent[0])]
 
     def boolean_union(self, entities):
         """Boolean union, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
         """
-        out, _ = gmsh.model.occ.fuse(
-            entities[0].dim_tags,
-            [dt for e in entities[1:] for dt in e.dim_tags],
+        entities = [e if isinstance(e, list) else [e] for e in entities]
+
+        dim_tags, _ = gmsh.model.occ.fuse(
+            [e.dim_tag for e in entities[0]],
+            [ee.dim_tag for e in entities[1:] for ee in e],
             removeObject=True,
             removeTool=True,
         )
-        return Boolean(out, "Union")
+        return [Dummy(*dim_tag) for dim_tag in dim_tags]
 
     def boolean_difference(self, d0, d1, delete_first=True, delete_other=True):
         """Boolean difference, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
         """
-        out, _ = gmsh.model.occ.cut(
-            d0.dim_tags,
-            d1.dim_tags,
+        d0 = d0 if isinstance(d0, list) else [d0]
+        d1 = d1 if isinstance(d1, list) else [d1]
+        dim_tags, _ = gmsh.model.occ.cut(
+            [d.dim_tag for d in d0],
+            [d.dim_tag for d in d1],
             removeObject=delete_first,
             removeTool=delete_other,
         )
-        return Boolean(out, "Difference")
+        return [Dummy(*dim_tag) for dim_tag in dim_tags]
 
     def boolean_fragments(self, d0, d1):
         """Boolean fragments, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
         """
-        out, _ = gmsh.model.occ.fragment(d0.dim_tags, d1.dim_tags)
-        return Boolean(out, "Fragments")
+        d0 = d0 if isinstance(d0, list) else [d0]
+        d1 = d1 if isinstance(d1, list) else [d1]
+        dim_tags, _ = gmsh.model.occ.fragment(
+            [d.dim_tag for d in d0],
+            [d.dim_tag for d in d1],
+        )
+        print("out", dim_tags)
+        return [Dummy(*dim_tag) for dim_tag in dim_tags]

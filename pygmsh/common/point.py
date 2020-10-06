@@ -21,7 +21,8 @@ class Point:
         if mesh_size is not None:
             args.append(mesh_size)
         self._ID = env.addPoint(*args)
-        self.dim_tags = [(0, self._ID)]
+        self.dim_tag = (0, self._ID)
+        self.dim_tags = [self.dim_tag]
 
     def __repr__(self):
         X = ", ".join(str(x) for x in self.x)

@@ -44,7 +44,8 @@ class PlaneSurface:
 
         curve_loops = [self.curve_loop] + self.holes
         self._ID = env.addPlaneSurface([ll._ID for ll in curve_loops])
-        self.dim_tags = [(2, self._ID)]
+        self.dim_tag = (2, self._ID)
+        self.dim_tags = [self.dim_tag]
 
     def __repr__(self):
         return (
