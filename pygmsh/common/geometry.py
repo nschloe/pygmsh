@@ -323,9 +323,6 @@ class CommonGeometry:
         self,
         dim=3,
         order=None,
-        prune_vertices=True,
-        prune_z_0=False,
-        remove_lower_dim_cells=False,
         # http://gmsh.info/doc/texinfo/gmsh.html#index-Mesh_002eAlgorithm
         algorithm=None,
     ):
@@ -383,8 +380,6 @@ class CommonGeometry:
         srt = numpy.argsort(idx)
         assert numpy.all(idx[srt] == numpy.arange(len(idx)))
         points = points[srt]
-        if prune_z_0 and numpy.all(numpy.abs(points[:, 2]) < 1.0e-13):
-            points = points[:, :2]
 
         # extract cells
         elem_types, elem_tags, node_tags = gmsh.model.mesh.getElements()
@@ -431,50 +426,4 @@ class CommonGeometry:
             ]
 
         # make meshio mesh
-        mesh = meshio.Mesh(points, cells, cell_sets=cell_sets)
-
-        if remove_lower_dim_cells:
-            # Only keep the cells of highest topological dimension; discard faces and
-            # such.
-            cells_2d = {"triangle", "quad"}
-            cells_3d = {
-                "tetra",
-                "hexahedron",
-                "wedge",
-                "pyramid",
-                "penta_prism",
-                "hexa_prism",
-            }
-            if any(c.type in cells_3d for c in mesh.cells):
-                keep_types = cells_3d
-            elif any(c.type in cells_2d for c in mesh.cells):
-                keep_types = cells_2d
-            else:
-                keep_types = set(cell_type for cell_type, _ in mesh.cells)
-
-            for name, val in mesh.cell_data.items():
-                mesh.cell_data[name] = [
-                    d for d, c in zip(val, mesh.cells) if c[0] in keep_types
-                ]
-            mesh.cells = [c for c in mesh.cells if c[0] in keep_types]
-
-        if prune_vertices:
-            # Make sure to include only those vertices which belong to a cell.
-            ncells = numpy.concatenate([numpy.concatenate(c) for _, c in mesh.cells])
-            uvertices, uidx = numpy.unique(ncells, return_inverse=True)
-
-            k = 0
-            cells = []
-            for key, cellblock in mesh.cells:
-                n = numpy.prod(cellblock.shape)
-                cells.append(
-                    meshio.CellBlock(key, uidx[k : k + n].reshape(cellblock.shape))
-                )
-                k += n
-            mesh.cells = cells
-
-            mesh.points = mesh.points[uvertices]
-            for key in mesh.point_data:
-                mesh.point_data[key] = mesh.point_data[key][uvertices]
-
-        return mesh
+        return meshio.Mesh(points, cells, cell_sets=cell_sets)
