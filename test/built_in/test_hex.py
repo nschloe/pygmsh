@@ -23,17 +23,14 @@ def test(lcar=1.0):
         )
         # compute_volume only supports 3D for tetras, but does return surface area for
         # quads
-        mesh = geom.generate_mesh(prune_vertices=False)
+        mesh = geom.generate_mesh()
+        # mesh.remove_lower_dimensional_cells()
+        # mesh.remove_orphaned_nodes()
 
     ref = sum(l * w for l, w in permutations(lbw, 2))  # surface area
     # TODO compute hex volumes
-    assert (
-        abs(
-            compute_volume(meshio.Mesh(mesh.points, {"quad": mesh.cells_dict["quad"]}))
-            - ref
-        )
-        < 1.0e-2 * ref
-    )
+    quad_mesh = meshio.Mesh(mesh.points, {"quad": mesh.cells_dict["quad"]})
+    assert abs(compute_volume(quad_mesh) - ref) < 1.0e-2 * ref
     return mesh
 
 

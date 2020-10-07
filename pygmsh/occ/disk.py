@@ -31,7 +31,8 @@ class Disk:
         self.radius1 = radius1
 
         self._ID = gmsh.model.occ.addDisk(*x0, radius0, radius1)
-        self.dim_tags = [(self.dim, self._ID)]
+        self.dim_tag = (self.dim, self._ID)
+        self.dim_tags = [self.dim_tag]
 
     def __repr__(self):
         return f"<pygmsh Disk object, ID {self._ID}>"

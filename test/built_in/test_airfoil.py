@@ -137,7 +137,8 @@ def test():
         geom.set_recombined_surfaces([polygon.surface])
 
         ref = 10.525891646546
-        mesh = geom.generate_mesh(remove_lower_dim_cells=True)
+        mesh = geom.generate_mesh()
+
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 

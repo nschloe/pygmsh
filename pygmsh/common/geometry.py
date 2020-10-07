@@ -29,7 +29,6 @@ class CommonGeometry:
         self._BOOLEAN_ID = 0
         self._ARRAY_ID = 0
         self._FIELD_ID = 0
-        self._TAKEN_PHYSICALGROUP_IDS = []
         self._COMPOUND_ENTITIES = []
         self._RECOMBINE_ENTITIES = []
         self._EMBED_QUEUE = []
@@ -38,6 +37,7 @@ class CommonGeometry:
         self._TRANSFINITE_VOLUME_QUEUE = []
         self._AFTER_SYNC_QUEUE = []
         self._SIZE_QUEUE = []
+        self._PHYSICAL_QUEUE = []
 
     def __enter__(self):
         gmsh.initialize()
@@ -89,42 +89,20 @@ class CommonGeometry:
     def add_polygon(self, *args, **kwargs):
         return Polygon(self, *args, **kwargs)
 
-    def _new_physical_group(self, label=None):
-        # See
-        # https://github.com/nschloe/pygmsh/issues/46#issuecomment-286684321
-        # for context.
-        max_id = (
-            0
-            if not self._TAKEN_PHYSICALGROUP_IDS
-            else max(self._TAKEN_PHYSICALGROUP_IDS)
-        )
-
-        if label is None:
-            label = max_id + 1
-
-        if isinstance(label, int):
-            assert (
-                label not in self._TAKEN_PHYSICALGROUP_IDS
-            ), f"Physical group label {label} already taken."
-            self._TAKEN_PHYSICALGROUP_IDS += [label]
-            return str(label)
-
-        assert isinstance(label, str)
-        self._TAKEN_PHYSICALGROUP_IDS += [max_id + 1]
-        return f'"{label}"'
-
     def add_physical(self, entities, label=None):
         if not isinstance(entities, list):
             entities = [entities]
 
+        # make sure the dimensionality is the same for all entities
         dim = entities[0].dim
         for e in entities:
             assert e.dim == dim
 
-        label = self._new_physical_group(label)
-        tag = gmsh.model.addPhysicalGroup(dim, [e._ID for e in entities])
         if label is not None:
-            gmsh.model.setPhysicalName(dim, tag, label)
+            if not isinstance(label, str):
+                raise ValueError(f"Physical label must be string, not {type(label)}.")
+
+        self._PHYSICAL_QUEUE.append((entities, label))
 
     def set_transfinite_curve(self, curve, num_nodes, mesh_type, coeff):
         assert mesh_type in ["Progression", "Bulk"]
@@ -165,8 +143,10 @@ class CommonGeometry:
 
         assert len(translation_axis) == 3
 
+        ie_list = input_entity if isinstance(input_entity, list) else [input_entity]
+
         out_dim_tags = self.env.extrude(
-            input_entity.dim_tags,
+            [e.dim_tag for e in ie_list],
             *translation_axis,
             numElements=num_layers,
             heights=heights,
@@ -293,6 +273,9 @@ class CommonGeometry:
     def mirror(self, obj, abcd):
         self.env.mirror(obj.dim_tags, *abcd)
 
+    def remove(self, obj, recursive=False):
+        self.env.remove(obj.dim_tags, recursive=recursive)
+
     def in_surface(self, input_entity, surface):
         """Embed the point(s) or curve(s) in the given surface. The surface mesh will
         conform to the mesh of the point(s) or curves(s).
@@ -340,9 +323,6 @@ class CommonGeometry:
         self,
         dim=3,
         order=None,
-        prune_vertices=True,
-        prune_z_0=False,
-        remove_lower_dim_cells=False,
         # http://gmsh.info/doc/texinfo/gmsh.html#index-Mesh_002eAlgorithm
         algorithm=None,
     ):
@@ -378,6 +358,11 @@ class CommonGeometry:
                 gmsh.model.getBoundary(item.dim_tags, False, False, True), size
             )
 
+        for entities, label in self._PHYSICAL_QUEUE:
+            tag = gmsh.model.addPhysicalGroup(dim, [e._ID for e in entities])
+            if label is not None:
+                gmsh.model.setPhysicalName(dim, tag, label)
+
         if order is not None:
             gmsh.model.mesh.setOrder(order)
 
@@ -395,8 +380,6 @@ class CommonGeometry:
         srt = numpy.argsort(idx)
         assert numpy.all(idx[srt] == numpy.arange(len(idx)))
         points = points[srt]
-        if prune_z_0 and numpy.all(numpy.abs(points[:, 2]) < 1.0e-13):
-            points = points[:, :2]
 
         # extract cells
         elem_types, elem_tags, node_tags = gmsh.model.mesh.getElements()
@@ -413,61 +396,34 @@ class CommonGeometry:
                 )
             )
 
-        # print("a", gmsh.model.getEntities())
-        # grps = gmsh.model.getPhysicalGroups()
-        # print("a", grps)
-        # for dim, tag in grps:
-        #     print("a", gmsh.model.getPhysicalName(dim, tag))
-        #     ent = gmsh.model.getEntitiesForPhysicalGroup(dim, tag)
-        #     print("a", ent)
-        #     assert len(ent) == 1
-        #     print("a", gmsh.model.mesh.getElements(dim, ent[0]))
+        cell_sets = {}
+        for dim, tag in gmsh.model.getPhysicalGroups():
+            name = gmsh.model.getPhysicalName(dim, tag)
+            cell_sets[name] = [[] for _ in range(len(cells))]
+            for e in gmsh.model.getEntitiesForPhysicalGroup(dim, tag):
+                # TODO node_tags?
+                # elem_types, elem_tags, node_tags
+                elem_types, elem_tags, _ = gmsh.model.mesh.getElements(dim, e)
+                assert len(elem_types) == len(elem_tags)
+                assert len(elem_types) == 1
+                elem_type = elem_types[0]
+                elem_tags = elem_tags[0]
+
+                meshio_cell_type = meshio.gmsh.gmsh_to_meshio_type[elem_type]
+                # make sure that the cell type appears only once in the cell list
+                # -- for now
+                idx = []
+                for k, cell_block in enumerate(cells):
+                    if cell_block.type == meshio_cell_type:
+                        idx.append(k)
+                assert len(idx) == 1
+                idx = idx[0]
+                cell_sets[name][idx].append(elem_tags - 1)
+
+            cell_sets[name] = [
+                (None if len(idcs) == 0 else numpy.concatenate(idcs))
+                for idcs in cell_sets[name]
+            ]
 
         # make meshio mesh
-        mesh = meshio.Mesh(points, cells)
-
-        if remove_lower_dim_cells:
-            # Only keep the cells of highest topological dimension; discard faces and
-            # such.
-            cells_2d = {"triangle", "quad"}
-            cells_3d = {
-                "tetra",
-                "hexahedron",
-                "wedge",
-                "pyramid",
-                "penta_prism",
-                "hexa_prism",
-            }
-            if any(c.type in cells_3d for c in mesh.cells):
-                keep_types = cells_3d
-            elif any(c.type in cells_2d for c in mesh.cells):
-                keep_types = cells_2d
-            else:
-                keep_types = set(cell_type for cell_type, _ in mesh.cells)
-
-            for name, val in mesh.cell_data.items():
-                mesh.cell_data[name] = [
-                    d for d, c in zip(val, mesh.cells) if c[0] in keep_types
-                ]
-            mesh.cells = [c for c in mesh.cells if c[0] in keep_types]
-
-        if prune_vertices:
-            # Make sure to include only those vertices which belong to a cell.
-            ncells = numpy.concatenate([numpy.concatenate(c) for _, c in mesh.cells])
-            uvertices, uidx = numpy.unique(ncells, return_inverse=True)
-
-            k = 0
-            cells = []
-            for key, cellblock in mesh.cells:
-                n = numpy.prod(cellblock.shape)
-                cells.append(
-                    meshio.CellBlock(key, uidx[k : k + n].reshape(cellblock.shape))
-                )
-                k += n
-            mesh.cells = cells
-
-            mesh.points = mesh.points[uvertices]
-            for key in mesh.point_data:
-                mesh.point_data[key] = mesh.point_data[key][uvertices]
-
-        return mesh
+        return meshio.Mesh(points, cells, cell_sets=cell_sets)

@@ -30,7 +30,7 @@ def test(lcar=0.3):
         geom.add_physical(p1, label="c")
         geom.add_physical(c0, label="arc")
         geom.add_physical(pacman)
-        geom.add_physical(pacman, label=77)
+        geom.add_physical(pacman, label="77")
 
         mesh = geom.generate_mesh()
 
