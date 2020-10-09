@@ -4,6 +4,30 @@ import numpy
 from .. import common
 
 
+class Circle:
+    def __init__(
+        self,
+        x0,
+        radius,
+        R,
+        compound,
+        num_sections,
+        holes,
+        curve_loop,
+        plane_surface,
+        mesh_size=None,
+    ):
+        self.x0 = x0
+        self.radius = radius
+        self.mesh_size = mesh_size
+        self.R = R
+        self.compound = compound
+        self.num_sections = num_sections
+        self.holes = holes
+        self.curve_loop = curve_loop
+        self.plane_surface = plane_surface
+
+
 class Geometry(common.CommonGeometry):
     def __init__(self):
         super().__init__(gmsh.model.geo)
@@ -71,29 +95,6 @@ class Geometry(common.CommonGeometry):
                 self._COMPOUND_ENTITIES.append((2, [plane_surface._ID]))
         else:
             plane_surface = None
-
-        class Circle:
-            def __init__(
-                self,
-                x0,
-                radius,
-                R,
-                compound,
-                num_sections,
-                holes,
-                curve_loop,
-                plane_surface,
-                mesh_size=None,
-            ):
-                self.x0 = x0
-                self.radius = radius
-                self.mesh_size = mesh_size
-                self.R = R
-                self.compound = compound
-                self.num_sections = num_sections
-                self.holes = holes
-                self.curve_loop = curve_loop
-                self.plane_surface = plane_surface
 
         return Circle(
             x0,

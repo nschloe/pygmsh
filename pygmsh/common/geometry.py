@@ -359,9 +359,11 @@ class CommonGeometry:
             )
 
         for entities, label in self._PHYSICAL_QUEUE:
-            tag = gmsh.model.addPhysicalGroup(dim, [e._ID for e in entities])
+            d = entities[0].dim
+            assert all(e.dim == d for e in entities)
+            tag = gmsh.model.addPhysicalGroup(d, [e._ID for e in entities])
             if label is not None:
-                gmsh.model.setPhysicalName(dim, tag, label)
+                gmsh.model.setPhysicalName(d, tag, label)
 
         if order is not None:
             gmsh.model.mesh.setOrder(order)
