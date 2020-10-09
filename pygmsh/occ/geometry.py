@@ -3,7 +3,6 @@ import gmsh
 from .. import common
 from .ball import Ball
 
-# from .boolean import Boolean
 from .box import Box
 from .cone import Cone
 from .cylinder import Cylinder
