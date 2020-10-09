@@ -102,7 +102,7 @@ class CommonGeometry:
             if not isinstance(label, str):
                 raise ValueError(f"Physical label must be string, not {type(label)}.")
 
-        self._PHYSICAL_QUEUE.append((entities, label))
+        self._PHYSICAL_QUEUE.append((entities, dim, label))
 
     def set_transfinite_curve(self, curve, num_nodes, mesh_type, coeff):
         assert mesh_type in ["Progression", "Bulk"]
@@ -358,7 +358,7 @@ class CommonGeometry:
                 gmsh.model.getBoundary(item.dim_tags, False, False, True), size
             )
 
-        for entities, label in self._PHYSICAL_QUEUE:
+        for entities, dim, label in self._PHYSICAL_QUEUE:
             tag = gmsh.model.addPhysicalGroup(dim, [e._ID for e in entities])
             if label is not None:
                 gmsh.model.setPhysicalName(dim, tag, label)
