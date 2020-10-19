@@ -45,8 +45,12 @@ class CommonGeometry:
         return self
 
     def __exit__(self, *a):
-        # https://gitlab.onelab.info/gmsh/gmsh/-/issues/1036
-        gmsh.model.mesh.removeSizeCallback()
+        try:
+            # Gmsh >= 4.7.0
+            # https://gitlab.onelab.info/gmsh/gmsh/-/issues/1036
+            gmsh.model.mesh.removeSizeCallback()
+        except AttributeError:
+            pass
         gmsh.finalize()
 
     def synchronize(self):
