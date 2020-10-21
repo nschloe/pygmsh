@@ -26,6 +26,15 @@ def optimize_cli(argv=None):
     )
 
     parser.add_argument(
+        "-m",
+        "--method",
+        default="",
+        # Valid choices are on
+        # https://gmsh.info/doc/texinfo/gmsh.html#Namespace-gmsh_002fmodel_002fmesh
+        help="method (e.g., \"\", Netgen, ...)",
+    )
+
+    parser.add_argument(
         "-v",
         "--version",
         action="version",
@@ -35,7 +44,7 @@ def optimize_cli(argv=None):
     args = parser.parse_args(argv)
 
     mesh = meshio.read(args.infile)
-    optimize(mesh, verbose=args.verbose).write(args.outfile)
+    optimize(mesh, method=args.method, verbose=args.verbose).write(args.outfile)
 
 
 def _get_version_text():
