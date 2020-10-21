@@ -1,7 +1,10 @@
+import math
+
 import gmsh
 import numpy
 
 from .. import common
+from .dummy import Dummy
 
 
 class Circle:
@@ -31,6 +34,60 @@ class Circle:
 class Geometry(common.CommonGeometry):
     def __init__(self):
         super().__init__(gmsh.model.geo)
+
+    def revolve(self, *args, **kwargs):
+        if len(args) >= 4:
+            angle = args[3]
+        else:
+            assert "angle" in kwargs
+            angle = kwargs["angle"]
+
+        assert angle < math.pi
+        return super()._revolve(*args, **kwargs)
+
+    def twist(
+        self,
+        input_entity,
+        translation_axis,
+        rotation_axis,
+        point_on_axis,
+        angle,
+        num_layers=None,
+        heights=None,
+        recombine=False,
+    ):
+        """Twist (translation + rotation) of any entity along a given translation_axis,
+        around a given rotation_axis, about a given angle.
+        """
+        if isinstance(num_layers, int):
+            num_layers = [num_layers]
+        if num_layers is None:
+            num_layers = []
+            heights = []
+        else:
+            if heights is None:
+                heights = []
+            else:
+                assert len(num_layers) == len(heights)
+
+        assert len(point_on_axis) == 3
+        assert len(rotation_axis) == 3
+        assert len(translation_axis) == 3
+        assert angle < math.pi
+        out_dim_tags = self.env.twist(
+            input_entity.dim_tags,
+            *point_on_axis,
+            *translation_axis,
+            *rotation_axis,
+            angle,
+            numElements=num_layers,
+            heights=heights,
+            recombine=recombine,
+        )
+        top = Dummy(*out_dim_tags[0])
+        extruded = Dummy(*out_dim_tags[1])
+        lateral = [Dummy(*e) for e in out_dim_tags[2:]]
+        return top, extruded, lateral
 
     def add_circle(
         self,
