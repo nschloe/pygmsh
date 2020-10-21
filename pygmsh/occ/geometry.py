@@ -1,3 +1,5 @@
+import math
+
 import gmsh
 
 from .. import common
@@ -39,6 +41,16 @@ class Geometry(common.CommonGeometry):
     @characteristic_length_max.setter
     def characteristic_length_max(self, val):
         gmsh.option.setNumber("Mesh.CharacteristicLengthMax", val)
+
+    def revolve(self, *args, **kwargs):
+        if len(args) >= 4:
+            angle = args[3]
+        else:
+            assert "angle" in kwargs
+            angle = kwargs["angle"]
+
+        assert angle < 2 * math.pi
+        return super()._revolve(*args, **kwargs)
 
     def add_rectangle(self, *args, mesh_size=None, **kwargs):
         entity = Rectangle(*args, **kwargs)
