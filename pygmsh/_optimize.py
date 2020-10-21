@@ -5,6 +5,8 @@ import gmsh
 import numpy
 import meshio
 
+from .helpers import extract_to_meshio
+
 
 def optimize(mesh, method="", verbose=False):
     mesh.remove_lower_dimensional_cells()
@@ -24,9 +26,8 @@ def optimize(mesh, method="", verbose=False):
         gmsh.merge(str(tmpfile))
         # We need force=True because we're reading from a discrete mesh
         gmsh.model.mesh.optimize(method, force=True)
-        gmsh.write(str(tmpfile))
+        mesh = extract_to_meshio()
         gmsh.finalize()
-        mesh = meshio.read(tmpfile)
 
     if verbose:
         meshplex_mesh = meshplex.from_meshio(mesh)
