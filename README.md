@@ -303,6 +303,23 @@ with pygmsh.occ.Geometry() as geom:
     mesh = geom.generate_mesh()
 ```
 
+#### Optimization
+
+pygmsh can optimize existing meshes, too.
+<!--exdown-skip-->
+```python
+import meshio
+
+mesh = meshio.read("mymesh.vtk")
+optimized_mesh = pygmsh.optimize(mesh, method="")
+```
+You can also use the command-line utility
+```
+pygmsh-optimize input.vtk output.xdmf
+```
+where input and output can be any format supported by
+[meshio](https://pypi.org/project/meshio).
+
 ### Testing
 To run the pygmsh unit tests, check out this repository and type
 ```
