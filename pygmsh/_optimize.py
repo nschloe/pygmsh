@@ -17,7 +17,10 @@ def optimize(mesh, method="", verbose=False):
         meshplex_mesh = meshplex.from_meshio(mesh)
         print_stats(meshplex_mesh)
 
-    # optimize
+    # This writes a temporary file and reads it into gmsh ("merge"). There are other
+    # ways of feeding gmsh a mesh
+    # (https://gitlab.onelab.info/gmsh/gmsh/-/issues/1030#note_11435), but let's not do
+    # that for now.
     with tempfile.TemporaryDirectory() as tmpdirname:
         tmpdir = Path(tmpdirname)
         tmpfile = tmpdir / "tmp.msh"
