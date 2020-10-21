@@ -31,7 +31,7 @@ def optimize_cli(argv=None):
         default="",
         # Valid choices are on
         # https://gmsh.info/doc/texinfo/gmsh.html#Namespace-gmsh_002fmodel_002fmesh
-        help="method (e.g., \"\", Netgen, ...)",
+        help='method (e.g., "", Netgen, ...)',
     )
 
     parser.add_argument(
