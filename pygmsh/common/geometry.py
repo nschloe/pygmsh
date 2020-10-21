@@ -1,5 +1,6 @@
 import gmsh
 
+from ..helpers import extract_to_meshio
 from .bspline import BSpline
 from .circle_arc import CircleArc
 from .curve_loop import CurveLoop
@@ -13,8 +14,6 @@ from .spline import Spline
 from .surface import Surface
 from .surface_loop import SurfaceLoop
 from .volume import Volume
-
-from ..helpers import extract_to_meshio
 
 
 class CommonGeometry:

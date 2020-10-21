@@ -1,9 +1,8 @@
-from pathlib import Path
 import tempfile
+from pathlib import Path
 
 import gmsh
 import numpy
-import meshio
 
 from .helpers import extract_to_meshio
 
@@ -14,6 +13,7 @@ def optimize(mesh, method="", verbose=False):
 
     if verbose:
         import meshplex
+
         meshplex_mesh = meshplex.from_meshio(mesh)
         print_stats(meshplex_mesh)
 
@@ -37,6 +37,7 @@ def optimize(mesh, method="", verbose=False):
 
 def print_stats(mesh):
     import termplotlib
+
     q = mesh.q_radius_ratio
     q_hist, q_bin_edges = numpy.histogram(
         q, bins=numpy.linspace(0.0, 1.0, num=41, endpoint=True)

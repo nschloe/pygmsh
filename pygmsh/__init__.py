@@ -1,7 +1,7 @@
 from . import geo, occ
 from .__about__ import __gmsh_version__, __version__
-from .helpers import orient_lines, rotation_matrix
 from ._optimize import optimize
+from .helpers import orient_lines, rotation_matrix
 
 __all__ = [
     "geo",

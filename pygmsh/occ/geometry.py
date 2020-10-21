@@ -4,7 +4,6 @@ import gmsh
 
 from .. import common
 from .ball import Ball
-
 from .box import Box
 from .cone import Cone
 from .cylinder import Cylinder

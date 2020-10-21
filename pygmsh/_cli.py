@@ -2,7 +2,8 @@ import argparse
 from sys import version_info
 
 import meshio
-from .__about__ import __version__, __gmsh_version__
+
+from .__about__ import __gmsh_version__, __version__
 from ._optimize import optimize
 
 
