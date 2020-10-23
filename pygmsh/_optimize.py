@@ -11,12 +11,6 @@ def optimize(mesh, method="", verbose=False):
     mesh.remove_lower_dimensional_cells()
     mesh.cell_data = {}
 
-    if verbose:
-        import meshplex
-
-        meshplex_mesh = meshplex.from_meshio(mesh)
-        print_stats(meshplex_mesh)
-
     # This writes a temporary file and reads it into gmsh ("merge"). There are other
     # ways of feeding gmsh a mesh
     # (https://gitlab.onelab.info/gmsh/gmsh/-/issues/1030#note_11435), but let's not do
@@ -26,15 +20,13 @@ def optimize(mesh, method="", verbose=False):
         tmpfile = tmpdir / "tmp.msh"
         mesh.write(tmpfile)
         gmsh.initialize()
+        if verbose:
+            gmsh.option.setNumber("General.Terminal", 1)
         gmsh.merge(str(tmpfile))
         # We need force=True because we're reading from a discrete mesh
         gmsh.model.mesh.optimize(method, force=True)
         mesh = extract_to_meshio()
         gmsh.finalize()
-
-    if verbose:
-        meshplex_mesh = meshplex.from_meshio(mesh)
-        print_stats(meshplex_mesh)
     return mesh
 
 
