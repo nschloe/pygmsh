@@ -41,6 +41,9 @@ class Geometry(common.CommonGeometry):
     def characteristic_length_max(self, val):
         gmsh.option.setNumber("Mesh.CharacteristicLengthMax", val)
 
+    def force_outward_normals(self, tag):
+        self._OUTWARD_NORMALS.append(tag)
+
     def revolve(self, *args, **kwargs):
         if len(args) >= 4:
             angle = args[3]
