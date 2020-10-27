@@ -35,6 +35,7 @@ class CommonGeometry:
         self._AFTER_SYNC_QUEUE = []
         self._SIZE_QUEUE = []
         self._PHYSICAL_QUEUE = []
+        self._OUTWARD_NORMALS = []
 
     def __enter__(self):
         gmsh.initialize()
@@ -323,6 +324,9 @@ class CommonGeometry:
             tag = gmsh.model.addPhysicalGroup(d, [e._ID for e in entities])
             if label is not None:
                 gmsh.model.setPhysicalName(d, tag, label)
+
+        for entity in self._OUTWARD_NORMALS:
+            gmsh.model.mesh.setOutwardOrientation(entity.id)
 
         if order is not None:
             gmsh.model.mesh.setOrder(order)
