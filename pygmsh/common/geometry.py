@@ -331,8 +331,7 @@ class CommonGeometry:
         if order is not None:
             gmsh.model.mesh.setOrder(order)
 
-        if verbose:
-            gmsh.option.setNumber("General.Terminal", 1)
+        gmsh.option.setNumber("General.Terminal", 1 if verbose else 0)
 
         # set algorithm
         # http://gmsh.info/doc/texinfo/gmsh.html#index-Mesh_002eAlgorithm
