@@ -26,7 +26,8 @@ class Torus:
         self.alpha = alpha
 
         self._ID = gmsh.model.occ.addTorus(*center, radius0, radius1, angle=alpha)
-        self.dim_tags = [(3, self._ID)]
+        self.dim_tag = (3, self._ID)
+        self.dim_tags = [self.dim_tag]
 
     def __repr__(self):
         return f"<pygmsh Torus object, ID {self._ID}>"
