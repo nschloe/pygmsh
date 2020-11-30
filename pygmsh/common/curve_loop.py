@@ -25,7 +25,8 @@ class CurveLoop:
             assert curves[k].points[-1] == curves[k + 1].points[0]
         assert curves[-1].points[-1] == curves[0].points[0]
         self._ID = env.addCurveLoop([c._ID for c in curves])
-
+        self.dim_tag = (1, self._ID)
+        self.dim_tags = [self.dim_tag]
         self.curves = curves
 
     def __len__(self):

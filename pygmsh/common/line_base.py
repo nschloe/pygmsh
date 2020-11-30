@@ -13,6 +13,8 @@ class LineBase:
 
     def __init__(self, id0, points):
         self._ID = id0
+        self.dim_tag = (1, self._ID)
+        self.dim_tags = [self.dim_tag]
         self.points = points
 
     def __neg__(self):

@@ -35,3 +35,5 @@ class Volume:
 
         surface_loops = [surface_loop] + holes
         self._ID = env.addVolume([s._ID for s in surface_loops])
+        self.dim_tag = (3, self._ID)
+        self.dim_tags = [self.dim_tag]

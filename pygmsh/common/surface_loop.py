@@ -20,3 +20,5 @@ class SurfaceLoop:
     def __init__(self, env, surfaces):
         self.surfaces = surfaces
         self._ID = env.addSurfaceLoop([s._ID for s in surfaces])
+        self.dim_tag = (2, self._ID)
+        self.dim_tags = [self.dim_tag]
