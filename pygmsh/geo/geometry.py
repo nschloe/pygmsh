@@ -142,14 +142,14 @@ class Geometry(common.CommonGeometry):
         ] + [self.add_circle_arc(p[-1], p[0], p[1])]
 
         if compound:
-            self._COMPOUND_ENTITIES.append((1, [arc._ID for arc in arcs]))
+            self._COMPOUND_ENTITIES.append((1, [arc._id for arc in arcs]))
 
         curve_loop = self.add_curve_loop(arcs)
 
         if make_surface:
             plane_surface = self.add_plane_surface(curve_loop, holes)
             if compound:
-                self._COMPOUND_ENTITIES.append((2, [plane_surface._ID]))
+                self._COMPOUND_ENTITIES.append((2, [plane_surface._id]))
         else:
             plane_surface = None
 
@@ -243,8 +243,8 @@ class Geometry(common.CommonGeometry):
         # Combine the surfaces to avoid seams
         # <https://gitlab.onelab.info/gmsh/gmsh/issues/507>
         # Cannot enable those yet, <https://gitlab.onelab.info/gmsh/gmsh/-/issues/995>
-        self._COMPOUND_ENTITIES.append((2, [surf._ID for surf in s[:4]]))
-        self._COMPOUND_ENTITIES.append((2, [surf._ID for surf in s[4:]]))
+        self._COMPOUND_ENTITIES.append((2, [surf._id for surf in s[:4]]))
+        self._COMPOUND_ENTITIES.append((2, [surf._id for surf in s[4:]]))
 
         # Create the surface loop.
         surface_loop = self.add_surface_loop(s)
@@ -463,7 +463,7 @@ class Geometry(common.CommonGeometry):
             all_volumes.append(vol)
 
         assert int(gmsh.__version__.split(".")[0])
-        self._COMPOUND_ENTITIES.append((3, [v._ID for v in all_volumes]))
+        self._COMPOUND_ENTITIES.append((3, [v._id for v in all_volumes]))
 
     def add_pipe(
         self,
@@ -624,19 +624,19 @@ class BoundaryLayer:
 
         if self.edges_list:
             gmsh.model.mesh.field.setNumbers(
-                tag1, "EdgesList", [e._ID for e in self.edges_list]
+                tag1, "EdgesList", [e._id for e in self.edges_list]
             )
             # edge nodes must be specified, too, cf.
             # <https://gitlab.onelab.info/gmsh/gmsh/-/issues/812#note_9454>
             nodes = list(set([p for e in self.edges_list for p in e.points]))
-            gmsh.model.mesh.field.setNumbers(tag1, "NodesList", [n._ID for n in nodes])
+            gmsh.model.mesh.field.setNumbers(tag1, "NodesList", [n._id for n in nodes])
         if self.faces_list:
             gmsh.model.mesh.field.setNumbers(
-                tag1, "FacesList", [f._ID for f in self.faces_list]
+                tag1, "FacesList", [f._id for f in self.faces_list]
             )
         if self.nodes_list:
             gmsh.model.mesh.field.setNumbers(
-                tag1, "NodesList", [n._ID for n in self.nodes_list]
+                tag1, "NodesList", [n._id for n in self.nodes_list]
             )
 
         tag2 = gmsh.model.mesh.field.add("Threshold")

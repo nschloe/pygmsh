@@ -3,9 +3,9 @@ class Dummy:
         assert isinstance(id0, int)
         self.dim = dim
         self.id = id0
-        self._ID = id0
+        self._id = id0
         self.dim_tag = (dim, id0)
         self.dim_tags = [self.dim_tag]
 
     def __repr__(self):
-        return f"<pygmsh Dummy object, ID {self._ID}>"
+        return f"<pygmsh Dummy object, ID {self._id}>"

@@ -20,5 +20,5 @@ class CircleArc(LineBase):
         assert isinstance(start, Point)
         assert isinstance(center, Point)
         assert isinstance(end, Point)
-        id0 = env.addCircleArc(start._ID, center._ID, end._ID)
+        id0 = env.addCircleArc(start._id, center._id, end._id)
         super().__init__(id0, [start, center, end])

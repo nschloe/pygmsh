@@ -26,9 +26,9 @@ class Surface:
         assert isinstance(curve_loop, CurveLoop)
         self.curve_loop = curve_loop
         self.num_edges = len(curve_loop)
-        self._ID = env.addSurfaceFilling([self.curve_loop._ID])
-        self.dim_tag = (2, self._ID)
+        self._id = env.addSurfaceFilling([self.curve_loop._id])
+        self.dim_tag = (2, self._id)
         self.dim_tags = [self.dim_tag]
 
     def __repr__(self):
-        return f"<pygmsh Surface object, ID {self._ID}>"
+        return f"<pygmsh Surface object, ID {self._id}>"

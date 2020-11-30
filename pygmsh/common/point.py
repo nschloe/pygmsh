@@ -20,10 +20,10 @@ class Point:
         args = list(x)
         if mesh_size is not None:
             args.append(mesh_size)
-        self._ID = env.addPoint(*args)
-        self.dim_tag = (0, self._ID)
+        self._id = env.addPoint(*args)
+        self.dim_tag = (0, self._id)
         self.dim_tags = [self.dim_tag]
 
     def __repr__(self):
         X = ", ".join(str(x) for x in self.x)
-        return f"<pygmsh Point object, ID {self._ID}, x = [{X}]>"
+        return f"<pygmsh Point object, ID {self._id}, x = [{X}]>"

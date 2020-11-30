@@ -23,9 +23,9 @@ class CommonGeometry:
 
     def __init__(self, env):
         self.env = env
-        self._BOOLEAN_ID = 0
-        self._ARRAY_ID = 0
-        self._FIELD_ID = 0
+        self._BOOLEAN_id = 0
+        self._ARRAY_id = 0
+        self._FIELD_id = 0
         self._COMPOUND_ENTITIES = []
         self._RECOMBINE_ENTITIES = []
         self._EMBED_QUEUE = []
@@ -110,13 +110,13 @@ class CommonGeometry:
 
     def set_transfinite_curve(self, curve, num_nodes, mesh_type, coeff):
         assert mesh_type in ["Progression", "Bulk"]
-        self._TRANSFINITE_CURVE_QUEUE.append((curve._ID, num_nodes, mesh_type, coeff))
+        self._TRANSFINITE_CURVE_QUEUE.append((curve._id, num_nodes, mesh_type, coeff))
 
     def set_transfinite_surface(self, surface, arrangement, corner_tags):
-        self._TRANSFINITE_SURFACE_QUEUE.append((surface._ID, arrangement, corner_tags))
+        self._TRANSFINITE_SURFACE_QUEUE.append((surface._id, arrangement, corner_tags))
 
     def set_transfinite_volume(self, volume, arrangement, corner_tags):
-        self._TRANSFINITE_VOLUME_QUEUE.append((volume._ID, corner_tags))
+        self._TRANSFINITE_VOLUME_QUEUE.append((volume._id, corner_tags))
 
     def set_recombined_surfaces(self, surfaces):
         for i, surface in enumerate(surfaces):
@@ -295,7 +295,7 @@ class CommonGeometry:
             item.exec()
 
         for item, host in self._EMBED_QUEUE:
-            gmsh.model.mesh.embed(item.dim, [item._ID], host.dim, host._ID)
+            gmsh.model.mesh.embed(item.dim, [item._id], host.dim, host._id)
 
         # set compound entities after sync
         for c in self._COMPOUND_ENTITIES:
@@ -321,7 +321,7 @@ class CommonGeometry:
         for entities, label in self._PHYSICAL_QUEUE:
             d = entities[0].dim
             assert all(e.dim == d for e in entities)
-            tag = gmsh.model.addPhysicalGroup(d, [e._ID for e in entities])
+            tag = gmsh.model.addPhysicalGroup(d, [e._id for e in entities])
             if label is not None:
                 gmsh.model.setPhysicalName(d, tag, label)
 
