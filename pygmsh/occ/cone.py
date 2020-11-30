@@ -33,6 +33,6 @@ class Cone:
         self._id = gmsh.model.occ.addCone(*center, *axis, radius0, radius1, angle=angle)
         self.dim_tag = (3, self._ID)
         self.dim_tags = [(3, self._ID)]
-        
+
     def __repr__(self):
         return f"<pygmsh Cone object, ID {self._id}>"
