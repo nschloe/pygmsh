@@ -37,7 +37,7 @@ class Polygon:
             self.surface = host.add_plane_surface(self.curve_loop, holes)
             self.dim_tag = self.surface.dim_tag
             self.dim_tags = self.surface.dim_tags
-            self._ID = self.surface._ID
+            self._id = self.surface._id
 
     def __repr__(self):
         return "<pygmsh Polygon object>"

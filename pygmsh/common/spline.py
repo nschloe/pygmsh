@@ -17,5 +17,5 @@ class Spline(LineBase):
             assert isinstance(c, Point)
         assert len(points) > 1
 
-        id0 = env.addSpline([c._ID for c in points])
+        id0 = env.addSpline([c._id for c in points])
         super().__init__(id0, points)

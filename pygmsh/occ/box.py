@@ -22,6 +22,6 @@ class Box:
         assert len(extents) == 3
         self.x0 = x0
         self.extents = extents
-        self._ID = gmsh.model.occ.addBox(*x0, *extents)
-        self.dim_tag = (3, self._ID)
+        self._id = gmsh.model.occ.addBox(*x0, *extents)
+        self.dim_tag = (3, self._id)
         self.dim_tags = [self.dim_tag]

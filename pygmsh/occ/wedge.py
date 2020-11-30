@@ -18,8 +18,8 @@ class Wedge:
         self.extents = extents
         self.top_extent = top_extent
 
-        self._ID = gmsh.model.occ.addWedge(*x0, *extents, ltx=top_extent)
-        self.dim_tags = [(3, self._ID)]
+        self._id = gmsh.model.occ.addWedge(*x0, *extents, ltx=top_extent)
+        self.dim_tags = [(3, self._id)]
 
     def __repr__(self):
-        return f"<pygmsh Wedge object, ID {self._ID}>"
+        return f"<pygmsh Wedge object, ID {self._id}>"

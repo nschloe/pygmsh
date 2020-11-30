@@ -24,12 +24,12 @@ class EllipseArc(LineBase):
         assert isinstance(point_on_major_axis, Point)
         assert isinstance(end, Point)
 
-        id0 = env.addEllipseArc(start._ID, center._ID, point_on_major_axis._ID, end._ID)
+        id0 = env.addEllipseArc(start._id, center._id, point_on_major_axis._id, end._id)
         super().__init__(id0, [start, center, end])
 
         self.points = [start, center, end]
         self.point_on_major_axis = point_on_major_axis
 
     def __repr__(self):
-        pts = ", ".join(str(p._ID) for p in self.points)
-        return f"<pygmsh EllipseArc object, ID {self._ID}, points ({pts})>"
+        pts = ", ".join(str(p._id) for p in self.points)
+        return f"<pygmsh EllipseArc object, ID {self._id}, points ({pts})>"

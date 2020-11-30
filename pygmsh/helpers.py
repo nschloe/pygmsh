@@ -29,7 +29,7 @@ def orient_lines(lines):
     """
     # Categorise graph edges by their vertex pair ids
     point_pair_ids = numpy.array(
-        [[line.points[0]._ID, line.points[1]._ID] for line in lines]
+        [[line.points[0]._id, line.points[1]._id] for line in lines]
     )
 
     # Indices of reordering

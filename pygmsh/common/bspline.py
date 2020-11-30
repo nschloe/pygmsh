@@ -17,5 +17,5 @@ class BSpline(LineBase):
             assert isinstance(c, Point)
         assert len(control_points) > 1
 
-        id0 = env.addBSpline([c._ID for c in control_points])
+        id0 = env.addBSpline([c._id for c in control_points])
         super().__init__(id0, control_points)

@@ -24,13 +24,14 @@ class CurveLoop:
         for k in range(len(curves) - 1):
             assert curves[k].points[-1] == curves[k + 1].points[0]
         assert curves[-1].points[-1] == curves[0].points[0]
-        self._ID = env.addCurveLoop([c._ID for c in curves])
-
+        self._id = env.addCurveLoop([c._id for c in curves])
+        self.dim_tag = (1, self._id)
+        self.dim_tags = [self.dim_tag]
         self.curves = curves
 
     def __len__(self):
         return len(self.curves)
 
     def __repr__(self):
-        curves = ", ".join([str(l._ID) for l in self.curves])
-        return f"<pygmsh CurveLoop object, ID {self._ID}, curves ({curves})>"
+        curves = ", ".join([str(l._id) for l in self.curves])
+        return f"<pygmsh CurveLoop object, ID {self._id}, curves ({curves})>"

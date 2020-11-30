@@ -43,12 +43,12 @@ class PlaneSurface:
         self.num_edges = len(self.curve_loop) + sum(len(h) for h in self.holes)
 
         curve_loops = [self.curve_loop] + self.holes
-        self._ID = env.addPlaneSurface([ll._ID for ll in curve_loops])
-        self.dim_tag = (2, self._ID)
+        self._id = env.addPlaneSurface([ll._id for ll in curve_loops])
+        self.dim_tag = (2, self._id)
         self.dim_tags = [self.dim_tag]
 
     def __repr__(self):
         return (
             "<pygmsh PlaneSurface object (OCC), "
-            f"ID {self._ID}, curve loop {self.curve_loop._ID}>"
+            f"ID {self._id}, curve loop {self.curve_loop._id}>"
         )
