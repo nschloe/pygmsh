@@ -23,9 +23,6 @@ class CommonGeometry:
 
     def __init__(self, env):
         self.env = env
-        self._BOOLEAN_id = 0
-        self._ARRAY_id = 0
-        self._FIELD_id = 0
         self._COMPOUND_ENTITIES = []
         self._RECOMBINE_ENTITIES = []
         self._EMBED_QUEUE = []
