@@ -1,3 +1,5 @@
+from typing import List, Optional, Union
+
 import gmsh
 
 from ..helpers import extract_to_meshio
@@ -161,12 +163,12 @@ class CommonGeometry:
     def _revolve(
         self,
         input_entity,
-        rotation_axis,
-        point_on_axis,
-        angle,
-        num_layers=None,
-        heights=None,
-        recombine=False,
+        rotation_axis: List[float],
+        point_on_axis: List[float],
+        angle: float,
+        num_layers: Optional[Union[int, List[int]]] = None,
+        heights: Optional[List[float]] = None,
+        recombine: bool = False,
     ):
         """Rotation of any entity around a given rotation_axis, about a given angle."""
         if isinstance(num_layers, int):

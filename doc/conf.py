@@ -11,7 +11,6 @@
 # serve to show the default.
 import os
 import sys
-
 from unittest import mock
 
 sys.path.insert(0, os.path.abspath("../"))

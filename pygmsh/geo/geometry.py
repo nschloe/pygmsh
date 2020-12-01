@@ -1,4 +1,5 @@
 import math
+from typing import List, Optional, Union
 
 import gmsh
 import numpy
@@ -10,15 +11,15 @@ from .dummy import Dummy
 class Circle:
     def __init__(
         self,
-        x0,
-        radius,
+        x0: List[float],
+        radius: float,
         R,
         compound,
-        num_sections,
+        num_sections: int,
         holes,
         curve_loop,
         plane_surface,
-        mesh_size=None,
+        mesh_size: Optional[float] = None,
     ):
         self.x0 = x0
         self.radius = radius
@@ -48,13 +49,13 @@ class Geometry(common.CommonGeometry):
     def twist(
         self,
         input_entity,
-        translation_axis,
-        rotation_axis,
-        point_on_axis,
-        angle,
-        num_layers=None,
-        heights=None,
-        recombine=False,
+        translation_axis: List[float],
+        rotation_axis: List[float],
+        point_on_axis: List[float],
+        angle: float,
+        num_layers: Optional[Union[int, List[int]]] = None,
+        heights: Optional[List[float]] = None,
+        recombine: bool = False,
     ):
         """Twist (translation + rotation) of any entity along a given translation_axis,
         around a given rotation_axis, about a given angle.
@@ -91,14 +92,14 @@ class Geometry(common.CommonGeometry):
 
     def add_circle(
         self,
-        x0,
-        radius,
-        mesh_size=None,
+        x0: List[float],
+        radius: float,
+        mesh_size: Optional[float] = None,
         R=None,
         compound=False,
-        num_sections=3,
+        num_sections: int = 3,
         holes=None,
-        make_surface=True,
+        make_surface: bool = True,
     ):
         """Add circle in the :math:`x`-:math:`y`-plane."""
         if holes is None:
@@ -175,7 +176,15 @@ class Geometry(common.CommonGeometry):
         self._AFTER_SYNC_QUEUE.append(setter)
 
     def add_rectangle(
-        self, xmin, xmax, ymin, ymax, z, mesh_size=None, holes=None, make_surface=True
+        self,
+        xmin: float,
+        xmax: float,
+        ymin: float,
+        ymax: float,
+        z: float,
+        mesh_size: Optional[float] = None,
+        holes=None,
+        make_surface: bool = True,
     ):
         return self.add_polygon(
             [[xmin, ymin, z], [xmax, ymin, z], [xmax, ymax, z], [xmin, ymax, z]],
@@ -184,10 +193,15 @@ class Geometry(common.CommonGeometry):
             make_surface=make_surface,
         )
 
-    def add_ellipsoid(self, x0, radii, mesh_size=None, with_volume=True, holes=None):
-        """Creates an ellipsoid with radii around a given midpoint
-        :math:`x_0`.
-        """
+    def add_ellipsoid(
+        self,
+        x0: List[float],
+        radii: List[float],
+        mesh_size: Optional[float] = None,
+        with_volume: bool = True,
+        holes=None,
+    ):
+        """Creates an ellipsoid with radii around a given midpoint :math:`x_0`."""
         if holes is None:
             holes = []
 
@@ -268,11 +282,20 @@ class Geometry(common.CommonGeometry):
 
         return Ellipsoid(x0, radii, surface_loop, volume, mesh_size=mesh_size)
 
-    def add_ball(self, x0, radius, **kwargs):
+    def add_ball(self, x0: List[float], radius: float, **kwargs):
         return self.add_ellipsoid(x0, [radius, radius, radius], **kwargs)
 
     def add_box(
-        self, x0, x1, y0, y1, z0, z1, mesh_size=None, with_volume=True, holes=None
+        self,
+        x0: float,
+        x1: float,
+        y0: float,
+        y1: float,
+        z0: float,
+        z1: float,
+        mesh_size: Optional[float] = None,
+        with_volume: bool = True,
+        holes=None,
     ):
         if holes is None:
             holes = []
@@ -343,12 +366,12 @@ class Geometry(common.CommonGeometry):
 
     def add_torus(
         self,
-        irad,
-        orad,
-        mesh_size=None,
+        irad: float,
+        orad: float,
+        mesh_size: Optional[float] = None,
         R=numpy.eye(3),
         x0=numpy.array([0.0, 0.0, 0.0]),
-        variant="extrude_lines",
+        variant: str = "extrude_lines",
     ):
 
         if variant == "extrude_lines":
@@ -362,9 +385,9 @@ class Geometry(common.CommonGeometry):
 
     def _add_torus_extrude_lines(
         self,
-        irad,
-        orad,
-        mesh_size=None,
+        irad: float,
+        orad: float,
+        mesh_size: float = None,
         R=numpy.eye(3),
         x0=numpy.array([0.0, 0.0, 0.0]),
     ):
@@ -397,7 +420,7 @@ class Geometry(common.CommonGeometry):
         previous = c.curve_loop.curves
         angle = 2 * numpy.pi / 3
         all_surfaces = []
-        for i in range(3):
+        for _ in range(3):
             for k, p in enumerate(previous):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
                 # ...
