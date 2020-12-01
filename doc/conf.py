@@ -12,6 +12,7 @@
 import os
 import pathlib
 import sys
+from configparser import ConfigParser
 from unittest import mock
 
 sys.path.insert(0, os.path.abspath("../"))
@@ -74,8 +75,6 @@ author = "Nico Schlömer"
 # built documents.
 #
 this_dir = pathlib.Path(__file__).resolve().parent
-
-from configparser import ConfigParser
 
 p = ConfigParser()
 p.read(this_dir / ".." / "setup.cfg")
