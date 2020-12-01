@@ -56,5 +56,6 @@ Contents:
     :maxdepth: 1
     :caption: Table of Contents
 
+    common
     geo
     occ
