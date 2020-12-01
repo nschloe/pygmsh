@@ -12,16 +12,13 @@
 import os
 import sys
 
-try:
-    from unittest import mock as mock
-except ImportError:
-    import mock
+from unittest import mock
 
 sys.path.insert(0, os.path.abspath("../"))
 
 ON_RTD = os.environ.get("READTHEDOCS", None) == "True"
 
-MOCK_MODULES = ["meshio"]
+MOCK_MODULES = ["meshio", "gmsh"]
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.Mock()
 
