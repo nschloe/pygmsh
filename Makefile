@@ -30,3 +30,6 @@ lint:
 	flake8 .
 	isort -c .
 	black --check .
+
+doc:
+	sphinx-build -M html doc/ build/

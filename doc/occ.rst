@@ -56,23 +56,9 @@ Rectangle
     :undoc-members:
     :show-inheritance:
 
-SurfaceBase
------------
-.. automodule:: pygmsh.occ.surface_base
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Torus
 -----
 .. automodule:: pygmsh.occ.torus
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-VolumeBase
-----------
-.. automodule:: pygmsh.occ.volume_base
     :members:
     :undoc-members:
     :show-inheritance:
