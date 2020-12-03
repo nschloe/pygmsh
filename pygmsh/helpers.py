@@ -35,7 +35,7 @@ def orient_lines(lines):
     # Indices of reordering
     order = numpy.arange(len(point_pair_ids), dtype=int)
     # Compute orientations where oriented[j] == False requires edge j to be reversed
-    oriented = numpy.array([True] * len(point_pair_ids), dtype=numpy.bool)
+    oriented = numpy.array([True] * len(point_pair_ids), dtype=bool)
 
     for j in range(1, len(point_pair_ids)):
         out = point_pair_ids[j - 1, 1]  # edge out from vertex
@@ -63,7 +63,7 @@ def orient_lines(lines):
 def extract_to_meshio():
     # extract point coords
     idx, points, _ = gmsh.model.mesh.getNodes()
-    points = points.reshape(-1, 3)
+    points = numpy.asarray(points).reshape(-1, 3)
     idx -= 1
     srt = numpy.argsort(idx)
     assert numpy.all(idx[srt] == numpy.arange(len(idx)))
@@ -80,7 +80,7 @@ def extract_to_meshio():
         cells.append(
             meshio.CellBlock(
                 meshio.gmsh.gmsh_to_meshio_type[elem_type],
-                node_tags.reshape(-1, num_nodes_per_cell) - 1,
+                numpy.asarray(node_tags).reshape(-1, num_nodes_per_cell) - 1,
             )
         )
 

@@ -550,7 +550,7 @@ class Geometry(common.CommonGeometry):
         angle = 2 * numpy.pi / 3
         all_surfaces = []
         # com = []
-        for i in range(3):
+        for _ in range(3):
             for k, p in enumerate(previous):
                 # ts1[] = Extrude {{0,0,1}, {0,0,0}, 2*Pi/3}{Line{tc1};};
                 top, surf, _ = self.revolve(
