@@ -340,3 +340,8 @@ class CommonGeometry:
         gmsh.model.mesh.generate(dim)
 
         return extract_to_meshio()
+
+    def save_geometry(self, filename: str):
+        # filename is typically a geo_unrolled or brep file
+        self.synchronize()
+        gmsh.write(filename)
