@@ -17,6 +17,8 @@ class Torus:
         Defines the angular opening.
     """
 
+    dim = 3
+
     def __init__(self, center, radius0, radius1, alpha=2 * pi):
         assert len(center) == 3
 

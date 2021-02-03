@@ -26,6 +26,8 @@ class Ball:
         If specified, sets the `Characteristic Length` property.
     """
 
+    dim = 3
+
     def __init__(self, center, radius, angle1=-pi / 2, angle2=pi / 2, angle3=2 * pi):
         self.center = center
         self.radius = radius

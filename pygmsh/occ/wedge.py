@@ -13,6 +13,8 @@ class Wedge:
         Defines the top X extent.
     """
 
+    dim = 3
+
     def __init__(self, x0, extents, top_extent=None):
         self.x0 = x0
         self.extents = extents
