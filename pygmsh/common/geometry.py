@@ -119,9 +119,7 @@ class CommonGeometry:
 
     def set_recombined_surfaces(self, surfaces):
         for i, surface in enumerate(surfaces):
-            assert isinstance(
-                surface, (PlaneSurface, Surface)
-            ), f"item {i} is not a surface"
+            assert surface.dim == 2, f"item {i} is not a surface"
         self._RECOMBINE_ENTITIES += [s.dim_tags[0] for s in surfaces]
 
     def extrude(
