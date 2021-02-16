@@ -1,3 +1,5 @@
+from typing import Optional, Tuple
+
 import gmsh
 
 
@@ -17,7 +19,13 @@ class Rectangle:
 
     dim = 2
 
-    def __init__(self, x0, a, b, corner_radius=None):
+    def __init__(
+        self,
+        x0: Tuple[float, float, float],
+        a: float,
+        b: float,
+        corner_radius: Optional[float] = None,
+    ):
         assert len(x0) == 3
 
         self.x0 = x0
