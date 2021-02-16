@@ -111,10 +111,12 @@ class CommonGeometry:
         assert mesh_type in ["Progression", "Bulk"]
         self._TRANSFINITE_CURVE_QUEUE.append((curve._id, num_nodes, mesh_type, coeff))
 
-    def set_transfinite_surface(self, surface, arrangement, corner_tags):
+    def set_transfinite_surface(self, surface, arrangement, corner_pts):
+        corner_tags = [pt._id for pt in corner_pts]
         self._TRANSFINITE_SURFACE_QUEUE.append((surface._id, arrangement, corner_tags))
 
-    def set_transfinite_volume(self, volume, arrangement, corner_tags):
+    def set_transfinite_volume(self, volume, arrangement, corner_pts):
+        corner_tags = [pt._id for pt in corner_pts]
         self._TRANSFINITE_VOLUME_QUEUE.append((volume._id, corner_tags))
 
     def set_recombined_surfaces(self, surfaces):

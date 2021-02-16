@@ -1,31 +1,30 @@
 import numpy as np
-import pytest
 
 import pygmsh
 
 
-@pytest.mark.skip()
 def test():
     with pygmsh.geo.Geometry() as geom:
-        p = [
-            geom.add_point((0.0, 0.0, 0.0), lcar=1.0),
-            geom.add_point((2.0, 0.0, 0.0), lcar=1.0),
-            geom.add_point((0.0, 1.0, 0.0), lcar=1.0),
-            geom.add_point((2.0, 1.0, 0.0), lcar=1.0),
+        pts = [
+            geom.add_point((0.0, 0.0, 0.0), mesh_size=1.0),
+            geom.add_point((2.0, 0.0, 0.0), mesh_size=1.0),
+            geom.add_point((0.0, 1.0, 0.0), mesh_size=1.0),
+            geom.add_point((2.0, 1.0, 0.0), mesh_size=1.0),
         ]
-        l = [
-            geom.add_line(p[0], p[1]),
-            geom.add_line(p[1], p[3]),
-            geom.add_line(p[3], p[2]),
-            geom.add_line(p[2], p[0]),
+        lines = [
+            geom.add_line(pts[0], pts[1]),
+            geom.add_line(pts[1], pts[3]),
+            geom.add_line(pts[3], pts[2]),
+            geom.add_line(pts[2], pts[0]),
         ]
-        ll0 = geom.add_curve_loop(l)
+        ll0 = geom.add_curve_loop(lines)
         rs0 = geom.add_surface(ll0)
 
-        geom.set_transfinite_curve(l[3], 3, "Progression", 1.0)
-        geom.set_transfinite_curve(l[1], 3, "Progression", 1.0)
-        geom.set_transfinite_curve(l[2], 3, "Progression", 1.0)
-        geom.set_transfinite_curve(l[0], 3, "Progression", 1.0)
+        geom.set_transfinite_curve(lines[3], 3, "Progression", 1.0)
+        geom.set_transfinite_curve(lines[1], 3, "Progression", 1.0)
+        geom.set_transfinite_curve(lines[2], 3, "Progression", 1.0)
+        geom.set_transfinite_curve(lines[0], 3, "Progression", 1.0)
+        geom.set_transfinite_surface(rs0, "Left", pts)
         geom.set_recombined_surfaces([rs0])
 
         mesh = geom.generate_mesh()
@@ -37,4 +36,4 @@ def test():
 
 
 if __name__ == "__main__":
-    test().write("rectangle_structured.vtk")
+    test().write("rectangle_structured.vtu")
