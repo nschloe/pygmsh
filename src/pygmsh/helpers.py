@@ -95,9 +95,10 @@ def extract_to_meshio():
     field_data = {}
     if len(gmsh.model.getPhysicalGroups()) > 0:
         cell_data["gmsh:physical"] = [np.zeros((len(cell[1]))) for cell in cells]
+        cell_data["gmsh:geometrical"] = [np.zeros((len(cell[1]))) for cell in cells]
         for dim, tag in gmsh.model.getPhysicalGroups():
             name = gmsh.model.getPhysicalName(dim, tag)
-            field_data[name] = numpy.array([tag, dim])
+            field_data[name] = np.array([tag, dim])
             for e in gmsh.model.getEntitiesForPhysicalGroup(dim, tag):
                 elem_types, elem_tags, _ = gmsh.model.mesh.getElements(dim, e)
                 assert len(elem_types) == len(elem_tags)
@@ -120,6 +121,7 @@ def extract_to_meshio():
                     elem_tags -= sum([len(cells[i][1]) for i in range(idx)])
 
                     cell_data["gmsh:physical"][idx][elem_tags - 1] = tag
+                    cell_data["gmsh:geometrical"][idx][elem_tags - 1] = e
 
     # make meshio mesh
     return meshio.Mesh(points, cells, cell_data=cell_data, field_data=field_data)
