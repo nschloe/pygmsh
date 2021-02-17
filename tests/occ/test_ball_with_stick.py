@@ -22,11 +22,10 @@ def test():
 
         mesh = geom.generate_mesh(algorithm=6)
 
-    assert "Sphere cut by box 1" in mesh.cell_sets
-    assert "Box 2 cut by sphere" in mesh.cell_sets
+    assert "Sphere cut by box 1" in mesh.field_data
+    assert "Box 2 cut by sphere" in mesh.field_data
 
     mesh.remove_lower_dimensional_cells()
-    mesh.sets_to_int_data()
     return mesh
 
 
