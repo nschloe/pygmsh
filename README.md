@@ -95,6 +95,13 @@ mesh.write("test.vtk")
 The output file can be visualized with various tools, e.g.,
 [ParaView](https://www.paraview.org/).
 
+With
+<!--exdown-skip-->
+```python
+pygmsh.write("test.msh")
+```
+you can access Gmsh's native file writer.
+
 #### Extrusions
 
 <img src="https://nschloe.github.io/pygmsh/extrude.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/revolve.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/twist.png" width="100%">

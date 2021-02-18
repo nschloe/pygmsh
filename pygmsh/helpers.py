@@ -3,6 +3,12 @@ import meshio
 import numpy as np
 
 
+def write(filename: str):
+    import gmsh
+
+    gmsh.write(filename)
+
+
 def rotation_matrix(u, theta):
     """Return matrix that implements the rotation around the vector :math:`u`
     by the angle :math:`\\theta`, cf.
