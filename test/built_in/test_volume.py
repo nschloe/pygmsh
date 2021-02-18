@@ -1,10 +1,10 @@
 import meshio
-import numpy
+import numpy as np
 from helpers import compute_volume
 
 
 def test_volume():
-    points = numpy.array(
+    points = np.array(
         [
             [0.0, 0.0, 0.0],
             [1.0, 0.0, 0.0],
@@ -17,8 +17,8 @@ def test_volume():
         ]
     )
     cells = {
-        "triangle": numpy.array([[0, 1, 6], [0, 6, 7]]),
-        "quad": numpy.array([[1, 2, 5, 6], [2, 3, 4, 5]]),
+        "triangle": np.array([[0, 1, 6], [0, 6, 7]]),
+        "quad": np.array([[1, 2, 5, 6], [2, 3, 4, 5]]),
     }
     vol = compute_volume(meshio.Mesh(points, cells))
     assert abs(vol - 3.0) < 1.0e-14

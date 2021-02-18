@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 
 
 class Polygon:
@@ -15,9 +15,9 @@ class Polygon:
         else:
             mesh_size = len(points) * [mesh_size]
 
-        points = numpy.asarray(points)
+        points = np.asarray(points)
         if points.shape[1] == 2:
-            points = numpy.column_stack([points, numpy.zeros_like(points[:, 0])])
+            points = np.column_stack([points, np.zeros_like(points[:, 0])])
 
         # Create points.
         self.points = [

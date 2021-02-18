@@ -1,11 +1,11 @@
 import math
 
-import numpy
+import numpy as np
 
 
 def prune_nodes(points, cells):
     # Only points/cells that actually used
-    uvertices, uidx = numpy.unique(cells, return_inverse=True)
+    uvertices, uidx = np.unique(cells, return_inverse=True)
     cells = uidx.reshape(cells.shape)
     points = points[uvertices]
     return points, cells
@@ -13,15 +13,15 @@ def prune_nodes(points, cells):
 
 def get_triangle_volumes(pts, cells):
     # Works in any dimension; taken from voropy
-    local_idx = numpy.array([[1, 2], [2, 0], [0, 1]]).T
+    local_idx = np.array([[1, 2], [2, 0], [0, 1]]).T
     idx_hierarchy = cells.T[local_idx]
 
     half_edge_coords = pts[idx_hierarchy[1]] - pts[idx_hierarchy[0]]
-    ei_dot_ej = numpy.einsum(
+    ei_dot_ej = np.einsum(
         "ijk, ijk->ij", half_edge_coords[[1, 2, 0]], half_edge_coords[[2, 0, 1]]
     )
 
-    vols = 0.5 * numpy.sqrt(
+    vols = 0.5 * np.sqrt(
         +ei_dot_ej[2] * ei_dot_ej[0]
         + ei_dot_ej[0] * ei_dot_ej[1]
         + ei_dot_ej[1] * ei_dot_ej[2]
@@ -37,8 +37,8 @@ def get_simplex_volumes(pts, cells):
     assert cells.shape[1] == n + 1
 
     p = pts[cells]
-    p = numpy.concatenate([p, numpy.ones(list(p.shape[:2]) + [1])], axis=-1)
-    return numpy.abs(numpy.linalg.det(p) / math.factorial(n))
+    p = np.concatenate([p, np.ones(list(p.shape[:2]) + [1])], axis=-1)
+    return np.abs(np.linalg.det(p) / math.factorial(n))
 
 
 def compute_volume(mesh):
@@ -58,7 +58,7 @@ def compute_volume(mesh):
         if "quad" in mesh.cells_dict:
             # quad: treat as two triangles
             quads = mesh.cells_dict["quad"].T
-            split_cells = numpy.column_stack(
+            split_cells = np.column_stack(
                 [[quads[0], quads[1], quads[2]], [quads[0], quads[2], quads[3]]]
             ).T
             vol += math.fsum(
@@ -66,8 +66,8 @@ def compute_volume(mesh):
             )
     else:
         assert "line" in mesh.cells_dict
-        segs = numpy.diff(mesh.points[mesh.cells_dict["line"]], axis=1).squeeze()
-        vol = numpy.sum(numpy.sqrt(numpy.einsum("...j, ...j", segs, segs)))
+        segs = np.diff(mesh.points[mesh.cells_dict["line"]], axis=1).squeeze()
+        vol = np.sum(np.sqrt(np.einsum("...j, ...j", segs, segs)))
 
     return vol
 

@@ -1,6 +1,6 @@
 import gmsh
 import meshio
-import numpy
+import numpy as np
 
 
 def rotation_matrix(u, theta):
@@ -11,13 +11,13 @@ def rotation_matrix(u, theta):
     :param u: rotation vector
     :param theta: rotation angle
     """
-    assert numpy.isclose(numpy.inner(u, u), 1.0), "the rotation axis must be unitary"
+    assert np.isclose(np.inner(u, u), 1.0), "the rotation axis must be unitary"
 
     # Cross-product matrix.
-    cpm = numpy.array([[0.0, -u[2], u[1]], [u[2], 0.0, -u[0]], [-u[1], u[0], 0.0]])
-    c = numpy.cos(theta)
-    s = numpy.sin(theta)
-    R = numpy.eye(3) * c + s * cpm + (1.0 - c) * numpy.outer(u, u)
+    cpm = np.array([[0.0, -u[2], u[1]], [u[2], 0.0, -u[0]], [-u[1], u[0], 0.0]])
+    c = np.cos(theta)
+    s = np.sin(theta)
+    R = np.eye(3) * c + s * cpm + (1.0 - c) * np.outer(u, u)
     return R
 
 
@@ -28,25 +28,25 @@ def orient_lines(lines):
     :param lines: a sequence of lines defining a closed polygon
     """
     # Categorise graph edges by their vertex pair ids
-    point_pair_ids = numpy.array(
+    point_pair_ids = np.array(
         [[line.points[0]._id, line.points[1]._id] for line in lines]
     )
 
     # Indices of reordering
-    order = numpy.arange(len(point_pair_ids), dtype=int)
+    order = np.arange(len(point_pair_ids), dtype=int)
     # Compute orientations where oriented[j] == False requires edge j to be reversed
-    oriented = numpy.array([True] * len(point_pair_ids), dtype=bool)
+    oriented = np.array([True] * len(point_pair_ids), dtype=bool)
 
     for j in range(1, len(point_pair_ids)):
         out = point_pair_ids[j - 1, 1]  # edge out from vertex
         inn = point_pair_ids[j:, 0]  # candidates for edge into vertices
-        wh = numpy.where(inn == out)[0] + j
+        wh = np.where(inn == out)[0] + j
         if len(wh) == 0:
             # look for candidates in those which are not correctly oriented
             inn = point_pair_ids[j:, 1]
-            wh = numpy.where(inn == out)[0] + j
+            wh = np.where(inn == out)[0] + j
             # reorient remaining edges
-            point_pair_ids[j:] = numpy.flip(point_pair_ids[j:], axis=1)
+            point_pair_ids[j:] = np.flip(point_pair_ids[j:], axis=1)
             oriented[j:] ^= True
 
         # reorder
@@ -63,10 +63,10 @@ def orient_lines(lines):
 def extract_to_meshio():
     # extract point coords
     idx, points, _ = gmsh.model.mesh.getNodes()
-    points = numpy.asarray(points).reshape(-1, 3)
+    points = np.asarray(points).reshape(-1, 3)
     idx -= 1
-    srt = numpy.argsort(idx)
-    assert numpy.all(idx[srt] == numpy.arange(len(idx)))
+    srt = np.argsort(idx)
+    assert np.all(idx[srt] == np.arange(len(idx)))
     points = points[srt]
 
     # extract cells
@@ -80,7 +80,7 @@ def extract_to_meshio():
         cells.append(
             meshio.CellBlock(
                 meshio.gmsh.gmsh_to_meshio_type[elem_type],
-                numpy.asarray(node_tags).reshape(-1, num_nodes_per_cell) - 1,
+                np.asarray(node_tags).reshape(-1, num_nodes_per_cell) - 1,
             )
         )
 
@@ -109,7 +109,7 @@ def extract_to_meshio():
             cell_sets[name][idx].append(elem_tags - 1)
 
         cell_sets[name] = [
-            (None if len(idcs) == 0 else numpy.concatenate(idcs))
+            (None if len(idcs) == 0 else np.concatenate(idcs))
             for idcs in cell_sets[name]
         ]
 

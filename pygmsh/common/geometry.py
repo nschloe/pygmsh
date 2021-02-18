@@ -1,3 +1,4 @@
+import warnings
 from typing import List, Optional, Union
 
 import gmsh
@@ -92,7 +93,8 @@ class CommonGeometry:
     def add_polygon(self, *args, **kwargs):
         return Polygon(self, *args, **kwargs)
 
-    def add_physical(self, entities, label=None):
+    def add_physical(self, entities, label: Optional[str] = None):
+        # : str):
         if not isinstance(entities, list):
             entities = [entities]
 
@@ -101,7 +103,13 @@ class CommonGeometry:
         for e in entities:
             assert e.dim == dim
 
-        if label is not None:
+        if label is None:
+            # 2021-02-18
+            warnings.warn(
+                "Physical groups without label are deprecated. "
+                'Use add_physical(entities, "dummy").'
+            )
+        else:
             if not isinstance(label, str):
                 raise ValueError(f"Physical label must be string, not {type(label)}.")
 
