@@ -139,8 +139,8 @@ class Geometry(common.CommonGeometry):
         if delete_first:
             all_entities += entities[0]
         if delete_other:
-            for ent in entities[1:]:
-                all_entities += ent
+            for e in entities[1:]:
+                all_entities += e
         for s in self._SIZE_QUEUE:
             if s[0] in all_entities:
                 warnings.warn(
@@ -203,9 +203,9 @@ class Geometry(common.CommonGeometry):
         # remove entities from SIZE_QUEUE if necessary
         all_entities = []
         if delete_first:
-            all_entities += d0[0]
+            all_entities += d0
         if delete_other:
-            all_entities += d1[0]
+            all_entities += d1
         for s in self._SIZE_QUEUE:
             if s[0] in all_entities:
                 warnings.warn(
@@ -235,9 +235,9 @@ class Geometry(common.CommonGeometry):
         # remove entities from SIZE_QUEUE if necessary
         all_entities = []
         if delete_first:
-            all_entities += d0[0]
+            all_entities += d0
         if delete_other:
-            all_entities += d1[0]
+            all_entities += d1
         for s in self._SIZE_QUEUE:
             if s[0] in all_entities:
                 warnings.warn(
