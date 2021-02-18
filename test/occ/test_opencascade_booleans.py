@@ -88,13 +88,13 @@ def test_square_circle_slice():
         surf1 = geom.add_plane_surface(square)
         surf2 = geom.add_plane_surface(curve_loop)
         geom.boolean_fragments(surf1, surf2)
-        # Gmsh 4 default format MSH4 doesn't have geometrical entities.
         mesh = geom.generate_mesh()
 
     ref = 1.0
     val = compute_volume(mesh)
     assert np.abs(val - ref) < 1e-3 * ref
 
+    # Gmsh 4 default format MSH4 doesn't have geometrical entities.
     outer_mask = np.where(mesh.cell_data["gmsh:geometrical"][2] == 13)[0]
     outer_cells = {}
     outer_cells["triangle"] = mesh.cells_dict["triangle"][outer_mask]
@@ -108,7 +108,7 @@ def test_square_circle_slice():
     assert np.abs(value - ref) < 1e-2 * ref
 
 
-@pytest.mark.skip("cell data no working yet")
+@pytest.mark.skip("cell data not working yet")
 def test_fragments_diff_union():
     """Test planar surface with holes.
 
@@ -144,7 +144,7 @@ def test_fragments_diff_union():
     assert np.abs(value - surf) < 1e-2 * surf
 
 
-@pytest.mark.skip("cell data no working yet")
+@pytest.mark.skip("cell data not working yet")
 def test_diff_physical_assignment():
     """construct surface using boolean.
 
@@ -174,6 +174,14 @@ def test_polygon_diff():
         poly = geom.add_polygon([[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]])
         disk = geom.add_disk([0, 0, 0], 0.5)
         geom.boolean_difference(poly, disk)
+
+
+def test_mesh_size_removal():
+    with pygmsh.occ.Geometry() as geom:
+        box0 = geom.add_box([0.0, 0, 0], [1, 1, 1], mesh_size=0.1)
+        box1 = geom.add_box([0.5, 0.5, 1], [0.5, 0.5, 1], mesh_size=0.2)
+        union = geom.boolean_union([box0, box1])
+        mesh = geom.generate_mesh()
 
 
 if __name__ == "__main__":

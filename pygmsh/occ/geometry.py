@@ -1,4 +1,5 @@
 import math
+import warnings
 
 import gmsh
 
@@ -109,7 +110,9 @@ class Geometry(common.CommonGeometry):
             self._SIZE_QUEUE.append((obj, mesh_size))
         return obj
 
-    def boolean_intersection(self, entities):
+    def boolean_intersection(
+        self, entities, delete_first: bool = True, delete_other: bool = True
+    ):
         """Boolean intersection, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
@@ -123,17 +126,34 @@ class Geometry(common.CommonGeometry):
             out, _ = gmsh.model.occ.intersect(
                 ent,
                 [ee.dim_tag for ee in e],
-                removeObject=True,
-                removeTool=True,
+                removeObject=delete_first,
+                removeTool=delete_other,
             )
             if len(out) == 0:
                 raise RuntimeError("Empty intersection.")
             assert all(out[0] == item for item in out)
             ent = [out[0]]
 
+        # remove entities from SIZE_QUEUE if necessary
+        all_entities = []
+        if delete_first:
+            all_entities += entities[0]
+        if delete_other:
+            for ent in entities[1:]:
+                all_entities += ent
+        for s in self._SIZE_QUEUE:
+            if s[0] in all_entities:
+                warnings.warn(
+                    f"Specified mesh size for {s[0]} "
+                    "discarded in Boolean intersection operation."
+                )
+        self._SIZE_QUEUE = [s for s in self._SIZE_QUEUE if s[0] not in all_entities]
+
         return [Dummy(*ent[0])]
 
-    def boolean_union(self, entities):
+    def boolean_union(
+        self, entities, delete_first: bool = True, delete_other: bool = True
+    ):
         """Boolean union, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
@@ -143,12 +163,30 @@ class Geometry(common.CommonGeometry):
         dim_tags, _ = gmsh.model.occ.fuse(
             [e.dim_tag for e in entities[0]],
             [ee.dim_tag for e in entities[1:] for ee in e],
-            removeObject=True,
-            removeTool=True,
+            removeObject=delete_first,
+            removeTool=delete_other,
         )
+
+        # remove entities from SIZE_QUEUE if necessary
+        all_entities = []
+        if delete_first:
+            all_entities += entities[0]
+        if delete_other:
+            for ent in entities[1:]:
+                all_entities += ent
+        for s in self._SIZE_QUEUE:
+            if s[0] in all_entities:
+                warnings.warn(
+                    f"Specified mesh size for {s[0]} "
+                    "discarded in Boolean union operation."
+                )
+        self._SIZE_QUEUE = [s for s in self._SIZE_QUEUE if s[0] not in all_entities]
+
         return [Dummy(*dim_tag) for dim_tag in dim_tags]
 
-    def boolean_difference(self, d0, d1, delete_first=True, delete_other=True):
+    def boolean_difference(
+        self, d0, d1, delete_first: bool = True, delete_other: bool = True
+    ):
         """Boolean difference, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
@@ -161,9 +199,26 @@ class Geometry(common.CommonGeometry):
             removeObject=delete_first,
             removeTool=delete_other,
         )
+
+        # remove entities from SIZE_QUEUE if necessary
+        all_entities = []
+        if delete_first:
+            all_entities += d0[0]
+        if delete_other:
+            all_entities += d1[0]
+        for s in self._SIZE_QUEUE:
+            if s[0] in all_entities:
+                warnings.warn(
+                    f"Specified mesh size for {s[0]} "
+                    "discarded in Boolean difference operation."
+                )
+        self._SIZE_QUEUE = [s for s in self._SIZE_QUEUE if s[0] not in all_entities]
+
         return [Dummy(*dim_tag) for dim_tag in dim_tags]
 
-    def boolean_fragments(self, d0, d1):
+    def boolean_fragments(
+        self, d0, d1, delete_first: bool = True, delete_other: bool = True
+    ):
         """Boolean fragments, see
         https://gmsh.info/doc/texinfo/gmsh.html#Boolean-operations input_entity
         and tool_entity are called object and tool in gmsh documentation.
@@ -173,5 +228,22 @@ class Geometry(common.CommonGeometry):
         dim_tags, _ = gmsh.model.occ.fragment(
             [d.dim_tag for d in d0],
             [d.dim_tag for d in d1],
+            removeObject=delete_first,
+            removeTool=delete_other,
         )
+
+        # remove entities from SIZE_QUEUE if necessary
+        all_entities = []
+        if delete_first:
+            all_entities += d0[0]
+        if delete_other:
+            all_entities += d1[0]
+        for s in self._SIZE_QUEUE:
+            if s[0] in all_entities:
+                warnings.warn(
+                    f"Specified mesh size for {s[0]} "
+                    "discarded in Boolean fragments operation."
+                )
+        self._SIZE_QUEUE = [s for s in self._SIZE_QUEUE if s[0] not in all_entities]
+
         return [Dummy(*dim_tag) for dim_tag in dim_tags]
