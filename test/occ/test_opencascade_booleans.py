@@ -180,8 +180,8 @@ def test_mesh_size_removal():
     with pygmsh.occ.Geometry() as geom:
         box0 = geom.add_box([0.0, 0, 0], [1, 1, 1], mesh_size=0.1)
         box1 = geom.add_box([0.5, 0.5, 1], [0.5, 0.5, 1], mesh_size=0.2)
-        union = geom.boolean_union([box0, box1])
-        mesh = geom.generate_mesh()
+        geom.boolean_union([box0, box1])
+        geom.generate_mesh()
 
 
 if __name__ == "__main__":
