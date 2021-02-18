@@ -95,7 +95,7 @@ class CommonGeometry:
 
     def add_physical(self, entities, label: Optional[str] = None):
         if label in [label for _, label in self._PHYSICAL_QUEUE]:
-            raise ValueError(f"Label \"{label}\" already exists.")
+            raise ValueError(f'Label "{label}" already exists.')
 
         if not isinstance(entities, list):
             entities = [entities]
