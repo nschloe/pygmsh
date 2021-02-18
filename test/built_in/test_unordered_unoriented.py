@@ -1,6 +1,6 @@
 import random
 
-import numpy
+import numpy as np
 from helpers import compute_volume
 
 import pygmsh
@@ -9,8 +9,8 @@ import pygmsh
 def test():
     with pygmsh.geo.Geometry() as geom:
         # Generate an approximation of a circle
-        t = numpy.arange(0, 2.0 * numpy.pi, 0.05)
-        x = numpy.column_stack([numpy.cos(t), numpy.sin(t), numpy.zeros_like(t)])
+        t = np.arange(0, 2.0 * np.pi, 0.05)
+        x = np.column_stack([np.cos(t), np.sin(t), np.zeros_like(t)])
         points = [geom.add_point(p) for p in x]
 
         # Shuffle the orientation of lines by point order
@@ -32,7 +32,7 @@ def test():
 
         mesh = geom.generate_mesh()
 
-    ref = numpy.pi
+    ref = np.pi
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
 

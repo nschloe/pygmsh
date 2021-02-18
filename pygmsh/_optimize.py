@@ -1,6 +1,6 @@
 import gmsh
 import meshio
-import numpy
+import numpy as np
 
 from .helpers import extract_to_meshio
 
@@ -16,7 +16,7 @@ def optimize(mesh, method="", verbose=False):
     dim = 3
     tag = gmsh.model.addDiscreteEntity(dim=dim)
     #
-    nodes = numpy.arange(1, len(mesh.points) + 1)
+    nodes = np.arange(1, len(mesh.points) + 1)
     assert mesh.points.shape[1] == 3
     gmsh.model.mesh.addNodes(dim, tag, nodes, mesh.points.flat)
     for cell_block in mesh.cells:
@@ -53,14 +53,14 @@ def print_stats(mesh):
     import termplotlib
 
     q = mesh.q_radius_ratio
-    q_hist, q_bin_edges = numpy.histogram(
-        q, bins=numpy.linspace(0.0, 1.0, num=41, endpoint=True)
+    q_hist, q_bin_edges = np.histogram(
+        q, bins=np.linspace(0.0, 1.0, num=41, endpoint=True)
     )
 
     grid = termplotlib.subplot_grid((1, 2), column_widths=None, border_style=None)
     grid[0, 0].hist(q_hist, q_bin_edges, bar_width=1, strip=True)
-    grid[0, 1].aprint("min quality: {:5.3f}".format(numpy.min(q)))
-    grid[0, 1].aprint("avg quality: {:5.3f}".format(numpy.average(q)))
-    grid[0, 1].aprint("max quality: {:5.3f}".format(numpy.max(q)))
+    grid[0, 1].aprint("min quality: {:5.3f}".format(np.min(q)))
+    grid[0, 1].aprint("avg quality: {:5.3f}".format(np.average(q)))
+    grid[0, 1].aprint("max quality: {:5.3f}".format(np.max(q)))
 
     grid.show()

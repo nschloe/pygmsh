@@ -2,7 +2,7 @@ import math
 from typing import List, Optional, Union
 
 import gmsh
-import numpy
+import numpy as np
 
 from .. import common
 from .dummy import Dummy
@@ -109,28 +109,28 @@ class Geometry(common.CommonGeometry):
 
         # Define points that make the circle (midpoint and the four cardinal
         # directions).
-        X = numpy.zeros((num_sections + 1, len(x0)))
+        X = np.zeros((num_sections + 1, len(x0)))
         if num_sections == 4:
             # For accuracy, the points are provided explicitly.
-            X[1:, [0, 1]] = numpy.array(
+            X[1:, [0, 1]] = np.array(
                 [[radius, 0.0], [0.0, radius], [-radius, 0.0], [0.0, -radius]]
             )
         else:
-            X[1:, [0, 1]] = numpy.array(
+            X[1:, [0, 1]] = np.array(
                 [
                     [
-                        radius * numpy.cos(2 * numpy.pi * k / num_sections),
-                        radius * numpy.sin(2 * numpy.pi * k / num_sections),
+                        radius * np.cos(2 * np.pi * k / num_sections),
+                        radius * np.sin(2 * np.pi * k / num_sections),
                     ]
                     for k in range(num_sections)
                 ]
             )
 
         if R is not None:
-            assert numpy.allclose(
-                abs(numpy.linalg.eigvals(R)), numpy.ones(X.shape[1])
+            assert np.allclose(
+                abs(np.linalg.eigvals(R)), np.ones(X.shape[1])
             ), "The transformation matrix doesn't preserve circles; at least one eigenvalue lies off the unit circle."
-            X = numpy.dot(X, R.T)
+            X = np.dot(X, R.T)
 
         X += x0
 
@@ -369,8 +369,8 @@ class Geometry(common.CommonGeometry):
         irad: float,
         orad: float,
         mesh_size: Optional[float] = None,
-        R=numpy.eye(3),
-        x0=numpy.array([0.0, 0.0, 0.0]),
+        R=np.eye(3),
+        x0=np.array([0.0, 0.0, 0.0]),
         variant: str = "extrude_lines",
     ):
 
@@ -388,8 +388,8 @@ class Geometry(common.CommonGeometry):
         irad: float,
         orad: float,
         mesh_size: float = None,
-        R=numpy.eye(3),
-        x0=numpy.array([0.0, 0.0, 0.0]),
+        R=np.eye(3),
+        x0=np.array([0.0, 0.0, 0.0]),
     ):
         """Create Gmsh code for the torus in the x-y plane under the coordinate
         transformation
@@ -401,15 +401,15 @@ class Geometry(common.CommonGeometry):
         :param orad: outer radius of the torus
         """
         # Add circle
-        x0t = numpy.dot(R, numpy.array([0.0, orad, 0.0]))
+        x0t = np.dot(R, np.array([0.0, orad, 0.0]))
         # Get circles in y-z plane
-        Rc = numpy.array([[0.0, 0.0, 1.0], [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]])
-        c = self.add_circle(x0 + x0t, irad, mesh_size=mesh_size, R=numpy.dot(R, Rc))
+        Rc = np.array([[0.0, 0.0, 1.0], [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]])
+        c = self.add_circle(x0 + x0t, irad, mesh_size=mesh_size, R=np.dot(R, Rc))
 
         rot_axis = [0.0, 0.0, 1.0]
-        rot_axis = numpy.dot(R, rot_axis)
+        rot_axis = np.dot(R, rot_axis)
         point_on_rot_axis = [0.0, 0.0, 0.0]
-        point_on_rot_axis = numpy.dot(R, point_on_rot_axis) + x0
+        point_on_rot_axis = np.dot(R, point_on_rot_axis) + x0
 
         # Form the torus by extruding the circle three times by 2/3*pi. This
         # works around the inability of Gmsh to extrude by pi or more. The
@@ -418,7 +418,7 @@ class Geometry(common.CommonGeometry):
         # for the following Extrude() step.  The second [1] entry of the array
         # is the surface that was created by the extrusion.
         previous = c.curve_loop.curves
-        angle = 2 * numpy.pi / 3
+        angle = 2 * np.pi / 3
         all_surfaces = []
         for _ in range(3):
             for k, p in enumerate(previous):
@@ -444,8 +444,8 @@ class Geometry(common.CommonGeometry):
         irad,
         orad,
         mesh_size=None,
-        R=numpy.eye(3),
-        x0=numpy.array([0.0, 0.0, 0.0]),
+        R=np.eye(3),
+        x0=np.array([0.0, 0.0, 0.0]),
     ):
         """Create Gmsh code for the torus under the coordinate transformation
 
@@ -456,14 +456,14 @@ class Geometry(common.CommonGeometry):
         :param orad: outer radius of the torus
         """
         # Add circle
-        x0t = numpy.dot(R, numpy.array([0.0, orad, 0.0]))
-        Rc = numpy.array([[0.0, 0.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
-        c = self.add_circle(x0 + x0t, irad, mesh_size=mesh_size, R=numpy.dot(R, Rc))
+        x0t = np.dot(R, np.array([0.0, orad, 0.0]))
+        Rc = np.array([[0.0, 0.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
+        c = self.add_circle(x0 + x0t, irad, mesh_size=mesh_size, R=np.dot(R, Rc))
 
         rot_axis = [0.0, 0.0, 1.0]
-        rot_axis = numpy.dot(R, rot_axis)
+        rot_axis = np.dot(R, rot_axis)
         point_on_rot_axis = [0.0, 0.0, 0.0]
-        point_on_rot_axis = numpy.dot(R, point_on_rot_axis) + x0
+        point_on_rot_axis = np.dot(R, point_on_rot_axis) + x0
 
         # Form the torus by extruding the circle three times by 2/3*pi. This
         # works around the inability of Gmsh to extrude by pi or more. The
@@ -480,7 +480,7 @@ class Geometry(common.CommonGeometry):
                 previous,
                 rotation_axis=rot_axis,
                 point_on_axis=point_on_rot_axis,
-                angle=2 * numpy.pi / num_steps,
+                angle=2 * np.pi / num_steps,
             )
             previous = top
             all_volumes.append(vol)
@@ -493,8 +493,8 @@ class Geometry(common.CommonGeometry):
         outer_radius,
         inner_radius,
         length,
-        R=numpy.eye(3),
-        x0=numpy.array([0.0, 0.0, 0.0]),
+        R=np.eye(3),
+        x0=np.array([0.0, 0.0, 0.0]),
         mesh_size=None,
         variant="rectangle_rotation",
     ):
@@ -512,14 +512,14 @@ class Geometry(common.CommonGeometry):
         outer_radius,
         inner_radius,
         length,
-        R=numpy.eye(3),
-        x0=numpy.array([0.0, 0.0, 0.0]),
+        R=np.eye(3),
+        x0=np.array([0.0, 0.0, 0.0]),
         mesh_size=None,
     ):
         """Hollow cylinder.
         Define a rectangle, extrude it by rotation.
         """
-        X = numpy.array(
+        X = np.array(
             [
                 [0.0, outer_radius, -0.5 * length],
                 [0.0, outer_radius, +0.5 * length],
@@ -528,7 +528,7 @@ class Geometry(common.CommonGeometry):
             ]
         )
         # Apply transformation.
-        X = [numpy.dot(R, x) + x0 for x in X]
+        X = [np.dot(R, x) + x0 for x in X]
         # Create points set.
         p = [self.add_point(x, mesh_size=mesh_size) for x in X]
 
@@ -541,13 +541,13 @@ class Geometry(common.CommonGeometry):
         ]
 
         rot_axis = [0.0, 0.0, 1.0]
-        rot_axis = numpy.dot(R, rot_axis)
+        rot_axis = np.dot(R, rot_axis)
         point_on_rot_axis = [0.0, 0.0, 0.0]
-        point_on_rot_axis = numpy.dot(R, point_on_rot_axis) + x0
+        point_on_rot_axis = np.dot(R, point_on_rot_axis) + x0
 
         # Extrude all edges three times by 2*Pi/3.
         previous = e
-        angle = 2 * numpy.pi / 3
+        angle = 2 * np.pi / 3
         all_surfaces = []
         # com = []
         for _ in range(3):
@@ -578,33 +578,33 @@ class Geometry(common.CommonGeometry):
         outer_radius,
         inner_radius,
         length,
-        R=numpy.eye(3),
-        x0=numpy.array([0.0, 0.0, 0.0]),
+        R=np.eye(3),
+        x0=np.array([0.0, 0.0, 0.0]),
         mesh_size=None,
     ):
         """Hollow cylinder.
         Define a ring, extrude it by translation.
         """
         # Define ring which to Extrude by translation.
-        Rc = numpy.array([[0.0, 0.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
+        Rc = np.array([[0.0, 0.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
         c_inner = self.add_circle(
             x0,
             inner_radius,
             mesh_size=mesh_size,
-            R=numpy.dot(R, Rc),
+            R=np.dot(R, Rc),
             make_surface=False,
         )
         circ = self.add_circle(
             x0,
             outer_radius,
             mesh_size=mesh_size,
-            R=numpy.dot(R, Rc),
+            R=np.dot(R, Rc),
             holes=[c_inner.curve_loop],
         )
 
         # Now Extrude the ring surface.
         _, vol, _ = self.extrude(
-            circ.plane_surface, translation_axis=numpy.dot(R, [length, 0, 0])
+            circ.plane_surface, translation_axis=np.dot(R, [length, 0, 0])
         )
         return vol
 

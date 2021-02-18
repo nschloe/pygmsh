@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 from helpers import compute_volume
 
 import pygmsh
@@ -6,7 +6,7 @@ import pygmsh
 
 def test():
     # Airfoil coordinates
-    airfoil_coordinates = numpy.array(
+    airfoil_coordinates = np.array(
         [
             [1.000000, 0.000000, 0.0],
             [0.999023, 0.000209, 0.0],
@@ -130,7 +130,7 @@ def test():
         xmax = airfoil_coordinates[:, 0].max() + right_dist * coord
         ymin = airfoil_coordinates[:, 1].min() - bottom_dist * coord
         ymax = airfoil_coordinates[:, 1].max() + top_dist * coord
-        domainCoordinates = numpy.array(
+        domainCoordinates = np.array(
             [[xmin, ymin, 0.0], [xmax, ymin, 0.0], [xmax, ymax, 0.0], [xmin, ymax, 0.0]]
         )
         polygon = geom.add_polygon(domainCoordinates, char_length, holes=[airfoil])
