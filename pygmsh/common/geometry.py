@@ -138,15 +138,16 @@ class CommonGeometry:
         self,
         input_entity,
         translation_axis,
-        num_layers=None,
-        heights=None,
-        recombine=False,
+        num_layers: Optional[Union[int, List[int]]] = None,
+        heights: Optional[List[float]] = None,
+        recombine: bool = False,
     ):
         """Extrusion of any entity along a given translation_axis."""
         if isinstance(num_layers, int):
             num_layers = [num_layers]
         if num_layers is None:
             num_layers = []
+            assert heights is None
             heights = []
         else:
             if heights is None:
