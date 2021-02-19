@@ -14,6 +14,7 @@ from .rectangle import Rectangle
 from .torus import Torus
 from .wedge import Wedge
 
+from ..common.size_field import BoundaryLayer,SetBackgroundMesh,ignore_other_mesh_sizes
 
 class Geometry(common.CommonGeometry):
     def __init__(self):
@@ -54,6 +55,15 @@ class Geometry(common.CommonGeometry):
 
         assert angle < 2 * math.pi
         return super()._revolve(*args, **kwargs)
+
+    def add_boundary_layer(self, *args, **kwargs):
+        layer = BoundaryLayer(*args, **kwargs)
+        self._AFTER_SYNC_QUEUE.append(layer)
+        return layer
+
+    def set_background_mesh(self, *args, **kwargs):
+        setter = SetBackgroundMesh(*args, **kwargs)
+        self._AFTER_SYNC_QUEUE.append(setter)
 
     def add_rectangle(self, *args, mesh_size=None, **kwargs):
         entity = Rectangle(*args, **kwargs)
