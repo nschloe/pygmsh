@@ -250,7 +250,6 @@ class Geometry(common.CommonGeometry):
 
     from pygmsh.occ.dummy import Dummy
 
-
     def import_shapes(self, filename: str):
         s = gmsh.model.occ.importShapes(filename)
         return [Dummy(*i) for i in s]
