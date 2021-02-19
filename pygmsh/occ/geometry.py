@@ -247,3 +247,10 @@ class Geometry(common.CommonGeometry):
         self._SIZE_QUEUE = [s for s in self._SIZE_QUEUE if s[0] not in all_entities]
 
         return [Dummy(*dim_tag) for dim_tag in dim_tags]
+
+    from pygmsh.occ.dummy import Dummy
+
+
+    def import_shapes(self, filename: str):
+        s = gmsh.model.occ.importShapes(filename)
+        return [Dummy(*i) for i in s]
