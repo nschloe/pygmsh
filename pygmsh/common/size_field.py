@@ -35,8 +35,8 @@ class BoundaryLayer:
             )
             # edge nodes must be specified, too, cf.
             # <https://gitlab.onelab.info/gmsh/gmsh/-/issues/812#note_9454>
-            nodes = list(set([p for e in self.edges_list for p in e.points]))
-            gmsh.model.mesh.field.setNumbers(tag1, "NodesList", [n._id for n in nodes])
+            #nodes = list(set([p for e in self.edges_list for p in e.points]))
+            #gmsh.model.mesh.field.setNumbers(tag1, "NodesList", [n._id for n in nodes])
         if self.faces_list:
             gmsh.model.mesh.field.setNumbers(
                 tag1, "FacesList", [f._id for f in self.faces_list]
