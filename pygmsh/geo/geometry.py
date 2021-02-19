@@ -7,7 +7,7 @@ import numpy as np
 from .. import common
 from .dummy import Dummy
 
-from ..common.size_field import BoundaryLayer,SetBackgroundMesh,ignore_other_mesh_sizes
+from ..common.size_field import BoundaryLayer, SetBackgroundMesh, ignore_other_mesh_sizes
 
 
 class Circle:

@@ -14,7 +14,7 @@ from .rectangle import Rectangle
 from .torus import Torus
 from .wedge import Wedge
 
-from ..common.size_field import BoundaryLayer,SetBackgroundMesh,ignore_other_mesh_sizes
+from ..common.size_field import BoundaryLayer, SetBackgroundMesh, ignore_other_mesh_sizes
 
 
 class Geometry(common.CommonGeometry):
