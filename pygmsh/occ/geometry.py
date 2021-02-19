@@ -16,6 +16,7 @@ from .wedge import Wedge
 
 from ..common.size_field import BoundaryLayer,SetBackgroundMesh,ignore_other_mesh_sizes
 
+
 class Geometry(common.CommonGeometry):
     def __init__(self):
         super().__init__(gmsh.model.occ)
