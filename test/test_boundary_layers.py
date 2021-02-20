@@ -48,7 +48,7 @@ def test():
             lcmax=0.1,
             distmin=0.0,
             distmax=0.2,
-            NumPts_PerCurve=50
+            NumPts_PerCurve=50,
         )
         field1 = geom.add_boundary_layer(
             nodes_list=[point1],
@@ -56,7 +56,7 @@ def test():
             lcmax=0.1,
             distmin=0.0,
             distmax=0.2,
-            NumPts_PerCurve=50
+            NumPts_PerCurve=50,
         )
         geom.set_background_mesh([field0, field1], operator="Min")
 

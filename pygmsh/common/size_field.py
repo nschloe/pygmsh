@@ -17,7 +17,7 @@ class BoundaryLayer:
         edges_list=None,
         faces_list=None,
         nodes_list=None,
-        NumPts_PerCurve=100
+        NumPts_PerCurve=100,
     ):
         self.lcmin = lcmin
         self.lcmax = lcmax
