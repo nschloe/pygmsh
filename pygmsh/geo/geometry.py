@@ -5,9 +5,8 @@ import gmsh
 import numpy as np
 
 from .. import common
-from .dummy import Dummy
-
 from ..common.size_field import BoundaryLayer, SetBackgroundMesh
+from .dummy import Dummy
 
 
 class Circle:
@@ -621,6 +620,3 @@ class Geometry(common.CommonGeometry):
         will conform to the mesh of the input entities.
         """
         self._EMBED_QUEUE.append((input_entity, volume))
-
-
-

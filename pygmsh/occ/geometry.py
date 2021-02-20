@@ -4,6 +4,7 @@ import warnings
 import gmsh
 
 from .. import common
+from ..common.size_field import BoundaryLayer, SetBackgroundMesh
 from .ball import Ball
 from .box import Box
 from .cone import Cone
@@ -13,8 +14,6 @@ from .dummy import Dummy
 from .rectangle import Rectangle
 from .torus import Torus
 from .wedge import Wedge
-
-from ..common.size_field import BoundaryLayer, SetBackgroundMesh
 
 
 class Geometry(common.CommonGeometry):
