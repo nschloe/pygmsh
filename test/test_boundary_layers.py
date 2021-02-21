@@ -64,7 +64,7 @@ def test_occ():
         )
         geom.set_background_mesh([field0, field1], operator="Min")
 
-        ref = 0.5
+        ref = 2.5
         mesh = geom.generate_mesh()
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
     return mesh
