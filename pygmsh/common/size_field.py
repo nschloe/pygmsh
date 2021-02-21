@@ -1,12 +1,6 @@
 import gmsh
 
 
-def ignore_other_mesh_sizes():
-    gmsh.option.setNumber("Mesh.CharacteristicLengthExtendFromBoundary", 0)
-    gmsh.option.setNumber("Mesh.CharacteristicLengthFromPoints", 0)
-    gmsh.option.setNumber("Mesh.CharacteristicLengthFromCurvature", 0)
-
-
 class BoundaryLayer:
     def __init__(
         self,
