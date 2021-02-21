@@ -5,7 +5,6 @@ import gmsh
 import numpy as np
 
 from .. import common
-from ..common.size_field import BoundaryLayer, SetBackgroundMesh
 from .dummy import Dummy
 
 
@@ -166,15 +165,6 @@ class Geometry(common.CommonGeometry):
             plane_surface,
             mesh_size=mesh_size,
         )
-
-    def add_boundary_layer(self, *args, **kwargs):
-        layer = BoundaryLayer(*args, **kwargs)
-        self._AFTER_SYNC_QUEUE.append(layer)
-        return layer
-
-    def set_background_mesh(self, *args, **kwargs):
-        setter = SetBackgroundMesh(*args, **kwargs)
-        self._AFTER_SYNC_QUEUE.append(setter)
 
     def add_rectangle(
         self,

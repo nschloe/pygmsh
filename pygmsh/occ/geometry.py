@@ -4,7 +4,6 @@ import warnings
 import gmsh
 
 from .. import common
-from ..common.size_field import BoundaryLayer, SetBackgroundMesh
 from .ball import Ball
 from .box import Box
 from .cone import Cone
@@ -55,15 +54,6 @@ class Geometry(common.CommonGeometry):
 
         assert angle < 2 * math.pi
         return super()._revolve(*args, **kwargs)
-
-    def add_boundary_layer(self, *args, **kwargs):
-        layer = BoundaryLayer(*args, **kwargs)
-        self._AFTER_SYNC_QUEUE.append(layer)
-        return layer
-
-    def set_background_mesh(self, *args, **kwargs):
-        setter = SetBackgroundMesh(*args, **kwargs)
-        self._AFTER_SYNC_QUEUE.append(setter)
 
     def add_rectangle(self, *args, mesh_size=None, **kwargs):
         entity = Rectangle(*args, **kwargs)
