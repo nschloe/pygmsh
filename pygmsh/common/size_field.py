@@ -11,7 +11,7 @@ class BoundaryLayer:
         edges_list=None,
         faces_list=None,
         nodes_list=None,
-        NumPts_PerCurve=100,
+        num_points_per_curve=None,
     ):
         self.lcmin = lcmin
         self.lcmax = lcmax
@@ -22,7 +22,7 @@ class BoundaryLayer:
         self.edges_list = edges_list if edges_list else []
         self.faces_list = faces_list if faces_list else []
         self.nodes_list = nodes_list if nodes_list else []
-        self.NumPts_PerCurve = NumPts_PerCurve
+        self.num_points_per_curve = num_points_per_curve
 
     def exec(self):
         tag1 = gmsh.model.mesh.field.add("Distance")
@@ -43,7 +43,10 @@ class BoundaryLayer:
             gmsh.model.mesh.field.setNumbers(
                 tag1, "NodesList", [n._id for n in self.nodes_list]
             )
-        gmsh.model.mesh.field.setNumber(tag1, "NumPointsPerCurve", self.NumPts_PerCurve)
+        if self.num_points_per_curve:
+            gmsh.model.mesh.field.setNumber(
+                tag1, "NumPointsPerCurve", self.num_points_per_curve
+            )
 
         tag2 = gmsh.model.mesh.field.add("Threshold")
         gmsh.model.mesh.field.setNumber(tag2, "IField", tag1)

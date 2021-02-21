@@ -3,7 +3,7 @@ from helpers import compute_volume
 import pygmsh
 
 
-def test():
+def test_geo():
     with pygmsh.geo.Geometry() as geom:
         poly = geom.add_polygon(
             [
@@ -36,6 +36,10 @@ def test():
         mesh = geom.generate_mesh()
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
 
+    return mesh
+
+
+def test_occ():
     with pygmsh.occ.Geometry() as geom:
         geom.add_rectangle([0.0, 0.5, 0.0], 1.0, 0.5)
 
@@ -63,9 +67,9 @@ def test():
         ref = 0.5
         mesh = geom.generate_mesh()
     assert abs(compute_volume(mesh) - ref) < 1.0e-2 * ref
-
     return mesh
 
 
 if __name__ == "__main__":
-    test().write("boundary_layers.vtu")
+    test_geo().write("boundary_layers_geo.vtu")
+    test_occ().write("boundary_layers_occ.vtu")
