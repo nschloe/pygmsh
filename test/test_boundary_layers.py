@@ -41,7 +41,7 @@ def test_geo():
 
 def test_occ():
     with pygmsh.occ.Geometry() as geom:
-        geom.add_rectangle([0.0, 0.5, 0.0], 1.0, 0.5)
+        geom.add_rectangle([0.0, 0.5, 0.0], 5.0, 0.5)
 
         edge1 = pygmsh.occ.dummy.Dummy(dim=1, id0=1)
         point1 = pygmsh.occ.dummy.Dummy(dim=0, id0=3)
@@ -52,7 +52,7 @@ def test_occ():
             lcmax=0.1,
             distmin=0.0,
             distmax=0.2,
-            NumPts_PerCurve=50,
+            num_points_per_curve=50,
         )
         field1 = geom.add_boundary_layer(
             nodes_list=[point1],
@@ -60,7 +60,7 @@ def test_occ():
             lcmax=0.1,
             distmin=0.0,
             distmax=0.2,
-            NumPts_PerCurve=50,
+            num_points_per_curve=50,
         )
         geom.set_background_mesh([field0, field1], operator="Min")
 
