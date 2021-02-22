@@ -13,6 +13,7 @@ from .line import Line
 from .plane_surface import PlaneSurface
 from .point import Point
 from .polygon import Polygon
+from .size_field import BoundaryLayer, SetBackgroundMesh
 from .spline import Spline
 from .surface import Surface
 from .surface_loop import SurfaceLoop
@@ -287,6 +288,15 @@ class CommonGeometry:
             gmsh.option.setNumber("Mesh.CharacteristicLengthExtendFromBoundary", 0)
             gmsh.option.setNumber("Mesh.CharacteristicLengthFromPoints", 0)
             gmsh.option.setNumber("Mesh.CharacteristicLengthFromCurvature", 0)
+
+    def add_boundary_layer(self, *args, **kwargs):
+        layer = BoundaryLayer(*args, **kwargs)
+        self._AFTER_SYNC_QUEUE.append(layer)
+        return layer
+
+    def set_background_mesh(self, *args, **kwargs):
+        setter = SetBackgroundMesh(*args, **kwargs)
+        self._AFTER_SYNC_QUEUE.append(setter)
 
     def generate_mesh(  # noqa: C901
         self,
