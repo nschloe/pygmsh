@@ -24,7 +24,7 @@ class CommonGeometry:
     and occ.
     """
 
-    def __init__(self, env, init_argv):
+    def __init__(self, env, init_argv=None):
         self.env = env
         self.init_argv = init_argv
         self._COMPOUND_ENTITIES = []
