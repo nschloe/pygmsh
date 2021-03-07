@@ -16,8 +16,8 @@ from .wedge import Wedge
 
 
 class Geometry(common.CommonGeometry):
-    def __init__(self, argv=[]):
-        super().__init__(gmsh.model.occ, argv=argv)
+    def __init__(self, init_argv=None):
+        super().__init__(gmsh.model.occ, init_argv=init_argv)
 
     def __exit__(self, *a):
         # TODO remove once gmsh 4.7.0 is out

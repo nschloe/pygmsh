@@ -13,7 +13,6 @@ from .line import Line
 from .plane_surface import PlaneSurface
 from .point import Point
 from .polygon import Polygon
-from .size_field import BoundaryLayer, SetBackgroundMesh
 from .spline import Spline
 from .surface import Surface
 from .surface_loop import SurfaceLoop
@@ -25,9 +24,9 @@ class CommonGeometry:
     and occ.
     """
 
-    def __init__(self, env, argv=[]):
+    def __init__(self, env, init_argv):
         self.env = env
-        self.argv = argv
+        self.init_argv = init_argv
         self._COMPOUND_ENTITIES = []
         self._RECOMBINE_ENTITIES = []
         self._EMBED_QUEUE = []
@@ -40,7 +39,9 @@ class CommonGeometry:
         self._OUTWARD_NORMALS = []
 
     def __enter__(self):
-        gmsh.initialize(self.argv)
+        if self.init_argv = None:
+            self.init_argv = []
+        gmsh.initialize(self.init_argv)
         gmsh.model.add("pygmsh model")
         return self
 
@@ -289,15 +290,6 @@ class CommonGeometry:
             gmsh.option.setNumber("Mesh.CharacteristicLengthExtendFromBoundary", 0)
             gmsh.option.setNumber("Mesh.CharacteristicLengthFromPoints", 0)
             gmsh.option.setNumber("Mesh.CharacteristicLengthFromCurvature", 0)
-
-    def add_boundary_layer(self, *args, **kwargs):
-        layer = BoundaryLayer(*args, **kwargs)
-        self._AFTER_SYNC_QUEUE.append(layer)
-        return layer
-
-    def set_background_mesh(self, *args, **kwargs):
-        setter = SetBackgroundMesh(*args, **kwargs)
-        self._AFTER_SYNC_QUEUE.append(setter)
 
     def generate_mesh(  # noqa: C901
         self,
