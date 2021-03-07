@@ -33,8 +33,8 @@ class Circle:
 
 
 class Geometry(common.CommonGeometry):
-    def __init__(self, init_argv=None):
-        super().__init__(gmsh.model.geo, init_argv=init_argv)
+    def __init__(self, argv=[]):
+        super().__init__(gmsh.model.geo, argv=argv)
 
     def revolve(self, *args, **kwargs):
         if len(args) >= 4:
