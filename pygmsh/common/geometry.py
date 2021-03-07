@@ -25,8 +25,9 @@ class CommonGeometry:
     and occ.
     """
 
-    def __init__(self, env):
+    def __init__(self, env, argv=[]):
         self.env = env
+        self.argv = argv
         self._COMPOUND_ENTITIES = []
         self._RECOMBINE_ENTITIES = []
         self._EMBED_QUEUE = []
@@ -38,8 +39,8 @@ class CommonGeometry:
         self._PHYSICAL_QUEUE = []
         self._OUTWARD_NORMALS = []
 
-    def __enter__(self):
-        gmsh.initialize()
+    def __enter__(self, argv=self.argv):
+        gmsh.initialize(argv)
         gmsh.model.add("pygmsh model")
         return self
 
