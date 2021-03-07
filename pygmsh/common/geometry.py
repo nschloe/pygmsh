@@ -39,8 +39,8 @@ class CommonGeometry:
         self._PHYSICAL_QUEUE = []
         self._OUTWARD_NORMALS = []
 
-    def __enter__(self, argv=self.argv):
-        gmsh.initialize(argv)
+    def __enter__(self):
+        gmsh.initialize(self.argv)
         gmsh.model.add("pygmsh model")
         return self
 
