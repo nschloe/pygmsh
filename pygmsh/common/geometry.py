@@ -40,7 +40,7 @@ class CommonGeometry:
         self._OUTWARD_NORMALS = []
 
     def __enter__(self):
-        
+
         if self.init_argv is None:
             init_argv = []
         else:
