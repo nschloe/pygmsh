@@ -41,12 +41,7 @@ class CommonGeometry:
 
     def __enter__(self):
 
-        if self.init_argv is None:
-            init_argv = []
-        else:
-            init_argv = self.init_argv
-
-        gmsh.initialize(init_argv)
+        gmsh.initialize([] if self.init_argv is None else self.init_argv)
         gmsh.model.add("pygmsh model")
         return self
 
