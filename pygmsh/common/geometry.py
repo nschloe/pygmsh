@@ -1,5 +1,5 @@
 import warnings
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 import gmsh
 
@@ -120,15 +120,17 @@ class CommonGeometry:
 
         self._PHYSICAL_QUEUE.append((entities, label))
 
-    def set_transfinite_curve(self, curve, num_nodes, mesh_type, coeff):
+    def set_transfinite_curve(
+        self, curve, num_nodes: int, mesh_type: str, coeff: float
+    ):
         assert mesh_type in ["Progression", "Bulk"]
         self._TRANSFINITE_CURVE_QUEUE.append((curve._id, num_nodes, mesh_type, coeff))
 
-    def set_transfinite_surface(self, surface, arrangement, corner_pts):
+    def set_transfinite_surface(self, surface, arrangement: str, corner_pts):
         corner_tags = [pt._id for pt in corner_pts]
         self._TRANSFINITE_SURFACE_QUEUE.append((surface._id, arrangement, corner_tags))
 
-    def set_transfinite_volume(self, volume, arrangement, corner_pts):
+    def set_transfinite_volume(self, volume, corner_pts):
         corner_tags = [pt._id for pt in corner_pts]
         self._TRANSFINITE_VOLUME_QUEUE.append((volume._id, corner_tags))
 
@@ -140,7 +142,7 @@ class CommonGeometry:
     def extrude(
         self,
         input_entity,
-        translation_axis,
+        translation_axis: Tuple[float, float, float],
         num_layers: Optional[Union[int, List[int]]] = None,
         heights: Optional[List[float]] = None,
         recombine: bool = False,
@@ -177,8 +179,8 @@ class CommonGeometry:
     def _revolve(
         self,
         input_entity,
-        rotation_axis: List[float],
-        point_on_axis: List[float],
+        rotation_axis: Tuple[float, float, float],
+        point_on_axis: Tuple[float, float, float],
         angle: float,
         num_layers: Optional[Union[int, List[int]]] = None,
         heights: Optional[List[float]] = None,
@@ -213,15 +215,21 @@ class CommonGeometry:
         lateral = [Dummy(*e) for e in out_dim_tags[2:]]
         return top, extruded, lateral
 
-    def translate(self, obj, vector):
+    def translate(self, obj, vector: Tuple[float, float, float]):
         """Translates input_entity itself by vector.
 
         Changes the input object.
         """
         self.env.translate(obj.dim_tags, *vector)
 
-    def rotate(self, obj, point, angle, axis):
-        """Rotate input_entity around a given point with a give angle.
+    def rotate(
+        self,
+        obj,
+        point: Tuple[float, float, float],
+        angle: float,
+        axis: Tuple[float, float, float],
+    ):
+        """Rotate input_entity around a given point with a given angle.
            Rotation axis has to be specified.
 
         Changes the input object.
@@ -233,19 +241,21 @@ class CommonGeometry:
         assert len(dim_tag) == 1
         return Dummy(*dim_tag[0])
 
-    def symmetrize(self, obj, coefficients):
+    def symmetrize(self, obj, coefficients: Tuple[float, float, float, float]):
         """Transforms all elementary entities symmetrically to a plane. The vector
         should contain four expressions giving the coefficients of the plane's equation.
         """
         self.env.symmetrize(obj.dim_tags, *coefficients)
 
-    def dilate(self, obj, x0, abc):
+    def dilate(
+        self, obj, x0: Tuple[float, float, float], abc: Tuple[float, float, float]
+    ):
         self.env.dilate(obj.dim_tags, *x0, *abc)
 
-    def mirror(self, obj, abcd):
+    def mirror(self, obj, abcd: Tuple[float, float, float, float]):
         self.env.mirror(obj.dim_tags, *abcd)
 
-    def remove(self, obj, recursive=False):
+    def remove(self, obj, recursive: bool = False):
         self.env.remove(obj.dim_tags, recursive=recursive)
 
     def in_surface(self, input_entity, surface):
