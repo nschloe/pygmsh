@@ -123,7 +123,7 @@ class CommonGeometry:
     def set_transfinite_curve(
         self, curve, num_nodes: int, mesh_type: str, coeff: float
     ):
-        assert mesh_type in ["Progression", "Bulk"]
+        assert mesh_type in ["Progression", "Bump", "Beta"]
         self._TRANSFINITE_CURVE_QUEUE.append((curve._id, num_nodes, mesh_type, coeff))
 
     def set_transfinite_surface(self, surface, arrangement: str, corner_pts):
