@@ -29,7 +29,7 @@ def test(lcar=0.3):
         # test setting physical groups
         geom.add_physical(p1, label="c")
         geom.add_physical(c0, label="arc")
-        geom.add_physical(pacman)
+        geom.add_physical(pacman, "dummy")
         geom.add_physical(pacman, label="77")
 
         mesh = geom.generate_mesh()
