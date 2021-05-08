@@ -87,7 +87,7 @@ with pygmsh.geo.Geometry() as geom:
 
 The return value is always a [meshio](https://pypi.org/project/meshio) mesh, so to store
 it to a file you can
-<!--exdown-skip-->
+<!--pytest-codeblocks:skip-->
 ```python
 mesh.write("test.vtk")
 ```
@@ -95,7 +95,7 @@ The output file can be visualized with various tools, e.g.,
 [ParaView](https://www.paraview.org/).
 
 With
-<!--exdown-skip-->
+<!--pytest-codeblocks:skip-->
 ```python
 pygmsh.write("test.msh")
 ```
@@ -273,7 +273,7 @@ with pygmsh.geo.Geometry() as geom:
 
     mesh = geom.generate_mesh()
 ```
-<!--exdown-skip-->
+<!--pytest-codeblocks:skip-->
 ```python
 # mesh refinement with callback
 import pygmsh
@@ -293,7 +293,7 @@ with pygmsh.geo.Geometry() as geom:
 
     mesh = geom.generate_mesh()
 ```
-<!--exdown-skip-->
+<!--pytest-codeblocks:skip-->
 ```python
 # ball with mesh refinement
 from math import sqrt
@@ -312,7 +312,7 @@ with pygmsh.occ.Geometry() as geom:
 #### Optimization
 
 pygmsh can optimize existing meshes, too.
-<!--exdown-skip-->
+<!--pytest-codeblocks:skip-->
 ```python
 import meshio
 
