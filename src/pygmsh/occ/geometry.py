@@ -123,16 +123,14 @@ class Geometry(common.CommonGeometry):
         # form subsequent intersections
         # https://gitlab.onelab.info/gmsh/gmsh/-/issues/999
         for e in entities[1:]:
-            out, _ = gmsh.model.occ.intersect(
+            ent, _ = gmsh.model.occ.intersect(
                 ent,
                 [ee.dim_tag for ee in e],
                 removeObject=delete_first,
                 removeTool=delete_other,
             )
-            if len(out) == 0:
+            if len(ent) == 0:
                 raise RuntimeError("Empty intersection.")
-            assert all(out[0] == item for item in out)
-            ent = [out[0]]
 
         # remove entities from SIZE_QUEUE if necessary
         all_entities = []
@@ -149,7 +147,7 @@ class Geometry(common.CommonGeometry):
                 )
         self._SIZE_QUEUE = [s for s in self._SIZE_QUEUE if s[0] not in all_entities]
 
-        return [Dummy(*ent[0])]
+        return [Dummy(*e) for e in ent]
 
     def boolean_union(
         self, entities, delete_first: bool = True, delete_other: bool = True
