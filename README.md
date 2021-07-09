@@ -3,14 +3,14 @@
   <p align="center">Gmsh for Python.</p>
 </p>
 
-[![PyPi Version](https://img.shields.io/pypi/v/pygmsh.svg?style=flat-square)](https://pypi.org/project/pygmsh)
-[![PyPI pyversions](https://img.shields.io/pypi/pyversions/pygmsh.svg?style=flat-square)](https://pypi.org/pypi/pygmsh/)
+[![PyPi Version](https://img.shields.io/pypi/v/pygmsh.svg?style=flat-square)](https://pypi.org/project/pygmsh/)
+[![PyPI pyversions](https://img.shields.io/pypi/pyversions/pygmsh.svg?style=flat-square)](https://pypi.org/project/pygmsh/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1173105.svg?style=flat-square)](https://doi.org/10.5281/zenodo.1173105)
 [![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?style=flat-square&logo=github&label=Stars&logoColor=white)](https://github.com/nschloe/pygmsh)
 [![PyPi downloads](https://img.shields.io/pypi/dm/pygmsh.svg?style=flat-square)](https://pypistats.org/packages/pygmsh)
 
 [![Discord](https://img.shields.io/static/v1?logo=discord&label=chat&message=on%20discord&color=7289da&style=flat-square)](https://discord.gg/hnTJ5MRX2Y)
-[![Documentation Status](https://readthedocs.org/projects/pygmsh/badge/?version=latest&style=flat-square)](https://pygmsh.readthedocs.org/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/pygmsh/badge/?version=latest&style=flat-square)](https://pygmsh.readthedocs.io/en/latest/?badge=latest)
 
 [![gh-actions](https://img.shields.io/github/workflow/status/nschloe/pygmsh/ci?style=flat-square)](https://github.com/nschloe/pygmsh/actions?query=workflow%3Aci)
 [![codecov](https://img.shields.io/codecov/c/github/nschloe/pygmsh.svg?style=flat-square)](https://codecov.io/gh/nschloe/pygmsh)
@@ -85,7 +85,7 @@ with pygmsh.geo.Geometry() as geom:
     mesh = geom.generate_mesh()
 ```
 
-The return value is always a [meshio](https://pypi.org/project/meshio) mesh, so to store
+The return value is always a [meshio](https://pypi.org/project/meshio/) mesh, so to store
 it to a file you can
 <!--pytest-codeblocks:skip-->
 ```python
@@ -324,7 +324,7 @@ You can also use the command-line utility
 pygmsh-optimize input.vtk output.xdmf
 ```
 where input and output can be any format supported by
-[meshio](https://pypi.org/project/meshio).
+[meshio](https://pypi.org/project/meshio/).
 
 ### Testing
 To run the pygmsh unit tests, check out this repository and type

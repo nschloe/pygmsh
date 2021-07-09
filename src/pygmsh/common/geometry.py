@@ -40,7 +40,6 @@ class CommonGeometry:
         self._OUTWARD_NORMALS = []
 
     def __enter__(self):
-
         gmsh.initialize([] if self.init_argv is None else self.init_argv)
         gmsh.model.add("pygmsh model")
         return self

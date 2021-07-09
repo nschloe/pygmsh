@@ -246,7 +246,7 @@ class Geometry(common.CommonGeometry):
         s = [self.add_surface(l) for l in ll]
 
         # Combine the surfaces to avoid seams
-        # <https://gitlab.onelab.info/gmsh/gmsh/issues/507>
+        # <https://gitlab.onelab.info/gmsh/gmsh/-/issues/507>
         # Cannot enable those yet, <https://gitlab.onelab.info/gmsh/gmsh/-/issues/995>
         self._COMPOUND_ENTITIES.append((2, [surf._id for surf in s[:4]]))
         self._COMPOUND_ENTITIES.append((2, [surf._id for surf in s[4:]]))
