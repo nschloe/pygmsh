@@ -27,10 +27,9 @@ To use, install Gmsh itself and pygmsh from [pypi](https://pypi.org/project/pygm
 pip install pygmsh
 ```
 
-This document and the directory
-[`test/`](https://github.com/nschloe/pygmsh/tree/main/test/) contain many small
-examples. See [here](https://pygmsh.readthedocs.io/en/latest/index.html) for the full
-documentation.
+This document and the [`tests/`](https://github.com/nschloe/pygmsh/tree/main/tests/)
+directory contain many small examples. See
+[here](https://pygmsh.readthedocs.io/en/latest/index.html) for the full documentation.
 
 #### Flat shapes
 
