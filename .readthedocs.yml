@@ -1,3 +1,5 @@
+version: 2
+
 python:
   version: 3
   # use pip for installation, see
