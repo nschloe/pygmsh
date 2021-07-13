@@ -1,5 +1,6 @@
 import math
 import warnings
+from itertools import groupby
 
 import gmsh
 
@@ -13,6 +14,12 @@ from .dummy import Dummy
 from .rectangle import Rectangle
 from .torus import Torus
 from .wedge import Wedge
+
+
+# <https://stackoverflow.com/a/3844832/353337>
+def _all_equal(iterable):
+    g = groupby(iterable)
+    return next(g, True) and not next(g, False)
 
 
 class Geometry(common.CommonGeometry):
@@ -131,7 +138,10 @@ class Geometry(common.CommonGeometry):
             )
             if len(out) == 0:
                 raise RuntimeError("Empty intersection.")
-            assert all(out[0] == item for item in out)
+            if not _all_equal(out):
+                raise RuntimeError(
+                    f"Expected all-equal elements, but got dim_tags {out}"
+                )
             ent = [out[0]]
 
         # remove entities from SIZE_QUEUE if necessary
