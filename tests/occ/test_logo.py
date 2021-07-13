@@ -1,12 +1,8 @@
-import pytest
 from helpers import compute_volume
 
 import pygmsh
 
 
-@pytest.mark.skipif(
-    int(pygmsh.__gmsh_version__.split(".")[0]) < 3, reason="requires Gmsh >= 3"
-)
 def test():
     with pygmsh.occ.Geometry() as geom:
         # test setters, getters
