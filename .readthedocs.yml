@@ -1,6 +1,9 @@
+version: 2
+
 python:
   version: 3
   # use pip for installation, see
   # <https://github.com/readthedocs/readthedocs.org/issues/7030#issuecomment-625882887>
   install:
     - path: .
+      method: pip
