@@ -59,8 +59,8 @@ def print_stats(mesh):
 
     grid = termplotlib.subplot_grid((1, 2), column_widths=None, border_style=None)
     grid[0, 0].hist(q_hist, q_bin_edges, bar_width=1, strip=True)
-    grid[0, 1].aprint("min quality: {:5.3f}".format(np.min(q)))
-    grid[0, 1].aprint("avg quality: {:5.3f}".format(np.average(q)))
-    grid[0, 1].aprint("max quality: {:5.3f}".format(np.max(q)))
+    grid[0, 1].aprint(f"min quality: {np.min(q):5.3f}")
+    grid[0, 1].aprint(f"avg quality: {np.average(q):5.3f}")
+    grid[0, 1].aprint(f"max quality: {np.max(q):5.3f}")
 
     grid.show()
