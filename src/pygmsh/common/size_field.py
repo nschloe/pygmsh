@@ -19,9 +19,9 @@ class BoundaryLayer:
         self.distmax = distmax
         # Don't use [] as default argument, cf.
         # <https://stackoverflow.com/a/113198/353337>
-        self.edges_list = edges_list if edges_list else []
-        self.faces_list = faces_list if faces_list else []
-        self.nodes_list = nodes_list if nodes_list else []
+        self.edges_list = edges_list or []
+        self.faces_list = faces_list or []
+        self.nodes_list = nodes_list or []
         self.num_points_per_curve = num_points_per_curve
 
     def exec(self):

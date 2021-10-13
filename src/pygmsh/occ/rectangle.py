@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from __future__ import annotations
 
 import gmsh
 
@@ -21,10 +21,10 @@ class Rectangle:
 
     def __init__(
         self,
-        x0: Tuple[float, float, float],
+        x0: tuple[float, float, float],
         a: float,
         b: float,
-        corner_radius: Optional[float] = None,
+        corner_radius: float | None = None,
     ):
         assert len(x0) == 3
 
