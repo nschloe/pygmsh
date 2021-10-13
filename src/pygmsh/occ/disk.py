@@ -1,5 +1,3 @@
-from typing import Optional, Tuple, Union
-
 import gmsh
 
 
@@ -21,12 +19,12 @@ class Disk:
 
     def __init__(
         self,
-        x0: Union[Tuple[float, float], Tuple[float, float, float]],
+        x0: tuple[float, float] | tuple[float, float, float],
         radius0: float,
-        radius1: Optional[float] = None,
+        radius1: float | None = None,
     ):
         if len(x0) == 2:
-            x0 = [x0[0], x0[1], 0.0]
+            x0 = (x0[0], x0[1], 0.0)
         assert len(x0) == 3
 
         if radius1 is None:

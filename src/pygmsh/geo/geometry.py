@@ -1,5 +1,4 @@
 import math
-from typing import List, Optional, Union
 
 import gmsh
 import numpy as np
@@ -11,7 +10,7 @@ from .dummy import Dummy
 class Circle:
     def __init__(
         self,
-        x0: List[float],
+        x0: list[float],
         radius: float,
         R,
         compound,
@@ -19,7 +18,7 @@ class Circle:
         holes,
         curve_loop,
         plane_surface,
-        mesh_size: Optional[float] = None,
+        mesh_size: float | None = None,
     ):
         self.x0 = x0
         self.radius = radius
@@ -49,12 +48,12 @@ class Geometry(common.CommonGeometry):
     def twist(
         self,
         input_entity,
-        translation_axis: List[float],
-        rotation_axis: List[float],
-        point_on_axis: List[float],
+        translation_axis: list[float],
+        rotation_axis: list[float],
+        point_on_axis: list[float],
         angle: float,
-        num_layers: Optional[Union[int, List[int]]] = None,
-        heights: Optional[List[float]] = None,
+        num_layers: int | list[int] | None = None,
+        heights: list[float] | None = None,
         recombine: bool = False,
     ):
         """Twist (translation + rotation) of any entity along a given translation_axis,
@@ -92,9 +91,9 @@ class Geometry(common.CommonGeometry):
 
     def add_circle(
         self,
-        x0: List[float],
+        x0: list[float],
         radius: float,
-        mesh_size: Optional[float] = None,
+        mesh_size: float | None = None,
         R=None,
         compound=False,
         num_sections: int = 3,
@@ -173,7 +172,7 @@ class Geometry(common.CommonGeometry):
         ymin: float,
         ymax: float,
         z: float,
-        mesh_size: Optional[float] = None,
+        mesh_size: float | None = None,
         holes=None,
         make_surface: bool = True,
     ):
@@ -186,9 +185,9 @@ class Geometry(common.CommonGeometry):
 
     def add_ellipsoid(
         self,
-        x0: List[float],
-        radii: List[float],
-        mesh_size: Optional[float] = None,
+        x0: list[float],
+        radii: list[float],
+        mesh_size: float | None = None,
         with_volume: bool = True,
         holes=None,
     ):
@@ -273,7 +272,7 @@ class Geometry(common.CommonGeometry):
 
         return Ellipsoid(x0, radii, surface_loop, volume, mesh_size=mesh_size)
 
-    def add_ball(self, x0: List[float], radius: float, **kwargs):
+    def add_ball(self, x0: list[float], radius: float, **kwargs):
         return self.add_ellipsoid(x0, [radius, radius, radius], **kwargs)
 
     def add_box(
@@ -284,7 +283,7 @@ class Geometry(common.CommonGeometry):
         y1: float,
         z0: float,
         z1: float,
-        mesh_size: Optional[float] = None,
+        mesh_size: float | None = None,
         with_volume: bool = True,
         holes=None,
     ):
@@ -359,7 +358,7 @@ class Geometry(common.CommonGeometry):
         self,
         irad: float,
         orad: float,
-        mesh_size: Optional[float] = None,
+        mesh_size: float | None = None,
         R=np.eye(3),
         x0=np.array([0.0, 0.0, 0.0]),
         variant: str = "extrude_lines",
