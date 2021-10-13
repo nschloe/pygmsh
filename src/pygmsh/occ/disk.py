@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import gmsh
 
 
@@ -25,10 +27,12 @@ class Disk:
     ):
         if len(x0) == 2:
             x0 = (x0[0], x0[1], 0.0)
+
         assert len(x0) == 3
 
         if radius1 is None:
             radius1 = radius0
+
         assert radius0 >= radius1
 
         self.x0 = x0
