@@ -3,22 +3,22 @@ name: ci
 on:
   push:
     branches:
-    - main
+      - main
   pull_request:
     branches:
-    - main
+      - main
 
 jobs:
   doc:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/setup-python@v2
-      with:
-        python-version: "3.x"
-    - uses: actions/checkout@v2
-    - run: |
-        pip install sphinx
-        sphinx-build -M html doc/ build/
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+      - uses: actions/checkout@v2
+      - run: |
+          pip install sphinx
+          sphinx-build -M html doc/ build/
 
   lint:
     runs-on: ubuntu-latest
@@ -31,21 +31,21 @@ jobs:
         uses: pre-commit/action@v2.0.3
 
   build:
-    runs-on: ubuntu-20.04  # ubuntu-latest
+    runs-on: ubuntu-20.04 # ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.6", "3.7", "3.8", "3.9", "3.10-dev"]
     steps:
-    - uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - uses: actions/checkout@v2
-    - name: Install gmsh
-      run: |
-        sudo apt-get install -y python3-gmsh
-    - name: Test with tox
-      run: |
-        pip install tox
-        tox -- --cov pygmsh --cov-report xml --cov-report term
-    - uses: codecov/codecov-action@v1
-      if: ${{ matrix.python-version == '3.9' }}
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: actions/checkout@v2
+      - name: Install gmsh
+        run: |
+          sudo apt-get install -y python3-gmsh
+      - name: Test with tox
+        run: |
+          pip install tox
+          tox -- --cov pygmsh --cov-report xml --cov-report term
+      - uses: codecov/codecov-action@v1
+        if: ${{ matrix.python-version == '3.9' }}
