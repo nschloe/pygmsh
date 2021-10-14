@@ -17,7 +17,7 @@ jobs:
           python-version: "3.x"
       - uses: actions/checkout@v2
       - run: |
-          pip install sphinx
+          pip install sphinx sphinx-autodoc-typehints
           sphinx-build -M html doc/ build/
 
   lint:
