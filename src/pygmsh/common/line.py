@@ -8,10 +8,8 @@ class Line(LineBase):
 
     Parameters
     ----------
-    p0 : Object
-        Point object that represents the start of the line.
-    p1 : Object
-        Point object that represents the end of the line.
+    p0 : Point object that represents the start of the line.
+    p1 : Point object that represents the end of the line.
 
     Attributes
     ----------
@@ -21,7 +19,7 @@ class Line(LineBase):
 
     dim = 1
 
-    def __init__(self, env, p0, p1):
+    def __init__(self, env, p0: Point, p1: Point):
         assert isinstance(p0, Point)
         assert isinstance(p1, Point)
         id0 = env.addLine(p0._id, p1._id)

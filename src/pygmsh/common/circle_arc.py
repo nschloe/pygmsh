@@ -8,15 +8,12 @@ class CircleArc(LineBase):
 
     Parameters
     ----------
-    start : Point
-        Coordinates of start point needed to construct circle-arc.
-    center : Point
-        Coordinates of center point needed to construct circle-arc.
-    end : Point
-        Coordinates of end point needed to construct circle-arc.
+    start : Coordinates of start point needed to construct circle-arc.
+    center : Coordinates of center point needed to construct circle-arc.
+    end : Coordinates of end point needed to construct circle-arc.
     """
 
-    def __init__(self, env, start, center, end):
+    def __init__(self, env, start: Point, center: Point, end: Point):
         assert isinstance(start, Point)
         assert isinstance(center, Point)
         assert isinstance(end, Point)

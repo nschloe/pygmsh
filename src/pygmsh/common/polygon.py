@@ -1,27 +1,38 @@
+from __future__ import annotations
+
 import numpy as np
+from numpy.typing import ArrayLike
 
 
 class Polygon:
     dim = 2
 
-    def __init__(self, host, points, mesh_size=None, holes=None, make_surface=True):
+    def __init__(
+        self,
+        host,
+        points: ArrayLike,
+        mesh_size: float | list[float | None] | None = None,
+        holes=None,
+        make_surface: bool = True,
+    ):
         if holes is None:
             holes = []
         else:
             assert make_surface
+
+        points = np.asarray(points)
 
         if isinstance(mesh_size, list):
             assert len(points) == len(mesh_size)
         else:
             mesh_size = len(points) * [mesh_size]
 
-        points = np.asarray(points)
         if points.shape[1] == 2:
             points = np.column_stack([points, np.zeros_like(points[:, 0])])
 
         # Create points.
         self.points = [
-            host.add_point(x, mesh_size=l) for x, l in zip(points, mesh_size)
+            host.add_point(x, mesh_size=size) for x, size in zip(points, mesh_size)
         ]
         # Create lines
         self.curves = [
