@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .line_base import LineBase
 from .point import Point
 
@@ -8,11 +10,10 @@ class BSpline(LineBase):
 
     Parameters
     ----------
-    control_points : List[Point]
-        Contains the identification numbers of the control points.
+    control_points : Contains the identification numbers of the control points.
     """
 
-    def __init__(self, env, control_points):
+    def __init__(self, env, control_points: list[Point]):
         for c in control_points:
             assert isinstance(c, Point)
         assert len(control_points) > 1

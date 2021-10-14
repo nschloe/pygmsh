@@ -8,17 +8,15 @@ class EllipseArc(LineBase):
 
     Parameters
     ----------
-    start : Point
-        Coordinates of start point needed to construct elliptic arc.
-    center : Point
-        Coordinates of center point needed to construct elliptic arc.
-    point_on_major_axis : Point
-        Point on the center axis of ellipse.
-    end : Point
-        Coordinates of end point needed to construct elliptic arc.
+    start : Coordinates of start point needed to construct elliptic arc.
+    center : Coordinates of center point needed to construct elliptic arc.
+    point_on_major_axis : Point on the center axis of ellipse.
+    end : Coordinates of end point needed to construct elliptic arc.
     """
 
-    def __init__(self, env, start, center, point_on_major_axis, end):
+    def __init__(
+        self, env, start: Point, center: Point, point_on_major_axis: Point, end: Point
+    ):
         assert isinstance(start, Point)
         assert isinstance(center, Point)
         assert isinstance(point_on_major_axis, Point)

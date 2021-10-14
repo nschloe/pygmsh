@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .line_base import LineBase
 from .point import Point
 
@@ -8,11 +10,10 @@ class Spline(LineBase):
 
     Parameters
     ----------
-    points : list
-        List containing Point objects
+    points : List containing Point objects
     """
 
-    def __init__(self, env, points):
+    def __init__(self, env, points: list[Point]):
         for c in points:
             assert isinstance(c, Point)
         assert len(points) > 1

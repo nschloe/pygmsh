@@ -1,17 +1,12 @@
+from __future__ import annotations
+
 import copy
 
 
 class LineBase:
-    """
-    Parameters
-    ----------
-    id0 : int
-    points: list of int
-    """
-
     dim = 1
 
-    def __init__(self, id0, points):
+    def __init__(self, id0: int, points: list[int]):
         self._id = id0
         self.dim_tag = (1, self._id)
         self.dim_tags = [self.dim_tag]

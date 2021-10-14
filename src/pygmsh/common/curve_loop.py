@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 class CurveLoop:
     """
     Increments the Line ID every time a new object is created that inherits
@@ -5,10 +8,7 @@ class CurveLoop:
 
     Parameters
     ----------
-    id0 : str
-        If no unique ID is given, the object global is incremented.
-    lines : list
-        Containing the lines defining the shape.
+    curves : Containing the lines defining the shape.
 
     Notes
     -----
@@ -20,7 +20,7 @@ class CurveLoop:
 
     dim = 1
 
-    def __init__(self, env, curves):
+    def __init__(self, env, curves: list):
         for k in range(len(curves) - 1):
             assert curves[k].points[-1] == curves[k + 1].points[0]
         assert curves[-1].points[-1] == curves[0].points[0]
