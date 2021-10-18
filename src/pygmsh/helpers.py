@@ -78,15 +78,17 @@ def extract_to_meshio():
     # extract cells
     elem_types, elem_tags, node_tags = gmsh.model.mesh.getElements()
     cells = []
-    for elem_type, node_tags in zip(elem_types, node_tags):
+    for elem_type, elem_tags, node_tags in zip(elem_types, elem_tags, node_tags):
         # `elementName', `dim', `order', `numNodes', `localNodeCoord',
         # `numPrimaryNodes'
         num_nodes_per_cell = gmsh.model.mesh.getElementProperties(elem_type)[3]
-        meshio.gmsh.gmsh_to_meshio_type
+        
+        node_tags_reshaped = np.asarray(node_tags).reshape(-1, num_nodes_per_cell) - 1
+        node_tags_sorted = node_tags_reshaped[np.argsort(elem_tags)]
         cells.append(
             meshio.CellBlock(
                 meshio.gmsh.gmsh_to_meshio_type[elem_type],
-                np.asarray(node_tags).reshape(-1, num_nodes_per_cell) - 1,
+                node_tags_sorted
             )
         )
 
