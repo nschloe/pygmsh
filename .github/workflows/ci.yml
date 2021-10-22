@@ -40,6 +40,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - uses: actions/checkout@v2
+      # install gmsh from system -- not sure why this is necessary
       - name: Install gmsh
         run: |
           sudo apt-get install -y python3-gmsh
