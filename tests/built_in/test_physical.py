@@ -1,5 +1,6 @@
-import pygmsh
 import meshio
+
+import pygmsh
 
 
 def test(lcar=0.5):
