@@ -1,3 +1,5 @@
+import meshio
+
 import pygmsh
 
 
@@ -14,8 +16,11 @@ def test(lcar=0.5):
         geom.add_physical(poly.lines[0], label="line")
 
         mesh = geom.generate_mesh()
+        assert len(mesh.cell_sets) == 5
     return mesh
 
 
 if __name__ == "__main__":
     test().write("physical.vtu")
+    read_mesh = meshio.read("physical.vtu")
+    assert len(read_mesh.cell_sets) == 5
