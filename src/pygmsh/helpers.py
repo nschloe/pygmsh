@@ -91,34 +91,37 @@ def extract_to_meshio():
             )
         )
 
-    cell_sets = {}
-    for dim, tag in gmsh.model.getPhysicalGroups():
-        name = gmsh.model.getPhysicalName(dim, tag)
-        cell_sets[name] = [[] for _ in range(len(cells))]
-        for e in gmsh.model.getEntitiesForPhysicalGroup(dim, tag):
-            # TODO node_tags?
-            # elem_types, elem_tags, node_tags
-            elem_types, elem_tags, _ = gmsh.model.mesh.getElements(dim, e)
-            assert len(elem_types) == len(elem_tags)
-            assert len(elem_types) == 1
-            elem_type = elem_types[0]
-            elem_tags = elem_tags[0]
+    cell_data = {}
+    field_data = {}
+    if len(gmsh.model.getPhysicalGroups()) > 0:
+        cell_data["gmsh:physical"] = [np.zeros((len(cell[1]))) for cell in cells]
+        cell_data["gmsh:geometrical"] = [np.zeros((len(cell[1]))) for cell in cells]
+        for dim, tag in gmsh.model.getPhysicalGroups():
+            name = gmsh.model.getPhysicalName(dim, tag)
+            field_data[name] = np.array([tag, dim])
+            for e in gmsh.model.getEntitiesForPhysicalGroup(dim, tag):
+                elem_types, elem_tags, _ = gmsh.model.mesh.getElements(dim, e)
+                assert len(elem_types) == len(elem_tags)
+                assert len(elem_types) == 1
+                elem_type = elem_types[0]
+                elem_tags = elem_tags[0]
 
-            meshio_cell_type = meshio.gmsh.gmsh_to_meshio_type[elem_type]
-            # make sure that the cell type appears only once in the cell list
-            # -- for now
-            idx = []
-            for k, cell_block in enumerate(cells):
-                if cell_block.type == meshio_cell_type:
-                    idx.append(k)
-            assert len(idx) == 1
-            idx = idx[0]
-            cell_sets[name][idx].append(elem_tags - 1)
+                meshio_cell_type = meshio.gmsh.gmsh_to_meshio_type[elem_type]
+                # TODO: vertex physical tags must be managed separately
+                if meshio_cell_type != "vertex":
+                    idx = []
+                    for k, cell_block in enumerate(cells):
+                        if cell_block.type == meshio_cell_type:
+                            idx.append(k)
+                    assert len(idx) == 1
+                    idx = idx[0]
 
-        cell_sets[name] = [
-            (None if len(idcs) == 0 else np.concatenate(idcs))
-            for idcs in cell_sets[name]
-        ]
+                    # elem_tags from gmsh are not grouped by dimension,
+                    # they are progressive
+                    elem_tags -= sum([len(cells[i][1]) for i in range(idx)])
+
+                    cell_data["gmsh:physical"][idx][elem_tags - 1] = tag
+                    cell_data["gmsh:geometrical"][idx][elem_tags - 1] = e
 
     # make meshio mesh
-    return meshio.Mesh(points, cells, cell_sets=cell_sets)
+    return meshio.Mesh(points, cells, cell_data=cell_data, field_data=field_data)
