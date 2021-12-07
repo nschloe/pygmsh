@@ -6,7 +6,7 @@ from .helpers import extract_to_meshio
 
 
 def optimize(mesh, method="", verbose=False):
-    mesh.remove_lower_dimensional_cells()
+    # mesh.remove_lower_dimensional_cells()
     mesh.cell_data = {}
 
     # read into meshio like

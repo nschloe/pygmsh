@@ -12,6 +12,6 @@ def test():
         geom.set_mesh_size_callback(
             lambda dim, tag, x, y, z: abs(sqrt(x ** 2 + y ** 2 + z ** 2) - 0.5) + 0.1
         )
-        mesh = geom.generate_mesh(remove_lower_dim_cells=True)
+        mesh = geom.generate_mesh()
 
     assert mesh.cells[0].data.shape[0] > 1500
