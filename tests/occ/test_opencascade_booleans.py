@@ -78,7 +78,7 @@ def test_square_circle_hole(fun):
 
 @pytest.mark.skip()
 def test_square_circle_slice():
-    """Test planar suface square with circular hole.
+    """Test planar surface square with circular hole.
 
     Also test for surface area of fragments.
     """
