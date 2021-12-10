@@ -16,6 +16,7 @@ from .point import Point
 from .polygon import Polygon
 from .size_field import BoundaryLayer, SetBackgroundMesh
 from .spline import Spline
+from .bezier import Bezier
 from .surface import Surface
 from .surface_loop import SurfaceLoop
 from .volume import Volume
@@ -62,6 +63,9 @@ class CommonGeometry:
 
     def add_bspline(self, *args, **kwargs):
         return BSpline(self.env, *args, **kwargs)
+
+    def add_bezier(self, *args, **kwargs):
+        return Bezier(self.env, *args, **kwargs)
 
     def add_circle_arc(self, *args, **kwargs):
         return CircleArc(self.env, *args, **kwargs)
