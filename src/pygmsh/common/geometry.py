@@ -5,6 +5,7 @@ import warnings
 import gmsh
 
 from ..helpers import extract_to_meshio
+from .bezier import Bezier
 from .bspline import BSpline
 from .circle_arc import CircleArc
 from .curve_loop import CurveLoop
@@ -16,7 +17,6 @@ from .point import Point
 from .polygon import Polygon
 from .size_field import BoundaryLayer, SetBackgroundMesh
 from .spline import Spline
-from .bezier import Bezier
 from .surface import Surface
 from .surface_loop import SurfaceLoop
 from .volume import Volume
