@@ -5,6 +5,7 @@ import warnings
 import gmsh
 
 from ..helpers import extract_to_meshio
+from .bezier import Bezier
 from .bspline import BSpline
 from .circle_arc import CircleArc
 from .curve_loop import CurveLoop
@@ -62,6 +63,9 @@ class CommonGeometry:
 
     def add_bspline(self, *args, **kwargs):
         return BSpline(self.env, *args, **kwargs)
+
+    def add_bezier(self, *args, **kwargs):
+        return Bezier(self.env, *args, **kwargs)
 
     def add_circle_arc(self, *args, **kwargs):
         return CircleArc(self.env, *args, **kwargs)
