@@ -11,6 +11,9 @@ class CircleArc(LineBase):
     start : Coordinates of start point needed to construct circle-arc.
     center : Coordinates of center point needed to construct circle-arc.
     end : Coordinates of end point needed to construct circle-arc.
+    nx : Plane normal in x dir
+    ny : Plane normal in y dir
+    nz : Plane normal in z dir
     """
 
     def __init__(self, env, start: Point, center: Point, end: Point, nx: float = 0., ny: float = 0., nz: float = 0.):
