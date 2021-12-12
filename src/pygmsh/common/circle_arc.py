@@ -16,7 +16,16 @@ class CircleArc(LineBase):
     nz : Plane normal in z dir
     """
 
-    def __init__(self, env, start: Point, center: Point, end: Point, nx: float = 0., ny: float = 0., nz: float = 0.):
+    def __init__(
+        self,
+        env,
+        start: Point,
+        center: Point,
+        end: Point,
+        nx: float = 0.0,
+        ny: float = 0.0,
+        nz: float = 0.0,
+    ):
         assert isinstance(start, Point)
         assert isinstance(center, Point)
         assert isinstance(end, Point)
