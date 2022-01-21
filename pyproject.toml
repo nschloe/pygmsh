@@ -41,5 +41,5 @@ Documentation = "https://pygmsh.readthedocs.io/en/latest"
 Funding = "https://github.com/sponsors/nschloe"
 Issues = "https://github.com/nschloe/pygmsh/issues"
 
-[project.entry-points.console_scripts]
+[project.scripts]
 pygmsh-optimize = "pygmsh._cli:optimize_cli"
