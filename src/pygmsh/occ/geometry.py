@@ -26,7 +26,7 @@ class Geometry(common.CommonGeometry):
     def __init__(self, init_argv=None):
         super().__init__(gmsh.model.occ, init_argv=init_argv)
 
-    def __exit__(self, *a):
+    def __exit__(self, *_):
         # TODO remove once gmsh 4.7.0 is out long enough (out November 5, 2020)
         # <https://gitlab.onelab.info/gmsh/gmsh/-/issues/1001>
         gmsh.option.setNumber("Mesh.CharacteristicLengthMin", 0.0)

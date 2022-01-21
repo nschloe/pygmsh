@@ -26,7 +26,7 @@ def test():
     assert "Box 2 cut by sphere" in mesh.cell_sets
 
     # mesh.remove_lower_dimensional_cells()
-    mesh.sets_to_int_data()
+    # mesh.sets_to_int_data()
     return mesh
 
 

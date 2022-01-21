@@ -3,6 +3,7 @@ from sys import version_info
 
 import meshio
 
+from .__about__ import __version__
 from ._optimize import optimize
 
 
@@ -51,10 +52,8 @@ def _get_version_text():
         # Python 3.8
         from importlib import metadata
 
-        __version__ = metadata.version("pygmsh")
         __gmsh_version__ = metadata.version("gmsh")
     except Exception:
-        __version__ = "unknown"
         __gmsh_version__ = "unknown"
 
     return "\n".join(
@@ -62,6 +61,6 @@ def _get_version_text():
             f"pygmsh {__version__} "
             f"[Gmsh {__gmsh_version__}, "
             f"Python {version_info.major}.{version_info.minor}.{version_info.micro}]",
-            "Copyright (c) 2013-2020 Nico Schlömer et al.",
+            "Copyright (c) 2013-2022 Nico Schlömer et al.",
         ]
     )

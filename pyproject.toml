@@ -1,3 +1,45 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.isort]
+profile = "black"
+
+[project]
+name = "pygmsh"
+authors = [{name = "Nico Schlömer", email = "nico.schloemer@gmail.com"}]
+description = "Python frontend for Gmsh"
+readme = "README.md"
+license = {file = "LICENSE.txt"}
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Mathematics",
+  "Topic :: Utilities",
+]
+dynamic = ["version"]
+requires-python = ">=3.7"
+dependencies = [
+  "gmsh",
+  "meshio >= 4.3.2, <6",
+  "numpy >= 1.20.0",
+]
+keywords = ["mesh", "gmsh", "mesh generation", "mathematics", "engineering"]
+
+[project.urls]
+Code = "https://github.com/nschloe/pygmsh"
+Documentation = "https://pygmsh.readthedocs.io/en/latest"
+Funding = "https://github.com/sponsors/nschloe"
+Issues = "https://github.com/nschloe/pygmsh/issues"
+
+[project.scripts]
+pygmsh-optimize = "pygmsh._cli:optimize_cli"
