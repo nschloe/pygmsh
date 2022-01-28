@@ -24,6 +24,9 @@ def test():
             xmin, xmax, ymin, ymax, 0.0, lcar, holes=[squareHole.curve_loop]
         )
         mesh = geom.generate_mesh(order=2)
+
+    assert "triangle6" in mesh.cells_dict
+
     # TODO support for volumes of triangle6
     # ref = 16.0
     # from helpers import compute_volume
