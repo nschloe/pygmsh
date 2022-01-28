@@ -18,6 +18,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: |
           pip install sphinx sphinx-autodoc-typehints
+          pip install .
           sphinx-build -M html doc/ build/
 
   lint:
