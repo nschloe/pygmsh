@@ -11,11 +11,15 @@
 # serve to show the default.
 import os
 import sys
+from pathlib import Path
 from unittest import mock
 
-from pygmsh import __version__
+this_dir = Path(__file__).resolve().parent
+about = {}
+with open(this_dir / ".." / "src" / "pygmsh" / "__about__.py") as f:
+    d = exec(f.read(), about)
 
-sys.path.insert(0, os.path.abspath("../"))
+__version__ = about["__version__"]
 
 ON_RTD = os.environ.get("READTHEDOCS", None) == "True"
 
