@@ -364,9 +364,6 @@ class CommonGeometry:
         for entity in self._OUTWARD_NORMALS:
             gmsh.model.mesh.setOutwardOrientation(entity.id)
 
-        if order is not None:
-            gmsh.model.mesh.setOrder(order)
-
         gmsh.option.setNumber("General.Terminal", 1 if verbose else 0)
 
         # set algorithm
@@ -375,6 +372,11 @@ class CommonGeometry:
             gmsh.option.setNumber("Mesh.Algorithm", algorithm)
 
         gmsh.model.mesh.generate(dim)
+
+        # setOrder() after generate(), see
+        # <https://github.com/nschloe/pygmsh/issues/515#issuecomment-1020106499>
+        if order is not None:
+            gmsh.model.mesh.setOrder(order)
 
         return extract_to_meshio()
 
