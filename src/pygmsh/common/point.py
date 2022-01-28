@@ -5,9 +5,17 @@ class Point:
     """
     Creates an elementary point.
 
+    Parameters
+    ----------
     x : Give the coordinates X, Y (and Z) of the point in the three-dimensional
         Euclidean space.
     mesh_size : The prescribed mesh element size at this point.
+
+
+    Attributes
+    ----------
+    x : array-like
+        Point coordinates.
     """
 
     dim = 0
