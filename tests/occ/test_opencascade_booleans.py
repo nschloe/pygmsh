@@ -72,7 +72,7 @@ def test_square_circle_hole(fun):
     with pygmsh.occ.Geometry() as geom:
         fun(geom)
         mesh = geom.generate_mesh()
-    surf = 1 - 0.1 ** 2 * np.pi
+    surf = 1 - 0.1**2 * np.pi
     assert np.abs((compute_volume(mesh) - surf) / surf) < 1e-3
 
 
@@ -103,7 +103,7 @@ def test_square_circle_slice():
     inner_cells = {}
     inner_cells["triangle"] = mesh.cells_dict["triangle"][inner_mask]
 
-    ref = 1 - 0.1 ** 2 * np.pi
+    ref = 1 - 0.1**2 * np.pi
     value = compute_volume(meshio.Mesh(mesh.points, outer_cells))
     assert np.abs(value - ref) < 1e-2 * ref
 
@@ -131,7 +131,7 @@ def test_fragments_diff_union():
     ref = 1.0
     assert np.abs(compute_volume(mesh) - ref) < 1e-3 * ref
 
-    surf = 1 - 0.1 ** 2 * np.pi
+    surf = 1 - 0.1**2 * np.pi
     outer_mask = np.where(mesh.cell_data_dict["gmsh:geometrical"]["triangle"] == 1)[0]
     outer_cells = {}
     outer_cells["triangle"] = mesh.cells_dict["triangle"][outer_mask]
@@ -165,7 +165,7 @@ def test_diff_physical_assignment():
         mesh.cell_data_dict["gmsh:geometrical"]["triangle"],
         np.ones(mesh.cells_dict["triangle"].shape[0]),
     )
-    surf = 1 - 0.1 ** 2 * np.pi
+    surf = 1 - 0.1**2 * np.pi
     assert np.abs((compute_volume(mesh) - surf) / surf) < 1e-3
 
 
