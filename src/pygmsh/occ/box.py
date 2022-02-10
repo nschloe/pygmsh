@@ -9,7 +9,7 @@ class Box:
     ----------
     x0 : array-like[3]
         List containing the x, y, z values of the start point.
-    extends : array-like[3]
+    extents : array-like[3]
         List of the 3 extents of the box edges.
     char_length : float
         Characteristic length of the mesh elements of this polygon.
