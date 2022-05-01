@@ -1,20 +1,20 @@
 <p align="center">
-  <a href="https://github.com/nschloe/pygmsh"><img alt="pygmsh" src="https://nschloe.github.io/pygmsh/logo-with-text.svg" width="60%"></a>
+  <a href="https://github.com/meshpro/pygmsh"><img alt="pygmsh" src="https://meshpro.github.io/pygmsh/logo-with-text.svg" width="60%"></a>
   <p align="center">Gmsh for Python.</p>
 </p>
 
 [![PyPi Version](https://img.shields.io/pypi/v/pygmsh.svg?style=flat-square)](https://pypi.org/project/pygmsh/)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/pygmsh.svg?style=flat-square)](https://pypi.org/project/pygmsh/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1173105.svg?style=flat-square)](https://doi.org/10.5281/zenodo.1173105)
-[![GitHub stars](https://img.shields.io/github/stars/nschloe/pygmsh.svg?style=flat-square&logo=github&label=Stars&logoColor=white)](https://github.com/nschloe/pygmsh)
+[![GitHub stars](https://img.shields.io/github/stars/meshpro/pygmsh.svg?style=flat-square&logo=github&label=Stars&logoColor=white)](https://github.com/meshpro/pygmsh)
 [![PyPi downloads](https://img.shields.io/pypi/dm/pygmsh.svg?style=flat-square)](https://pypistats.org/packages/pygmsh)
 
 [![Discord](https://img.shields.io/static/v1?logo=discord&label=chat&message=on%20discord&color=7289da&style=flat-square)](https://discord.gg/hnTJ5MRX2Y)
 [![Documentation Status](https://readthedocs.org/projects/pygmsh/badge/?version=latest&style=flat-square)](https://pygmsh.readthedocs.io/en/latest/?badge=latest)
 
-[![gh-actions](https://img.shields.io/github/workflow/status/nschloe/pygmsh/ci?style=flat-square)](https://github.com/nschloe/pygmsh/actions?query=workflow%3Aci)
-[![codecov](https://img.shields.io/codecov/c/github/nschloe/pygmsh.svg?style=flat-square)](https://codecov.io/gh/nschloe/pygmsh)
-[![LGTM](https://img.shields.io/lgtm/grade/python/github/nschloe/pygmsh.svg?style=flat-square)](https://lgtm.com/projects/g/nschloe/pygmsh)
+[![gh-actions](https://img.shields.io/github/workflow/status/meshpro/pygmsh/ci?style=flat-square)](https://github.com/meshpro/pygmsh/actions?query=workflow%3Aci)
+[![codecov](https://img.shields.io/codecov/c/github/meshpro/pygmsh.svg?style=flat-square)](https://codecov.io/gh/meshpro/pygmsh)
+[![LGTM](https://img.shields.io/lgtm/grade/python/github/meshpro/pygmsh.svg?style=flat-square)](https://lgtm.com/projects/g/meshpro/pygmsh)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)](https://github.com/psf/black)
 
 pygmsh combines the power of [Gmsh](https://gmsh.info/) with the versatility of Python.
@@ -28,13 +28,13 @@ To use, install Gmsh itself and pygmsh from [pypi](https://pypi.org/project/pygm
 pip install pygmsh
 ```
 
-This document and the [`tests/`](https://github.com/nschloe/pygmsh/tree/main/tests/)
+This document and the [`tests/`](https://github.com/meshpro/pygmsh/tree/main/tests/)
 directory contain many small examples. See
 [here](https://pygmsh.readthedocs.io/en/latest/index.html) for the full documentation.
 
 #### Flat shapes
 
-| <img src="https://nschloe.github.io/pygmsh/polygon.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/circle.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/splines.svg" width="100%"> |
+| <img src="https://meshpro.github.io/pygmsh/polygon.svg" width="100%"> | <img src="https://meshpro.github.io/pygmsh/circle.svg" width="100%"> | <img src="https://meshpro.github.io/pygmsh/splines.svg" width="100%"> |
 | :-------------------------------------------------------------------: | :------------------------------------------------------------------: | :-------------------------------------------------------------------: |
 |                                Polygon                                |                                Circle                                |                              (B-)Splines                              |
 
@@ -112,7 +112,7 @@ you can access Gmsh's native file writer.
 
 #### Extrusions
 
-| <img src="https://nschloe.github.io/pygmsh/extrude.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/revolve.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/twist.png" width="100%"> |
+| <img src="https://meshpro.github.io/pygmsh/extrude.png" width="100%"> | <img src="https://meshpro.github.io/pygmsh/revolve.png" width="100%"> | <img src="https://meshpro.github.io/pygmsh/twist.png" width="100%"> |
 | :-------------------------------------------------------------------: | :-------------------------------------------------------------------: | :-----------------------------------------------------------------: |
 |                               `extrude`                               |                               `revolve`                               |                               `twist`                               |
 
@@ -182,7 +182,7 @@ with pygmsh.geo.Geometry() as geom:
 
 #### OpenCASCADE
 
-| <img src="https://nschloe.github.io/pygmsh/intersection.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/ellipsoid-holes.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/puzzle.png" width="100%"> |
+| <img src="https://meshpro.github.io/pygmsh/intersection.png" width="100%"> | <img src="https://meshpro.github.io/pygmsh/ellipsoid-holes.png" width="100%"> | <img src="https://meshpro.github.io/pygmsh/puzzle.png" width="100%"> |
 | :------------------------------------------------------------------------: | :---------------------------------------------------------------------------: | :------------------------------------------------------------------: |
 |                                                                            |                                                                               |
 
@@ -249,7 +249,7 @@ with pygmsh.occ.Geometry() as geom:
 
 #### Mesh refinement/boundary layers
 
-| <img src="https://nschloe.github.io/pygmsh/boundary0.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/mesh-refinement-2d.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/ball-mesh-refinement.png" width="70%"> |
+| <img src="https://meshpro.github.io/pygmsh/boundary0.svg" width="100%"> | <img src="https://meshpro.github.io/pygmsh/mesh-refinement-2d.svg" width="100%"> | <img src="https://meshpro.github.io/pygmsh/ball-mesh-refinement.png" width="70%"> |
 | :---------------------------------------------------------------------: | :------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------: |
 |                                                                         |                                                                                  |
 
