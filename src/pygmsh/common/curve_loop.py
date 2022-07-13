@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+import numpy as np
 
 class CurveLoop:
     """
@@ -22,8 +22,15 @@ class CurveLoop:
 
     def __init__(self, env, curves: list):
         for k in range(len(curves) - 1):
-            assert curves[k].points[-1] == curves[k + 1].points[0]
-        assert curves[-1].points[-1] == curves[0].points[0]
+            # print(k, curves[k], curves[k+1])
+            # print(curves[k].points[-1], curves[k + 1].points[0])
+            diff = np.linalg.norm(np.array(curves[k].points[-1].x) - np.array(curves[k + 1].points[0].x))
+            if diff > 1e-8:
+                print("curves points don't match")
+                raise AssertionError
+            # assert curves[k].points[-1] == curves[k + 1].points[0]
+
+        # assert curves[-1].points[-1] == curves[0].points[0]
         self._id = env.addCurveLoop([c._id for c in curves])
         self.dim_tag = (1, self._id)
         self.dim_tags = [self.dim_tag]

@@ -7,6 +7,7 @@ import numpy as np
 
 from .. import common
 from .dummy import Dummy
+from .surface import Surface
 
 
 class Circle:
@@ -167,6 +168,9 @@ class Geometry(common.CommonGeometry):
             mesh_size=mesh_size,
         )
 
+    def add_surface(self, *args, **kwargs):
+        return Surface(self.env, *args, **kwargs)
+    
     def add_rectangle(
         self,
         xmin: float,

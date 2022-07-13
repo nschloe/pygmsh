@@ -14,6 +14,7 @@ from .dummy import Dummy
 from .rectangle import Rectangle
 from .torus import Torus
 from .wedge import Wedge
+from .surface import Surface
 
 
 # <https://stackoverflow.com/a/3844832/353337>
@@ -80,6 +81,10 @@ class Geometry(common.CommonGeometry):
             self._SIZE_QUEUE.append((obj, mesh_size))
         return obj
 
+
+    def add_surface(self, *args, **kwargs):
+        return Surface(self.env, *args, **kwargs)
+        
     def add_box(self, *args, mesh_size=None, **kwargs):
         box = Box(*args, **kwargs)
         if mesh_size is not None:

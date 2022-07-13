@@ -17,9 +17,10 @@ from .point import Point
 from .polygon import Polygon
 from .size_field import BoundaryLayer, SetBackgroundMesh
 from .spline import Spline
-from .surface import Surface
+# from .surface import Surface
 from .surface_loop import SurfaceLoop
 from .volume import Volume
+from .fillet import Fillet
 
 
 class CommonGeometry:
@@ -88,8 +89,8 @@ class CommonGeometry:
     def add_spline(self, *args, **kwargs):
         return Spline(self.env, *args, **kwargs)
 
-    def add_surface(self, *args, **kwargs):
-        return Surface(self.env, *args, **kwargs)
+    # def add_surface(self, *args, **kwargs):
+    #     return Surface(self.env, *args, **kwargs)
 
     def add_surface_loop(self, *args, **kwargs):
         return SurfaceLoop(self.env, *args, **kwargs)
@@ -99,6 +100,9 @@ class CommonGeometry:
 
     def add_polygon(self, *args, **kwargs):
         return Polygon(self, *args, **kwargs)
+
+    def add_fillet(self, *args, **kwargs):
+        return Fillet(self.env, *args, **kwargs)
 
     def add_physical(self, entities, label: str | None = None):
         if label in [label for _, label in self._PHYSICAL_QUEUE]:

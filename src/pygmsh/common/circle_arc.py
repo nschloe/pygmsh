@@ -1,6 +1,7 @@
 from .line_base import LineBase
 from .point import Point
 
+from ipdb import set_trace
 
 class CircleArc(LineBase):
     """
@@ -29,5 +30,8 @@ class CircleArc(LineBase):
         assert isinstance(start, Point)
         assert isinstance(center, Point)
         assert isinstance(end, Point)
-        id0 = env.addCircleArc(start._id, center._id, end._id, nx=nx, ny=ny, nz=nz)
+        # print(f"nx:{nx}, ny:{ny}, nz:{nz}")
+        # set_trace()
+        # id0 = env.addCircleArc(start._id, center._id, end._id, nx=nx, ny=ny, nz=nz)
+        id0 = env.addCircleArc(start._id, center._id, end._id)
         super().__init__(id0, [start, center, end])
