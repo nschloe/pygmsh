@@ -304,7 +304,7 @@ with pygmsh.geo.Geometry() as geom:
         ]
     )
     geom.set_mesh_size_callback(
-        lambda dim, tag, x, y, z: 6.0e-2 + 2.0e-1 * (x**2 + y**2)
+        lambda dim, tag, x, y, z, lc: 6.0e-2 + 2.0e-1 * (x**2 + y**2)
     )
 
     mesh = geom.generate_mesh()
@@ -322,7 +322,7 @@ with pygmsh.occ.Geometry() as geom:
     geom.add_ball([0.0, 0.0, 0.0], 1.0)
 
     geom.set_mesh_size_callback(
-        lambda dim, tag, x, y, z: abs(sqrt(x**2 + y**2 + z**2) - 0.5) + 0.1
+        lambda dim, tag, x, y, z, lc: abs(sqrt(x**2 + y**2 + z**2) - 0.5) + 0.1
     )
     mesh = geom.generate_mesh()
 ```
