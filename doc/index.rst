@@ -30,7 +30,7 @@ then lines (using Line, Circle, Spline, …, commands or by extruding points), t
 and finally volumes (using the Volume command or by extruding surfaces).
 
 These geometrical entities are called “elementary” in Gmsh’s jargon, and
-are assigned identification numbers (stricly positive) when they are created:
+are assigned identification numbers (strictly positive) when they are created:
 
 1. Each elementary point must possess a unique identification number;
 2. Each elementary line must possess a unique identification number;
