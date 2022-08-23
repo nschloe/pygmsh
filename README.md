@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/nschloe/pygmsh"><img alt="pygmsh" src="https://nschloe.github.io/pygmsh/logo-with-text.svg" width="60%"></a>
+  <a href="https://github.com/nschloe/pygmsh"><img alt="pygmsh" src="https://meshpro.github.io/pygmsh/logo-with-text.svg" width="60%"></a>
   <p align="center">Gmsh for Python.</p>
 </p>
 
@@ -34,7 +34,7 @@ directory contain many small examples. See
 
 #### Flat shapes
 
-| <img src="https://nschloe.github.io/pygmsh/polygon.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/circle.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/splines.svg" width="100%"> |
+| <img src="https://meshpro.github.io/pygmsh/polygon.svg" width="100%"> | <img src="https://meshpro.github.io/pygmsh/circle.svg" width="100%"> | <img src="https://meshpro.github.io/pygmsh/splines.svg" width="100%"> |
 | :-------------------------------------------------------------------: | :------------------------------------------------------------------: | :-------------------------------------------------------------------: |
 |                                Polygon                                |                                Circle                                |                              (B-)Splines                              |
 
@@ -112,7 +112,7 @@ you can access Gmsh's native file writer.
 
 #### Extrusions
 
-| <img src="https://nschloe.github.io/pygmsh/extrude.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/revolve.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/twist.png" width="100%"> |
+| <img src="https://meshpro.github.io/pygmsh/extrude.png" width="100%"> | <img src="https://meshpro.github.io/pygmsh/revolve.png" width="100%"> | <img src="https://meshpro.github.io/pygmsh/twist.png" width="100%"> |
 | :-------------------------------------------------------------------: | :-------------------------------------------------------------------: | :-----------------------------------------------------------------: |
 |                               `extrude`                               |                               `revolve`                               |                               `twist`                               |
 
@@ -182,7 +182,7 @@ with pygmsh.geo.Geometry() as geom:
 
 #### OpenCASCADE
 
-| <img src="https://nschloe.github.io/pygmsh/intersection.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/ellipsoid-holes.png" width="100%"> | <img src="https://nschloe.github.io/pygmsh/puzzle.png" width="100%"> |
+| <img src="https://meshpro.github.io/pygmsh/intersection.png" width="100%"> | <img src="https://meshpro.github.io/pygmsh/ellipsoid-holes.png" width="100%"> | <img src="https://meshpro.github.io/pygmsh/puzzle.png" width="100%"> |
 | :------------------------------------------------------------------------: | :---------------------------------------------------------------------------: | :------------------------------------------------------------------: |
 |                                                                            |                                                                               |
 
@@ -249,7 +249,7 @@ with pygmsh.occ.Geometry() as geom:
 
 #### Mesh refinement/boundary layers
 
-| <img src="https://nschloe.github.io/pygmsh/boundary0.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/mesh-refinement-2d.svg" width="100%"> | <img src="https://nschloe.github.io/pygmsh/ball-mesh-refinement.png" width="70%"> |
+| <img src="https://meshpro.github.io/pygmsh/boundary0.svg" width="100%"> | <img src="https://meshpro.github.io/pygmsh/mesh-refinement-2d.svg" width="100%"> | <img src="https://meshpro.github.io/pygmsh/ball-mesh-refinement.png" width="70%"> |
 | :---------------------------------------------------------------------: | :------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------: |
 |                                                                         |                                                                                  |
 
