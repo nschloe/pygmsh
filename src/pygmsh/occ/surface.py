@@ -26,7 +26,7 @@ class Surface:
         assert isinstance(curve_loop, CurveLoop)
         self.curve_loop = curve_loop
         self.num_edges = len(curve_loop)
-        print(f"Adding occ surface using curve : {self.curve_loop._id}")
+        # print(f"Adding occ surface using curve : {self.curve_loop._id}")
         self._id = env.addSurfaceFilling(self.curve_loop._id)
         self.dim_tag = (2, self._id)
         self.dim_tags = [self.dim_tag]
