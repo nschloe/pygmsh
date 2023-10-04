@@ -26,7 +26,11 @@ class Surface:
         assert isinstance(curve_loop, CurveLoop)
         self.curve_loop = curve_loop
         self.num_edges = len(curve_loop)
-        self._id = env.addSurfaceFilling([self.curve_loop._id])
+        try:
+            self._id = env.addSurfaceFilling([self.curve_loop._id])
+        except TypeError:       # occ backend expects single tag
+            self._id = env.addSurfaceFilling(self.curve_loop._id)
+
         self.dim_tag = (2, self._id)
         self.dim_tags = [self.dim_tag]
 
